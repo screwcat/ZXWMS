@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveSetInterestRatesDao">
+
+<select id="selectRateInfo" parameterType="java.lang.String" resultType="map">
+select current_rate from wms_inve_current_rate where enable_flag=1
+</select>
+
+<insert id="saveRateInfo" parameterType="map" >
+
+	insert into wms_inve_current_rate
+	(
+	current_rate,
+	create_user_id,
+	create_timestamp,
+	last_update_user_id,
+	last_update_timestamp,
+	enable_flag
+	)
+	values(
+	#{current_rate},
+	#{user_id},
+	now(),
+	#{user_id},
+	now(),
+	1
+	)
+
+</insert>
+
+<update id="updateRateInfo" parameterType="map">
+	update 
+	wms_inve_current_rate
+	set 
+	enable_flag =0,
+	last_update_timestamp = now(),
+	last_update_user_id = #{user_id}
+	where 
+	enable_flag = 1
+</update>
+
+</mapper>

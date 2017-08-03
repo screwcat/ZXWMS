@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../../js/zx-all.js"> </script>
+<script type="text/javascript">
+	var grid;
+	var grid_data={};
+	var contact_number=$.query.get("contact_number");
+	var id_card=$.query.get("id_card");
+	var customer_name = $.query.get("customer_name");
+	$(function(){
+		    initGrid();  
+		    var toolbarItemData = [];
+		    toolbarItemData.push({
+		        text: '查询',
+		        click:search,
+		        icon: 'search'
+		    });
+		    toolbarItemData.push({
+		        line: true
+		    });
+		    toolbarItemData.push({
+		        text: '保存',
+		        click:save,
+		        icon: 'save'
+		    });
+		    toolbarItemData.push({
+		        line: true
+		    });
+		    toolbarItemData.push({
+		        text: '清空',
+		        click:clear,
+		        icon: 'empty'
+		    });
+		    toolbarItemData.push({
+		        line: true
+		    });
+		  $("#centertoolbar").ligerToolBar({
+		    items: toolbarItemData
+		    });
+		  search();
+	});
+	
+	//初始化页面数据显示
+	function initGrid() {
+		
+		var columns = [{
+			display:'客户编号',
+			name: 'customer_num',
+		    width: 230,
+		    minWidth: 230,
+		    isSort:false
+		},{
+			display:'客户名称',
+			name: 'cus_name',
+	        width: 230,
+	        minWidth: 230,
+	        isSort:false
+		},{
+			display:'客户经理',
+			name: 'salesman_name',
+	        width: 250,
+	        minWidth: 250,
+	        isSort:false
+		}];
+		
+		grid = $("#grid").ligerGrid({
+			columns: columns,
+			url: global_param.context_name + '/sysmanage/getsearchKHlist.do?id_card='+id_card+"&contact_number="+contact_number + "&customer_name="+customer_name,
+			sortName: 'customer_num', // 排序列名
+			sortOrder: 'asc', // 排序方式
+			rownumbers: true,
+			usePager: true, // 是否分页支持，默认为true
+			enabledEdit: true,
+			width:"100%",
+			delayLoad: true,
+			height:380,
+			heightDiff: -4,
+			parms: {
+				_filterParms: -1
+			}
+		});
+		
+	}
+	//提交
+	function save(){
+		var cus = grid.getSelectedRow();
+		if(cus==null){
+			globalUtil.warnMsg(globalErrorMsg['100122']);//请选择一行记录
+            return;
+		}
+		window.parent.sumbit(cus);
+		window.parent.dialog.hide();
+	}
+    //实现数据查询
+     var search= function() {
+         initParams();
+         global_ligerui_extend.search(grid, params);
+     }
+     function initParams() {
+         params = globalUtil.getFormParam("searchbar");
+         //params.id_card=id_card;
+         //params.contact_number=contact_number;
+         //params.customer_name=customer_name;
+     }
+	//清空查询条件
+    function clear(){
+        $("#salesman_name").val("");
+    }
+	//关闭页面
+    function closepage(){
+        window.parent.dialog.hide();
+    }
+</script>
+</head>
+<body style="overflow-y: hidden;">
+	<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<!--查询条件-->
+			<div class="l-panel-search-cond clearfix">
+				<div class="float-l">
+					<div class="l-panel-search-title">业务员短工号:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="salesman_name" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="centertoolbar" class="minwidth400"></div>
+	<div id="grid"></div>	
+</body>
+</html>

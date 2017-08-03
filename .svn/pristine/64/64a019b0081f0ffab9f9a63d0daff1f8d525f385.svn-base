@@ -1,0 +1,865 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sqls namespace="autosingle2">
+	<sqlElement key="wms_cre_credit_head#list" author="auto_generator">  
+        <![CDATA[ 
+		  select  
+			  wms_cre_credit_head_id,
+			  bill_code,
+			  credit_purpose,
+			  max_repayment_limit_per_month,
+			  credit_limit,
+			  max_repayment_time_limit,
+			  enter_file_way,
+			  payroll_payment_way,
+			  data_type,
+			  is_complete,
+			  reference_type,
+			  is_other_corporation_done,
+			  is_to_public_stream,
+			  is_house_certificate_original,
+			  is_check,
+			  person_condition,
+			  salesman_id,
+			  salesman_code,
+			  salesman_name,
+			  bill_status,
+			  create_user_id,
+			  create_user_name,
+			  date_format(create_timestamp,'%Y-%c-%d %h:%i:%s')  as create_timestamp,
+			  last_update_user_id,
+			  date_format(last_update_timestamp,'%Y-%c-%d %h:%i:%s')  as last_update_timestamp,
+			  enable_flag
+
+		   from  wms_cre_credit_head  t1
+		   where enable_flag=1
+		   <#if bill_code??> 
+		         and bill_code like :bill_code
+		   </#if> 
+		   <#if salesman_name??> 
+		        and salesman_name like :salesman_name
+		   </#if> 
+		   <#if create_timestamp??> 
+		       and  create_timestamp like :create_timestamp
+		   </#if> 
+		   <#if id_card??> 
+		        and exists (select 1 from wms_cre_credit_line_customer_change_head t2 where t1.wms_cre_credit_head_id=t2.wms_cre_credit_head_id and t2.id_card like :id_card ) 
+		   </#if> 
+		   <#if sortname??> 
+		      order by ${sortname} ${sortorder} 
+		   </#if> 
+
+        ]]>
+	</sqlElement>
+	<sqlElement key="wms_cre_credit_head#update" author="auto_generator">  
+        <![CDATA[ 
+		  update  wms_cre_credit_head
+		  set 
+		  <#if wms_cre_credit_head_id??>
+				  wms_cre_credit_head_id = :wms_cre_credit_head_id
+		  <#else>
+				  wms_cre_credit_head_id = null
+		  </#if>
+		  <#if bill_code??>
+				  bill_code = :bill_code
+		  <#else>
+				  bill_code = null
+		  </#if>
+		  <#if credit_purpose??>
+				  credit_purpose = :credit_purpose
+		  <#else>
+				  credit_purpose = null
+		  </#if>
+		  <#if max_repayment_limit_per_month??>
+				  max_repayment_limit_per_month = :max_repayment_limit_per_month
+		  <#else>
+				  max_repayment_limit_per_month = null
+		  </#if>
+		  <#if credit_limit??>
+				  credit_limit = :credit_limit
+		  <#else>
+				  credit_limit = null
+		  </#if>
+		  <#if max_repayment_time_limit??>
+				  max_repayment_time_limit = :max_repayment_time_limit
+		  <#else>
+				  max_repayment_time_limit = null
+		  </#if>
+		  <#if enter_file_way??>
+				  enter_file_way = :enter_file_way
+		  <#else>
+				  enter_file_way = null
+		  </#if>
+		  <#if payroll_payment_way??>
+				  payroll_payment_way = :payroll_payment_way
+		  <#else>
+				  payroll_payment_way = null
+		  </#if>
+		  <#if data_type??>
+				  data_type = :data_type
+		  <#else>
+				  data_type = null
+		  </#if>
+		  <#if is_complete??>
+				  is_complete = :is_complete
+		  <#else>
+				  is_complete = null
+		  </#if>
+		  <#if reference_type??>
+				  reference_type = :reference_type
+		  <#else>
+				  reference_type = null
+		  </#if>
+		  <#if is_other_corporation_done??>
+				  is_other_corporation_done = :is_other_corporation_done
+		  <#else>
+				  is_other_corporation_done = null
+		  </#if>
+		  <#if is_to_public_stream??>
+				  is_to_public_stream = :is_to_public_stream
+		  <#else>
+				  is_to_public_stream = null
+		  </#if>
+		  <#if is_house_certificate_original??>
+				  is_house_certificate_original = :is_house_certificate_original
+		  <#else>
+				  is_house_certificate_original = null
+		  </#if>
+		  <#if is_check??>
+				  is_check = :is_check
+		  <#else>
+				  is_check = null
+		  </#if>
+		  <#if person_condition??>
+				  person_condition = :person_condition
+		  <#else>
+				  person_condition = null
+		  </#if>
+		  <#if salesman_id??>
+				  salesman_id = :salesman_id
+		  <#else>
+				  salesman_id = null
+		  </#if>
+		  <#if salesman_code??>
+				  salesman_code = :salesman_code
+		  <#else>
+				  salesman_code = null
+		  </#if>
+		  <#if salesman_name??>
+				  salesman_name = :salesman_name
+		  <#else>
+				  salesman_name = null
+		  </#if>
+		  <#if bill_status??>
+				  bill_status = :bill_status
+		  <#else>
+				  bill_status = null
+		  </#if>
+		  <#if create_user_id??>
+				  create_user_id = :create_user_id
+		  <#else>
+				  create_user_id = null
+		  </#if>
+		  <#if create_user_name??>
+				  create_user_name = :create_user_name
+		  <#else>
+				  create_user_name = null
+		  </#if>
+		  <#if create_timestamp??>
+				  create_timestamp = :create_timestamp
+		  <#else>
+				  create_timestamp = null
+		  </#if>
+		  <#if last_update_user_id??>
+				  last_update_user_id = :last_update_user_id
+		  <#else>
+				  last_update_user_id = null
+		  </#if>
+		  <#if last_update_timestamp??>
+				  last_update_timestamp = :last_update_timestamp
+		  <#else>
+				  last_update_timestamp = null
+		  </#if>
+		  <#if enable_flag??>
+				  enable_flag = :enable_flag
+		  <#else>
+				  enable_flag = null
+		  </#if>
+		  where 1=1
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="wms_cre_credit_line_customer_change_head#list"
+		author="auto_generator">  
+        <![CDATA[ 
+		  select  
+			  wms_cre_credit_line_customer_change_head_id,
+			  wms_cre_credit_head_id,
+			  wms_cus_customer_head_id,
+			  customer_code,
+			  customer_name,
+			  customer_ever_name,
+			  customer_category,
+			  gender,
+			  max_degree,
+			  date_format(birthday,'%Y-%m-%d')  as birthday,
+			  id_card,
+			  province,
+			  city,
+			  district,
+			  address_more,
+			  has_children,
+			  children_name,
+			  children_address,
+			  children_telephone,
+			  has_married,
+			  has_house,
+			  current_address_province,
+			  current_address_city,
+			  current_address_district,
+			  current_address_more,
+			  post_code,
+			  fixed_telephone,
+			  mobile_telephone1,
+			  service_password1,
+			  mobile_telephone2,
+			  service_password2,
+			  personal_year_income,
+			  customer_email,
+			  credit_card_limit,
+			  common_occupants,
+			  status,
+			  create_user_id,
+			  create_user_name,
+			  date_format(create_timestamp,'%Y-%m-%d %h:%i:%s')  as create_timestamp,
+			  last_update_user_id,
+			  date_format(last_update_timestamp,'%Y-%m-%d %h:%i:%s')  as last_update_timestamp,
+			  enable_flag
+
+		   from  wms_cre_credit_line_customer_change_head
+		   where enable_flag=1
+		   <#if wms_cre_credit_head_id??> 
+		       and wms_cre_credit_head_id = :wms_cre_credit_head_id
+		   </#if> 
+		    <#if wms_cre_credit_line_customer_change_head_id??> 
+		       and wms_cre_credit_line_customer_change_head_id = :wms_cre_credit_line_customer_change_head_id
+		   </#if> 
+		   <#if sortname??> 
+		      order by ${sortname} ${sortorder} 
+		   </#if> 
+
+        ]]>
+	</sqlElement>
+	<sqlElement key="wms_cre_credit_line_customer_change_head#update"
+		author="auto_generator">  
+        <![CDATA[ 
+		  update  wms_cre_credit_line_customer_change_head
+		  set 
+		  <#if wms_cre_credit_line_customer_change_head_id??>
+				  wms_cre_credit_line_customer_change_head_id = :wms_cre_credit_line_customer_change_head_id
+		  <#else>
+				  wms_cre_credit_line_customer_change_head_id = null
+		  </#if>
+		  <#if wms_cre_credit_head_id??>
+				  wms_cre_credit_head_id = :wms_cre_credit_head_id
+		  <#else>
+				  wms_cre_credit_head_id = null
+		  </#if>
+		  <#if wms_cus_customer_head_id??>
+				  wms_cus_customer_head_id = :wms_cus_customer_head_id
+		  <#else>
+				  wms_cus_customer_head_id = null
+		  </#if>
+		  <#if customer_code??>
+				  customer_code = :customer_code
+		  <#else>
+				  customer_code = null
+		  </#if>
+		  <#if customer_name??>
+				  customer_name = :customer_name
+		  <#else>
+				  customer_name = null
+		  </#if>
+		  <#if customer_ever_name??>
+				  customer_ever_name = :customer_ever_name
+		  <#else>
+				  customer_ever_name = null
+		  </#if>
+		  <#if customer_category??>
+				  customer_category = :customer_category
+		  <#else>
+				  customer_category = null
+		  </#if>
+		  <#if gender??>
+				  gender = :gender
+		  <#else>
+				  gender = null
+		  </#if>
+		  <#if max_degree??>
+				  max_degree = :max_degree
+		  <#else>
+				  max_degree = null
+		  </#if>
+		  <#if birthday??>
+				  birthday = :birthday
+		  <#else>
+				  birthday = null
+		  </#if>
+		  <#if id_card??>
+				  id_card = :id_card
+		  <#else>
+				  id_card = null
+		  </#if>
+		  <#if province??>
+				  province = :province
+		  <#else>
+				  province = null
+		  </#if>
+		  <#if city??>
+				  city = :city
+		  <#else>
+				  city = null
+		  </#if>
+		  <#if district??>
+				  district = :district
+		  <#else>
+				  district = null
+		  </#if>
+		  <#if address_more??>
+				  address_more = :address_more
+		  <#else>
+				  address_more = null
+		  </#if>
+		  <#if has_children??>
+				  has_children = :has_children
+		  <#else>
+				  has_children = null
+		  </#if>
+		  <#if children_name??>
+				  children_name = :children_name
+		  <#else>
+				  children_name = null
+		  </#if>
+		  <#if children_address??>
+				  children_address = :children_address
+		  <#else>
+				  children_address = null
+		  </#if>
+		  <#if children_telephone??>
+				  children_telephone = :children_telephone
+		  <#else>
+				  children_telephone = null
+		  </#if>
+		  <#if has_married??>
+				  has_married = :has_married
+		  <#else>
+				  has_married = null
+		  </#if>
+		  <#if has_house??>
+				  has_house = :has_house
+		  <#else>
+				  has_house = null
+		  </#if>
+		  <#if current_address_province??>
+				  current_address_province = :current_address_province
+		  <#else>
+				  current_address_province = null
+		  </#if>
+		  <#if current_address_city??>
+				  current_address_city = :current_address_city
+		  <#else>
+				  current_address_city = null
+		  </#if>
+		  <#if current_address_district??>
+				  current_address_district = :current_address_district
+		  <#else>
+				  current_address_district = null
+		  </#if>
+		  <#if current_address_more??>
+				  current_address_more = :current_address_more
+		  <#else>
+				  current_address_more = null
+		  </#if>
+		  <#if post_code??>
+				  post_code = :post_code
+		  <#else>
+				  post_code = null
+		  </#if>
+		  <#if fixed_telephone??>
+				  fixed_telephone = :fixed_telephone
+		  <#else>
+				  fixed_telephone = null
+		  </#if>
+		  <#if mobile_telephone1??>
+				  mobile_telephone1 = :mobile_telephone1
+		  <#else>
+				  mobile_telephone1 = null
+		  </#if>
+		  <#if service_password1??>
+				  service_password1 = :service_password1
+		  <#else>
+				  service_password1 = null
+		  </#if>
+		  <#if mobile_telephone2??>
+				  mobile_telephone2 = :mobile_telephone2
+		  <#else>
+				  mobile_telephone2 = null
+		  </#if>
+		  <#if service_password2??>
+				  service_password2 = :service_password2
+		  <#else>
+				  service_password2 = null
+		  </#if>
+		  <#if personal_year_income??>
+				  personal_year_income = :personal_year_income
+		  <#else>
+				  personal_year_income = null
+		  </#if>
+		  <#if customer_email??>
+				  customer_email = :customer_email
+		  <#else>
+				  customer_email = null
+		  </#if>
+		  <#if credit_card_limit??>
+				  credit_card_limit = :credit_card_limit
+		  <#else>
+				  credit_card_limit = null
+		  </#if>
+		  <#if common_occupants??>
+				  common_occupants = :common_occupants
+		  <#else>
+				  common_occupants = null
+		  </#if>
+		  <#if status??>
+				  status = :status
+		  <#else>
+				  status = null
+		  </#if>
+		  <#if create_user_id??>
+				  create_user_id = :create_user_id
+		  <#else>
+				  create_user_id = null
+		  </#if>
+		  <#if create_user_name??>
+				  create_user_name = :create_user_name
+		  <#else>
+				  create_user_name = null
+		  </#if>
+		  <#if create_timestamp??>
+				  create_timestamp = :create_timestamp
+		  <#else>
+				  create_timestamp = null
+		  </#if>
+		  <#if last_update_user_id??>
+				  last_update_user_id = :last_update_user_id
+		  <#else>
+				  last_update_user_id = null
+		  </#if>
+		  <#if last_update_timestamp??>
+				  last_update_timestamp = :last_update_timestamp
+		  <#else>
+				  last_update_timestamp = null
+		  </#if>
+		  <#if enable_flag??>
+				  enable_flag = :enable_flag
+		  <#else>
+				  enable_flag = null
+		  </#if>
+		  where 1=1
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="wms_cre_customer_change_line_contact#list"
+		author="auto_generator">  
+        <![CDATA[ 
+		  select  
+			  wms_cre_customer_change_line_contact_id,
+			  contact_name,
+			  contact_relation_type,
+			  contact_relation_description,
+			  contact_mobile_phone,
+			  audit_result1,
+			  audit_result2,
+			  audit_result3,
+			  wms_cre_credit_head_id
+
+		   from  wms_cre_customer_change_line_contact
+		   where 1=1
+		   <#if wms_cre_credit_line_customer_change_head_id??> 
+		        and wms_cre_credit_head_id = :wms_cre_credit_line_customer_change_head_id 
+		   </#if> 
+		   <#if sortname??> 
+		      order by ${sortname} ${sortorder} 
+		   </#if> 
+
+        ]]>
+	</sqlElement>
+	<sqlElement key="wms_cre_customer_change_line_contact#update"
+		author="auto_generator">  
+        <![CDATA[ 
+		  update  wms_cre_customer_change_line_contact
+		  set 
+		  <#if wms_cre_customer_change_line_contact_id??>
+				  wms_cre_customer_change_line_contact_id = :wms_cre_customer_change_line_contact_id
+		  <#else>
+				  wms_cre_customer_change_line_contact_id = null
+		  </#if>
+		  <#if contact_name??>
+				  contact_name = :contact_name
+		  <#else>
+				  contact_name = null
+		  </#if>
+		  <#if contact_relation_type??>
+				  contact_relation_type = :contact_relation_type
+		  <#else>
+				  contact_relation_type = null
+		  </#if>
+		  <#if contact_relation_description??>
+				  contact_relation_description = :contact_relation_description
+		  <#else>
+				  contact_relation_description = null
+		  </#if>
+		  <#if contact_mobile_phone??>
+				  contact_mobile_phone = :contact_mobile_phone
+		  <#else>
+				  contact_mobile_phone = null
+		  </#if>
+		  <#if audit_result1??>
+				  audit_result1 = :audit_result1
+		  <#else>
+				  audit_result1 = null
+		  </#if>
+		  <#if audit_result2??>
+				  audit_result2 = :audit_result2
+		  <#else>
+				  audit_result2 = null
+		  </#if>
+		  <#if audit_result3??>
+				  audit_result3 = :audit_result3
+		  <#else>
+				  audit_result3 = null
+		  </#if>
+		  <#if wms_cre_credit_line_customer_change_head_id??>
+				  wms_cre_credit_line_customer_change_head_id = :wms_cre_credit_line_customer_change_head_id
+		  <#else>
+				  wms_cre_credit_line_customer_change_head_id = null
+		  </#if>
+		  where 1=1
+        ]]>
+	</sqlElement>
+
+
+	<sqlElement key="wms_cre_credit_line_customer_data_attachment#list"
+		author="auto_generator">  
+        <![CDATA[ 
+		  select  
+			  wms_cre_credit_line_customer_data_attachment_id,
+			  data_type_name,
+			  data_detail_name,
+			  attachment_old_name,
+			  attachment_new_name,
+			  attachment_address,
+			  attachment_type,
+			  wms_cre_credit_head_id
+
+		   from  wms_cre_credit_line_customer_data_attachment
+		   where 1=1
+		   <#if wms_cre_credit_head_id??> 
+		       and wms_cre_credit_head_id = :wms_cre_credit_head_id
+		   </#if> 
+		   <#if sortname??> 
+		      order by ${sortname} ${sortorder} 
+		   </#if> 
+
+        ]]>
+	</sqlElement>
+	<sqlElement key="wms_cre_credit_line_customer_data_attachment#update"
+		author="auto_generator">  
+        <![CDATA[ 
+		  update  wms_cre_credit_line_customer_data_attachment
+		  set 
+		  <#if wms_cre_credit_line_customer_data_attachment_id??>
+				  wms_cre_credit_line_customer_data_attachment_id = :wms_cre_credit_line_customer_data_attachment_id
+		  <#else>
+				  wms_cre_credit_line_customer_data_attachment_id = null
+		  </#if>
+		  <#if data_type_name??>
+				  data_type_name = :data_type_name
+		  <#else>
+				  data_type_name = null
+		  </#if>
+		  <#if data_detail_name??>
+				  data_detail_name = :data_detail_name
+		  <#else>
+				  data_detail_name = null
+		  </#if>
+		  <#if attachment_old_name??>
+				  attachment_old_name = :attachment_old_name
+		  <#else>
+				  attachment_old_name = null
+		  </#if>
+		  <#if attachment_new_name??>
+				  attachment_new_name = :attachment_new_name
+		  <#else>
+				  attachment_new_name = null
+		  </#if>
+		  <#if attachment_address??>
+				  attachment_address = :attachment_address
+		  <#else>
+				  attachment_address = null
+		  </#if>
+		  <#if attachment_type??>
+				  attachment_type = :attachment_type
+		  <#else>
+				  attachment_type = null
+		  </#if>
+		  <#if wms_cre_credit_head_id??>
+				  wms_cre_credit_head_id = :wms_cre_credit_head_id
+		  <#else>
+				  wms_cre_credit_head_id = null
+		  </#if>
+		  where 1=1
+        ]]>
+	</sqlElement>
+	<sqlElement key="wms_cre_customer_change_line_houseinfo#list"
+		author="auto_generator">  
+        <![CDATA[ 
+		  select  
+			  wms_cre_customer_change_line_houseinfo_id,
+			  date_format(house_buy_date,'%Y-%m-%d')  as house_buy_date,
+			  house_buy_money,
+			  house_building_area,
+			  house_address_province,
+			  house_address_city,
+			  house_address_district,
+			  house_address_more,
+			  house_post_code,
+			  wms_cre_credit_line_customer_change_head_id,
+			  create_user_id,
+			  date_format(create_timestamp,'%Y-%m-%d %h:%i:%s')  as create_timestamp,
+			  last_update_user_id,
+			  date_format(last_update_timestamp,'%Y-%m-%d %h:%i:%s')  as last_update_timestamp,
+			  enable_flag
+
+		   from  wms_cre_customer_change_line_houseinfo
+		   where enable_flag=1
+		   <#if searchName??> 
+		      and wms_cre_customer_change_line_houseinfo#list = :wms_cre_customer_change_line_houseinfo#list
+		   </#if> 
+		   <#if sortname??> 
+		      order by ${sortname} ${sortorder} 
+		   </#if> 
+
+        ]]>
+	</sqlElement>
+	<sqlElement key="wms_cre_customer_change_line_houseinfo#update"
+		author="auto_generator">  
+        <![CDATA[ 
+		  update  wms_cre_customer_change_line_houseinfo
+		  set 
+		  <#if wms_cre_customer_change_line_houseinfo_id??>
+				  wms_cre_customer_change_line_houseinfo_id = :wms_cre_customer_change_line_houseinfo_id
+		  <#else>
+				  wms_cre_customer_change_line_houseinfo_id = null
+		  </#if>
+		  <#if house_buy_date??>
+				  house_buy_date = :house_buy_date
+		  <#else>
+				  house_buy_date = null
+		  </#if>
+		  <#if house_buy_money??>
+				  house_buy_money = :house_buy_money
+		  <#else>
+				  house_buy_money = null
+		  </#if>
+		  <#if house_building_area??>
+				  house_building_area = :house_building_area
+		  <#else>
+				  house_building_area = null
+		  </#if>
+		  <#if house_address_province??>
+				  house_address_province = :house_address_province
+		  <#else>
+				  house_address_province = null
+		  </#if>
+		  <#if house_address_city??>
+				  house_address_city = :house_address_city
+		  <#else>
+				  house_address_city = null
+		  </#if>
+		  <#if house_address_district??>
+				  house_address_district = :house_address_district
+		  <#else>
+				  house_address_district = null
+		  </#if>
+		  <#if house_address_more??>
+				  house_address_more = :house_address_more
+		  <#else>
+				  house_address_more = null
+		  </#if>
+		  <#if house_post_code??>
+				  house_post_code = :house_post_code
+		  <#else>
+				  house_post_code = null
+		  </#if>
+		  <#if wms_cre_credit_line_customer_change_head_id??>
+				  wms_cre_credit_line_customer_change_head_id = :wms_cre_credit_line_customer_change_head_id
+		  <#else>
+				  wms_cre_credit_line_customer_change_head_id = null
+		  </#if>
+		  <#if create_user_id??>
+				  create_user_id = :create_user_id
+		  <#else>
+				  create_user_id = null
+		  </#if>
+		  <#if create_timestamp??>
+				  create_timestamp = :create_timestamp
+		  <#else>
+				  create_timestamp = null
+		  </#if>
+		  <#if last_update_user_id??>
+				  last_update_user_id = :last_update_user_id
+		  <#else>
+				  last_update_user_id = null
+		  </#if>
+		  <#if last_update_timestamp??>
+				  last_update_timestamp = :last_update_timestamp
+		  <#else>
+				  last_update_timestamp = null
+		  </#if>
+		  <#if enable_flag??>
+				  enable_flag = :enable_flag
+		  <#else>
+				  enable_flag = null
+		  </#if>
+		  where 1=1
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="wms_cre_customer_change_line_workinfo#list"
+		author="auto_generator">  
+        <![CDATA[ 
+		  select  
+			  wms_cre_customer_change_line_workinfo_id,
+			  work_unit_full_name,
+			  work_unit_address_province,
+			  work_unit_address_city,
+			  work_unit_address_district,
+			  work_unit_address_more,
+			  work_unit_telephone,
+			  date_format(work_unit_entry_date,'%Y-%m-%d')  as work_unit_entry_date,
+			  work_unit_department,
+			  work_unit_duty,
+			  work_unit_property,
+			  wms_cre_credit_line_customer_change_head_id,
+			  create_user_id,
+			  date_format(create_timestamp,'%Y-%m-%d %h:%i:%s')  as create_timestamp,
+			  last_update_user_id,
+			  date_format(last_update_timestamp,'%Y-%m-%d %h:%i:%s')  as last_update_timestamp,
+			  enable_flag
+
+		   from  wms_cre_customer_change_line_workinfo
+		   where enable_flag=1
+		   <#if wms_cre_credit_line_customer_change_head_id??> 
+		      and wms_cre_credit_line_customer_change_head_id = :wms_cre_credit_line_customer_change_head_id
+		   </#if> 
+		   <#if sortname??> 
+		      order by ${sortname} ${sortorder} 
+		   </#if> 
+
+        ]]>
+	</sqlElement>
+	<sqlElement key="wms_cre_customer_change_line_workinfo#update"
+		author="auto_generator">  
+        <![CDATA[ 
+		  update  wms_cre_customer_change_line_workinfo
+		  set 
+		  <#if wms_cre_customer_change_line_workinfo_id??>
+				  wms_cre_customer_change_line_workinfo_id = :wms_cre_customer_change_line_workinfo_id
+		  <#else>
+				  wms_cre_customer_change_line_workinfo_id = null
+		  </#if>
+		  <#if work_unit_full_name??>
+				  work_unit_full_name = :work_unit_full_name
+		  <#else>
+				  work_unit_full_name = null
+		  </#if>
+		  <#if work_unit_address_province??>
+				  work_unit_address_province = :work_unit_address_province
+		  <#else>
+				  work_unit_address_province = null
+		  </#if>
+		  <#if work_unit_address_city??>
+				  work_unit_address_city = :work_unit_address_city
+		  <#else>
+				  work_unit_address_city = null
+		  </#if>
+		  <#if work_unit_address_district??>
+				  work_unit_address_district = :work_unit_address_district
+		  <#else>
+				  work_unit_address_district = null
+		  </#if>
+		  <#if work_unit_address_more??>
+				  work_unit_address_more = :work_unit_address_more
+		  <#else>
+				  work_unit_address_more = null
+		  </#if>
+		  <#if work_unit_telephone??>
+				  work_unit_telephone = :work_unit_telephone
+		  <#else>
+				  work_unit_telephone = null
+		  </#if>
+		  <#if work_unit_entry_date??>
+				  work_unit_entry_date = :work_unit_entry_date
+		  <#else>
+				  work_unit_entry_date = null
+		  </#if>
+		  <#if work_unit_department??>
+				  work_unit_department = :work_unit_department
+		  <#else>
+				  work_unit_department = null
+		  </#if>
+		  <#if work_unit_duty??>
+				  work_unit_duty = :work_unit_duty
+		  <#else>
+				  work_unit_duty = null
+		  </#if>
+		  <#if work_unit_property??>
+				  work_unit_property = :work_unit_property
+		  <#else>
+				  work_unit_property = null
+		  </#if>
+		  <#if wms_cre_credit_line_customer_change_head_id??>
+				  wms_cre_credit_line_customer_change_head_id = :wms_cre_credit_line_customer_change_head_id
+		  <#else>
+				  wms_cre_credit_line_customer_change_head_id = null
+		  </#if>
+		  <#if create_user_id??>
+				  create_user_id = :create_user_id
+		  <#else>
+				  create_user_id = null
+		  </#if>
+		  <#if create_timestamp??>
+				  create_timestamp = :create_timestamp
+		  <#else>
+				  create_timestamp = null
+		  </#if>
+		  <#if last_update_user_id??>
+				  last_update_user_id = :last_update_user_id
+		  <#else>
+				  last_update_user_id = null
+		  </#if>
+		  <#if last_update_timestamp??>
+				  last_update_timestamp = :last_update_timestamp
+		  <#else>
+				  last_update_timestamp = null
+		  </#if>
+		  <#if enable_flag??>
+				  enable_flag = :enable_flag
+		  <#else>
+				  enable_flag = null
+		  </#if>
+		  where 1=1
+        ]]>
+	</sqlElement>
+
+</sqls>

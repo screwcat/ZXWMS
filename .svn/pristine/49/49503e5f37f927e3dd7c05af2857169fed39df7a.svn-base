@@ -1,0 +1,626 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>房产初评</title>
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<style type="text/css">
+.float-l {
+	height: 40px;
+}
+
+input {
+	width: 150px;
+}
+
+.readonly {
+	background-color: rgb(235, 235, 228);
+	border: 1px solid red;
+	width: 150px;
+}
+/*input_tb css*/
+.input_tb {
+	border: 1px solid #dfdfdf;
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.input_tb a {
+	color: #056aff;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.input_tb td {
+	height: 35px;
+	line-height: 25px;
+	border-bottom: 1px dashed #d5d5d5;
+	padding-top: 3px;
+	padding-left: 8px;
+	padding-right: 8px;
+}
+
+.input_tb .tr_title td {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	border-bottom: 1px solid #dfdfdf;
+}
+
+.input_tb .tr_last td {
+	border-bottom: 0;
+}
+
+.input_tb .title {
+	text-align: right;
+}
+
+.input_tb .subtitle {
+	text-align: left;
+	background-color: #d2e1fd;
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+}
+
+.input_tb .tr_btn_input td {
+	background-color: #fbfbfb;
+	/*border-top:1px solid #dbdbdb;*/
+	height: 40px;
+}
+</style>
+</head>
+<body>
+	<div class="tab_titleT">
+		<!--查询条件  begin-->
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr valign="bottom" id='trtab1'>
+				<td width="50%" class="tabbody1" id="tabbody1" onclick="changeTab('fcpgd');" tabname='mytab'><div align="center">房产评估单</div></td>
+				<td width="50%" class="tabbody2" id="tabbody2" onclick="changeTab('khinfo');" tabname='mytab'><div align="center">客户信息</div></td>
+			</tr>
+		</table>
+	</div>
+	<div class="pop-center overflow-au" style="margin: 5px; margin-top: 5px; top: 30px;">
+		<div id="fcpgd" class="pop-formDiv clearfix" style="margin: 5px; margin-top: 5px;">
+			<div class="center-title" style="margin-top: 0px;">客户房产信息</div>
+			<div class="center-content2 clearboth" style="min-width: 500px;" id="customerHouseInfo">
+				<div class="l-panel-search-cond clearfix" style="padding-top: 10px; height: 300px;">
+					<div class="float-l" style="margin-left: 80px">
+						<div class="l-panel-search-title">客户姓名：</div>
+						<div class="l-panel-search-item">
+							<input type="text" id="customer_name" maxlength="50" readonly="readonly" class="readonly" />
+						</div>
+					</div>
+					<div class="float-l" style="margin-left: 48px">
+						<div class="l-panel-search-title">年龄：</div>
+						<div class="l-panel-search-item">
+							<select id="customer_age" style="width: 152px;" disabled="disabled" class="readonly"></select>
+						</div>
+					</div>
+					<div class="float-l" style="margin-left: 48px">
+						<div class="l-panel-search-title">城市：</div>
+						<div class="l-panel-search-item">
+							<input type="text" id="city" maxlength="50" readonly="readonly" class="readonly" />
+						</div>
+					</div>
+					<div class="float-l clearboth" style="margin-left: 80px">
+						<div class="l-panel-search-title">房产类型：</div>
+						<div class="l-panel-search-item">
+							<input type="text" id="house_type" maxlength="50" readonly="readonly" class="readonly" />
+						</div>
+					</div>
+					<div class="float-l" style="margin-left: 24px">
+						<div class="l-panel-search-title">小区名称：</div>
+						<div class="l-panel-search-item">
+							<input type="text" id="community_name" maxlength="50" readonly="readonly" class="readonly" />
+						</div>
+					</div>
+					<div class="float-l" style="margin-left: 24px">
+						<div class="l-panel-search-title">建筑面积：</div>
+						<div class="l-panel-search-item" style="margin-right: 0px">
+							<input type="text" id="house_building_area" maxlength="50" style="width: 105px" readonly="readonly" class="readonly" />
+						</div>
+						<div class="l-panel-search-title">平方米</div>
+					</div>
+					<div class="float-l clearboth" style="margin-left: 80px">
+						<div class="l-panel-search-title">贷款金额：</div>
+						<div class="l-panel-search-item" style="margin-right: 0px">
+							<input type="text" id="credit_limit" readonly="readonly" class="readonly" style="width: 125px" />
+						</div>
+						<div class="l-panel-search-title">万</div>
+					</div>
+					<div class="float-l" style="margin-left: 24px">
+						<div class="l-panel-search-title">抵押房产地址：</div>
+						<div class="l-panel-search-item">
+							<input type="text" id="house_address" readonly="readonly" class="readonly" style="width: 420px" />
+						</div>
+					</div>
+					<div class="float-l clearboth" style="margin-left: 80px">
+						<div class="l-panel-search-title">贷款期数：</div>
+						<div class="l-panel-search-item">
+							<input id="max_repayment_time_limit" type="text" maxlength="50" style="width: 150px; vertical-align: top;" readonly="readonly" class="readonly" />
+						</div>
+					</div>
+					<div class="float-l"style="margin-left: 24px">
+						<div class="l-panel-search-title">名下房产：</div>
+						<div class="l-panel-search-item">
+							<input type="text" id="houses_number" maxlength="50" readonly="readonly" class="readonly" />
+						</div>
+					</div>
+					<div class="float-l" style="margin-left: 26px">
+						<div class="l-panel-search-title">是否复式：</div>
+						<div class="l-panel-search-item">
+							<input type="text" id="is_compound" maxlength="50" readonly="readonly" class="readonly" />
+						</div>
+					</div>
+					<div class="float-l clearboth" style="margin-left: 80px">
+						<div class="l-panel-search-title">购买时间：</div>
+						<div class="l-panel-search-item">
+							<input id="house_buy_date" type="text" maxlength="50" style="width: 150px; vertical-align: top;" readonly="readonly" class="readonly" />
+						</div>
+					</div>
+					<div class="float-l" style="margin-left: 24px">
+						<div class="l-panel-search-title">房屋房龄：</div>
+						<div class="l-panel-search-item" style="margin-right: 0px">
+							<input type="text" id="house_age" readonly="readonly" class="readonly" style="width: 125px" />
+						</div>
+						<div class="l-panel-search-title">年</div>
+					</div>
+					<div class="float-l" style="margin-left: 50px">
+						<div class="l-panel-search-title">联系电话：</div>
+						<div class="l-panel-search-item" style="margin-right: 0px">
+							<input type="text" id="mobile_telephone1" maxlength="50" style="width: 150px" readonly="readonly" class="readonly" />
+						</div>
+					</div>
+					<div class="float-l clearboth" style="margin-left: 103px">
+						<div class="l-panel-search-title">备注：</div>
+						<div class="l-panel-search-item">
+							<textarea id="house_remark" style="width: 690px; height: 80px;" class="readonly" readonly="readonly"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="center-title" style="margin-top: 0px;">评估结果</div>
+			<div class="center-content2 clearboth" style="min-width: 500px;">
+				<div class="l-panel-search-cond clearfix" style="padding-top: 10px; height: 270px;">
+					<div class="float-l clearboth" style="margin-left: 91px">
+						<div class="l-panel-search-title">评估人：</div>
+						<div class="l-panel-search-item" style="margin-right: 0px">
+							<select id="vehicle_evaluation_person"></select>
+						</div>
+					</div>
+					<div id="vehicle_evaluation_price_div" class="float-l" style="margin-left: 73px; display: none;">
+						<div class="l-panel-search-title" style="line-height: 30px;">评估价格：</div>
+						<div class="l-panel-search-item" style="margin-right: 0px">
+							<input type="text" id="vehicle_evaluation_price_begin" maxlength="50" style="width: 80px; margin-right: 5px;" />- <input type="text" id="vehicle_evaluation_price_end" maxlength="50" style="width: 80px; margin-left: 5px;" />
+						</div>
+						<div class="l-panel-search-title" style="line-height: 30px;">万元</div>
+					</div>
+					<div class="float-l clearboth" style="margin-left: 79px">
+						<div class="l-panel-search-title">评估备注：</div>
+						<div class="l-panel-search-item">
+							<textarea id="remark" style="width: 690px; height: 180px;"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ------------------------------------------------------------------客户资料------------------------------------------------------------------ -->
+
+		<div id="khinfo" style="margin-left: 300px; margin-top: 60px; display: none;">
+			<input type="button" onclick="globalUtil.openShowAllImg(fileArrkh)" class="btn" value="查看全部图片" style="margin-top: 0px" /> <input type="button" onclick="globalUtil.downloadAllImg(fileArrkh)" class="btn" value="下载全部图片" style="margin-top: 0px" />
+			<table cellspacing="1" cellpadding="1" class="input_tb" id="khinfo_tb" style="margin-left: -155px; margin-bottom: 40px; margin-top: 20px">
+				<tr>
+					<td colspan="3" align="left" id="SCtitle">客户资料上传：</td>
+					<td align="right"><div id='khzlscatt'></div></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<!-- 提交功能按钮区 -->
+	<div class="pop-footer5 clearboth" style="bottom: 1px; height: 35px" id="tb_btn">
+		<!-- 提交 -->
+		<input id="save" class="btn-saveT" onmouseover="this.className='btn-saveT-over'" onmouseout="this.className='btn-saveT'" onmousedown="this.className='btn-saveT-down'" type="button" style="margin-right: 7px;" />
+		<!-- 取消-->
+		<input id="cancel" class="btn-cancel" onmouseover="this.className='btn-cancel-over'" onmouseout="this.className='btn-cancel'" onmousedown="this.className='btn-cancel-down'" type="button" />
+	</div>
+	<script type="text/javascript">
+		var reqMap = {};
+		var bean = {};
+		var wmsCreCustomerChangeLineHouseinfo = {};
+		var wmsCreHousingTrialAssessment = {};
+
+		var wms_cre_credit_head_id = $.query.get("wms_cre_credit_head_id");
+		var customer_name = $.query.get("customer_name");
+		var taskId = $.query.get("taskId");
+		var wms_cre_credit_line_customer_change_head_id = $.query.get('wms_cre_credit_line_customer_change_head_id');
+		var edition_num = $.query.get("edition_num");
+		var cktype = $.query.get("cktype");//查看
+		var mort_flag_name = $.query.get("mort_flag_name");//抵押形式
+		var p_wms_sys_dict_id = 91; //附件大类ID
+		var wms_sys_dict_id = 92;//附件小类ID
+		var fileArrkh = [];//客户资料上传附件列表
+		var is_compound = null;//是否复式
+		var data_type_name = 843;//图片大类 
+
+		reqMap.wms_cre_credit_head_id = wms_cre_credit_head_id;
+		reqMap.edition_num = edition_num;
+		reqMap.wms_cre_credit_line_customer_change_head_id = wms_cre_credit_line_customer_change_head_id;
+
+		jQuery(function($) {
+			globalUtil.init_select_value('customer_age', 'value_code', 'value_meaning', true, '130');
+			init_vehicle_evaluation_person();
+			init_att();//初始化上传控件
+			initData();
+			$('#customer_name').val(customer_name);
+			function initData() {
+				$.ajax({
+					type : "POST",
+					url : global_param.context_name + "/loanreview/wmscrehouseingtrialassessmentdisp.do?sortname=last_update_timestamp&sortorder=desc",
+					async : false,
+					dataType : "json",
+					data : reqMap,
+					success : function(data) {
+						if (data.wmsCreCustomerChangeLineHouseinfo != null) {//初次填写
+							bean = data.wmsCreCustomerChangeLineHouseinfo;
+							bean.wms_cre_credit_head_id = wms_cre_credit_head_id;
+							if (data.wmsCreCustomerChangeLineHouseinfo.update == "1") {//之前暂存过
+								bean.create_timestamp = bean.create_timestamp_str;
+							}
+							bean.last_update_timestamp = bean.last_update_timestamp_str;
+							wmsCreCustomerChangeLineHouseinfo = data.wmsCreCustomerChangeLineHouseinfo;
+							var address = "";
+							if (wmsCreCustomerChangeLineHouseinfo.house_address_province != undefined) {
+								address = address + wmsCreCustomerChangeLineHouseinfo.house_address_province;
+							}
+							if (wmsCreCustomerChangeLineHouseinfo.house_address_city != undefined) {
+								address = address + wmsCreCustomerChangeLineHouseinfo.house_address_city;
+							}
+							if (wmsCreCustomerChangeLineHouseinfo.house_address_district != undefined) {
+								address = address + wmsCreCustomerChangeLineHouseinfo.house_address_district;
+							}
+							if (wmsCreCustomerChangeLineHouseinfo.house_address_more != undefined) {
+								address = address + wmsCreCustomerChangeLineHouseinfo.house_address_more;
+							}
+							$('#house_address').val(address);
+							$('#community_name').val(wmsCreCustomerChangeLineHouseinfo.community_name);
+							$('#house_type').val(wmsCreCustomerChangeLineHouseinfo.house_type);
+							$('#house_building_area').val(wmsCreCustomerChangeLineHouseinfo.house_building_area);
+							$('#house_buy_date').val(wmsCreCustomerChangeLineHouseinfo.house_buy_date);
+							$('#house_buy_money').val(wmsCreCustomerChangeLineHouseinfo.house_buy_money);
+							$('#city').val(wmsCreCustomerChangeLineHouseinfo.city);
+							$('#credit_limit').val(wmsCreCustomerChangeLineHouseinfo.credit_limit);
+							$('#max_repayment_time_limit').val(wmsCreCustomerChangeLineHouseinfo.max_repayment_time_limit);
+							$('#mobile_telephone1').val(wmsCreCustomerChangeLineHouseinfo.mobile_telephone1);
+						} else { //无房产信息
+							bean.wms_cre_credit_head_id = wms_cre_credit_head_id;
+						}
+						$("#customer_age").val(bean.customer_age);
+						$("#houses_number").val(bean.houses_number);
+						// 						$("#vehicle_evaluation_person").val(bean.vehicle_evaluation_person);//志刚在2017年2月21日说再次评估人不用带出来，为当前登录人
+						// 						$("#vehicle_evaluation_price").val(bean.vehicle_evaluation_price);
+						if (bean.vehicle_evaluation_price != null && bean.vehicle_evaluation_price != '' && typeof (bean.vehicle_evaluation_price) != 'undefined') {
+							if (bean.vehicle_evaluation_price.indexOf('-') > 0 && bean.vehicle_evaluation_price.indexOf('--') < 0) {
+								$('#vehicle_evaluation_price_begin').val(bean.vehicle_evaluation_price.split('-')[0]);
+								$('#vehicle_evaluation_price_end').val(bean.vehicle_evaluation_price.split('-')[1]);
+							}
+						}
+						$("#remark").val(bean.remark);
+						$("#house_age").val(bean.house_age);
+						$("#house_remark").val(bean.house_remark);
+						is_compound = bean.is_compound;
+						if (bean.is_compound == 1) {
+							$("#is_compound").val("是");
+						} else if (bean.is_compound == 0) {
+							$("#is_compound").val("否");
+						}
+
+						if (cktype == "ck") {
+							$("#save").hide();
+							//显示初评额度
+							$('#vehicle_evaluation_price_div').show();
+							$("#vehicle_evaluation_person").val(bean.vehicle_evaluation_person);
+							$("input[type=text]").attr({
+								"disabled" : "disabled"
+							});
+							$("textarea").attr({
+								"disabled" : "disabled"
+							});
+							$("select").attr({
+								"disabled" : "disabled"
+							});
+						}
+
+					}
+				});
+			}
+
+			//保存
+			$('#save').click(function() {
+				if ('' == $('#vehicle_evaluation_price').val()) {
+					globalUtil.warnMsg(globalErrorMsg['1300001']);
+					return false;
+				}
+				 var title_val='初评信息';
+				 if(mort_flag_name!=undefined&&mort_flag_name!=""){
+					 title_val='初评信息'+"  ##"+mort_flag_name+"##"; 
+				 }
+				var url = globalUtil.getHtml("housePreliminaryAssessment.html?wms_cre_credit_head_id=" + wms_cre_credit_head_id + '&vehicle_evaluation_price=' + bean.vehicle_evaluation_price + "&customer_name=" + $('#customer_name').val() + "&house_building_area=" + $('#house_building_area').val() + "&house_address=" + $('#house_address').val());
+				dialog = $.ligerDialog.open({
+					url : url,
+					title : title_val,
+					width : 1000,
+					height : globalUtil.setDialogHeight(550),
+					onHiddenOrClose : function() {
+					},
+					isResize : false
+				});
+			});
+
+			//取消
+			$('#cancel').click(function() {
+				try {
+					window.parent.dialog.hide();
+				} catch (e) {
+					globalUtil.closeCurrentTab();
+				}
+			});
+
+			$('#house_building_area,#house_buy_money').blur(function() {
+				if (isNaN($(this).val()) || $(this).val() < 0) {
+					var thisBefore = $(this);
+					globalUtil.warnMsg(globalErrorMsg['1300002'], function() {
+						thisBefore.val('');
+						thisBefore.focus();
+					});
+				}
+			});
+		});
+
+		function save(flag) {
+			bean.customer_name = $('#customer_name').val();
+			bean.house_address = $("#house_address").val();
+			bean.community_name = $('#community_name').val();
+			bean.house_type = $('#house_type').val();
+			if ($('#house_building_area').val() != '') {
+				bean.house_building_area = $('#house_building_area').val();
+			} else {
+				bean.house_building_area = null;
+			}
+			if ($('#house_buy_date').val() != '') {
+				bean.house_buy_date = $('#house_buy_date').val() + ' 00:00:00';
+			} else {
+				bean.house_buy_date = null;
+			}
+			bean.vehicle_evaluation_price = reqMap.vehicle_evaluation_price;
+			bean.remark = $('#remark').val();
+			reqMap.flag = flag;
+
+			if (bean.vehicle_evaluation_price == '') {
+				globalUtil.warnMsg(globalErrorMsg['1300001']);
+				return false;
+			}
+			if (flag === 0) {
+				$('body').startLoading("正在处理中.....");
+			}
+			reqMap.wmsCreHousingTrialAssessment_String = JSON.stringify(bean);
+			reqMap.taskId = taskId;
+			reqMap.house_buy_money = $('#house_buy_money').val();
+			reqMap.vehicle_evaluation_person = $('#vehicle_evaluation_person').val();
+			reqMap.customer_age = $('#customer_age').val();
+			reqMap.houses_number = $('#houses_number').val();
+			reqMap.is_compound = is_compound;
+			reqMap.house_age = $('#house_age').val();
+			reqMap.house_remark = $("#house_remark").val();
+			reqMap.is_compound = is_compound;
+			//结果
+			switch (reqMap.approval_result) {
+			case "1": {
+				if (reqMap.approval_advice == "") {
+					reqMap.approval_advice = "同意";
+				}
+				break;
+			}
+			case "3": {
+				if (reqMap.assessment_advice_info != "" && reqMap.approval_advice != "") {
+					reqMap.approval_advice = reqMap.assessment_advice_info + "，" + reqMap.approval_advice;
+				}
+				if (reqMap.approval_advice == "") {
+					reqMap.approval_advice = reqMap.assessment_advice_info;
+				}
+				break;
+			}
+			case "5": {
+				var adviceTemp = reqMap.approval_advice;
+				reqMap.approval_advice = "曾终审" + reqMap.old_appro_limit + "万元，";
+				if (reqMap.is_again_appl == 1) {
+					reqMap.approval_advice += "重新房产核查，需缴费" + reqMap.check_pay + "元，";
+				}
+				reqMap.approval_advice += adviceTemp;
+				break;
+			}
+			default: {
+			}
+			}
+
+			//1、初评： 退回、拒贷时，填写初评金额，在流程历程里显示。不填写，不显示初评金额（包括汉字）         直接核查， 不显示初评金额（包括汉字）
+
+			if (reqMap.approval_result != "4") {
+				if (reqMap.vehicle_evaluation_price != null && reqMap.vehicle_evaluation_price != "--" && reqMap.vehicle_evaluation_price != undefined) {
+					reqMap.approval_advice = reqMap.approval_advice + "   初评金额为:" + reqMap.vehicle_evaluation_price + "万元";
+				}
+			}
+
+			if (reqMap.check_pay != null && reqMap.check_pay != "" && reqMap.check_pay != undefined && reqMap.approval_result != "5") {
+				reqMap.approval_advice = reqMap.approval_advice + "   核查缴费金额:" + reqMap.check_pay + "元";
+			}
+			$.ajax({
+				type : "POST",
+				url : global_param.context_name + "/loanreview/wmscrehousingtrialassessmentsave.do",
+				async : false,
+				dataType : "json",
+				data : reqMap,
+				success : function(data) {
+					if (flag == 0) {
+						$('body').stopLoading();
+					} else if (flag == 1) {
+						var iframetmp = document.getElementsByTagName("iframe")[0];
+						var iframeWindow = iframetmp.contentWindow || iframetmp.contentDocument.parentWindow;
+						iframeWindow.stopLoading();
+					}
+					if (data == "success") {
+						var successMsgNum = flag == 0 ? '100032' : '100002';
+						globalUtil.successMsg(globalErrorMsg[successMsgNum], function() {
+							refreshAndClosePage();
+						});
+
+					} else if (data === 'statusError') {
+						globalUtil.successMsg(globalErrorMsg['500602']);//数据可能被其他人操作过请刷新重试
+					} else {
+						globalUtil.warnMsg(globalErrorMsg['100012']);
+					}
+				}
+			});
+		}
+
+		function saveForChildrenPage(paramObj) {
+			reqMap.approval_result = paramObj.approval_result;
+			reqMap.approval_advice = paramObj.approval_advice;
+			reqMap.vehicle_evaluation_price = paramObj.vehicle_evaluation_price;
+			reqMap.assessment_advice_val = paramObj.assessment_advice_val;
+			reqMap.assessment_advice_info = paramObj.assessment_advice_info;
+			reqMap.check_pay = paramObj.check_pay;
+			reqMap.old_appro_limit = paramObj.old_appro_limit;
+			reqMap.is_again_appl = paramObj.is_again_appl;
+			save(1);//保存
+		}
+
+		//关闭本页并刷新查询页面
+		function refreshAndClosePage() {
+			window.parent.search();
+			closePage();
+		}
+
+		function closePage() {
+			try {
+				window.parent.dialog.hide();
+			} catch (e) {
+				globalUtil.closeCurrentTab();
+			}
+		}
+
+		//加载评估人下拉列表信息
+		function init_vehicle_evaluation_person(json) {
+			var user = globalUtil.getLoginUserInfo();
+			$.ajax({
+				type : "GET",
+				url : global_param.context_name + "/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=100",
+				async : false,
+				dataType : "json",
+				data : {},
+				success : function(data) {
+					var selected = '';
+					for (var i = 1; i < data.length; i++) {
+						selected = '';
+						if (user.userId == data[i].value_code) {
+							selected = 'selected=selected';
+						}
+						$('#vehicle_evaluation_person').append('<option ' + selected + ' value="' + data[i].value_code + '">' + data[i].value_meaning + '</option>');
+					}
+				}
+			});
+		}
+
+		//页面切换
+		function changeTab(id) {
+			var fcpgd = document.getElementById("fcpgd");
+			var khinfo = document.getElementById("khinfo"); //客户信息tab
+			if (id == 'fcpgd') {
+				document.getElementById("tabbody1").className = "tabbody1";
+				document.getElementById("tabbody2").className = "tabbody2";
+				fcpgd.style.display = '';
+				khinfo.style.display = 'none';
+			} else if (id == 'khinfo') {
+				document.getElementById("tabbody1").className = "tabbody2";
+				document.getElementById("tabbody2").className = "tabbody1";
+				fcpgd.style.display = 'none';
+				khinfo.style.display = '';
+			}
+		};
+
+		//初始化附件信息
+		function init_att() {
+			$.getJSON(globalUtil.getTimestampUrl('/sysmanage/getdictdatatreebean.do?p_wms_sys_dict_id=' + p_wms_sys_dict_id + '&wms_sys_dict_id=' + wms_sys_dict_id+ '&isnotval=' + 1205), {}, function(att_json) {
+				for (var i = 0; i < att_json.length; i++) {
+					var data = att_json[i]
+					var children = data.children;
+					var row = document.getElementById("khinfo_tb").insertRow(document.getElementById("khinfo_tb").rows.length);
+					var td1 = row.insertCell(0);
+					td1.rowSpan = children.length;
+					td1.className = 'title textright';
+					td1.style.width = '100px';
+					SCtitle.innerHTML = data.text;
+					var data0 = children[0];
+
+					var td2 = row.insertCell(1);
+					td2.className = 'textleft';
+					td2.style.width = '200px';
+					td2.innerHTML = data0.text;
+
+					var td3 = row.insertCell(2);
+					td3.className = 'textleft';
+					td3.style.width = '100px';
+					td3.style.height = '100px';
+
+					var td4 = row.insertCell(3);
+					td4.className = 'textleft';
+					td4.id = data0.id;
+					td4.pid = data.id;
+					for (var j = 1; j < children.length; j++) {
+						var row_t = document.getElementById("khinfo_tb").insertRow(document.getElementById("khinfo_tb").rows.length);
+						var td1_t = row_t.insertCell(0);
+						td1_t.className = 'textleft';
+						td1_t.style.width = '100px';
+						td1_t.innerHTML = children[j].text;
+
+						var td3_t = row_t.insertCell(1);
+						td3_t.className = 'textleft';
+						td3_t.style.width = '30px';
+						td3_t.style.height = '100px';
+						var td4_t = row_t.insertCell(2);
+						td4_t.className = 'textleft';
+						td4_t.id = children[j].id;
+						td4_t.pid = data.id;
+					}
+				}
+				//初始化图片赋值
+				var khList = globalUtil.syncGetJson('/cremanage/wmscrehousingapplyattwithoutpaginglist.do', {
+					wms_cre_credit_head_id : wms_cre_credit_head_id, // 贷款id'
+					data_type_name : data_type_name
+				}, 'POST');
+				//初始化客户信息附件   焦德龙
+				var addhtml = '';
+				//图片展开
+				//显示图片链接
+				for (var i = 0; i < khList.Rows.length; i++) {
+					var addhtml = '';
+					fileArrkh = fileArrkh.concat(khList.Rows[i]);
+					var nnme = khList.Rows[i].attachment_new_name.replace('/', 'thxg1');
+					nnme = nnme.replace('/', 'thxg2');
+					addhtml += '<div id="delUploadDivId' + nnme + '">';
+					addhtml += '<a  target="_blank" href="'+global_param.upload_file_url+khList.Rows[i].attachment_address+'">' + khList.Rows[i].attachment_old_name + '</a>';
+					addhtml += '</div>';
+					if(khList.Rows[i].data_detail_name=="1205"){
+						khList.Rows[i].data_detail_name="846";
+	            	}
+					$("#" + khList.Rows[i].data_detail_name).append(addhtml);
+				}
+			});
+		}
+		//打开显示全部图片
+		var jqueryViewJson = [];
+	</script>
+</body>
+</html>

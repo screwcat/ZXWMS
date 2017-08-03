@@ -1,0 +1,397 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script type="text/javascript" charset="utf-8"
+	src="../../js/media/js/ZeroClipboard.js"></script>
+<title>收益账单信息表</title>
+</head>
+<body style="overflow-y: hidden;">
+	<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<!--查询条件-->
+			<div class="l-panel-search-cond clearfix">
+			
+				<div class="float-l">
+					<div class="l-panel-search-title" style="padding-left: 70px;">客户姓名:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="cus_name"/>
+					</div>
+				</div>
+				
+				<div class="float-l">
+					<div class="l-panel-search-title" style="margin-left: 16px">有效证件:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="id_card" />
+					</div>
+				</div>
+				
+				<div class="float-l">
+					<div class="l-panel-search-title" style="width: 63px;">合同编号:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="prot_code"/>
+					</div>
+				</div>
+				
+				<div class="float-l">
+					<div class="l-panel-search-title" style="width: 63px;">收益月份:</div>
+					<div class="l-panel-search-item">
+						<input id="return_date" name="return_date" class="Wdate" type="text" onclick="init_income_month()" style="vertical-align: top;" />
+					</div>
+				</div>
+				
+				<div class="float-l clearboth">
+					<div class="l-panel-search-title">归属客户经理[短工号]:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="salesman_name"/>
+					</div>
+				</div>
+				
+				<div class="float-l">
+					<div class="l-panel-search-title" style="width: 63px;">单据编号:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="bill_code"/>
+					</div>
+				</div>
+				
+				<div class="float-l">
+					<div class="l-panel-search-title" style="width: 63px;">理财产品:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="wms_inve_pruduct_category_id"/>
+					</div>
+				</div>
+				
+				<div class="float-l">
+					<div class="l-panel-search-title" style="width: 65px;">单据状态:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="data_status"/>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	<div id="toolBar" class="minwidth400"></div>
+	<div id="grid"></div>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+    	var grid;//定义列表对象
+    	var toolbar;//toolBar对象
+		var params;//定义参数对象
+		var dialog;//定义弹出窗口对象
+		var columns;//定义表格标题列对象
+		
+    	$(function(){
+    		var toolbarItemData = [];
+    		toolbarItemData.push({ 
+                text: '生成账单',
+                click:generateBillInfos,
+                icon: 'add'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+            toolbarItemData.push({ 
+                text: '查询',
+                click:search,
+                icon: 'search'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+            toolbarItemData.push({
+                text: '清空',
+                click:clear,
+                icon: 'empty'
+            });
+            
+            $("#toolBar").ligerToolBar({
+                 items: toolbarItemData
+       	 	});
+            
+            initGrid();//初始化表格数据信息
+            init_category_name();//初始化产品下拉列表
+            init_data_status();//初始化单据状态下拉列表
+    	});
+		
+		
+		/*
+		 * 初始化收益月份
+		 */
+		function init_income_month()
+		{
+			$.ajax({
+				url : globalUtil.getTimestampUrl('/inve/getMaxIncomeMonth.do'),
+				data: {},
+				async:false,
+				dataType:"json",
+				success:function(data)
+				{					
+					max_date = data.return_date;
+					WdatePicker({dateFmt:'yyyy-MM',isShowClear:true, maxDate:max_date});
+				}
+			});
+			
+		}
+		
+    	/*
+    	 * 初始化产品下拉列表
+    	 */
+    	function init_category_name(json){
+    		var category_name_params ={
+    				dest_url:'/inve/wmsinvepruductcategorylistforselect.do',
+    				t_col_name:'wms_inve_pruduct_category_id',
+    				valueField:'wms_inve_pruduct_category_id',   //下拉框value对应的值，默认为id
+    				textField:'category_name',    //下拉框text对应的值，默认为text
+    				input_width:133,
+    				def_val:'first'
+    				};
+    		global_ligerui_extend.initCombox("wms_inve_pruduct_category_id",null,category_name_params);
+   		    global_ligerui_extend.initComboxDefVal("wms_inve_pruduct_category_id");
+    	}
+		
+    	/*
+    	 * 初始化单据状态
+    	 */
+    	function init_data_status(json){
+    		var data_status_params ={
+    				dest_url:'/inve/getWmsInveTransaDataStatus.do',
+    				t_col_name:'data_status',
+    				valueField:'value_code',   //下拉框value对应的值，默认为id
+    				textField:'value_meaning',    //下拉框text对应的值，默认为text
+    				input_width:133,
+    				def_val:'first'
+    				};
+    		global_ligerui_extend.initCombox("data_status",null,data_status_params);
+    		global_ligerui_extend.initComboxDefVal("data_status");
+    	}
+    	 
+		/*
+		 * 初始化收益账单信息表格信息
+		 */
+		function initGrid()
+		{
+			columns = [
+			     {
+			      	display: '单据编号',name: 'bill_code',width: 150,minWidth: 150,
+				 	render: function (rowdata, nowRowIndex, value, column) {
+						return '<a href="javascript:inveInfo('+rowdata.wms_inve_transa_id+','+rowdata.wms_inve_transa_prod_id+','+rowdata.user_id+','+rowdata.inkey+');" style="color:#056AFF;text-decoration: none;">'+value+'</a>';
+				 	}
+			     },
+			     {display:'客户姓名',name: 'cus_name',width: 130,minWidth: 130},
+			     {display:'有效证件',name:'id_card',width:160,minWidth:160},
+			     {display:'理财产品',name:'category_name',width:150,minWidth:150},
+			     {display:'投资金额（万元）',name:'product_account',width:120,minWidth:120},
+			     {display:'合同编号',name:'prot_code',width:150,minWidth:150},
+			     {display:'合同生效日期',name:'begin_of_date',width:130,minWidth:130},
+			     {display:'归属客户经理',name:'salesman_name',width:130,minWidth:130},
+			     {display:'单据状态',name:'data_status_str',width:100,minWidth:100},
+			     {display:'收益月份',name:'return_date_str',width:100,minWidth:100}
+			];
+			
+			grid = $("#grid").ligerGrid({
+        		columns: columns,
+        		url: global_param.context_name + '/inve/getInveIncomeBillInfos.do',
+        		rownumbers: true,
+        		allowUnSelectRow: true,
+        		usePager: true,
+        		checkbox: true,
+        		width: '100%',
+        		height: '95%',
+        		heightDiff: -4,
+        		rowAttrRender: function(rowdata, rowindex) {
+    				
+        		},
+        		parms: {
+        			_filterParms: -1
+        		},
+        		onCheckAllRow:function(checked, element)
+        		{
+        			if(checked)
+       				{
+	        			checkRows();
+       				}
+        		},
+        		onCheckRow:function(checked, rowdata, rowindex, rowDomElement)
+        		{
+        			if(checked)
+        			{
+	        			checkRows();
+        			}
+        		}
+			});
+		}
+		
+		/*
+		 * 查看单据详情
+		 */
+		function inveInfo(wms_inve_transa_id,wms_inve_transa_prod_id,user_id,inkey)
+		{
+			var status;
+			var url = globalUtil.getTimestampUrl('/inve/wmsinvetransadSearchStatus.do');
+			var params = {
+				'wms_inve_transa_id': wms_inve_transa_id
+			}
+			
+      		$.post(url,params, function(data) {
+     			status = data;
+     			if(status == "1" || status == "2" || status == "7" || status == "9" || status == "10"){
+            		var url = globalUtil.getHtml("inve/addFinancialManagement.html?&user_id="+user_id+"&wms_inve_transa_id="+wms_inve_transa_id+"&wms_inve_transa_prod_id="+wms_inve_transa_prod_id+"&cktype=ck"+"&inkey="+inkey);
+            	}else{
+            		var url = globalUtil.getHtml("inve/addFinancialManagement.html?&zftype=zf&user_id="+user_id+"&wms_inve_transa_id="+wms_inve_transa_id+"&wms_inve_transa_prod_id="+wms_inve_transa_prod_id+"&cktype=ck"+"&inkey="+inkey);
+            	}
+     			globalUtil.openTab(10001, "理财详细信息", url, false);
+     		});
+        	
+        	if(user_id==undefined){
+        		user_id = 0;
+        	}
+		}
+		
+		/*
+		 * 验证选中行的有效证件是否一致
+		 */
+		function checkRows()
+		{
+			//获取选中的记录
+			var data = grid.getCheckedRows();
+			
+			var ids = ""; // 定义单据id字符串(多个以逗号分隔)
+			
+			//判断选中的记录是否大于1条,大于一条需要到后台进行有效证件的验证
+			if(data.length > 1)
+			{
+				//循环遍历取出上单表主键
+				for(var i = 0; i < data.length; i++)
+				{
+					ids += data[i].wms_inve_transa_id + ",";
+				}
+				
+				//截取字符串,去掉最后一个","
+				ids = ids.substring(0, ids.length - 1);
+				
+				//调用后台验证所选中的单据的有效证件是否一致(一致返回true,不一致返回false)
+				var bool = verifyBillIsCheck(ids);
+				
+				//判断存在不一致的情况
+				if(!bool)
+				{
+					globalUtil.warnMsg("请选择有效证件相同的单据!");//提示请选择相同的有效证件
+					return;
+				}
+			}
+		}
+		
+		/*
+		 * 验证选中的记录
+		 */
+		function verifyBillIsCheck(value)
+		{
+			var params = {ids:value};//设置参数
+			
+			var bool = true;//定义返回值
+			
+			//调用后台验证有效证件是否重复
+			$.ajax({
+				url : globalUtil.getTimestampUrl('/inve/verifyBillIdCardIsConsistent.do'),
+				data : params,
+				async:false,
+				dataType:"json",
+				success:function(data)
+				{
+					bool = data;
+				}
+			});
+			
+			return bool;
+		}
+			
+		/*
+		 * 清空查询项内容
+		 */
+	    function clear(){
+	        $("#cus_name").val("");//清空客户姓名查询项
+	        $("#id_card").val("");//清空有效证件查询项
+	        $("#prot_code").val("");//清空合同编号查询项
+	        $("#return_date").val("");//设置收益月份为初始值
+	        $("#bill_code").val("");//清空单据编号查询项
+	        $("#salesman_name").val("");//清空客户经理查询项
+	        global_ligerui_extend.setComboxVal("wms_inve_pruduct_category_id","-1");//设置产品名称初始值
+	        global_ligerui_extend.setComboxVal("data_status","-1");//设置单据状态初始值
+	    }
+		
+	  	/*
+	  	 * 查询
+	  	 */
+        var search= function() {
+            initParams();
+            global_ligerui_extend.search(grid, params);
+        }
+	  	
+	  	
+        /*
+         * 初始化检索条件
+         */
+        function initParams() {
+        	params = globalUtil.getFormParam("searchbar");
+        }
+        
+        /*
+         * 生成账单信息
+         */
+        function generateBillInfos()
+        {
+        	var data = grid.getCheckedRows();//获取选中的记录
+        	
+        	var ids = "";//定义上单表主键id字符串
+        	
+        	//判断是否选中了记录
+        	if(data.length == 0)
+        	{
+        		globalUtil.warnMsg("请至少选择一行记录！");
+ 	            return ;
+        	}
+        	
+        	//循环遍历取出上单表主键
+			for(var i = 0; i < data.length; i++)
+			{
+				ids += data[i].wms_inve_transa_id + ",";
+			}
+			
+			//截取字符串,去掉最后一个","
+			ids = ids.substring(0, ids.length - 1);
+        	
+        	//判断当选择了多条记录的进行二次验证有效证件是否不一致
+        	if(data.length > 1)
+        	{
+				// 判断验证有效证件不一致
+				if(!verifyBillIsCheck(ids))
+				{
+					globalUtil.warnMsg("请选择有效证件相同的单据!");//提示请选择相同的有效证件
+					return;
+				}
+        	}
+        	
+        	//获取查询条件收益月份
+        	var income_month = $("#return_date").val();
+        	
+        	var url = globalUtil.getHtml("inveIncomeBillInfos.html?ids="+ids+"&return_date=" + income_month);
+        	dialog=$.ligerDialog.open({
+	  			url:url,
+	  			title: '收益账单',
+	  	        width: 1000,
+	  	        height: globalUtil.setDialogHeight(800),
+	  	        onHiddenOrClose: function(){
+	  	    	},
+	  	        isResize: false
+  			});  
+        }
+		
+    </script>
+</body>
+</html>

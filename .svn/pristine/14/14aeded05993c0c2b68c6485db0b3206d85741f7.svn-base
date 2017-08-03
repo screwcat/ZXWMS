@@ -1,0 +1,34 @@
+package com.zx.emanage.sysmanage.service.impl;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.zx.emanage.sysmanage.service.IWmsCreContractLenderService;
+import com.zx.emanage.util.gen.entity.WmsCreContractLender;
+
+/*
+ * @version 2.0
+ */
+
+@Service("iwmscrecontractlenderservice")
+public class WmsCreContractLenderServiceImpl implements IWmsCreContractLenderService
+{
+    private static Logger log = LoggerFactory.getLogger(WmsCreContractLenderServiceImpl.class);
+
+    @Autowired
+    private com.zx.emanage.cremanage.persist.WmsCreContractLenderDao WmsCreContractLenderDao;
+
+
+	@Override
+	public List<WmsCreContractLender> getWmsCreContractLender() {
+		
+		 List<com.zx.emanage.util.gen.entity.WmsCreContractLender> list = WmsCreContractLenderDao.getWmsCreContractLenderList();
+	      
+	        return list;
+	}
+   
+}

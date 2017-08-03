@@ -1,0 +1,1013 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveCommissionPerformanceHisDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveCommissionPerformanceHis">
+		select
+        				wms_inve_commission_performance_his_id,
+        				salesman_name,
+        				compay_id,
+        				dept_id,
+        				salesman_id,
+        				salesman_post_id,
+        				salesman_status,
+						date_format(date_of_payment,'%Y-%m-%d') as date_of_payment_str,
+        				date_of_payment,
+        				statics_month,
+						date_format(statics_time,'%Y-%m-%d %H:%i:%s') as statics_time_str,
+        				statics_time,
+        				wms_inve_transa_prod_id,
+        				wms_inve_transa_id,
+        				product_deadline,
+        				bill_code,
+        				cus_name,
+        				investredemp_amount,
+        				aldeal_invest_amount,
+        				commission_days,
+        				redeem_back_days,
+        				inve_type,
+						date_format(add_start_date,'%Y-%m-%d') as add_start_date_str,
+        				add_start_date,
+						date_format(add_end_date,'%Y-%m-%d') as add_end_date_str,
+        				add_end_date,
+        				add_comm_coeff,
+        				add_comm_mon,
+        				stock_comm_coeff,
+        				stock_comm_mon,
+        				team_comm_coeff,
+        				team_comm_mon,
+        				wms_inve_comm_rate_id_team,
+        				team_personnel_id,
+        				tax_point,
+        				tax_mon,
+        				data_status,
+        				enable_flag,
+        				wms_inve_pruduct_category_id,
+        				wms_inve_comm_rate_id_stock,
+        				wms_inve_comm_rate_id_add,
+        				trans_salesman_status,
+        				redeem_company_reason,
+        				is_take_off_damages,
+        				redeem_type,
+        				investredemp_amount_base,
+        				redeem_type_detail,
+        				convert_account,
+        				relpace_type_detail,
+        				bel_salesman_id_id,
+        				wms_inve_redeem_id
+        	from
+        		wms_inve_commission_performance_his
+        	where
+        				wms_inve_commission_performance_his_id = #{wms_inve_commission_performance_his_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		SELECT
+		 count(1)
+		FROM
+			wms_inve_commission_performance_his a
+		LEFT JOIN (
+			SELECT
+				b.wms_inve_redeem_id,
+				b.redeem_date,
+				c.redeem_amount
+			FROM
+				wms_inve_redeem b,
+				wms_inve_redeem_detail c
+			WHERE
+				b.wms_inve_redeem_id = c.wms_inve_redeem_id
+		) d
+		on a.wms_inve_redeem_id=d.wms_inve_redeem_id
+		WHERE
+			(
+				a.salesman_id = #{salesman_id}
+				OR a.bel_salesman_id_id = #{salesman_id}
+			)
+		and a.statics_month=#{statics_month}
+		and a.bel_salesman_dept_id = #{dept_id}
+		<if test="qry_type != null and qry_type == 1 ">
+		    and ifnull(a.add_comm_mon,0)!=0
+		</if>
+		<if test="qry_type != null and qry_type == 2 ">
+		    and ifnull(a.stock_comm_mon,0)!=0
+		</if>
+		<if test="qry_type != null and qry_type == 3 ">
+		    and ifnull(a.tax_mon,0)!=0
+		</if>		
+		<if test="qry_type != null and qry_type == 4 ">
+		    and ifnull(a.tax_mon,0)!=0
+		</if>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+		a.bill_code,
+		a.cus_name,
+		(select CONCAT(e.personnel_name,e.personnel_shortCode) from pm_personnel e where e.personnel_id=a.salesman_id) as salesman_info,
+		a.investredemp_amount_base,
+		date_format(a.date_of_payment,'%Y-%m-%d') as date_of_payment,
+		d.redeem_amount,
+		d.redeem_date,
+		a.commission_days,
+		a.redeem_back_days,
+		if(a.inve_type='1',a.commission_days,a.redeem_back_days) as deal_days,
+		a.product_deadline,
+		(select h.category_name from wms_inve_pruduct_category h where h.wms_inve_pruduct_category_id=a.wms_inve_pruduct_category_id) as category_name,
+		a.add_comm_coeff,
+		a.add_comm_mon,
+		a.stock_comm_coeff,
+		a.stock_comm_mon,
+		a.team_comm_coeff,
+		a.team_comm_mon,
+		a.tax_point,
+		a.tax_mon
+		FROM
+			wms_inve_commission_performance_his a
+		LEFT JOIN (
+			SELECT
+				b.wms_inve_redeem_id,
+				b.redeem_date,
+				c.redeem_amount
+			FROM
+				wms_inve_redeem b,
+				wms_inve_redeem_detail c
+			WHERE
+				b.wms_inve_redeem_id = c.wms_inve_redeem_id
+		) d
+		on a.wms_inve_redeem_id=d.wms_inve_redeem_id
+		WHERE
+			(
+				a.salesman_id = #{salesman_id}
+				OR a.bel_salesman_id_id = #{salesman_id}
+			)
+		and a.statics_month=#{statics_month}
+		and a.bel_salesman_dept_id=#{dept_id}
+		<if test="qry_type != null and qry_type == 1 ">
+		    and ifnull(a.add_comm_mon,0)!=0
+		</if>
+		<if test="qry_type != null and qry_type == 2 ">
+		    and ifnull(a.stock_comm_mon,0)!=0
+		</if>
+		<if test="qry_type != null and qry_type == 4 ">
+		    and ifnull(a.tax_mon,0)!=0
+		</if>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	
+	<!-- count num -->
+	<select id="findCountTeam" parameterType="map" resultType="int">
+		SELECT
+		 count(1)
+		FROM
+			wms_inve_commission_performance_his a
+		LEFT JOIN (
+			SELECT
+				b.wms_inve_redeem_id,
+				b.redeem_date,
+				c.redeem_amount
+			FROM
+				wms_inve_redeem b,
+				wms_inve_redeem_detail c
+			WHERE
+				b.wms_inve_redeem_id = c.wms_inve_redeem_id
+		) d
+		on a.wms_inve_redeem_id=d.wms_inve_redeem_id
+		WHERE
+			a.team_personnel_id=#{salesman_id}
+			and a.statics_month=#{statics_month}
+			and a.team_personnel_dept_id=#{dept_id}
+			and ifnull(team_comm_mon,0)!=0
+	</select>
+
+	<!-- list -->
+	<select id="searchTeam" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			a.bill_code,
+			a.cus_name,
+			(select CONCAT(e.personnel_name,e.personnel_shortCode) from pm_personnel e where e.personnel_id=a.salesman_id) as salesman_info,
+			a.investredemp_amount_base,
+			a.date_of_payment,
+			d.redeem_amount,
+			d.redeem_date,
+			a.commission_days,
+			a.redeem_back_days,
+			if(a.inve_type='1',a.commission_days,a.redeem_back_days) as deal_days,
+			(select h.category_name from wms_inve_pruduct_category h where h.wms_inve_pruduct_category_id=a.wms_inve_pruduct_category_id) as category_name,
+			a.product_deadline,
+			a.add_comm_coeff,
+			a.add_comm_mon,
+			a.stock_comm_coeff,
+			a.stock_comm_mon,
+			a.team_comm_coeff,
+			a.team_comm_mon,
+			a.tax_point,
+			a.tax_mon
+		FROM
+			wms_inve_commission_performance_his a
+		LEFT JOIN (
+			SELECT
+				b.wms_inve_redeem_id,
+				b.redeem_date,
+				c.redeem_amount
+			FROM
+				wms_inve_redeem b,
+				wms_inve_redeem_detail c
+			WHERE
+				b.wms_inve_redeem_id = c.wms_inve_redeem_id
+		) d
+		on a.wms_inve_redeem_id=d.wms_inve_redeem_id
+		WHERE
+			a.team_personnel_id=#{salesman_id}
+			and a.team_personnel_dept_id=#{dept_id}
+			and a.statics_month=#{statics_month}
+			and ifnull(team_comm_mon,0)!=0
+			<if test="sortname != '' and sortorder !=''">
+				ORDER BY ${sortname} ${sortorder}
+			</if>
+			<if test="offset != null and pagesize !=null">
+				LIMIT ${offset} , ${pagesize}
+			</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveCommissionPerformanceHis" useGeneratedKeys="true" keyProperty="wms_inve_commission_performance_his_id">
+		INSERT INTO wms_inve_commission_performance_his
+		(
+				wms_inve_commission_performance_his_id,
+
+				salesman_name,
+
+				compay_id,
+
+				dept_id,
+
+				salesman_id,
+
+				salesman_post_id,
+
+				salesman_status,
+
+				date_of_payment,
+
+				statics_month,
+
+				statics_time,
+
+				wms_inve_transa_prod_id,
+
+				wms_inve_transa_id,
+
+				product_deadline,
+
+				bill_code,
+
+				cus_name,
+
+				investredemp_amount,
+
+				aldeal_invest_amount,
+
+				commission_days,
+
+				redeem_back_days,
+
+				inve_type,
+
+				add_start_date,
+
+				add_end_date,
+
+				add_comm_coeff,
+
+				add_comm_mon,
+
+				stock_comm_coeff,
+
+				stock_comm_mon,
+
+				team_comm_coeff,
+
+				team_comm_mon,
+
+				wms_inve_comm_rate_id_team,
+
+				team_personnel_id,
+
+				tax_point,
+
+				tax_mon,
+
+				data_status,
+
+				enable_flag,
+
+				wms_inve_pruduct_category_id,
+
+				wms_inve_comm_rate_id_stock,
+
+				wms_inve_comm_rate_id_add,
+
+				trans_salesman_status,
+
+				redeem_company_reason,
+
+				is_take_off_damages,
+
+				redeem_type,
+
+				investredemp_amount_base,
+
+				redeem_type_detail,
+
+				convert_account,
+
+				relpace_type_detail,
+
+				bel_salesman_id_id,
+
+				wms_inve_redeem_id
+		)
+		VALUES
+		(
+				#{wms_inve_commission_performance_his_id},
+				#{salesman_name},
+				#{compay_id},
+				#{dept_id},
+				#{salesman_id},
+				#{salesman_post_id},
+				#{salesman_status},
+				#{date_of_payment},
+				#{statics_month},
+				#{statics_time},
+				#{wms_inve_transa_prod_id},
+				#{wms_inve_transa_id},
+				#{product_deadline},
+				#{bill_code},
+				#{cus_name},
+				#{investredemp_amount},
+				#{aldeal_invest_amount},
+				#{commission_days},
+				#{redeem_back_days},
+				#{inve_type},
+				#{add_start_date},
+				#{add_end_date},
+				#{add_comm_coeff},
+				#{add_comm_mon},
+				#{stock_comm_coeff},
+				#{stock_comm_mon},
+				#{team_comm_coeff},
+				#{team_comm_mon},
+				#{wms_inve_comm_rate_id_team},
+				#{team_personnel_id},
+				#{tax_point},
+				#{tax_mon},
+				#{data_status},
+				#{enable_flag},
+				#{wms_inve_pruduct_category_id},
+				#{wms_inve_comm_rate_id_stock},
+				#{wms_inve_comm_rate_id_add},
+				#{trans_salesman_status},
+				#{redeem_company_reason},
+				#{is_take_off_damages},
+				#{redeem_type},
+				#{investredemp_amount_base},
+				#{redeem_type_detail},
+				#{convert_account},
+				#{relpace_type_detail},
+				#{bel_salesman_id_id},
+				#{wms_inve_redeem_id}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveCommissionPerformanceHis">
+		update wms_inve_commission_performance_his
+		<set>
+					<if test="wms_inve_commission_performance_his_id != null">
+						 wms_inve_commission_performance_his_id = #{wms_inve_commission_performance_his_id},
+					</if>
+					<if test="salesman_name != null">
+						 salesman_name = #{salesman_name},
+					</if>
+					<if test="compay_id != null">
+						 compay_id = #{compay_id},
+					</if>
+					<if test="dept_id != null">
+						 dept_id = #{dept_id},
+					</if>
+					<if test="salesman_id != null">
+						 salesman_id = #{salesman_id},
+					</if>
+					<if test="salesman_post_id != null">
+						 salesman_post_id = #{salesman_post_id},
+					</if>
+					<if test="salesman_status != null">
+						 salesman_status = #{salesman_status},
+					</if>
+					<if test="date_of_payment != null">
+						 date_of_payment = #{date_of_payment},
+					</if>
+					<if test="statics_month != null">
+						 statics_month = #{statics_month},
+					</if>
+					<if test="statics_time != null">
+						 statics_time = #{statics_time},
+					</if>
+					<if test="wms_inve_transa_prod_id != null">
+						 wms_inve_transa_prod_id = #{wms_inve_transa_prod_id},
+					</if>
+					<if test="wms_inve_transa_id != null">
+						 wms_inve_transa_id = #{wms_inve_transa_id},
+					</if>
+					<if test="product_deadline != null">
+						 product_deadline = #{product_deadline},
+					</if>
+					<if test="bill_code != null">
+						 bill_code = #{bill_code},
+					</if>
+					<if test="cus_name != null">
+						 cus_name = #{cus_name},
+					</if>
+					<if test="investredemp_amount != null">
+						 investredemp_amount = #{investredemp_amount},
+					</if>
+					<if test="aldeal_invest_amount != null">
+						 aldeal_invest_amount = #{aldeal_invest_amount},
+					</if>
+					<if test="commission_days != null">
+						 commission_days = #{commission_days},
+					</if>
+					<if test="redeem_back_days != null">
+						 redeem_back_days = #{redeem_back_days},
+					</if>
+					<if test="inve_type != null">
+						 inve_type = #{inve_type},
+					</if>
+					<if test="add_start_date != null">
+						 add_start_date = #{add_start_date},
+					</if>
+					<if test="add_end_date != null">
+						 add_end_date = #{add_end_date},
+					</if>
+					<if test="add_comm_coeff != null">
+						 add_comm_coeff = #{add_comm_coeff},
+					</if>
+					<if test="add_comm_mon != null">
+						 add_comm_mon = #{add_comm_mon},
+					</if>
+					<if test="stock_comm_coeff != null">
+						 stock_comm_coeff = #{stock_comm_coeff},
+					</if>
+					<if test="stock_comm_mon != null">
+						 stock_comm_mon = #{stock_comm_mon},
+					</if>
+					<if test="team_comm_coeff != null">
+						 team_comm_coeff = #{team_comm_coeff},
+					</if>
+					<if test="team_comm_mon != null">
+						 team_comm_mon = #{team_comm_mon},
+					</if>
+					<if test="wms_inve_comm_rate_id_team != null">
+						 wms_inve_comm_rate_id_team = #{wms_inve_comm_rate_id_team},
+					</if>
+					<if test="team_personnel_id != null">
+						 team_personnel_id = #{team_personnel_id},
+					</if>
+					<if test="tax_point != null">
+						 tax_point = #{tax_point},
+					</if>
+					<if test="tax_mon != null">
+						 tax_mon = #{tax_mon},
+					</if>
+					<if test="data_status != null">
+						 data_status = #{data_status},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+					<if test="wms_inve_pruduct_category_id != null">
+						 wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id},
+					</if>
+					<if test="wms_inve_comm_rate_id_stock != null">
+						 wms_inve_comm_rate_id_stock = #{wms_inve_comm_rate_id_stock},
+					</if>
+					<if test="wms_inve_comm_rate_id_add != null">
+						 wms_inve_comm_rate_id_add = #{wms_inve_comm_rate_id_add},
+					</if>
+					<if test="trans_salesman_status != null">
+						 trans_salesman_status = #{trans_salesman_status},
+					</if>
+					<if test="redeem_company_reason != null">
+						 redeem_company_reason = #{redeem_company_reason},
+					</if>
+					<if test="is_take_off_damages != null">
+						 is_take_off_damages = #{is_take_off_damages},
+					</if>
+					<if test="redeem_type != null">
+						 redeem_type = #{redeem_type},
+					</if>
+					<if test="investredemp_amount_base != null">
+						 investredemp_amount_base = #{investredemp_amount_base},
+					</if>
+					<if test="redeem_type_detail != null">
+						 redeem_type_detail = #{redeem_type_detail},
+					</if>
+					<if test="convert_account != null">
+						 convert_account = #{convert_account},
+					</if>
+					<if test="relpace_type_detail != null">
+						 relpace_type_detail = #{relpace_type_detail},
+					</if>
+					<if test="bel_salesman_id_id != null">
+						 bel_salesman_id_id = #{bel_salesman_id_id},
+					</if>
+					<if test="wms_inve_redeem_id != null">
+						 wms_inve_redeem_id = #{wms_inve_redeem_id},
+					</if>
+	   </set>
+		 where 
+    				wms_inve_commission_performance_his_id = #{wms_inve_commission_performance_his_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveCommissionPerformanceHis" resultType="WmsInveCommissionPerformanceHis">
+		select 
+				wms_inve_commission_performance_his_id,
+				salesman_name,
+				compay_id,
+				dept_id,
+				salesman_id,
+				salesman_post_id,
+				salesman_status,
+				date_format(date_of_payment,'%Y-%m-%d') as date_of_payment_str,
+				date_of_payment,
+				statics_month,
+				date_format(statics_time,'%Y-%m-%d %H:%i:%s') as statics_time_str,
+				statics_time,
+				wms_inve_transa_prod_id,
+				wms_inve_transa_id,
+				product_deadline,
+				bill_code,
+				cus_name,
+				investredemp_amount,
+				aldeal_invest_amount,
+				commission_days,
+				redeem_back_days,
+				inve_type,
+				date_format(add_start_date,'%Y-%m-%d') as add_start_date_str,
+				add_start_date,
+				date_format(add_end_date,'%Y-%m-%d') as add_end_date_str,
+				add_end_date,
+				add_comm_coeff,
+				add_comm_mon,
+				stock_comm_coeff,
+				stock_comm_mon,
+				team_comm_coeff,
+				team_comm_mon,
+				wms_inve_comm_rate_id_team,
+				team_personnel_id,
+				tax_point,
+				tax_mon,
+				data_status,
+				enable_flag,
+				wms_inve_pruduct_category_id,
+				wms_inve_comm_rate_id_stock,
+				wms_inve_comm_rate_id_add,
+				trans_salesman_status,
+				redeem_company_reason,
+				is_take_off_damages,
+				redeem_type,
+				investredemp_amount_base,
+				redeem_type_detail,
+				convert_account,
+				relpace_type_detail,
+				bel_salesman_id_id,
+				wms_inve_redeem_id
+		from
+		wms_inve_commission_performance_his
+		<where>
+					<if test="wms_inve_commission_performance_his_id != null">
+						and wms_inve_commission_performance_his_id = #{wms_inve_commission_performance_his_id}
+					</if>
+					<if test="salesman_name != null">
+						and salesman_name = #{salesman_name}
+					</if>
+					<if test="compay_id != null">
+						and compay_id = #{compay_id}
+					</if>
+					<if test="dept_id != null">
+						and dept_id = #{dept_id}
+					</if>
+					<if test="salesman_id != null">
+						and salesman_id = #{salesman_id}
+					</if>
+					<if test="salesman_post_id != null">
+						and salesman_post_id = #{salesman_post_id}
+					</if>
+					<if test="salesman_status != null">
+						and salesman_status = #{salesman_status}
+					</if>
+					<if test="date_of_payment != null">
+						and date_of_payment = #{date_of_payment}
+					</if>
+					<if test="statics_month != null">
+						and statics_month = #{statics_month}
+					</if>
+					<if test="statics_time != null">
+						and statics_time = #{statics_time}
+					</if>
+					<if test="wms_inve_transa_prod_id != null">
+						and wms_inve_transa_prod_id = #{wms_inve_transa_prod_id}
+					</if>
+					<if test="wms_inve_transa_id != null">
+						and wms_inve_transa_id = #{wms_inve_transa_id}
+					</if>
+					<if test="product_deadline != null">
+						and product_deadline = #{product_deadline}
+					</if>
+					<if test="bill_code != null">
+						and bill_code = #{bill_code}
+					</if>
+					<if test="cus_name != null">
+						and cus_name = #{cus_name}
+					</if>
+					<if test="investredemp_amount != null">
+						and investredemp_amount = #{investredemp_amount}
+					</if>
+					<if test="aldeal_invest_amount != null">
+						and aldeal_invest_amount = #{aldeal_invest_amount}
+					</if>
+					<if test="commission_days != null">
+						and commission_days = #{commission_days}
+					</if>
+					<if test="redeem_back_days != null">
+						and redeem_back_days = #{redeem_back_days}
+					</if>
+					<if test="inve_type != null">
+						and inve_type = #{inve_type}
+					</if>
+					<if test="add_start_date != null">
+						and add_start_date = #{add_start_date}
+					</if>
+					<if test="add_end_date != null">
+						and add_end_date = #{add_end_date}
+					</if>
+					<if test="add_comm_coeff != null">
+						and add_comm_coeff = #{add_comm_coeff}
+					</if>
+					<if test="add_comm_mon != null">
+						and add_comm_mon = #{add_comm_mon}
+					</if>
+					<if test="stock_comm_coeff != null">
+						and stock_comm_coeff = #{stock_comm_coeff}
+					</if>
+					<if test="stock_comm_mon != null">
+						and stock_comm_mon = #{stock_comm_mon}
+					</if>
+					<if test="team_comm_coeff != null">
+						and team_comm_coeff = #{team_comm_coeff}
+					</if>
+					<if test="team_comm_mon != null">
+						and team_comm_mon = #{team_comm_mon}
+					</if>
+					<if test="wms_inve_comm_rate_id_team != null">
+						and wms_inve_comm_rate_id_team = #{wms_inve_comm_rate_id_team}
+					</if>
+					<if test="team_personnel_id != null">
+						and team_personnel_id = #{team_personnel_id}
+					</if>
+					<if test="tax_point != null">
+						and tax_point = #{tax_point}
+					</if>
+					<if test="tax_mon != null">
+						and tax_mon = #{tax_mon}
+					</if>
+					<if test="data_status != null">
+						and data_status = #{data_status}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+					<if test="wms_inve_pruduct_category_id != null">
+						and wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id}
+					</if>
+					<if test="wms_inve_comm_rate_id_stock != null">
+						and wms_inve_comm_rate_id_stock = #{wms_inve_comm_rate_id_stock}
+					</if>
+					<if test="wms_inve_comm_rate_id_add != null">
+						and wms_inve_comm_rate_id_add = #{wms_inve_comm_rate_id_add}
+					</if>
+					<if test="trans_salesman_status != null">
+						and trans_salesman_status = #{trans_salesman_status}
+					</if>
+					<if test="redeem_company_reason != null">
+						and redeem_company_reason = #{redeem_company_reason}
+					</if>
+					<if test="is_take_off_damages != null">
+						and is_take_off_damages = #{is_take_off_damages}
+					</if>
+					<if test="redeem_type != null">
+						and redeem_type = #{redeem_type}
+					</if>
+					<if test="investredemp_amount_base != null">
+						and investredemp_amount_base = #{investredemp_amount_base}
+					</if>
+					<if test="redeem_type_detail != null">
+						and redeem_type_detail = #{redeem_type_detail}
+					</if>
+					<if test="convert_account != null">
+						and convert_account = #{convert_account}
+					</if>
+					<if test="relpace_type_detail != null">
+						and relpace_type_detail = #{relpace_type_detail}
+					</if>
+					<if test="bel_salesman_id_id != null">
+						and bel_salesman_id_id = #{bel_salesman_id_id}
+					</if>
+					<if test="wms_inve_redeem_id != null">
+						and wms_inve_redeem_id = #{wms_inve_redeem_id}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_inve_commission_performance_his_id != #{wms_inve_commission_performance_his_id}
+					</if>
+		</where>
+	</select>
+	
+	<!-- 查看存量时候认证 -->
+	<select id="findPmpersonnelOtherCountByPid" parameterType="PmPersonnelOtherinfo"
+		resultType="PmPersonnelOtherinfo">
+		select
+			pm_personnel_otherinfo_id,
+			pm_personnel_id,
+			is_all_flag,
+			ensure_date,
+			ensure_way,
+			enable_flag
+        from
+        	pm_personnel_otherinfo
+        where
+        	pm_personnel_id = #{pm_personnel_id}
+	</select>
+		<!-- 查看认证情况详细 -->
+	<select id="getWmsInveTransaAuthListByPid" parameterType="map" resultType="WmsInveTransaAuth">
+		select 
+				wms_inve_transa_auth_id,
+				pm_personnel_otherinfo_id,
+				wms_inve_transa_id,
+				wms_inve_customer_id,
+				bill_code,
+				id_card,
+				card_type,
+				cus_name,
+				cus_address,
+				post_code,
+				address_phone,
+				work_phone,
+				cus_fax,
+				contact_address,
+				customer_email,
+				bill_send_mode,
+				inve_transa_type,
+				product_total_count_lower,
+				product_total_count_upper,
+				data_status,
+				account_status,
+				pay_type,
+				pay_usr_id,
+				date_format(date_of_payment,'%Y-%m-%d') as date_of_payment_str,
+				date_of_payment,
+				pay_account,
+				cash_pay_name,
+				act_account_usr_id,
+				date_format(date_of_act,'%Y-%m-%d') as date_of_act_str,
+				date_of_act,
+				act_account,
+				fee_account,
+				salesman_name,
+				salesman_id,
+				salesman_city_code,
+				salesman_city,
+				salesman_dept_id,
+				salesman_shortcode,
+				create_user_id,
+				create_user_name,
+				create_user_dept_id,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag,
+				mobile_phone,
+				department_manager_id,
+				department_manager_city_code,
+				department_manager_dept_id,
+				vice_general_manager_id,
+				vice_general_manager_city_code,
+				vice_general_manager_dept_id,
+				general_manager_id,
+				general_manager_city_code,
+				general_manager_dept_id,
+				costomer_id,
+				customer_source,
+				customer_num,
+				bill_source,
+				old_wms_inve_transa_id,
+				date_format(old_date_of_payment,'%Y-%m-%d') as old_date_of_payment_str,
+				old_date_of_payment,
+				bel_salesman_id_id,
+				trans_salesman_status,
+				convert_account,
+				relpace_type_detail
+		from wms_inve_transa_auth
+      
+        where
+        		pm_personnel_otherinfo_id = #{pm_personnel_otherinfo_id}
+       	<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+	</select>
+	
+	<!-- 老产品个人佣金信息 -->
+	<select id="searchOldStock" parameterType="map" resultType="map">
+		SELECT
+			wt.bill_code,
+			wt.cus_name,
+			(select CONCAT(e.personnel_name,e.personnel_shortCode) from pm_personnel e where e.personnel_id=woch.salesman_id) as salesman_info,
+			woch.product_account as investredemp_amount_base,
+			woch.date_of_payment,
+			woch.redeem_amount,
+			woch.redeem_date,
+			woch.commission_days,
+			woch.redeem_date as redeem_back_days,
+			woch.commission_days as deal_days,
+			wp.category_name,
+			woch.date_of_payment as product_deadline,
+			woch.stock_comm_coeff as add_comm_coeff,
+			woch.old_stock_comm_mon as add_comm_mon,
+			woch.stock_comm_coeff,
+			woch.old_stock_comm_mon as stock_comm_mon,
+			woch.team_comm_coeff,
+			woch.old_team_comm_mon as team_comm_mon,
+			woch.tax_point,
+			woch.tax_mon,
+			wb.org_product_account
+		FROM
+			wms_inve_old_comm_his woch
+		LEFT JOIN 
+			wms_inve_transa wt
+		ON 
+			woch.wms_inve_transa_id = wt.wms_inve_transa_id
+		LEFT JOIN
+		  	wms_inve_redeem wr
+		ON 
+			woch.wms_inve_redeem_id = wr.wms_inve_redeem_id
+		LEFT JOIN
+		  	wms_inve_transa_prod wp
+		ON
+		  	woch.wms_inve_transa_prod_id = wp.wms_inve_transa_prod_id
+		LEFT JOIN
+			(SELECT * FROM wms_inve_transa_backup WHERE backup_month = #{statics_month}) wb
+    	ON
+			wt.wms_inve_transa_id = wb.wms_inve_transa_id
+		WHERE 
+			woch.statics_month=#{statics_month}
+		<if test="qry_type == 5">
+			AND	IFNULL(woch.old_stock_comm_mon, 0) != 0
+			AND woch.salesman_id = #{salesman_id}
+			AND woch.salesman_dept_id=#{dept_id}
+		</if>
+		<if test="qry_type == 6">
+			AND	IFNULL(woch.old_team_comm_mon, 0) != 0
+			AND (woch.department_manager_id = #{salesman_id}
+			AND woch.department_manager_dept_id=#{dept_id})
+		</if>
+		<if test="qry_type == 7">
+			AND	IFNULL(woch.tax_mon, 0) != 0
+			AND woch.salesman_id = #{salesman_id}
+			AND woch.salesman_dept_id=#{dept_id}
+		</if>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY woch.date_of_payment ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	
+	<select id="findCountOldStock" parameterType="map" resultType="int">
+		SELECT
+			count(1)
+		FROM
+			wms_inve_old_comm_his woch
+		LEFT JOIN 
+			wms_inve_transa wt
+		ON 
+			woch.wms_inve_transa_id = wt.wms_inve_transa_id
+		LEFT JOIN
+		  	wms_inve_redeem wr
+		ON 
+			woch.wms_inve_redeem_id = wr.wms_inve_redeem_id
+		LEFT JOIN
+		  	wms_inve_transa_prod wp
+		ON
+		  	woch.wms_inve_transa_prod_id = wp.wms_inve_transa_prod_id
+		LEFT JOIN
+			(SELECT * FROM wms_inve_transa_backup WHERE backup_month = '2016-12') wb
+    	ON
+			wt.wms_inve_transa_id = wb.wms_inve_transa_id
+		WHERE 
+		woch.statics_month=#{statics_month}
+		<if test="qry_type == 5">
+			AND	IFNULL(woch.old_stock_comm_mon, 0) != 0
+			AND woch.salesman_id = #{salesman_id}
+			AND woch.salesman_dept_id=#{dept_id}
+		</if>
+		<if test="qry_type == 6">
+			AND	IFNULL(woch.old_team_comm_mon, 0) != 0
+			AND (woch.department_manager_id = #{salesman_id}
+			AND woch.department_manager_dept_id=#{dept_id})
+		</if>
+		<if test="qry_type == 7">
+			AND	IFNULL(woch.tax_mon, 0) != 0
+			AND woch.salesman_id = #{salesman_id}
+			AND woch.salesman_dept_id=#{dept_id}
+		</if>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY woch.date_of_payment ${sortorder}
+		</if>
+	</select>
+	<select id="searchPerAdd" parameterType="map" resultType="map">
+		SELECT
+		a.bill_code,
+		a.cus_name,
+		(select CONCAT(e.personnel_name,e.personnel_shortCode) from pm_personnel e where e.personnel_id=a.salesman_id) as salesman_info,
+		a.investredemp_amount_base,
+		date_format(a.date_of_payment,'%Y-%m-%d') as date_of_payment,
+		d.redeem_amount,
+		d.redeem_date,
+		a.commission_days,
+		a.redeem_back_days,
+		if(a.inve_type='1',a.commission_days,a.redeem_back_days) as deal_days,
+		a.product_deadline,
+		(select h.category_name from wms_inve_pruduct_category h where h.wms_inve_pruduct_category_id=a.wms_inve_pruduct_category_id) as category_name,
+		a.add_comm_coeff,
+		a.add_comm_mon,
+		a.stock_comm_coeff,
+		a.stock_comm_mon,
+		a.team_comm_coeff,
+		a.team_comm_mon,
+		a.tax_point,
+		a.tax_mon
+		FROM
+			wms_inve_commission_performance_his a
+		LEFT JOIN (
+			SELECT
+				b.wms_inve_redeem_id,
+				b.redeem_date,
+				c.redeem_amount
+			FROM
+				wms_inve_redeem b,
+				wms_inve_redeem_detail c
+			WHERE
+				b.wms_inve_redeem_id = c.wms_inve_redeem_id
+		) d
+		on a.wms_inve_redeem_id=d.wms_inve_redeem_id
+		WHERE
+			(
+				(a.salesman_id = #{salesman_id} and 0>a.add_comm_mon)
+				OR (a.bel_salesman_id_id = #{salesman_id} and a.add_comm_mon>0)
+			)
+		and a.statics_month=#{statics_month}
+		and ifnull(a.add_comm_mon,0)!=0
+		
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<select id="findCountPerAdd" parameterType="map" resultType="int">
+		SELECT
+			count(1)
+		FROM
+			wms_inve_commission_performance_his a
+		
+		WHERE
+			(
+				(a.salesman_id = #{salesman_id} and 0>a.add_comm_mon)
+				OR (a.bel_salesman_id_id = #{salesman_id} and a.add_comm_mon>0)
+			)
+		and a.statics_month=#{statics_month}
+		and ifnull(a.add_comm_mon,0)!=0
+	</select>
+	
+</mapper> 

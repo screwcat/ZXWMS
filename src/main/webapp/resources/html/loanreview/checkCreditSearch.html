@@ -1,0 +1,560 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script type="text/javascript" charset="utf-8"
+	src="../../js/media/js/ZeroClipboard.js"></script>
+<title>贷前管理>审批查询查询列表</title>
+</head>
+<body style="overflow-y: hidden;">
+	<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<!--查询条件-->
+			<div class="l-panel-search-cond clearfix">
+				<div class="float-l">
+					<div class="l-panel-search-title">单据编号:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="bill_code" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">客户姓名:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="customer_name" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title" style="margin-left: 16px">业务员/编号:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="salesman_name" />
+					</div>
+				</div>
+				<div class="float-l ">
+					<div class="l-panel-search-title">申请时间:</div>
+					<div class="l-panel-search-item">
+						<input id="create_timestamp" class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+							style="width: 133px; vertical-align: top;" />
+					</div>
+				</div>
+				<div class="float-l clearboth">
+					<div class="l-panel-search-title">身份证号:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="id_card" />
+					</div>
+				</div>
+				<div class="float-l ">
+					<div class="l-panel-search-title">所属城市:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="city" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">贷款产品:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="cre_type"
+							onchange="getCreTypeForBillStatus();" />
+					</div>
+				</div>
+				<div class="float-l ">
+					<div class="l-panel-search-title">单据状态:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="bill_status" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="centertoolbar" class="minwidth400"></div>
+	<div id="grid"></div>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+        var grid;
+		var toolbar;
+		var params;
+		var dialog;
+		var columns;
+        $(function() {
+        	initGrid();
+        	var toolbarItemData = [];
+             toolbarItemData.push({
+                 text: '查询',
+                 click:search,
+                 icon: 'search'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             toolbarItemData.push({
+                 text: '清空',
+                 click:clear,
+                 icon: 'empty'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             toolbarItemData.push({
+                 text: '导出Excel',
+                 icon: 'export',
+                 id:'ToolTables_XLS_2'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             $("#centertoolbar").ligerToolBar({
+                  items: toolbarItemData
+        	 });
+             search();
+             registerCsv();
+             init_cre_type();
+        });
+        //初始化贷款产品
+    	function init_cre_type(json){
+    		var cre_type_params ={
+    				dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=15',
+    				t_col_name:'cre_type',
+    				valueField:'value_code',   //下拉框value对应的值，默认为id
+    				textField:'value_meaning',    //下拉框text对应的值，默认为text
+    				input_width:133,
+    				def_val:'first'
+    				};
+    		global_ligerui_extend.initCombox("cre_type",null,cre_type_params);
+    		if(json){
+    			//把值装载设定
+    			global_ligerui_extend.syncRequestInitComboxData(json,"cre_type");
+    			//让其不可编辑
+    			global_ligerui_extend.disabledCombox("cre_type");
+    		}else{			
+    		    global_ligerui_extend.initComboxDefVal("cre_type");
+    		}
+    	}
+        //实现信息导出
+        function registerCsv(){
+        	var moviePath = "../../js/media/swf/copy_csv_xls_pdf.swf";
+        	var fileName = '审批信息.xls';
+        	var titleJson = '';
+        	var dataJson = '';
+        	var obj = $("div[toolbarid='ToolTables_XLS_2']")[0];//获取菜单对象
+        	var getDataFun = function(){
+        		var text = {};
+        		initParams();
+        		//实现导出的时候，规定导出的具体内容
+        		text.title={'bill_code':'单据编号','create_timestamp':'申请时间','cre_type_name':'产品类型','customer_name':'客户姓名','id_card':'身份证号','credit_limit':'贷款金额（万元）','salesman_name_str':'业务员/编号','salesman_city':'城市','create_user_name':'录入员','bill_status_name':'单据状态'};//定义需要导出的列名以及列名与数据的对应关系
+        		var json = globalUtil.syncGetJson("/loancheck/creditCheckWithoutPaginglist.do?sortname=bill_code",params);//同步获取需要导出的数据内容
+        		text.data = json.Rows;
+        		return text;
+        	};
+        	registerXlsFlashBtn(moviePath,fileName,titleJson,dataJson,obj,getDataFun);
+        }
+        //清空所填写内容
+        function clear(){
+        	$("#bill_code").val("");
+        	$("#customer_name").val("");
+        	$("#salesman_name").val("");
+        	$("#id_card").val("");
+        	$("#create_timestamp").val("");
+        	$("#city").val("");
+		    $("#cre_type").val("请选择");
+		    $("#bill_status").val("请选择");
+		    global_ligerui_extend.setComboxVal("cre_type","-1");
+		    global_ligerui_extend.setComboxVal("bill_status","-1");
+        }
+        //当点击贷款产品的时候，初始化单据状态
+        function getCreTypeForBillStatus(){
+        	//获取筛选条件
+        	params = globalUtil.getFormParam("searchbar");
+        	//判断贷款产品信贷还是房贷进行初始化单据状态
+      		if(params.cre_type=='-1'){//代表请选择
+      			getBillStatus(params.cre_type);
+      	    }else if(params.cre_type=='1'){//信贷
+      	    	getBillStatus(params.cre_type);
+      		}else if(params.cre_type=='2'){//房贷
+      			getBillStatus(params.cre_type);
+      		}
+        }
+        //getCreTypeForBillStatus -->getBillStatus
+        function getBillStatus(cre_type){
+        	var bill_status_params ={
+    				dest_url:'/sysmanage/wmssysdictdatabyidandcreType.do?isEmpty=true&wms_sys_dict_id=24&cre_type='+cre_type,
+    				t_col_name:'bill_status',
+    				valueField:'value_code',   //下拉框value对应的值，默认为id
+    				textField:'value_meaning',    //下拉框text对应的值，默认为text
+    				input_width:133,
+    				def_val:'first'
+			};
+  			global_ligerui_extend.initCombox("bill_status",null,bill_status_params);		
+			global_ligerui_extend.initComboxDefVal("bill_status");
+        }
+        //表格初始化
+        function initGrid() {
+        	columns = [{
+                display: '单据编号',
+                name: 'bill_code',
+                width: 115,
+                minWidth: 115,
+                //添加超链接的东西
+                render: function (rowdata, rowindex, value) { 
+        			return '<a href="javascript:creditInfo('+rowdata.wms_cre_credit_head_id+','+rowdata.cre_type+');" style="color:#056AFF;text-decoration: none;">'+value+'</a>';
+        		},
+
+            },{
+                display: '申请时间',
+                name: 'create_timestamp',
+                width: 150,
+                minWidth: 150
+            },{
+            	display:'产品类型',
+            	name:'cre_type_name',
+            	width:100,
+            	minWidth:100
+            },{
+            	display:'客户姓名',
+            	name:'customer_name',
+            	width:100,
+            	minWidth:100
+            },{
+            	display:'身份证号',
+            	name:'id_card',
+            	width:140,
+            	minWidth:140
+            },{
+            	display:'贷款金额（万元）',
+            	name:'credit_limit',
+            	width:100,
+            	minWidth:100
+            },{
+            	display:'流水审批',
+            	name:'water_appro_result_page',
+            	width:70,
+            	minWidth:70,
+            	render: function (rowdata, rowindex, value) { 
+            	/*
+            	*修改：判断“Information_personnel”值是否等于1，如果等于1则说明当前登录人是“信审部门主管”
+            	*修改人：wangyujain
+            	*时间：2015-1-20
+            	*/
+            	if(rowdata.Information_personnel=='1'){
+            			if(value == '0'){
+                			return '<a href="javascript:lsspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+                		}else if(value == '1'){
+                			return '<a href="javascript:lsspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+                		}else if(value == '3'){
+                			return '<a href="javascript:lsshcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'已忽略'+'</a>';
+                		}else{
+                			return '<a href="javascript:lsspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+                		}	
+            		}else{
+            			if(value == '0'){
+                			return '<a style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+                		}else if(value == '1'){
+                			return '<a style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+                		}else if(value == '3'){
+                			return '<a style="color:#056AFF;text-decoration: none;">'+'已忽略'+'</a>';
+                		}else{
+                			return '<a style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+                		}
+                		
+            		}         		         		
+                }
+            },{
+            	display:'信息调查',
+            	name:'info_appro_result_page',
+            	width:70,
+            	minWidth:70,
+            	render: function (rowdata, rowindex, value) { 
+            		if(rowdata.Information_personnel=='1'){
+            			if(value == '0'){
+                			return '<a href="javascript:lsspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+                		}else if(value == '1'){
+                			return '<a href="javascript:lsspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+                		}else if(value == '3'){
+                			return '<a href="javascript:xxdccreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'已忽略'+'</a>';
+                		}else{
+                			return '<a href="javascript:lsspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+                		}	
+            		}else{
+            			if(value == '0'){
+                			return '<a style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+                		}else if(value == '1'){
+                			return '<a style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+                		}else if(value == '3'){
+                			return '<a style="color:#056AFF;text-decoration: none;">'+'已忽略'+'</a>';
+                		}else{
+                			return '<a style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+                		}
+                		
+            		}	
+               }
+            },{
+            	display:'电审审批',
+            	name:'phone_appro_result_page',
+            	width:70,
+            	minWidth:70,
+            	render: function (rowdata, rowindex, value) {
+       		     if(rowdata.Information_personnel=='1'){
+                	if(value == '0'){
+        	    		return '<a href="javascript:dsshcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+            		}else if(value == '1'){
+        	    		return '<a href="javascript:dsshcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+        	        }else if(value == '3'){
+            			return '<a href="javascript:dsshcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'已忽略'+'</a>';
+            		}else{
+        		    	  return '<a href="javascript:dsshcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+        		    }	
+    		     }else{
+    			    if(value == '0'){
+        		    	return '<a  style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+        	    	}else if(value == '1'){
+        		    	return '<a style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+        	    	}else if(value == '3'){
+        		    	return '<a style="color:#056AFF;text-decoration: none;">'+'已忽略'+'</a>';
+        	    	}else{
+        	    		return '<a style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+        	    	}		
+    	      	 }	
+               }
+             },{
+            	display:'征信审批',
+            	name:'certificate_appro_result_page',
+            	width:70,
+            	minWidth:70,
+            	render: function (rowdata, rowindex, value) { 
+            		if(rowdata.Information_personnel=='1'){
+            			if(value == '0'){
+                			return '<a href="javascript:xxdccreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+                		}else if(value == '1'){
+                			return '<a href="javascript:xxdccreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+                		}else{
+                			return '<a href="javascript:xxdccreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+                		}
+            		}else{
+            			if(value == '0'){
+                			return '<a  style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+                		}else if(value == '1'){
+                			return '<a  style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+                		}else{
+                			return '<a  style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+                		}
+            		}
+            	}
+            },{
+            	display:'验点审批',
+            	name:'inspection_appro_result_page',
+            	width:70,
+            	minWidth:70,
+            	render: function (rowdata, rowindex, value) { 
+            		if(rowdata.Information_personnel=='1'){
+            			if(rowdata.cre_loan_type == 113){
+                			if(value == '0'){
+                    			return '<a href="javascript:ydspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+                    		}else if(value == '1'){
+                    			return '<a href="javascript:ydspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+                    		}else{
+                    			return '<a href="javascript:ydspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+                    		}
+                		}else if(rowdata.cre_loan_type ==283&&rowdata.credit_limit>=10){
+                			if(value == '0'){
+                    			return '<a href="javascript:ydspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+                    		}else if(value == '1'){
+                    			return '<a href="javascript:ydspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+                    		}else{
+                    			return '<a href="javascript:ydspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+                    		}
+                		}else{
+                			return '<span style="color:black;">----</span>';
+                 		}
+            	   }else{
+            			if(rowdata.cre_loan_type == 113){
+                			if(value == '0'){
+                    			return '<a style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+                    		}else if(value == '1'){
+                    			return '<a style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+                    		}else{
+                    			return '<a style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+                    		}
+                		}else if(rowdata.cre_loan_type ==283&&rowdata.credit_limit>=10){
+                			if(value == '0'){
+                    			return '<a style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+                    		}else if(value == '1'){
+                    			return '<a style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+                    		}else{
+                    			return '<a style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+                    		}
+                		}else{
+                			return '<span style="color:black;">----</span>';
+                		}
+            		}
+               }
+            },{
+                display: '办件审核',
+                name: 'house_appro_result_page',
+                width: 70,
+                minWidth:70,
+                render: function (rowdata, rowindex, value) {
+                	if(rowdata.Information_personnel=='1'){
+                		if(rowdata.cre_type==2){
+                    		if(value == '0'){
+                    			return '<a href="javascript:bjshcreditInfo('+rowdata.wms_cre_credit_head_id+','+rowdata.cre_type+');" style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+                    		}else if(value == '1'){
+                    			return '<a href="javascript:bjshcreditInfo('+rowdata.wms_cre_credit_head_id+','+rowdata.cre_type+');" style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+                    		}else{
+                    			return '<a href="javascript:bjshcreditInfo('+rowdata.wms_cre_credit_head_id+','+rowdata.cre_type+');" style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+                    		}
+                    	}else{
+                    		return '<span style="color:black;">----</span>';
+                    	}
+                	}else{
+                		if(rowdata.cre_type==2){
+                    		if(value == '0'){
+                    			return '<a style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+                    		}else if(value == '1'){
+                    			return '<a  style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+                    		}else{
+                    			return '<a  style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+                    		}
+                    	}else{
+                    		return '<span style="color:black;">----</span>';
+                    	}
+                	}
+                }
+            },{
+                display: '业务员/编号',
+                name: 'salesman_name_str',
+                width: 100,
+                minWidth: 100	
+            },{
+            	display:'城市',
+            	name:'salesman_city',
+            	width:100,
+            	minWidth:100
+            },{
+                display: '录入员',
+                name: 'create_user_name',
+                width: 100,
+                minWidth:100
+            },{
+                display: '单据状态',
+                name: 'bill_status_name',
+                width: 100,
+                minWidth: 100,
+                render: function (rowdata, rowindex, value) {
+             	   var bsn='';
+            		  switch (rowdata.bill_status) {
+ 					case 'A':
+ 						bsn='草稿';
+ 						break;
+ 					case 'B':
+ 						bsn='待复核';
+ 						break;
+ 					case 'C':
+ 						bsn='待贷前审核';
+ 						break;
+ 					case 'D':
+ 						bsn='待终审 ';
+ 						break;
+ 					case 'E':
+ 						bsn='待放款准备';
+ 						break;
+ 					case 'F':
+ 						bsn='待放款审核';
+ 						break;
+ 					case 'G':
+ 						bsn='待放款';
+ 						break;
+ 					case 'H':
+ 						bsn='已完成';
+ 						break;
+ 					case 'Z':
+ 						bsn='终止';
+ 						break;
+ 					default:
+ 						bsn=value;
+ 					}
+            		  return bsn;
+                }
+            },{
+        	   display: '流程历程',
+               width: 100,
+               minWidth: 100,
+               //添加超链接
+               render: function (rowdata, rowindex, value) { 
+       					return '<a href="javascript:approvalProcess('+rowdata.wms_cre_credit_head_id+','+rowdata.cre_type+');" style="color:#056AFF;text-decoration: none;">'+"查看"+'</a>';
+               	 		}
+               }];
+        	
+            grid = $("#grid").ligerGrid({
+        		columns: columns,
+        		url: global_param.context_name + '/loancheck/creditCheckWithPaginglist.do?flag=1',
+        		sortName: 'bill_code', // 排序列名
+				sortOrder: 'asc', // 排序方式
+        		rownumbers: true,
+        		allowUnSelectRow: true,
+        		usePager: true,
+        		width: '100%',
+        		height: '95%',
+        		heightDiff: -4,
+        		parms: {
+        			_filterParms: -1
+        		}
+            });
+        }   
+      
+        //------------------------------------贷款详细信息------------------------------
+          function approvalProcess(wms_cre_credit_head_id,cretype){
+        	  var url = '';
+         		if(cretype=='1'){
+         			url=globalUtil.getHtml("../creditManage/approvalProcess.html?wms_cre_credit_head_id="+wms_cre_credit_head_id);
+         		}else if (cretype=='2') {
+         			url=globalUtil.getHtml("../creditManage/houseInfoWSAppProcess.html?wms_cre_credit_head_id="+wms_cre_credit_head_id);
+  			}
+       		dialog=$.ligerDialog.open({
+       			url:url,
+       			title: '查看',
+		        width: 1000,
+		        height: globalUtil.setDialogHeight(500),
+		        onHiddenOrClose: function(){
+		    	},
+		        isResize: false
+       		});
+        }
+        function creditInfo(wms_cre_credit_head_id,cretype){
+        	var url ='';
+        	if(cretype=='1'){
+        		url=globalUtil.getHtml("../creditManage/addCredit.html?wms_cre_credit_head_id="+wms_cre_credit_head_id+"&cktype=ck");
+        	}else if (cretype=='2') {
+				url=globalUtil.getHtml("../creditManage/checkHouseCredit.html?wms_cre_credit_head_id="+wms_cre_credit_head_id+"&pageType=ck");
+			}else if (cretype=='3') {
+        		//车贷用户详细信息
+        		url=globalUtil.getHtml("../creditManage/checkCarCredit.html?wms_cre_credit_head_id="+wms_cre_credit_head_id+"&pageType=ck");
+			}
+        	dialog = $.ligerDialog.open({
+		        url: url,
+		        title: '客户贷款详细信息',
+		        width: 1020,
+		        height: globalUtil.setDialogHeight(700),
+		        onHiddenOrClose: function(){
+		    	},
+		        isResize: false
+	    	});
+        }
+        //------------------------------------贷款详细信息结束------------------------------
+
+        function initParams() {
+        	params = globalUtil.getFormParam("searchbar");
+        	if(params.cre_type == '-1'){
+            	params.cre_type = '';
+            }
+        }
+        //查询
+        var search= function() {
+            initParams();
+            global_ligerui_extend.search(grid, params);
+        }
+        </script>
+</body>
+</html>

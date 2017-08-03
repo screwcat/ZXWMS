@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.sysmanage.persist.WmsSysAssessmentAdviceInfoDao">
+	<select id="getAdviceInfo" parameterType="int"
+		resultType="WmsSysAssessmentAdviceInfo">
+		select * from wms_sys_assessment_advice_info
+		order by
+		wms_sys_assessment_advice_info_id
+	</select>
+</mapper>

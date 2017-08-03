@@ -1,0 +1,49 @@
+package com.zx.emanage.inve.persist;
+
+import java.util.List;
+import java.util.Map;
+
+import com.zx.emanage.util.gen.entity.WmsInveSalary;
+import com.zx.sframe.util.mybatis.BaseDao;
+import com.zx.sframe.util.mybatis.MyBatisRepository;
+
+@MyBatisRepository
+public interface WmsInveSalaryDao extends BaseDao<WmsInveSalary> {
+
+	/**
+	 * 根据日期获取对应的工资信息
+	 * 
+	 * @param date
+	 * @return
+	 */
+	List<Map<String, Object>> getWmsInveSalaryInfoByDate(String date);
+	
+    /**
+     * 
+     * @Title: getSalaryPersonnelPerformanceByDate
+     * @Description: 获取个人业绩 static_month
+     * @param date
+     * @return 
+     * @author: zhangyunfei
+     * @time:2017年1月5日 下午1:23:49
+     * history:
+     * 1、2017年1月5日 Administrator 创建方法
+     */
+
+	List<Map<String, Object>> getSalaryPersonnelPerformanceByDate(String date);
+	
+    /**
+     * 
+     * @Title: getSalaryDeptPerformanceByDate
+     * @Description: 获取部门业绩 根据static_month和static_season 
+     * @param pmap
+     * @return 
+     * @author: zhangyunfei
+     * @time:2017年1月5日 下午1:22:12
+     * history:
+     * 1、2017年1月5日 Administrator 创建方法
+     */
+    List<Map<String, Object>> getSalaryDeptPerformanceByDate(Map<String, Object> pmap);
+
+	
+}

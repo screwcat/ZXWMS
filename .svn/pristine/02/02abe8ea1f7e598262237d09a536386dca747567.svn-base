@@ -1,0 +1,450 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script type="text/javascript" charset="utf-8"
+	src="../../js/media/js/ZeroClipboard.js"></script>
+<title>债权管理 > 债权查询 > 抵押包查询</title>
+</head>
+<body style="overflow-y: hidden;">
+	<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<!--查询条件-->
+			<div class="l-panel-search-cond clearfix">
+				<div class="float-l">
+					<div class="l-panel-search-title">抵押类型:</div>
+					<div class="l-panel-search-item">
+						<select name="cre_type" id="cre_type" style="width: 135px;">
+							<option selected="selected" value="">---请选择---</option> 
+							<option value="1">信用类债权</option> 
+							<option value="2">房产抵押类债权</option> 
+							<option value="3">车产抵押类债权</option> 
+							<option value="4">可拆分抵押类债权</option> 
+						</select> 
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">抵押姓名:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="cre_per_name" style="width: 150px;"/>
+					</div>
+				</div>
+				
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;合同编号:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="protocol_id_year_num" style="width: 150px;"/>
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">身份证号:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="cre_per_card_id" style="width: 150px;"/>
+					</div>
+				</div>
+				
+				
+				<div class="float-l">
+					<div class="l-panel-search-title">抵押金额(万元):</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="cre_pledge_mon_tt_low" style="width: 150px;"/>
+						至
+						<input type="text" id="cre_pledge_mon_tt_high" style="width: 150px;" />
+					</div>
+				</div>
+				
+				<div class="float-l clearboth">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;他项人:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="rele_per_id" style="width: 200px;"/>
+					</div>
+				</div>
+				
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;归属地:</div>
+					<div class="l-panel-search-item">
+					 	<input type="text" id="loca_num" style="width: 135px;"/>
+					</div>
+				</div>
+				
+				<div class="float-l">
+					<div class="l-panel-search-title">抵押包状态:</div>
+					<div class="l-panel-search-item">
+						<select name="crepackage_state" id="crepackage_state" style="width: 153px;">
+							<option selected="selected" value="">---请选择---</option> 
+							<option value="0">未匹配</option> 
+							<option value="1">匹配中</option> 
+							<option value="2">完全匹配</option> 
+							<option value="3">正常到期</option> 
+							<option value="4">提前到期</option> 
+							<option value="5">已失效</option> 
+						</select> 
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	<div id="centertoolbar" class="minwidth400"></div>
+	<div id="grid"></div>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+        var grid;
+		var toolbar;
+		var params;
+		var dialog;
+		var columns;
+        $(function() {
+        	initGrid();
+        	var toolbarItemData = [];
+        	//修改按钮
+			toolbarItemData.push({
+                 text: '提前到期',
+                 click: updatedate,
+                 icon: 'modify'
+            });
+			toolbarItemData.push({
+                line: true
+            });
+			toolbarItemData.push({
+    			text: ' 失效',
+    			click: destroyCreditPackage,
+    			icon: 'modify'
+            });
+			
+			toolbarItemData.push({
+                line: true
+            });
+        	
+             toolbarItemData.push({
+                 text: '查询',
+                 click:search,
+                 icon: 'search'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             toolbarItemData.push({
+                 text: '清空',
+                 click:clear,
+                 icon: 'empty'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             
+             $("#centertoolbar").ligerToolBar({
+                  items: toolbarItemData
+        	 });
+             search();
+             getLocaNumData();
+             getRelePerIdData();
+        });
+        
+        var destroyCreditPackage = function(){
+        	var row = grid.getSelectedRow();
+        	if(row == null){
+        		globalUtil.warnMsg(globalErrorMsg['800302']);
+        		return ;
+        	}
+        	
+        	var creditPackageState = getCreditPackageState(row);
+        	if(creditPackageState == 1 || creditPackageState == 2)
+       		{
+       			globalUtil.warnMsg("您所选择的抵押包已被使用，请勿作废！");
+       			return ;
+       		}
+        	else if(creditPackageState == 3 || creditPackageState == 4)
+        	{
+       			globalUtil.warnMsg("您所选择的抵押包已经到期！");
+       			return ;
+        	}
+        	else if(creditPackageState == -1){
+        		globalUtil.warnMsg("您说选择的抵押包已经作废！");
+        		return ;
+        	}
+        	
+    		var url = globalUtil.getHtml("./creditRightDestroy.html?creditPackageId="+row.wms_inve_credit_package_id);
+    		dialog = $.ligerDialog.open({
+    			url : url,
+    			title : '设置抵押包失效',
+    			width : 400,
+    			height : globalUtil.setDialogHeight(300),
+    			onHiddenOrClose : function() {
+    			},
+    			isResize : false
+    		});
+        }
+        
+        var getCreditPackageState = function(rowdata){
+        	if(rowdata.enable_flag = '0' && rowdata.destroy_reason != null)
+       		{
+        		return -1;
+//        			return "已失效";
+       		}
+        	else
+        	{
+            	if(rowdata.is_finish == '1'){
+            		if(rowdata.act_end_date_str != null){
+            			return 3;
+//             			return '提前到期';
+            		}else{
+            			return 4;
+//             			return '正常到期';
+            		}
+            	}else{
+            		if(rowdata.used_amount-0 == 0){
+            			return 0;
+//             			return '未匹配';
+            		}else if(rowdata.used_amount>=rowdata.cre_pledge_mon_total){
+            			return 2;
+//             			return '完全匹配';
+            		}else{
+            			return 1;
+//             			return '匹配中';
+            		}
+            	}
+        	}
+        }
+    	
+        //清空所填写内容
+        var clear= function(){
+        	$("#cre_type").val("");
+        	$("#cre_per_name").val("");
+        	$("#protocol_id_year_num").val("");
+        	$("#cre_per_card_id").val("");
+        	$("#cre_pledge_mon_tt_low").val("");
+        	$("#cre_pledge_mon_tt_high").val("");
+        	global_ligerui_extend.setComboxVal("rele_per_id","");
+        	global_ligerui_extend.setComboxVal("loca_num","");
+        	$("#crepackage_state").val("");
+        	$("#cre_type").val('');
+        	$("#crepackage_state").val('');
+        }
+        var row;
+        function updatedate(){
+        	row=grid.getSelectedRow();
+        	if(row==null){
+        		globalUtil.warnMsg(globalErrorMsg['800302']);//请选择一行记录进行操作
+                return;
+        	}
+        	if(row.is_finish-0==1){
+        		globalUtil.warnMsg('该债权包还款已完成！');//请选择一行记录进行操作
+                return;
+        	}
+        	var url = globalUtil.getHtml("creditRightModify.html?wms_inve_credit_package_id="+row.wms_inve_credit_package_id);
+            dialog = $.ligerDialog.open({
+		        url: url,
+		        title: '提前到期',
+		        width: 1000,
+		        height: globalUtil.setDialogHeight(450),
+		        onHiddenOrClose: function(){
+		    	},
+		        isResize: false
+	    	}); 
+        }
+        
+        //表格初始化
+        function initGrid() {
+        	columns = [{
+                display: '抵押包编号',
+                name: 'cre_pkg_code',
+                width: 130,
+                minWidth: 130,
+            	isSort:false
+            },{
+                display: '抵押类型',
+                name: 'cre_type',
+                width: 130,
+                minWidth: 130,
+            	isSort:false
+            },{
+            	display:'抵押包姓名',
+            	name:'cre_per_name',
+            	width:130,
+            	minWidth:130,
+            	isSort:false
+            },{
+            	display:'合同编号',
+            	name:'protocol_id_year_num',
+            	width:130,
+            	minWidth:130,
+            	isSort:false
+            },{
+            	display:'身份证号',
+            	name:'cre_per_card_id',
+            	width:150,
+            	minWidth:150,
+            	isSort:false
+            },{
+            	display:'抵押金额(万元)',
+            	name:'cre_pledge_mon',
+            	width:150,
+            	minWidth:150,
+            	isSort:false
+            },{
+            	display:'平米数',
+            	name:'house_size',
+            	width:120,
+            	minWidth:120,
+            	isSort:false
+            },{
+            	display:'起始终止日期',
+            	name:'crepg_date',
+            	width:180,
+            	minWidth:180,
+            	isSort:false
+            },{
+            	display:'实际终止日期',
+            	name:'act_end_date',
+            	width:160,
+            	minWidth:160,
+            	isSort:false,
+            	render: function (rowdata, rowindex, value) { 
+                	if(value.indexOf("（")>=0){
+                		return '<font color="#FF4500"><div title="'+(typeof rowdata.remark == 'undefined' ? '':rowdata.remark)+'" style="position:relative;width: 100%; height: 100%;">'+value+'</div></font>';
+                	}else{
+                		return '<div title="'+(typeof rowdata.remark == 'undefined' ? '':rowdata.remark)+'" style="position:relative;width: 100%; height: 100%;">'+value+'</div>';
+                	}
+        		}
+            },{
+            	display:'他项人',
+            	name:'rele_per_name',
+            	width:140,
+            	minWidth:140,
+            	isSort:false
+            },{
+            	display:'归属地',
+            	name:'loca_num',
+            	width:140,
+            	minWidth:140,
+            	isSort:false
+            },{
+            	display:'抵押包状态',
+            	name:'crepackage_state',
+            	width:160,
+            	minWidth:160,
+            	isSort:false,
+            	//添加超链接的东西
+                render: function (rowdata, rowindex, value) { 
+                	if(rowdata.enable_flag = '0' && rowdata.destroy_reason != null)
+               		{
+               			return "<div title='"+rowdata.destroy_reason+"' style='position: relative;width: 100%; height: 100%;'>已失效</div>";
+               		}
+                	else
+                	{
+                    	if(rowdata.is_finish == '1'){
+                    		if(rowdata.act_end_date_str != null){
+                    			return '提前到期';
+                    		}else{
+                    			return '正常到期';
+                    		}
+                    	}else{
+                    		if(rowdata.used_amount-0 == 0){
+                    			return '未匹配';
+                    		}else if(rowdata.used_amount>=rowdata.cre_pledge_mon_total){
+                    			return '完全匹配';
+                    		}else{
+                    			return '匹配中';
+                    		}
+                    	}
+                	}
+        		}
+            },{
+            	display:'匹配情况',
+            	width:140,
+            	minWidth:140,
+            	isSort:false,
+            	//添加超链接的东西
+                render: function (rowdata, rowindex, value) { 
+                	return "<a href='javascript:toCreditPkgWithTransa(\""+rowdata.wms_inve_credit_package_id+"\",\""+rowdata.is_finish+"\",\""+rowdata.cre_pkg_code+"\");' style='color:#056AFF;text-decoration: none;'>查看</a>";
+        		}
+            }];
+            grid = $("#grid").ligerGrid({
+        		columns: columns,
+        		url: global_param.context_name + '/creRigMan/wmsinvecreditpackagewithpaginglist.do',
+        		sortName: 'create_timestamp', // 排序列名
+				sortOrder: 'desc', // 排序方式
+        		rownumbers: true,
+        		allowUnSelectRow: true,
+        		enabledSort: true, 
+        		usePager: true,
+        		width: '100%',
+        		height: '100%',
+        		heightDiff: -4,
+        		parms: {
+        			_filterParms: -1
+        		}
+            });
+        }  
+        
+        function initParams() {
+        	params = globalUtil.getFormParam("searchbar");
+        	params.cre_type=$("#cre_type").val();
+        	params.crepackage_state=$("#crepackage_state").val();
+        }
+        //查询
+        var search= function() {
+            initParams();
+            global_ligerui_extend.search(grid, params);
+        }
+        
+        var toCreditPkgWithTransa= function(wms_inve_credit_package_id,is_finish,cre_pkg_code){
+        	var url = globalUtil.getHtml("creditRight.html?wms_inve_credit_package_id="+wms_inve_credit_package_id+"&is_finish="+is_finish+"&cre_pkg_code="+cre_pkg_code);
+            dialog = $.ligerDialog.open({
+		        url: url,
+		        title: '匹配历程',
+		        width: 1000,
+		        height: globalUtil.setDialogHeight(850),
+		        onHiddenOrClose: function(){
+		    	},
+		        isResize: false
+	    	}); 
+        }
+
+         
+      	//债权数据手工采集单据
+        function inveTeamInfo(salesman_id,create_datetime){
+    		var url = globalUtil.getHtml("showTeam.html?salesman_id=" + salesman_id+'&create_datetime='+create_datetime+'&show=0');
+       		dialog=$.ligerDialog.open({
+       			url:url,
+       			title: '债权数据手工采集单据',
+		        width: 1100,
+		        height: globalUtil.setDialogHeight(670),
+		        onHiddenOrClose: function(){
+		    	},
+		        isResize: false
+       		}); 	
+	 	}
+      	function getLocaNumData(){
+      		var stores_params ={
+            		dest_url:'/creRigMan/getAllRelePerList.do',
+            		t_col_name:'rele_per_id',
+            		valueField:'rele_per_id',   //下拉框value对应的值，默认为id
+            		textField:'personnel_name',    //下拉框text对应的值，默认为text
+            		input_width:136,//下拉框长度
+            		def_val:'first'
+        			};
+          			global_ligerui_extend.initCombox("rele_per_id",null,stores_params);		
+        			global_ligerui_extend.initComboxDefVal("rele_per_id");
+      	}
+      	function getRelePerIdData(){
+      		var stores_params ={
+            		dest_url:'/creRigMan/getAllLocalNumList.do',
+            		t_col_name:'loca_num',
+            		valueField:'loca_num',   //下拉框value对应的值，默认为id
+            		textField:'region_name',    //下拉框text对应的值，默认为text
+            		input_width:150,//下拉框长度
+            		def_val:'first'
+        			};
+          			global_ligerui_extend.initCombox("loca_num",null,stores_params);		
+        			global_ligerui_extend.initComboxDefVal("loca_num");
+      	}
+        </script>
+</body>
+</html>

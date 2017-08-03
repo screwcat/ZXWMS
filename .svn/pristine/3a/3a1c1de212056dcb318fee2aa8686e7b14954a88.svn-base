@@ -1,0 +1,730 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveTransaProdDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveTransaProd">
+		select
+		t1.wms_inve_transa_prod_id,
+		t1.wms_inve_transa_id,
+		t1.wms_inve_pruduct_category_id,
+		t1.product_deadline,
+		t1.product_interest,
+		t1.product_account,
+		(case t1.is_finish when '1' then '是' when '0' then '否' end) as is_finish,
+		t1.create_user_id,
+		t1.create_user_name,
+		date_format(t1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		t1.create_timestamp,
+		t1.last_update_user_id,
+		date_format(t1.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		t1.last_update_timestamp,
+		t1.enable_flag,
+		t1.category_name,
+		t1.card_owner_name,
+		t1.reward_interest,
+		t1.bank_of_deposit,
+		t1.card_no,
+		t1.product_deadline_name,
+		t1.expect_interest_account,
+		t1.reward_interest,
+		t1.wms_inve_pruduct_deadline_id,
+		t1.org_product_account,
+		t1.bank_of_deposit_pro,
+		t1.bank_of_deposit_city,
+		t1.bank_branch,
+		t1.is_allopatry,
+		(select category_type from  wms_inve_pruduct_category where wms_inve_pruduct_category_id=t1.wms_inve_pruduct_category_id) as category_type,
+		(select category_interest_pay_method from  wms_inve_pruduct_category where wms_inve_pruduct_category_id=t1.wms_inve_pruduct_category_id) as category_type,
+		t1.wms_inve_customer_card_id
+		from
+		wms_inve_transa_prod t1
+		where
+		t1.wms_inve_transa_prod_id = #{wms_inve_transa_prod_id}
+	</select>
+
+	<select id="getForJEGL" parameterType="int" resultType="WmsInveTransaProd">
+			select
+				t1.wms_inve_transa_prod_id,
+				t1.wms_inve_transa_id,
+				t1.wms_inve_pruduct_category_id,
+				t1.category_name,
+				t1.product_deadline,
+				round(t1.product_interest) as product_interest,
+				t1.product_account,
+				(select category_interest_pay_method from wms_inve_pruduct_category where wms_inve_pruduct_category_id = t1.wms_inve_pruduct_category_id) as category_rebate_way,
+				t1.is_finish,
+				t1.create_user_id,
+				t1.create_user_name,
+				date_format(t1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				t1.create_timestamp,
+				t1.last_update_user_id,
+				date_format(t1.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				t1.last_update_timestamp,
+				t1.enable_flag,
+				t1.org_product_account,
+				t1.card_no,
+				t1.bank_of_deposit,
+				t1.card_owner_name,
+				t1.bank_of_deposit_pro,
+				t1.bank_of_deposit_city,
+				t1.bank_branch,
+				t1.is_allopatry,
+				t1.is_protocol_finish,
+				t1.is_customer_confirmation,
+				t1.redeem_sms_code,
+				t1.wms_inve_customer_card_id,
+				t2.buy_month_limit,
+				t2.has_paper_protocol
+			from
+				wms_inve_transa_prod t1,
+				wms_inve_pruduct_category t2
+			where
+				t1.wms_inve_pruduct_category_id = t2.wms_inve_pruduct_category_id
+			and
+				t1.wms_inve_transa_id = #{wms_inve_transa_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_transa_prod_id) as count
+		from
+		wms_inve_transa_prod
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		t1.wms_inve_transa_prod_id,
+		t1.wms_inve_transa_id,
+		t1.wms_inve_pruduct_category_id,
+		t1.category_name,
+		t1.product_deadline,
+		t1.product_interest,
+		t1.product_account,
+		t1.is_finish,
+		t1.create_user_id,
+		t1.create_user_name,
+		date_format(t1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		t1.create_timestamp,
+		t1.last_update_user_id,
+		date_format(t1.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		t1.last_update_timestamp,
+		t1.enable_flag,
+		t1.card_owner_name,
+		t1.bank_of_deposit,
+		t1.card_no,
+		t1.product_deadline_name,
+		t1.reward_interest,
+		t1.expect_interest_account,
+		t1.wms_inve_pruduct_deadline_id,
+		t1.is_allopatry,
+		t1.is_protocol_finish,
+		t1.is_customer_confirmation
+		from wms_inve_transa_prod t1,wms_inve_transa t2
+		<where>
+			t1.enable_flag = '1' and t1.wms_inve_transa_id=t2.wms_inve_transa_id
+			<if test="data_status1 != null and data_status2 != null">
+				and (t2.data_status=#{data_status1} or
+				t2.data_status=#{data_status2})
+			</if>
+			<if test="wms_inve_pruduct_category_id != null">
+				and
+				t1.wms_inve_pruduct_category_id=#{wms_inve_pruduct_category_id}
+			</if>
+			<if test="id_card != null">
+				and t2.id_card=#{id_card}
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveTransaProd"
+		useGeneratedKeys="true" keyProperty="wms_inve_transa_prod_id">
+		INSERT INTO wms_inve_transa_prod
+		(
+		wms_inve_transa_id,
+
+		wms_inve_pruduct_category_id,
+
+		product_deadline,
+
+		product_interest,
+
+		product_account,
+
+		is_finish,
+
+		create_user_id,
+
+		create_user_name,
+
+		create_timestamp,
+
+		last_update_user_id,
+
+		last_update_timestamp,
+
+		enable_flag,
+
+		category_name,
+
+		card_owner_name,
+
+		bank_of_deposit,
+
+		card_no,
+
+		product_deadline_name,
+
+		reward_interest,
+
+		expect_interest_account,
+
+		wms_inve_pruduct_deadline_id,
+
+		org_product_account,
+		bank_of_deposit_pro,
+		bank_of_deposit_city,
+		bank_branch,
+		category_code,
+		category_type,
+		is_allopatry,
+		is_protocol_finish,
+		is_customer_confirmation,
+		wms_inve_customer_card_id
+		)
+		VALUES
+		(
+		#{wms_inve_transa_id},
+		#{wms_inve_pruduct_category_id},
+		#{product_deadline},
+		#{product_interest},
+		#{product_account},
+		#{is_finish},
+		#{create_user_id},
+		#{create_user_name},
+		#{create_timestamp},
+		#{last_update_user_id},
+		#{last_update_timestamp},
+		#{enable_flag},
+		#{category_name},
+		#{card_owner_name},
+		#{bank_of_deposit},
+		#{card_no},
+		#{product_deadline_name},
+		#{reward_interest},
+		#{expect_interest_account},
+		#{wms_inve_pruduct_deadline_id},
+		#{org_product_account},
+		#{bank_of_deposit_pro},
+		#{bank_of_deposit_city},
+		#{bank_branch},
+		#{category_code},
+		#{category_type},
+		#{is_allopatry},
+		#{is_protocol_finish},
+		#{is_customer_confirmation},
+		#{wms_inve_customer_card_id}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveTransaProd">
+		update wms_inve_transa_prod
+		<set>
+			<if test="wms_inve_transa_id != null">
+				wms_inve_transa_id = #{wms_inve_transa_id},
+			</if>
+			<if test="wms_inve_pruduct_category_id != null">
+				wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id},
+			</if>
+			<if test="product_deadline != null">
+				product_deadline = #{product_deadline},
+			</if>
+			<if test="product_interest != null">
+				product_interest = #{product_interest},
+			</if>
+			<if test="is_finish != null">
+				is_finish = #{is_finish},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+			<if test="category_name != null">
+				category_name = #{category_name},
+			</if>
+			<if test="card_owner_name != null">
+				card_owner_name = #{card_owner_name},
+			</if>
+			<if test="bank_of_deposit != null">
+				bank_of_deposit = #{bank_of_deposit},
+			</if>
+			<if test="card_no != null">
+				card_no = #{card_no},
+			</if>
+			<if test="product_deadline_name != null">
+				product_deadline_name = #{product_deadline_name},
+			</if>
+			<if test="reward_interest != null">
+				reward_interest = #{reward_interest},
+			</if>
+			<if test="expect_interest_account != null">
+				expect_interest_account = #{expect_interest_account},
+			</if>
+			<if test="wms_inve_pruduct_deadline_id != null">
+				wms_inve_pruduct_deadline_id = #{wms_inve_pruduct_deadline_id},
+			</if>
+			<if test="product_account  != null">
+				product_account = #{product_account},
+			</if>
+			<if test="org_product_account != null">
+				org_product_account = #{org_product_account},
+			</if>
+			<if test="bank_of_deposit_pro != null">
+				bank_of_deposit_pro = #{bank_of_deposit_pro},
+			</if>
+			<if test="bank_of_deposit_city != null">
+				bank_of_deposit_city = #{bank_of_deposit_city},
+			</if>
+			<if test="bank_branch != null">
+				bank_branch = #{bank_branch},
+			</if>
+			<if test="category_code != null">
+				category_code = #{category_code},
+			</if>
+			<if test="category_type != null">
+				category_type = #{category_type},
+			</if>
+			<if test="is_allopatry != null">
+				is_allopatry = #{is_allopatry},
+			</if>
+			<if test="is_protocol_finish != null">
+				is_protocol_finish = #{is_protocol_finish},
+			</if>
+			<if test="is_customer_confirmation != null">
+				is_customer_confirmation = #{is_customer_confirmation},
+			</if>
+			<if test="redeem_sms_code !=null">
+				redeem_sms_code = #{redeem_sms_code},
+			</if>
+			<if test="wms_inve_customer_card_id != null">
+				wms_inve_customer_card_id = #{wms_inve_customer_card_id}
+			</if>
+		</set>
+		where
+		wms_inve_transa_prod_id = #{wms_inve_transa_prod_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveTransaProd"
+		resultType="WmsInveTransaProd">
+		select
+		wms_inve_transa_prod_id,
+		wms_inve_transa_id,
+		wms_inve_pruduct_category_id,
+		category_name,
+		product_deadline,
+		product_interest,
+		product_account,
+		is_finish,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		card_owner_name,
+		bank_of_deposit,
+		card_no,
+		bank_of_deposit_pro,
+		bank_of_deposit_city,
+		bank_branch,
+		is_allopatry,
+		is_protocol_finish,
+		is_customer_confirmation,
+		redeem_sms_code
+		from
+		wms_inve_transa_prod
+		<where>
+			<if test="wms_inve_transa_prod_id != null">
+				and wms_inve_transa_prod_id = #{wms_inve_transa_prod_id}
+			</if>
+			<if test="wms_inve_transa_id != null">
+				and wms_inve_transa_id = #{wms_inve_transa_id}
+			</if>
+			<if test="wms_inve_pruduct_category_id != null">
+				and wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id}
+			</if>
+			<if test="product_deadline != null">
+				and product_deadline = #{product_deadline}
+			</if>
+			<if test="product_interest != null">
+				and product_interest = #{product_interest}
+			</if>
+			<if test="product_account != null">
+				and product_account = #{product_account}
+			</if>
+			<if test="is_finish != null">
+				and is_finish = #{is_finish}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name = #{create_user_name}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id = #{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+			<if test="card_owner_name != null">
+				and card_owner_name = #{card_owner_name}
+			</if>
+			<if test="bank_of_deposit != null">
+				and bank_of_deposit = #{bank_of_deposit}
+			</if>
+			<if test="card_no != null">
+				and card_no = #{card_no}
+			</if>
+			<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+				and wms_inve_transa_prod_id != #{wms_inve_transa_prod_id}
+			</if>
+			<if test="bank_of_deposit_pro != null">
+				bank_of_deposit_pro = #{bank_of_deposit_pro},
+			</if>
+			<if test="bank_of_deposit_city != null">
+				bank_of_deposit_city = #{bank_of_deposit_city},
+			</if>
+			<if test="bank_branch != null">
+				bank_branch = #{bank_branch},
+			</if>
+			<if test="is_allopatry != null">
+				is_allopatry = #{is_allopatry},
+			</if>
+			<if test="is_protocol_finish != null">
+				is_protocol_finish = #{is_protocol_finish},
+			</if>
+			<if test="is_customer_confirmation != null">
+				is_customer_confirmation = #{is_customer_confirmation},
+			</if>
+		</where>
+	</select>
+	<!-- count num -->
+	<select id="calRecordNum" parameterType="map" resultType="int">
+		select count(t1.wms_inve_transa_prod_id) as count
+		from
+		wms_inve_transa_prod t1,wms_inve_transa t2
+		<where>
+			t1.wms_inve_transa_id=t2.wms_inve_transa_id and
+			(t2.data_status='4' or t2.data_status='5')
+			and t1.wms_inve_pruduct_category_id=#{wms_inve_pruduct_category_id} and
+			t2.id_card=#{id_card}
+		</where>
+	</select>
+
+	<update id="updateRedeem" parameterType="WmsInveTransaProd">
+		update wms_inve_transa_prod
+		<set>
+			product_account = product_account-#{product_account}
+		</set>
+		where
+		wms_inve_transa_prod_id = #{wms_inve_transa_prod_id}
+	</update>
+	
+	<!-- 备份上单产品 -->
+	<insert id="saveBak" parameterType="WmsInveTransaProd" 
+		useGeneratedKeys="true" keyProperty="wms_inve_transa_prod_bak_id">
+		insert into wms_inve_transa_prod_bak (
+			wms_inve_transa_prod_id,
+			wms_inve_transa_id,
+			wms_inve_pruduct_category_id,
+			product_deadline,
+			product_interest,
+			product_account,
+			is_finish,
+			create_user_id,
+			create_user_name,
+			create_timestamp,
+			last_update_user_id,
+			last_update_timestamp,
+			enable_flag,
+			category_name,
+			card_owner_name,
+			bank_of_deposit,
+			card_no,
+			product_deadline_name,
+			reward_interest,
+			expect_interest_account,
+			wms_inve_pruduct_deadline_id,
+			org_product_account,
+			bank_of_deposit_pro,
+			bank_of_deposit_city,
+			bank_branch,
+			category_code,
+			category_type
+		) values (
+			#{wms_inve_transa_prod_id},
+			#{wms_inve_transa_id},
+			#{wms_inve_pruduct_category_id},
+			#{product_deadline},
+			#{product_interest},
+			#{product_account},
+			#{is_finish},
+			#{create_user_id},
+			#{create_user_name},
+			#{create_timestamp},
+			#{last_update_user_id},
+			#{last_update_timestamp},
+			#{enable_flag},
+			#{category_name},
+			#{card_owner_name},
+			#{bank_of_deposit},
+			#{card_no},
+			#{product_deadline_name},
+			#{reward_interest},
+			#{expect_interest_account},
+			#{wms_inve_pruduct_deadline_id},
+			#{org_product_account},
+			#{bank_of_deposit_pro},
+			#{bank_of_deposit_city},
+			#{bank_branch},
+			#{category_code},
+			#{category_type}
+		);
+	</insert>
+	<!-- 更新用户 -->
+	<update id="updateAll" parameterType="WmsInveTransaProd">
+		update wms_inve_transa_prod
+		<set>
+			<if test="wms_inve_transa_id != null">
+				wms_inve_transa_id = #{wms_inve_transa_id},
+			</if>
+			<if test="wms_inve_pruduct_category_id != null">
+				wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id},
+			</if>
+			<if test="product_deadline != null">
+				product_deadline = #{product_deadline},
+			</if>
+			<if test="product_interest != null">
+				product_interest = #{product_interest},
+			</if>
+			<if test="is_finish != null">
+				is_finish = #{is_finish},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+			<if test="category_name != null">
+				category_name = #{category_name},
+			</if>
+			<if test="card_owner_name != null">
+				card_owner_name = #{card_owner_name},
+			</if>
+			<if test="bank_of_deposit != null">
+				bank_of_deposit = #{bank_of_deposit},
+			</if>
+			<if test="card_no != null">
+				card_no = #{card_no},
+			</if>
+			<if test="product_deadline_name != null">
+				product_deadline_name = #{product_deadline_name},
+			</if>
+			<if test="reward_interest != null">
+				reward_interest = #{reward_interest},
+			</if>
+			<if test="expect_interest_account != null">
+				expect_interest_account = #{expect_interest_account},
+			</if>
+			<if test="wms_inve_pruduct_deadline_id != null">
+				wms_inve_pruduct_deadline_id = #{wms_inve_pruduct_deadline_id},
+			</if>
+			<if test="product_account  != null">
+				product_account = #{product_account},
+			</if>
+			<if test="org_product_account != null">
+				org_product_account = #{org_product_account},
+			</if>
+			<if test="product_account  == null">
+				product_account = #{product_account},
+			</if>
+			<if test="org_product_account == null">
+				org_product_account = #{org_product_account},
+			</if>
+			<if test="bank_of_deposit_pro != null">
+				bank_of_deposit_pro = #{bank_of_deposit_pro},
+			</if>
+			<if test="bank_of_deposit_city != null">
+				bank_of_deposit_city = #{bank_of_deposit_city},
+			</if>
+			<if test="bank_branch != null">
+				bank_branch = #{bank_branch},
+			</if>
+			<if test="category_code != null">
+				category_code = #{category_code},
+			</if>
+			<if test="category_type != null">
+				category_type = #{category_type},
+			</if>
+			<if test="is_allopatry != null">
+				is_allopatry = #{is_allopatry},
+			</if>
+			<if test="is_protocol_finish != null">
+				is_protocol_finish = #{is_protocol_finish},
+			</if>
+			<if test="is_customer_confirmation != null">
+				is_customer_confirmation = #{is_customer_confirmation}
+			</if>
+		</set>
+		where
+		wms_inve_transa_prod_id = #{wms_inve_transa_prod_id}
+	</update>
+<!-- 	修改收益卡 -->
+	<update id="updateIncomeCard" parameterType="WmsInveTransaProd">
+	    update 
+	    	wms_inve_transa_prod
+	    set
+	    	card_owner_name = #{card_owner_name},
+	    	bank_of_deposit = #{bank_of_deposit},
+	    	card_no = #{card_no},
+	    	bank_of_deposit_pro = #{bank_of_deposit_pro},
+	    	bank_of_deposit_city = #{bank_of_deposit_city},
+	    	bank_branch = #{bank_branch}
+	    where
+	    	wms_inve_transa_prod_id = #{wms_inve_transa_prod_id}
+	</update>
+	<!-- 清空验证码 -->
+	<update id="updateSmsCard" parameterType="WmsInveTransaProd">
+	    update 
+	    	wms_inve_transa_prod
+	    set
+	    	redeem_sms_code = ""
+	    where
+	    	wms_inve_transa_id = #{wms_inve_transa_id}
+	</update>
+	
+	<select id="getHistoryCustomerBankInfo" parameterType="map" resultType="map">
+		SELECT
+    		wc.wms_inve_customer_card_id,
+			wc.card_owner_name,
+			wc.bank_of_deposit,
+			wc.bank_branch,
+			wc.bank_of_deposit_pro,
+			wc.bank_of_deposit_city,
+			wc.card_no,
+		  	CONCAT(wc.card_owner_name," | ",wc.bank_of_deposit ," | 尾号" , right(wc.card_no,4)) as bank_card_info
+		FROM
+			wms_inve_customer_card wc
+		WHERE
+			1=1
+		<if test="id_card != null and id_card != ''">
+			AND wc.id_card = #{id_card}
+		</if>
+		<if test="cus_name != null and cus_name != ''">
+			AND wc.card_owner_name = #{cus_name}
+		</if>
+		AND wc.card_owner_name is NOT null
+		AND wc.card_no is NOT null
+		AND wc.enable_flag = 1
+		GROUP BY wc.card_owner_name,wc.bank_of_deposit,wc.bank_branch, wc.card_no
+	</select>
+	
+	<!-- 根据客户姓名和身份证号获取对应的收益卡信息 -->
+	<select id="getWmsInveTransaProdInfos" parameterType="map" resultType="map">
+		SELECT
+			wc.card_owner_name,
+			wc.card_no,
+			DATE_FORMAT(wp.create_timestamp,'%Y-%m-%d') as date_of_payment,
+			(SELECT value_meaning FROM wms_sys_dict_data where wms_sys_dict_id = 72 AND value_code = wc.bank_of_deposit_pro) as bank_of_deposit_pro,
+			(SELECT value_meaning FROM wms_sys_dict_data where wms_sys_dict_id = 73 AND value_code = wc.bank_of_deposit_city) as bank_of_deposit_city,
+			wc.bank_of_deposit,
+			wc.bank_branch,
+			wt.contact_address AS cus_address
+		FROM
+			wms_inve_transa_prod wp, 
+			wms_inve_transa wt,
+			wms_inve_customer_card wc
+		WHERE wp.wms_inve_transa_id = wt.wms_inve_transa_id
+		AND wp.wms_inve_customer_card_id = wc.wms_inve_customer_card_id
+		AND wt.data_status = 4
+		<if test="customer_name!=null">
+		  	AND wt.cus_name= #{customer_name}
+	  	</if>
+	  	<if test="id_card_number!=null">
+			AND wt.id_card = #{id_card_number}
+	  	</if>
+		AND wt.enable_flag = '1'
+   		AND wc.enable_flag = '1'
+    	AND wp.enable_flag = '1'
+		GROUP BY wc.card_owner_name,wc.bank_of_deposit,wc.bank_branch, wc.card_no
+	</select>
+
+	<select id="getIncomeCardInfo" parameterType="int" resultType="map">
+		SELECT
+			t2.card_owner_name,
+			t2.card_no,
+			t2.bank_branch,
+			t2.bank_of_deposit,
+			t2.bank_of_deposit_city,
+			t2.bank_of_deposit_pro,
+		  	t3.wms_inve_customer_card_id
+		FROM wms_inve_transa t1, wms_inve_extend_info t2, wms_inve_customer_card t3
+		WHERE t1.wms_inve_transa_id = t2.wms_inve_transa_id
+		AND t1.id_card = t3.id_card
+		AND t2.card_no = t3.card_no
+		AND t3.enable_flag = '1'
+		AND t2.enable_flag = '1'
+		AND t2.wms_inve_transa_id = (SELECT wms_inve_transa_id FROM wms_inve_transa_prod WHERE wms_inve_transa_prod_id=#{wms_inve_transa_prod_id})
+		limit 0,1		
+	</select>
+</mapper> 

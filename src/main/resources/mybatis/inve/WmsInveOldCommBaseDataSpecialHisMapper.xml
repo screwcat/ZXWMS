@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveOldCommBaseDataSpecialHisDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveOldCommBaseDataSpecialHis">
+		select
+        				wms_inve_old_comm_base_data_special_his_id,
+        				department_manager_id,
+        				salesman_id,
+        				product_account_desc,
+        				product_account,
+        				team_comm_coeff,
+        				old_team_comm_mon,
+        				commission_days,
+						date_format(statics_time,'%Y-%m-%d %H:%i:%s') as statics_time_str,
+        				statics_time,
+        				statics_month
+        	from
+        		wms_inve_old_comm_base_data_special_his
+        	where
+        				wms_inve_old_comm_base_data_special_his_id = #{wms_inve_old_comm_base_data_special_his_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_old_comm_base_data_special_his_id) as count
+		from wms_inve_old_comm_base_data_special_his
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_inve_old_comm_base_data_special_his_id,
+				department_manager_id,
+				salesman_id,
+				product_account_desc,
+				product_account,
+				team_comm_coeff,
+				old_team_comm_mon,
+				commission_days,
+				date_format(statics_time,'%Y-%m-%d %H:%i:%s') as statics_time_str,
+				statics_time,
+				statics_month
+		from wms_inve_old_comm_base_data_special_his
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveOldCommBaseDataSpecialHis" useGeneratedKeys="true" keyProperty="wms_inve_old_comm_base_data_special_his_id">
+		INSERT INTO wms_inve_old_comm_base_data_special_his
+		(
+				wms_inve_old_comm_base_data_special_his_id,
+
+				department_manager_id,
+
+				salesman_id,
+
+				product_account_desc,
+
+				product_account,
+
+				team_comm_coeff,
+
+				old_team_comm_mon,
+
+				commission_days,
+
+				statics_time,
+
+				statics_month
+		)
+		VALUES
+		(
+				#{wms_inve_old_comm_base_data_special_his_id},
+				#{department_manager_id},
+				#{salesman_id},
+				#{product_account_desc},
+				#{product_account},
+				#{team_comm_coeff},
+				#{old_team_comm_mon},
+				#{commission_days},
+				#{statics_time},
+				#{statics_month}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveOldCommBaseDataSpecialHis">
+		update wms_inve_old_comm_base_data_special_his
+		<set>
+					<if test="wms_inve_old_comm_base_data_special_his_id != null">
+						 wms_inve_old_comm_base_data_special_his_id = #{wms_inve_old_comm_base_data_special_his_id},
+					</if>
+					<if test="department_manager_id != null">
+						 department_manager_id = #{department_manager_id},
+					</if>
+					<if test="salesman_id != null">
+						 salesman_id = #{salesman_id},
+					</if>
+					<if test="product_account_desc != null">
+						 product_account_desc = #{product_account_desc},
+					</if>
+					<if test="product_account != null">
+						 product_account = #{product_account},
+					</if>
+					<if test="team_comm_coeff != null">
+						 team_comm_coeff = #{team_comm_coeff},
+					</if>
+					<if test="old_team_comm_mon != null">
+						 old_team_comm_mon = #{old_team_comm_mon},
+					</if>
+					<if test="commission_days != null">
+						 commission_days = #{commission_days},
+					</if>
+					<if test="statics_time != null">
+						 statics_time = #{statics_time},
+					</if>
+					<if test="statics_month != null">
+						 statics_month = #{statics_month},
+					</if>
+	   </set>
+		 where 
+    				wms_inve_old_comm_base_data_special_his_id = #{wms_inve_old_comm_base_data_special_his_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveOldCommBaseDataSpecialHis" resultType="WmsInveOldCommBaseDataSpecialHis">
+		select 
+				wms_inve_old_comm_base_data_special_his_id,
+				department_manager_id,
+				salesman_id,
+				product_account_desc,
+				product_account,
+				team_comm_coeff,
+				old_team_comm_mon,
+				commission_days,
+				date_format(statics_time,'%Y-%m-%d %H:%i:%s') as statics_time_str,
+				statics_time,
+				statics_month
+		from
+		wms_inve_old_comm_base_data_special_his
+		<where>
+					<if test="wms_inve_old_comm_base_data_special_his_id != null">
+						and wms_inve_old_comm_base_data_special_his_id = #{wms_inve_old_comm_base_data_special_his_id}
+					</if>
+					<if test="department_manager_id != null">
+						and department_manager_id = #{department_manager_id}
+					</if>
+					<if test="salesman_id != null">
+						and salesman_id = #{salesman_id}
+					</if>
+					<if test="product_account_desc != null">
+						and product_account_desc = #{product_account_desc}
+					</if>
+					<if test="product_account != null">
+						and product_account = #{product_account}
+					</if>
+					<if test="team_comm_coeff != null">
+						and team_comm_coeff = #{team_comm_coeff}
+					</if>
+					<if test="old_team_comm_mon != null">
+						and old_team_comm_mon = #{old_team_comm_mon}
+					</if>
+					<if test="commission_days != null">
+						and commission_days = #{commission_days}
+					</if>
+					<if test="statics_time != null">
+						and statics_time = #{statics_time}
+					</if>
+					<if test="statics_month != null">
+						and statics_month = #{statics_month}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_inve_old_comm_base_data_special_his_id != #{wms_inve_old_comm_base_data_special_his_id}
+					</if>
+		</where>
+	</select>
+	
+	<!-- 打款 -->
+	<select id="getWmsInveOldCommBaseDataByCondition" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			h.wms_inve_old_comm_base_data_special_his_id,
+			(SELECT personnel_name FROM pm_personnel p WHERE p.personnel_id = h.department_manager_id) as department_manager,
+			(SELECT personnel_name FROM pm_personnel p WHERE p.personnel_id = h.salesman_id) as salesman,			
+			h.product_account_desc,
+			h.product_account/10000 as product_account,
+			CONCAT(truncate(h.team_comm_coeff*100,2),"%") as team_comm_coeff,						
+			(h.product_account*h.team_comm_coeff) as comm_mon,
+			h.old_team_comm_mon,
+			h.commission_days,
+			h.statics_time,
+			h.statics_month
+		FROM
+			wms_inve_old_comm_base_data_special_his h
+		<where>
+			<if test="export_month != null and export_month != ''">
+			   and h.statics_month = #{export_month}
+			</if>  
+  		</where>
+	</select>
+</mapper> 

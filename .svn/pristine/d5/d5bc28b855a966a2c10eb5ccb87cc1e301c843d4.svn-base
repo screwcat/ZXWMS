@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.reportmanage.persist.WmsInveCommissionTeamPerformanceDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveCommissionTeamPerformance">
+		select
+        				wms_inve_commission_team_performance_id,
+        				dept_id,
+        				team_id,
+        				team_user_id,
+        				float_disposable_commission_coeff,
+        				float_disposable_commission_money,
+        				float_monthly_commission_coeff,
+        				float_monthly_commission_money,
+						date_format(create_datetime,'%Y-%m-%d %H:%i:%s') as create_datetime_str,
+        				create_datetime,
+        				enable_flag,
+						date_format(lssue_date,'%Y-%m-%d') as lssue_date_str,
+        				lssue_date,
+        				wms_inve_pruduct_category_id
+        	from
+        		wms_inve_commission_team_performance
+        	where
+        				wms_inve_commission_team_performance_id = #{wms_inve_commission_team_performance_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_commission_team_performance_id) as count
+		from wms_inve_commission_team_performance
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_inve_commission_team_performance_id,
+				dept_id,
+				(select dept_name from sys_dept where dept_id=p.dept_id) as dept_name,
+				team_id,
+				(select dept_name from sys_dept where dept_id=team_id) as team_name,
+				float_disposable_commission_coeff,
+				sum(float_disposable_commission_money) as float_disposable_commission_money ,
+				float_monthly_commission_coeff,
+				sum(float_monthly_commission_money) as float_monthly_commission_money,
+				date_format(create_datetime,'%Y-%m-%d %H:%i:%s') as create_datetime_str,
+				create_datetime,
+				enable_flag,
+				date_format(lssue_date,'%Y-%m-%d') as lssue_date_str,
+				lssue_date,
+				wms_inve_pruduct_category_id,
+				sum(((case when ISNULL(float_disposable_commission_money) then 0 else float_disposable_commission_money end)+(case when ISNULL(float_monthly_commission_money) then 0 else float_monthly_commission_money end))) as total_commission_money
+		from wms_inve_commission_team_performance p
+		<where>
+				enable_flag=1
+			and date_format(create_datetime,'%Y%m')=date_format(#{create_datetime},'%Y%m')
+			<if test="show ==1">
+				and lssue_date is null
+			</if>
+			<if test="team_user_id != null">
+				and team_user_id = #{team_user_id}
+			</if>
+		</where>
+			group by team_user_id ,date_format(create_datetime,'%Y%m')
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveCommissionTeamPerformance" useGeneratedKeys="true" keyProperty="wms_inve_commission_team_performance_id">
+		INSERT INTO wms_inve_commission_team_performance
+		(
+				wms_inve_commission_team_performance_id,
+
+				dept_id,
+
+				team_id,
+
+				team_user_id,
+
+				float_disposable_commission_coeff,
+
+				float_disposable_commission_money,
+
+				float_monthly_commission_coeff,
+
+				float_monthly_commission_money,
+
+				create_datetime,
+
+				enable_flag,
+
+				lssue_date,
+
+				wms_inve_pruduct_category_id
+		)
+		VALUES
+		(
+				#{wms_inve_commission_team_performance_id},
+				#{dept_id},
+				#{team_id},
+				#{team_user_id},
+				#{float_disposable_commission_coeff},
+				#{float_disposable_commission_money},
+				#{float_monthly_commission_coeff},
+				#{float_monthly_commission_money},
+				#{create_datetime},
+				#{enable_flag},
+				#{lssue_date},
+				#{wms_inve_pruduct_category_id}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveCommissionTeamPerformance">
+		update wms_inve_commission_team_performance
+		<set>
+					<if test="wms_inve_commission_team_performance_id != null">
+						 wms_inve_commission_team_performance_id = #{wms_inve_commission_team_performance_id},
+					</if>
+					<if test="dept_id != null">
+						 dept_id = #{dept_id},
+					</if>
+					<if test="team_id != null">
+						 team_id = #{team_id},
+					</if>
+					<if test="team_user_id != null">
+						 team_user_id = #{team_user_id},
+					</if>
+					<if test="float_disposable_commission_coeff != null">
+						 float_disposable_commission_coeff = #{float_disposable_commission_coeff},
+					</if>
+					<if test="float_disposable_commission_money != null">
+						 float_disposable_commission_money = #{float_disposable_commission_money},
+					</if>
+					<if test="float_monthly_commission_coeff != null">
+						 float_monthly_commission_coeff = #{float_monthly_commission_coeff},
+					</if>
+					<if test="float_monthly_commission_money != null">
+						 float_monthly_commission_money = #{float_monthly_commission_money},
+					</if>
+					<if test="create_datetime != null">
+						 create_datetime = #{create_datetime},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+					<if test="lssue_date != null">
+						 lssue_date = #{lssue_date},
+					</if>
+					<if test="wms_inve_pruduct_category_id != null">
+						 wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id},
+					</if>
+	   </set>
+		 where 
+    				wms_inve_commission_team_performance_id = #{wms_inve_commission_team_performance_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveCommissionTeamPerformance" resultType="WmsInveCommissionTeamPerformance">
+		select 
+				wms_inve_commission_team_performance_id,
+				dept_id,
+				team_id,
+				team_user_id,
+				float_disposable_commission_coeff,
+				float_disposable_commission_money,
+				float_monthly_commission_coeff,
+				float_monthly_commission_money,
+				date_format(create_datetime,'%Y-%m-%d %H:%i:%s') as create_datetime_str,
+				create_datetime,
+				enable_flag,
+				date_format(lssue_date,'%Y-%m-%d') as lssue_date_str,
+				lssue_date,
+				wms_inve_pruduct_category_id
+		from
+		wms_inve_commission_team_performance
+		<where>
+					<if test="wms_inve_commission_team_performance_id != null">
+						and wms_inve_commission_team_performance_id = #{wms_inve_commission_team_performance_id}
+					</if>
+					<if test="dept_id != null">
+						and dept_id = #{dept_id}
+					</if>
+					<if test="team_id != null">
+						and team_id = #{team_id}
+					</if>
+					<if test="team_user_id != null">
+						and team_user_id = #{team_user_id}
+					</if>
+					<if test="float_disposable_commission_coeff != null">
+						and float_disposable_commission_coeff = #{float_disposable_commission_coeff}
+					</if>
+					<if test="float_disposable_commission_money != null">
+						and float_disposable_commission_money = #{float_disposable_commission_money}
+					</if>
+					<if test="float_monthly_commission_coeff != null">
+						and float_monthly_commission_coeff = #{float_monthly_commission_coeff}
+					</if>
+					<if test="float_monthly_commission_money != null">
+						and float_monthly_commission_money = #{float_monthly_commission_money}
+					</if>
+					<if test="create_datetime != null">
+						and create_datetime = #{create_datetime}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+					<if test="lssue_date != null">
+						and lssue_date = #{lssue_date}
+					</if>
+					<if test="wms_inve_pruduct_category_id != null">
+						and wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_inve_commission_team_performance_id != #{wms_inve_commission_team_performance_id}
+					</if>
+		</where>
+	</select>
+	<!-- 更新用户 -->
+	<update id="updateStatus" parameterType="map">
+		update wms_inve_commission_team_performance
+		<set>
+			 lssue_date = now()		
+	   </set>
+		<where>
+			enable_flag=1
+		<!--and	date_format(create_datetime,'%Y%m')=date_format(now(),'%Y%m')  -->
+		and lssue_date is null
+			<if test="dept_id !=null">
+				and dept_id=#{dept_id}
+			</if>
+			<if test="team_id !=null">
+				and team_id=#{team_id}
+			</if>
+			<if test="personnel_Code !=null">
+				and (salesman_name like #{personnel_Code} or personnel_shortCode like #{personnel_Code})
+			</if>
+		</where>
+	</update>
+</mapper> 

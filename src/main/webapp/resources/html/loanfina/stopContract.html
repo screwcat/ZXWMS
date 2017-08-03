@@ -1,0 +1,801 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>终止合同审批</title>
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script language="Javascript" src="../../js/zx-all.js"> </script>
+
+<style type="text/css">
+.textright {
+	text-align: right;
+}
+
+.textleft {
+	text-align: left;
+}
+/*input_tb css*/
+.input_tb_new {
+	/*border:1px solid #dfdfdf;*/
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.input_tb_new a {
+	color: #056aff;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.input_tb_new td {
+	height: 35px;
+	line-height: 25px;
+	/*border-bottom:1px dashed #d5d5d5;*/
+	padding-top: 3px;
+}
+
+.input_tb_new .tr_title td {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	/*border-bottom:1px solid #dfdfdf;*/
+}
+
+.input_tb_new .tr_last td {
+	border-bottom: 0;
+}
+
+.input_tb_new .title {
+	text-align: right;
+}
+
+.input_tb_new .subtitle {
+	text-align: left;
+	background-color: #d2e1fd;
+	border-top: 1px solid #fff;
+	/*border-left:1px solid #fff;*/
+}
+
+.input_tb_new .tr_btn_input td {
+	background-color: #fbfbfb;
+	/*border-top:1px solid #dbdbdb;*/
+	/*height:40px;*/
+}
+
+.title_tb {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	/*border:1px solid #dfdfdf;8/
+border-bottom:0;
+}
+.title_tb .title_txt{
+float:left;
+}
+.title_tb .title_btn{
+float:right;
+margin-top:2px;
+font-weight:normal;
+}
+.input_tb_new td {
+    /*border-bottom: 1px dashed #D5D5D5;*/
+	height: 35px;
+	line-height: 25px;
+	padding-top: 3px;
+}
+
+.data_tb td {
+	height: 30px;
+	line-height: 24px;
+	padding-left: 10px;
+	border-bottom: 1px dashed #e3e4e6;
+	text-align: left;
+}
+
+#huankuan {
+	text-align: left;
+}
+</style>
+
+
+</head>
+<body>
+	<div class="tab_titleT">
+		<!--查询条件  begin-->
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr valign="bottom" id='trtab1'>
+				<td class="tabbody1" id="tabbody1"
+					onclick="changeTab('arbdocument');" tabname='mytab'
+					style="width: 50%"><div align="center">终止合同审批单</div></td>
+				<td class="tabbody2" id="tabbody2"
+					onclick="changeTab('repayhistory');" tabname='mytab'><div
+						align="center">附件</div></td>
+			</tr>
+		</table>
+</div>
+		<div class="pop-center overflow-au" style="top: 30px;" >
+		<!-- -----------------------------------------------------------------客户信息 begin------------------------------------------------------------------ -->
+		<div id="arbdocument" class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 5px; ">
+			<div class="center-title">
+					合同基本信息
+			</div>
+			<!-- 添加的虚线 -->
+			<div class="line clearboth"></div>
+				<div class="float-l">
+					<div class="pop-form-title">客户名称:</div>
+					<div class="pop-form-item">
+						<input type="text" id="debtor_name" readonly="readonly"  />
+					</div>
+				</div>
+				<div class="float-l" style="left: 50px;">
+					<div class="pop-form-title">身份证号:</div>
+					<div class="pop-form-item">
+						<input type="text" id="debtor_identity_id"  readonly="readonly"  />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">合同编号:</div>
+					<div class="pop-form-item">
+						<input type="text" id="protocol_id_year_num" readonly="readonly" />
+					</div>
+				</div>
+				<div class="float-l clearboth">
+					<div class="pop-form-title">合同日期:</div>
+					<div class="pop-form-item">
+						<input type="text" id="protocol_date" readonly="readonly"/>
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">合同金额:</div>
+					<div class="pop-form-item">
+						<input type="text" id="principal_lower" readonly="readonly" style="width: 120px;"/>元
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">放款金额:</div>
+					<div class="pop-form-item">
+						<input type="text" id="loan_amount" readonly="readonly" style="width: 120px;" />元
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">欠款金额:</div>
+					<div class="pop-form-item">
+						<input type="text" id="amount_owed" 
+							maxlength="50" readonly="readonly" style="width: 120px;"/>元
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">未还本金:</div>
+					<div class="pop-form-item">
+						<input type="text" id="un_pay_principal" 
+							maxlength="50" readonly="readonly"style="width: 120px;"/>元
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">未还利息:</div>
+					<div class="pop-form-item">
+						<input type="text" id="un_pay_interest" 
+							maxlength="50" readonly="readonly"  style="width: 120px;"/>元
+					</div>
+				</div>
+				<div class="float-l clearboth">
+					<div class="pop-form-title">未还滞纳金:</div>
+					<div class="pop-form-item">
+						<input type="text" id="cur_late_fee"  readonly="readonly" style="width: 120px;"/>元
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">服务费:</div>
+					<div class="pop-form-item">
+						<input type="text" id="service_fee" style="width: 120px;" value="0" onchange="oncheck(this)" maxlength="8"/>元
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">合同违约金:</div>
+					<div class="pop-form-item">
+						<input type="text" id="liquidated_damages" value="0" style="width: 120px;" onchange="oncheck(this)" maxlength="8"/>元
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">业务员:</div>
+					<div class="pop-form-item">
+						<input type="text" id="salesman_name" maxlength="50"readonly="readonly"  />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">团队经理:</div>
+					<div class="pop-form-item">
+						<input type="text" id="team_manager_name" 
+							maxlength="50" readonly="readonly" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">客户专员:</div>
+					<div class="pop-form-item">
+						<input type="text" id="dunning_name" 
+							maxlength="50" readonly="readonly" />
+					</div>
+				</div>
+	
+
+			<div class="center-title clearboth">
+					收款信息
+			</div>
+			<!-- 添加的虚线 -->
+			<div class="line clearboth" id="info_l3"></div>
+			
+			<div class="float-l">
+				<div class="pop-form-title">减免金额：</div>
+				<div class="pop-form-item">
+					<input type="text" id="total_derate" style="width: 120px;" value="0" onchange="oncheck(this)" maxlength="8"/>元
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">现金还款：</div>
+				<div class="pop-form-item">
+					<input type="text" id="cash_payments" value="0" style="width: 120px;"onchange="oncheck(this)" maxlength="8"/>元
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">抵款金额：</div>
+				<div class="pop-form-item">
+					<input type="text" id="mortgage_sums" value="0" readonly="readonly" style="width: 120px;"onchange="oncheck(this)" maxlength="8"/>元
+				</div>
+			</div>
+			<div class="float-l clearboth">
+				<div class="pop-form-title">抵押物详情</div>
+					<div class="center-content clearboth" style="min-width: 450px;">
+						<div class="center-txt"  style="margin-bottom: 10px;" >
+							<div id="centertoolbar1" class="minwidth400"></div>
+							<div id="grid_top"></div>
+						</div>
+					</div>
+			</div>
+			<div class="float-l clearboth">
+				<div class="pop-form-title">总计需收款：</div>
+				<div class="pop-form-item">
+					<input type="text" id="total_amount_repayment" value="0" style="width: 120px;"onchange="oncheck(this)" />元
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title"></div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title"></div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">审核人：</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title" ></div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title" ></div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title" ></div>
+			</div>
+			<div class="float-l ">
+				<div class="pop-form-title" >审核日期：</div>
+			</div>
+			<!-- 添加的虚线 -->
+			<div class="line clearboth" id="info_l3"></div>
+		</div>
+		<!-- ------------------------------------------------------------------客户信息 end------------------------------------------------------------------ -->
+		<!-- ------------------------------------------------------------------还款历史 begin------------------------------------------------------------------ -->
+		<div id="repayhistory" class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 5px; display: none;">
+			<div class="float-l clearboth  clearfix" style="margin-top: 30px; height: auto">
+				<div class="pop-form-title2" align="right"><span style="color: red;">*</span>附件：</div>
+				<div class="pop-form-item clearfix" align="right"style="height: auto">
+					<div class="pop-form-item">
+						<a class="btn" href="#" onclick="openAddAttDialog()"
+							id="uploadButton">上传附件</a>
+					</div>
+					<div class="pop-form-item clearfix" id="fileinfo"
+						style="height: auto"></div>
+				</div>
+			</div>
+		</div>
+		<!-- ------------------------------------------------------------------还款历史 end------------------------------------------------------------------ -->
+	</div>
+	<!-- 提交功能按钮区 -->
+	<div class="pop-footer5 clearboth" style="bottom: 1px;" id="tb_btn">
+	<input id="dybtn" class="btn-print"
+			onmouseover="this.className='btn-print-over'"
+			onmouseout="this.className='btn-print'"
+			onmousedown="this.className='btn-print-down'" type="button"
+			onclick="doPrint()" style="margin-right: 7px;"/><input id="tjbtn" onclick="save();" class="btn-saveT"
+			onmouseover="this.className='btn-saveT-over'"
+			onmouseout="this.className='btn-saveT'"
+			onmousedown="this.className='btn-saveT-down'" type="button"
+			style="margin-right: 7px;" /> <input id="cancelBtnId"
+			class="btn-cancel" onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" type="button"
+			onclick="closeDialog();" />
+	</div>
+	<script type="text/javascript">
+	// wms_cre_credit_head_id = "101";//问题等待解决
+	var wms_cre_credit_head_id = $.query.get("wms_cre_credit_head_id");//wms_cre_credit_head_id 为选择审批的记录id
+	var wms_fina_cre_pay_id = $.query.get('wms_fina_cre_pay_id');//贷款还款表debtor_name
+    var grid_data = {};
+  	//上传附件列表
+ 	var fileArr = [];	
+ 	var paramCtinfo={};
+	$(function(){
+			//查询终止合同信息的
+			$.getJSON(globalUtil.getTimestampUrl('/loanfina/getInfoforstop.do'),//ctinfo 查询客户信息
+			{
+				"wms_cre_credit_head_id" : wms_cre_credit_head_id
+			},
+			function(json) {	
+					//终止合同信息的赋值
+					globalUtil.setFormVal("arbdocument", json);
+					$("#total_derate").val("0");
+					$("#service_fee").val("0");
+					$("#liquidated_damages").val("0");
+					$("#cash_payments").val("0");
+					$("#total_amount_repayment").val("0");
+					$("#mortgage_sums").val("0");
+					paramCtinfo=json;
+				});
+		//初始化页面新增按钮
+		var toolbarItemData1 = [];
+		toolbarItemData1.push({
+			text : '新增',
+			click: addRows1,
+			icon : 'add'
+		});
+		toolbarItemData1.push({
+			line : true
+		});			
+		toolbarItemData1.push({
+			text : '删除',
+			click: deleteRow1,
+			icon : 'delete'
+		});
+		toolbarItemData1.push({
+			line : true
+		});
+		$("#centertoolbar1").ligerToolBar({
+			items : toolbarItemData1
+		});
+		grid_data.Rows = [{"collateral_name": "","collateral_accout": "","collateral_estimated_value": "","collateral_value": "","collateral_actual_value":""}];
+		init_top_grid();
+	});
+	//添加grid行
+	function addRows1() {
+	 	grid_top.endEdit();
+	 	var rows = {"collateral_name": "","collateral_accout": "","collateral_estimated_value": "","collateral_value": "","collateral_actual_value":""};
+		global_ligerui_extend.addRows(grid_top, rows);
+	}
+	//删除grid选中行
+	function deleteRow1() {
+	 	var manager = $("#grid_top").ligerGetGridManager();
+	    var row = manager.getSelectedRow();
+	    if (!row) {
+	        globalUtil.warnMsg(globalErrorMsg['100001']); //请选择一行记录进行删除
+	        return;
+	    }
+	    globalUtil.confirmMsg(globalErrorMsg['100016'],
+	    function(yes) {//确认删除
+	    	if(yes){
+	    		add_total(row.collateral_value);
+	    		global_ligerui_extend.deleteSelectedRow(manager);
+	    		flaga=true;
+	    	}
+	    });
+	}
+	/**
+	*关闭窗口
+	*/
+    function closeDialog() {
+    	//window.parent.search();
+		window.parent.dialog.hide();
+    }
+	//抵押物详情
+	function init_top_grid(){
+		var columns = [{
+			display: '名称',
+	        name: 'collateral_name',
+	        resizable: false,
+	        width: 21,
+	        minWidth: 120,
+	        editor: { 
+				type: 'text', 
+				maxlength:120,
+				ext:{
+					onChangeValue: function(value){ 
+					}
+				}       							
+       		}
+	    }, {
+	        display: '数量',
+	        name: 'collateral_accout',
+	        resizable: false,
+	        width: 21,
+	        minWidth: 80,
+	        editor: { 
+				type: 'text', 
+				maxlength:80,
+				ext:{
+					onChangeValue: function(value){ 
+						var textObj = this;
+						if(!globalUtil.isNum(value)){
+							textObj.setValue('');
+						}
+					}
+				}       							
+       		}	
+	    }, {
+	        display: '预估价值（元）',
+	        name: 'collateral_estimated_value',
+	        resizable: false,
+	        width: 21,
+	        minWidth: 110,
+	        editor: { 
+				type: 'text', 
+				maxlength:110,
+				ext:{
+					onChangeValue: function(value){ 
+						var textObj = this;
+						if(!globalUtil.isNum(value)){
+							textObj.setValue('');
+						}
+					}
+				}       							
+       		}
+	    }, {
+	        display: '抵押价值（元）',
+	        name: 'collateral_value',
+	        resizable: false,
+	        width: 21,
+	        minWidth: 110,
+	        editor: { 
+				type: 'text', 
+				maxlength:110,
+				ext:{
+					onChangeValue: function(value){ 
+						var textObj = this;
+						if(!globalUtil.isNum(value)){
+							textObj.setValue('0');
+							add_total();
+						}else{
+							add_total();
+						}
+					}
+				}       							
+       		}
+	    },{
+	        display: '实际价值（元）',
+	        name: 'collateral_actual_value',
+	        resizable: false,
+	        width: 21,
+	        minWidth: 110,
+	        editor: { 
+				type: 'text', 
+				maxlength:110,
+				ext:{
+					onChangeValue: function(value){ 
+						var textObj = this;
+						if(!globalUtil.isNum(value)){
+							textObj.setValue('');
+						}
+					}
+				}       							
+       		}
+	    }];
+	    grid_top = $("#grid_top").ligerGrid({
+	    	columns: columns,
+    		data:grid_data,
+    		rownumbers: true,
+    		allowUnSelectRow: false,
+    		usePager: false,
+    		width: "100%",
+    		height: 150,
+    		heightDiff: -4,
+    		enabledEdit:true
+	    });
+	}
+	//计算抵押金额
+	function add_total(val){
+		var total=0;
+		var gridLimitVal = getGridData(grid_top);
+		for(var i=0;i<gridLimitVal.length;i++){
+			total=total+parseInt(gridLimitVal[i].collateral_value|0);
+		}
+		if(val!=null&&val!=""){
+			total=total-parseInt(val);
+		}
+		if(total==0){
+			$("#mortgage_sums").val("0");
+		}else{
+			$("#mortgage_sums").val(total);
+		}
+		//计算总和
+		sumtotal();
+	}
+	//检查是否输入正确
+	function oncheck(val){
+		if($(val).val()==""||$(val).val()==null){
+			return;
+		}
+		if(!globalUtil.isNum($(val).val())){
+			if(val.id=="service_fee"){
+				globalUtil.warnMsg(globalErrorMsg['900139']);//服务费输入不正确
+				$(val).val("");
+				return;
+			}
+			if(val.id=="liquidated_damages"){
+				globalUtil.warnMsg(globalErrorMsg['900140']);//合同违约金输入不正确
+				$(val).val("");
+				return;
+			}	
+			if(val.id=="total_derate"){
+				globalUtil.warnMsg(globalErrorMsg['900141']);//减免额输入不正确
+				$(val).val("");
+				return;
+			}
+			if(val.id=="cash_payments"){
+				globalUtil.warnMsg(globalErrorMsg['900142']);//现金还款输入不正确
+				$(val).val("");
+				return;
+			}
+			if(val.id=="mortgage_sums"){
+				globalUtil.warnMsg(globalErrorMsg['900143']);//抵押金额输入不正确
+				$(val).val("");
+				return;
+			}	
+			if(val.id=="total_amount_repayment"){
+				globalUtil.warnMsg(globalErrorMsg['900144']);//总计需还款金额输入不正确
+				$(val).val("");
+				return;
+			}
+		}
+		//计算总和
+		sumtotal();
+		
+	}
+	//计算总和
+	function sumtotal(){
+		var total_derate=$("#total_derate").val();//减免额
+		var cash_payments=$("#cash_payments").val();//现金还款
+		var mortgage_sums=$("#mortgage_sums").val();//抵押金额
+		if(total_derate!=null&&cash_payments!=null&&mortgage_sums!=null&&total_derate!=""&&cash_payments!=""&&mortgage_sums!=""){
+			var total_amount_repayment=parseInt(cash_payments)+parseInt(mortgage_sums)+parseInt(total_derate);
+			$("#total_amount_repayment").val(total_amount_repayment);
+		}	
+	}
+	/*
+	获取表格数据，去除全部为空的记录
+	*/
+	function getGridData(grid){
+	 grid.endEdit();
+	 var data_all = grid.getData();
+	 var griddata = [];
+	 
+     for(var i=0;i<data_all.length;i++){
+ 		var data = data_all[i];
+ 		var isEmpty = true;
+	 		if(data){
+				for(var key in data){
+					if($.trim(key) == '' || $.trim(key) == '__status'){continue;}
+					if(!globalUtil.isEmpty(data[key])){
+						if(data[key] instanceof Date){
+							data[key]= data[key].format('yyyy-MM-dd');//格式化日期类型数据
+						}
+						isEmpty = false;
+					}
+				}
+			}
+			if(!isEmpty){
+				griddata.push(data);
+			}
+			}
+		return griddata;
+}
+	////上传附件********/////
+	var dialog_att;
+	//打开附件上传页面
+	function openAddAttDialog(){
+		var url = globalUtil.getHtml("../creditManage/addFileForCre.html");
+		dialog_att = $.ligerDialog.open({
+	        url: url,
+	        title: '上传附件',
+	        width: 650,
+	        height: globalUtil.setDialogHeight(250),
+	        onHiddenOrClose: function(){
+	        	//alert('关闭或隐藏都调用的事件!');
+	    	},
+	        isResize: false
+		});
+	}
+	//添加上传文件的信息链接
+	function addAttFile(newfileArr,objid){
+		fileArr = fileArr.concat(newfileArr);
+		var filehtml = $("#fileinfo").html();
+		for(var i=0;i<newfileArr.length;i++){
+			var nnme=newfileArr[i].attachment_new_name.replace('/','thxg1');
+			nnme=nnme.replace('/','thxg2');
+			filehtml += '<div id="delUploadDivId'+nnme+'">';
+			filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+newfileArr[i].attachment_address+'">'+newfileArr[i].attachment_old_name+'</a>';
+			filehtml += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\''+nnme+'\')"/>';
+			filehtml += '</div>'
+		}		
+		$("#fileinfo").html(filehtml);
+	}
+	//删除上传文件的信息链接
+	function deleteFile(filename){
+	   	$.ligerDialog.confirm(globalErrorMsg['100016'],
+	    function(yes) {
+	    	if (yes) {
+	    		$("#delUploadDivId"+filename).remove();
+	    		filename=filename.replace('thxg1','/');
+	    		filename=filename.replace('thxg2','/');
+	    		for(var i=0;i<fileArr.length;i++){
+	    			if(filename == fileArr[i].attachment_new_name){
+	    				fileArr.splice(i,1);
+	    				break;
+	    			}
+	    		}
+	    	}                                            
+		});
+	}
+	//获取上传附件内容，并且只能查看功能
+	function init_attr(){
+		var filehtml = '';
+		for(var i=0;i<fileArr.length;i++){
+			var nnme=fileArr[i].attachment_new_name.replace('/','thxg1');
+			nnme=nnme.replace('/','thxg2');
+			filehtml += '<div id="delUploadDivId'+nnme+'">';
+			filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+fileArr[i].attachment_address+'">'+fileArr[i].attachment_old_name+'</a>';
+			filehtml += '</div>'
+		}
+		$("#fileinfo").html(filehtml);   
+	}
+//************************************保存数据函数开始******************************************/
+	
+
+  	//保存
+    function save(approveWorkFlowVO){
+    	//还款基本信息
+		paramCtinfo.service_fee=$("#service_fee").val();//服务费
+		paramCtinfo.liquidated_damages=$("#liquidated_damages").val();//合同违约金
+		paramCtinfo.total_derate=$("#total_derate").val();//减免金额
+		paramCtinfo.cash_payments=$("#cash_payments").val();//现金还款
+		paramCtinfo.mortgage_sums=$("#mortgage_sums").val();//抵款金额
+		paramCtinfo.total_amount_repayment=$("#total_amount_repayment").val();//总计需还款
+    	//-----------------获取抵押物信息
+    	var grid_top_list=getGridData(grid_top);
+    	var wms_fina_termination_contract_mortgage_list=JSON.stringify(grid_top_list);
+    	paramCtinfo.wms_fina_termination_contract_mortgage_list=wms_fina_termination_contract_mortgage_list;
+    	//附件上传信息
+    	paramCtinfo.fileArr=JSON.stringify(fileArr);
+    	//检验输入框值是否为空
+    	/*if(paramCtinfo.service_fee===""||paramCtinfo.service_fee==null){//服务费
+    		globalUtil.warnMsg(globalErrorMsg['900145']);
+    		return;
+    	}
+		if(paramCtinfo.liquidated_damages===""||paramCtinfo.liquidated_damages==null){//合同违约金
+			globalUtil.warnMsg(globalErrorMsg['900146']);
+    		return;
+    	}
+		if(paramCtinfo.total_derate===""||paramCtinfo.total_derate==null){//减免金额
+			globalUtil.warnMsg(globalErrorMsg['900147']);
+    		return;		
+		}
+		if(paramCtinfo.cash_payments===""||paramCtinfo.cash_payments==null){//现金还款
+			globalUtil.warnMsg(globalErrorMsg['900148']);
+    		return;
+		}
+		if(paramCtinfo.mortgage_sums===""||paramCtinfo.mortgage_sums==null){//抵款金额
+			globalUtil.warnMsg(globalErrorMsg['900149']);
+    		return;
+		}
+		if(paramCtinfo.total_amount_repayment===""||paramCtinfo.total_amount_repayment==null){//总计需还款
+			globalUtil.warnMsg(globalErrorMsg['900150']);
+    		return;
+		}*/
+		/*for(var i=0;i<grid_top_list.length;i++){
+			if(grid_top_list[i].collateral_name===""||grid_top_list[i].collateral_name==null){//名称
+				globalUtil.warnMsg(globalErrorMsg['900151']);
+	    		return;
+			}
+			if(grid_top_list[i].collateral_accout===""||grid_top_list[i].collateral_accout==null){//数量
+				globalUtil.warnMsg(globalErrorMsg['900152']);
+	    		return;
+			}
+			if(grid_top_list[i].collateral_estimated_value===""||grid_top_list[i].collateral_estimated_value==null){//预估价值（元）
+				globalUtil.warnMsg(globalErrorMsg['900153']);
+	    		return;
+			}
+			if(grid_top_list[i].collateral_value===""||grid_top_list[i].collateral_value==null){//抵押价值（元）
+				globalUtil.warnMsg(globalErrorMsg['900154']);
+	    		return;			
+			}
+			if(grid_top_list[i].collateral_actual_value===""||grid_top_list[i].collateral_actual_value==null){//实际价值（元）
+				globalUtil.warnMsg(globalErrorMsg['900155']);
+	    		return;
+			}	
+		}*/
+		if(fileArr.length<1){
+			globalUtil.warnMsg(globalErrorMsg['900156']);//附件
+    		return;
+		}
+		//if((parseFloat($("#un_pay_principal").val()|0)+parseFloat($("#un_pay_interest").val()|0))>(parseFloat($("#cash_payments").val()|0)+parseFloat($("#mortgage_sums").val()|0))){
+		//	globalUtil.warnMsg(globalErrorMsg['600111']);//未还本金利息需小于总额
+    	//	return;
+		//}
+		paramCtinfo.total_late_fee=paramCtinfo.cur_late_fee;
+		$.post(globalUtil.getTimestampUrl("/loanfina/wmsfinaterminationcontractsave.do"), paramCtinfo,
+			function(data) {
+       			if (data === 'success') {
+           	 		globalUtil.successMsg(globalErrorMsg['100002'],
+           			 function(){            		 		
+               			refreshAndClosePage();
+           	 		});//保存成功
+           	 
+           		}else {
+               		globalUtil.errorMsg(globalErrorMsg['100012']); //保存失败
+          		}
+        });
+    }
+/************************************************保存数据函数结束****************************/
+ 	//关闭本页并刷新查询页面
+    function refreshAndClosePage(){   
+    	window.parent.location.reload();
+    	closePage();
+    }
+ 	//关闭页面
+    function closePage(){
+    	window.parent.dialog.hide();
+    }
+    
+	 //页面切换
+     function changeTab(id) {
+   		var arbdocument = document.getElementById("arbdocument"); //提前还款结清单tab
+   		var repayhistory = document.getElementById("repayhistory"); //还款历史tab
+   		
+
+   		if (id == 'arbdocument') {
+   			document.getElementById("tabbody1").className = "tabbody1";
+   			document.getElementById("tabbody2").className = "tabbody2";
+   			
+   			arbdocument.style.display = '';
+   			repayhistory.style.display = 'none';
+   			
+   		} else if (id == 'repayhistory') {
+   			document.getElementById("tabbody1").className = "tabbody2";
+   			document.getElementById("tabbody2").className = "tabbody1";
+   		
+   			arbdocument.style.display = 'none';
+   			repayhistory.style.display = '';
+   		} 
+   	}
+     //实现页面打印页面
+     function doPrint(){
+     	//1.移除页面属性
+     	$("#pop-center").attr("class","pop-center");
+     	//3.移除打印div  display: none;
+     	$("#tb_btn").css("display","none");
+     	$("#centertoolbar1").css("display","none");
+     	//2.执行打印gongneng
+     	document.execCommand("print");
+     	//3.回复原有的样式
+     	$("#pop-center").attr("class","pop-center overflow-au");
+     	//打印div  display: "";
+     	$("#tb_btn").css("display","");
+     	$("#centertoolbar1").css("display","");
+     }
+	    
+</script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveProtocolRenewalDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveProtocolRenewal">
+		select
+        				wms_inve_protocol_renewal_id,
+        				wms_inve_transa_id,
+        				wms_inve_transa_prod_id,
+        				wms_inve_pruduct_category_id,
+        				wms_inve_customer_id,
+        				bill_code,
+        				cus_name,
+        				id_card,
+        				category_name,
+        				product_deadline,
+        				product_account,
+						date_format(atic_renewal_date,'%Y-%m-%d') as atic_renewal_date_str,
+        				atic_renewal_date,
+        				category_type,
+        				enable_flag
+        	from
+        		wms_inve_protocol_renewal
+        	where
+        				wms_inve_protocol_renewal_id = #{wms_inve_protocol_renewal_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_protocol_renewal_id) as count
+		from wms_inve_protocol_renewal
+		<where>
+			<if test="cus_name != null">
+				and cus_name like #{cus_name}
+			</if>
+			<if test="category_name != null">
+				and category_name = #{category_name}
+			</if>
+			<if test="id_card != null">
+				and id_card = #{id_card}
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+			select 
+				r.wms_inve_protocol_renewal_id,
+				r.wms_inve_transa_id,
+				r.wms_inve_transa_prod_id,
+				r.wms_inve_pruduct_category_id,
+				r.wms_inve_customer_id,
+				r.bill_code,
+				r.cus_name,
+				r.id_card,
+				r.category_name,
+				r.product_deadline,
+				r.product_account,
+				date_format(r.atic_renewal_date,'%Y-%m-%d') as atic_renewal_date_str,
+				r.atic_renewal_date,
+				r.category_type,
+				r.enable_flag,
+				(select category_interest_pay_method from  wms_inve_pruduct_category where wms_inve_pruduct_category_id=r.wms_inve_pruduct_category_id limit 1) as category_interest_pay_method
+		from wms_inve_protocol_renewal r
+		<where>
+				r.enable_flag=1
+			<if test="cus_name != null">
+				and r.cus_name like #{cus_name}
+			</if>
+			<if test="category_name != null">
+				and r.category_name = #{category_name}
+			</if>
+			<if test="id_card != null">
+				and r.id_card = #{id_card}
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveProtocolRenewal" useGeneratedKeys="true" keyProperty="wms_inve_protocol_renewal_id">
+		INSERT INTO wms_inve_protocol_renewal
+		(
+				wms_inve_protocol_renewal_id,
+
+				wms_inve_transa_id,
+
+				wms_inve_transa_prod_id,
+
+				wms_inve_pruduct_category_id,
+
+				wms_inve_customer_id,
+
+				bill_code,
+
+				cus_name,
+
+				id_card,
+
+				category_name,
+
+				product_deadline,
+
+				product_account,
+
+				atic_renewal_date,
+
+				category_type,
+
+				enable_flag
+		)
+		VALUES
+		(
+				#{wms_inve_protocol_renewal_id},
+				#{wms_inve_transa_id},
+				#{wms_inve_transa_prod_id},
+				#{wms_inve_pruduct_category_id},
+				#{wms_inve_customer_id},
+				#{bill_code},
+				#{cus_name},
+				#{id_card},
+				#{category_name},
+				#{product_deadline},
+				#{product_account},
+				#{atic_renewal_date},
+				#{category_type},
+				#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveProtocolRenewal">
+		update wms_inve_protocol_renewal
+		<set>
+					<if test="wms_inve_protocol_renewal_id != null">
+						 wms_inve_protocol_renewal_id = #{wms_inve_protocol_renewal_id},
+					</if>
+					<if test="wms_inve_transa_id != null">
+						 wms_inve_transa_id = #{wms_inve_transa_id},
+					</if>
+					<if test="wms_inve_transa_prod_id != null">
+						 wms_inve_transa_prod_id = #{wms_inve_transa_prod_id},
+					</if>
+					<if test="wms_inve_pruduct_category_id != null">
+						 wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id},
+					</if>
+					<if test="wms_inve_customer_id != null">
+						 wms_inve_customer_id = #{wms_inve_customer_id},
+					</if>
+					<if test="bill_code != null">
+						 bill_code = #{bill_code},
+					</if>
+					<if test="cus_name != null">
+						 cus_name = #{cus_name},
+					</if>
+					<if test="id_card != null">
+						 id_card = #{id_card},
+					</if>
+					<if test="category_name != null">
+						 category_name = #{category_name},
+					</if>
+					<if test="product_deadline != null">
+						 product_deadline = #{product_deadline},
+					</if>
+					<if test="product_account != null">
+						 product_account = #{product_account},
+					</if>
+					<if test="atic_renewal_date != null">
+						 atic_renewal_date = #{atic_renewal_date},
+					</if>
+					<if test="category_type != null">
+						 category_type = #{category_type},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+	   </set>
+		 where 
+    				wms_inve_protocol_renewal_id = #{wms_inve_protocol_renewal_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveProtocolRenewal" resultType="WmsInveProtocolRenewal">
+		select 
+				wms_inve_protocol_renewal_id,
+				wms_inve_transa_id,
+				wms_inve_transa_prod_id,
+				wms_inve_pruduct_category_id,
+				wms_inve_customer_id,
+				bill_code,
+				cus_name,
+				id_card,
+				category_name,
+				product_deadline,
+				product_account,
+				date_format(atic_renewal_date,'%Y-%m-%d') as atic_renewal_date_str,
+				atic_renewal_date,
+				category_type,
+				enable_flag
+		from
+		wms_inve_protocol_renewal
+		<where>
+					<if test="wms_inve_protocol_renewal_id != null">
+						and wms_inve_protocol_renewal_id = #{wms_inve_protocol_renewal_id}
+					</if>
+					<if test="wms_inve_transa_id != null">
+						and wms_inve_transa_id = #{wms_inve_transa_id}
+					</if>
+					<if test="wms_inve_transa_prod_id != null">
+						and wms_inve_transa_prod_id = #{wms_inve_transa_prod_id}
+					</if>
+					<if test="wms_inve_pruduct_category_id != null">
+						and wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id}
+					</if>
+					<if test="wms_inve_customer_id != null">
+						and wms_inve_customer_id = #{wms_inve_customer_id}
+					</if>
+					<if test="bill_code != null">
+						and bill_code = #{bill_code}
+					</if>
+					<if test="cus_name != null">
+						and cus_name = #{cus_name}
+					</if>
+					<if test="id_card != null">
+						and id_card = #{id_card}
+					</if>
+					<if test="category_name != null">
+						and category_name = #{category_name}
+					</if>
+					<if test="product_deadline != null">
+						and product_deadline = #{product_deadline}
+					</if>
+					<if test="product_account != null">
+						and product_account = #{product_account}
+					</if>
+					<if test="atic_renewal_date != null">
+						and atic_renewal_date = #{atic_renewal_date}
+					</if>
+					<if test="category_type != null">
+						and category_type = #{category_type}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_inve_protocol_renewal_id != #{wms_inve_protocol_renewal_id}
+					</if>
+		</where>
+	</select>
+</mapper> 

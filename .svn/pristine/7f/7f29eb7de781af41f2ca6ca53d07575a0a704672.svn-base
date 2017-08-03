@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.sysmanage.persist.WmsInveTaxpointRulesDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveTaxpointRules">
+		select
+        				wms_inve_taxpoint_rules_id,
+        				single_start,
+        				single_end,
+        				tax_coefficient,
+        				tax_fixed,
+        				enable_flag,
+						date_format(create_datetime,'%Y-%m-%d %H:%i:%s') as create_datetime_str,
+        				create_datetime,
+        				create_user_id
+        	from
+        		wms_inve_taxpoint_rules
+        	where
+        				wms_inve_taxpoint_rules_id = #{wms_inve_taxpoint_rules_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_taxpoint_rules_id) as count
+		from wms_inve_taxpoint_rules
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_inve_taxPoint_rules_id,
+				single_start,
+				single_end,
+				tax_coefficient,
+				tax_fixed,
+				enable_flag,
+				date_format(create_datetime,'%Y-%m-%d %H:%i:%s') as create_datetime,
+				create_datetime,
+				create_user_id
+		from wms_inve_taxpoint_rules
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveTaxpointRules" useGeneratedKeys="true" keyProperty="wms_inve_taxpoint_rules_id">
+		INSERT INTO wms_inve_taxpoint_rules
+		(
+				wms_inve_taxpoint_rules_id,
+
+				single_start,
+
+				single_end,
+
+				tax_coefficient,
+
+				tax_fixed,
+
+				enable_flag,
+
+				create_datetime,
+
+				create_user_id
+		)
+		VALUES
+		(
+				#{wms_inve_taxpoint_rules_id},
+				#{single_start},
+				#{single_end},
+				#{tax_coefficient},
+				#{tax_fixed},
+				#{enable_flag},
+				#{create_datetime},
+				#{create_user_id}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveTaxpointRules">
+		update wms_inve_taxpoint_rules
+		<set>
+					<if test="wms_inve_taxpoint_rules_id != null">
+						 wms_inve_taxpoint_rules_id = #{wms_inve_taxpoint_rules_id},
+					</if>
+					<if test="single_start != null">
+						 single_start = #{single_start},
+					</if>
+					<if test="single_end != null">
+						 single_end = #{single_end},
+					</if>
+					<if test="tax_coefficient != null">
+						 tax_coefficient = #{tax_coefficient},
+					</if>
+					<if test="tax_fixed != null">
+						 tax_fixed = #{tax_fixed},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+					<if test="create_datetime != null">
+						 create_datetime = #{create_datetime},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+	   </set>
+		 where 
+    				wms_inve_taxpoint_rules_id = #{wms_inve_taxpoint_rules_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveTaxpointRules" resultType="WmsInveTaxpointRules">
+		select 
+				wms_inve_taxpoint_rules_id,
+				single_start,
+				single_end,
+				tax_coefficient,
+				tax_fixed,
+				enable_flag,
+				date_format(create_datetime,'%Y-%m-%d %H:%i:%s') as create_datetime_str,
+				create_datetime,
+				create_user_id
+		from
+		wms_inve_taxpoint_rules
+		<where>
+					<if test="wms_inve_taxpoint_rules_id != null">
+						and wms_inve_taxpoint_rules_id = #{wms_inve_taxpoint_rules_id}
+					</if>
+					<if test="single_start != null">
+						and single_start = #{single_start}
+					</if>
+					<if test="single_end != null">
+						and single_end = #{single_end}
+					</if>
+					<if test="tax_coefficient != null">
+						and tax_coefficient = #{tax_coefficient}
+					</if>
+					<if test="tax_fixed != null">
+						and tax_fixed = #{tax_fixed}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+					<if test="create_datetime != null">
+						and create_datetime = #{create_datetime}
+					</if>
+					<if test="create_user_id != null">
+						and create_user_id = #{create_user_id}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_inve_taxpoint_rules_id != #{wms_inve_taxpoint_rules_id}
+					</if>
+		</where>
+	</select>
+	<!-- 根据主键删除 -->
+	<delete id="delete" parameterType="String">
+		delete from wms_inve_taxpoint_rules 
+		where wms_inve_taxpoint_rules_id = #{wms_inve_taxpoint_rules_id}
+	</delete>
+	<!-- 从字典中查询出固定值 -->
+	<select id="getTax_fixed" resultType="java.util.HashMap">
+		select value_code from 
+		WMS_SYS_DICT_DATA 
+		WHERE wms_sys_dict_id = 82
+	</select>
+	<!-- 清空表中所有信息 -->
+	<delete id="clear">
+		delete from wms_inve_taxpoint_rules
+	</delete>
+</mapper> 

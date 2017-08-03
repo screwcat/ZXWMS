@@ -1,0 +1,456 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script src="../../js/notice_pop.js" type="text/javascript"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/media/js/ZeroClipboard.js"></script>
+<title>房产初评</title>
+</head>
+<body style="overflow-y: hidden;">
+    <div class="l-panel-search clearfix centertoolbar-w">
+        <div id="searchbar" class="l-searchbar clearfix">
+            <!--查询条件-->
+            <div class="l-panel-search-cond clearfix">
+                <div class="float-l clearboth">
+                    <div class="l-panel-search-title">单据编号：</div>
+                    <div class="l-panel-search-item">
+                        <input type="text" id="bill_code" />
+                    </div>
+                </div>
+                <div class="float-l" style="margin-left: -15px;">
+                    <div class="l-panel-search-title">业务员/工号：</div>
+                    <div class="l-panel-search-item">
+                        <input type="text" id="salesman_name_str" />
+                    </div>
+                </div>
+                <div class="float-l">
+                    <div class="l-panel-search-title">申请时间：</div>
+                    <div class="l-panel-search-item">
+                        <input id="create_timestamp_start" class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+							style="width: 133px; vertical-align: top;" />
+                    </div>
+                </div>
+                <div class="float-l" style="margin-left: 22px;">
+                    <div class="l-panel-search-title">至</div>
+                    <div class="l-panel-search-item" style="margin-left: 31px;">
+                        <input id="create_timestamp_end" class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+							style="width: 133px; vertical-align: top;" />
+                    </div>
+                </div>
+                <div class="float-l clearboth">
+                    <div class="l-panel-search-title">客户姓名：</div>
+                    <div class="l-panel-search-item">
+                        <input type="text" id="customer_name" />
+                    </div>
+                </div>
+                <div class="float-l">
+                    <div class="l-panel-search-title">联系电话：</div>
+                    <div class="l-panel-search-item">
+                        <input type="text" id="mobile_telephone" />
+                    </div>
+                </div>
+                <div class="float-l" style="margin-left: 24px;">
+					<div class="l-panel-search-title">城市：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="salesman_city_code" />
+					</div>
+				</div>
+				<div class="float-l" style="margin-left: 5px;">
+					<div class="l-panel-search-title">产品种类：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="mort_flag" />
+					</div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <div id="centertoolbar" class="minwidth400"></div>
+    <div id="grid"></div>
+    <!-- 工具条初始化 -->
+    <script type="text/javascript">
+        var grid;
+        var toolbar;
+        var params;
+        var dialog;
+        var columns;
+        $(function() {
+        	init_dept_city_sel();
+            initGrid();
+            var toolbarItemData = [];
+            toolbarItemData.push({
+                text: '评估',
+                click: assessment,
+                icon: 'approve'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+            /* toolbarItemData.push({
+                text: '退件',
+                click: toBack,
+                icon: 'return'
+            });
+            toolbarItemData.push({
+                line: true
+            }); */
+            toolbarItemData.push({
+                text: '查询',
+                click:search,
+                icon: 'search'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+            toolbarItemData.push({
+                text: '清空',
+                click: clear,
+                icon: 'empty'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+            toolbarItemData.push({
+                text: '导出Excel',
+                icon: 'export',
+                id: 'ToolTables_XLS_2'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+            $("#centertoolbar").ligerToolBar({
+                 items: toolbarItemData
+            });
+            search();
+            registerCvs();
+            init_mort_flag_sel();
+        });
+        
+        //导出表格
+        function registerCvs() {
+            var moviePath = "../../js/media/swf/copy_csv_xls_pdf.swf";
+            var fileName = '房产初评信息.xls';
+            var titleJson = '';
+            var dataJson = '';
+            var obj = $("div[toolbarid='ToolTables_XLS_2']")[0];//获取菜单对象
+            var getDataFun = function(){
+                var text = {};
+                initParams();
+                //实现导出的时候，规定导出的具体内容
+                text.title = {
+                	'bill_code':'单据编号',
+                	'create_timestamp':'申请时间',
+                	'mort_flag_name':'产品种类',
+                	'customer_name':'客户姓名',
+                	'mobile_telephone1':'联系电话',
+                	'credit_limit':'贷款金额(万元)',
+                    'salesman_name_str':'业务员/工号',
+                    'city':'城市',
+                    'bill_status_name':'单据状态'
+                };//定义需要导出的列名以及列名与数据的对应关系
+                var json = globalUtil.syncGetJson("/loanreview/housepreliminaryassessmentlistexport.do?sortname=IFNULL(t3.approval_time,t1.create_timestamp)&sortorder=desc", params);//同步获取需要导出的数据内容
+                text.data = json.Rows;
+                return text;
+            };
+            registerXlsFlashBtn(moviePath, fileName, titleJson, dataJson, obj, getDataFun);
+        }
+        
+        //清空所填写内容
+        function clear() {
+           $('#searchbar input').val('');
+           $("#salesman_city_code").val("请选择");
+           global_ligerui_extend.setComboxVal("salesman_city_code", "-1");
+           global_ligerui_extend.setComboxVal("mort_flag", "-1");
+           search();
+        }
+
+        //表格初始化
+        function initGrid() {
+            columns = [{
+                display: '单据编号',
+                name: 'bill_code',
+                width: 130,
+                minWidth: 130,
+                //添加超链接的东西
+                render: function (rowdata, rowindex, value) { 
+                    return '<a href="javascript:creditInfo(' + rowdata.wms_cre_credit_head_id + ',' + rowdata.version_number + ');" style="color:#056AFF;text-decoration: none;">' + value + '</a>';
+                }
+            }, {
+                display: '申请时间',
+                name: 'create_timestamp',
+                width: 130,
+                minWidth: 130
+            }, {
+                display: '产品种类',
+                name: 'mort_flag_name',
+                width: 100,
+                minWidth: 100,
+             	isSort:false
+            }, {
+                display: '客户姓名',
+                name: 'customer_name',
+                width: 120,
+                minWidth: 120
+            }, {
+                display: '联系电话',
+                width: 180,
+                minWidth: 180,
+                render: function (rowdata, rowindex, value) { 
+                    return rowdata.mobile_telephone1 + (rowdata.mobile_telephone2 == undefined || rowdata.mobile_telephone2 == '' || rowdata.mobile_telephone2 == '无' || rowdata.mobile_telephone2 == '没有' ? '' : ' / ' + rowdata.mobile_telephone2);
+                }
+            }, {
+                display: '贷款金额(万元)',
+                name: 'credit_limit',
+                width: 120,
+                minWidth: 120
+            }, {
+                display: '业务员/工号',
+                name: 'salesman_name_str',
+                width: 100,
+                minWidth: 100   
+            }, {
+                display: '城市',
+                name: 'city',
+                width: 100,
+                minWidth: 100,
+                isSort: false
+            }, {
+                display: '单据状态',
+                name: 'bill_status_name',
+                width: 100,
+                minWidth: 100
+            }, {
+                display: '流程历程',
+                width: 100,
+                minWidth: 100,
+                //添加超链接
+                render: function (rowdata, rowindex, value) { 
+                    return '<a href="javascript:approvalProcess(' + rowdata.wms_cre_credit_head_id + ');" style="color:#056AFF;text-decoration: none;">' + "查看" + '</a>';
+                }
+            }];
+            
+            grid = $("#grid").ligerGrid({
+                columns: columns,
+                url: global_param.context_name + '/loanreview/housepreliminaryassessmentlist.do',
+                sortName: 'IFNULL(t3.approval_time,t1.create_timestamp)', // 排序列名
+                sortOrder: 'desc', // 排序方式
+                rownumbers: true,
+                allowUnSelectRow: true,
+                usePager: true,
+                enabledSort: true,
+                width: '100%',
+                height: '95%',
+                heightDiff: -4,
+                rowAttrRender: function(rowdata, rowindex) {
+                    if (rowdata.is_review_back == '1' && rowdata.water_appro_result != null) {
+                        return "style='color:green'";
+                    } else if(rowdata.is_link_repeat == '1') {
+                        return "style='color:red'";
+                    } 
+                },
+                parms: {
+                    _filterParms: -1
+                }
+            });
+        } 
+        
+        //查看流程历程
+        var rowsled;//行对象       
+        function approvalProcess(wms_cre_credit_head_id) {
+            var url = globalUtil.getHtml("../creditManage/houseApprovalProcess.html?wms_cre_credit_head_id=" + wms_cre_credit_head_id);
+            dialog = $.ligerDialog.open({
+                url:url,
+                title: '查看',
+                width: 1000,
+                height: globalUtil.setDialogHeight(500),
+                onHiddenOrClose: function() {
+                },
+                isResize: false
+            });
+        }
+        
+        //评估
+        var title_val;
+        function assessment() {
+        	//判断如果没有选择任何审批人，不允许跳出审批页面。
+            var row = grid.getSelectedRow();
+            if(row == null) {
+                globalUtil.warnMsg(globalErrorMsg['100031']);//请选择一行记录
+                return;
+            }else {
+                rowsled = row;
+                /* //获取taskid
+        		var taskinfo = globalUtil.getTaskInfo(row.wms_cre_credit_head_id,'初评预估');
+    			var taskId=taskinfo.taskId;
+//     			if(taskId == null || taskId == 'undefined') {
+//     				 globalUtil.warnMsg('当前单据异常！');
+//                      return;
+//     			} */
+				var mort_flag_name="";
+				title_val='房产评估单';
+				if(row.mort_flag_name!=undefined&&row.mort_flag_name!=""&&row.mort_flag=="2"){
+					 title_val='房产评估单'+"  ##"+row.mort_flag_name+"##"; 
+					 mort_flag_name=row.mort_flag_name;
+				}
+                var url = globalUtil.getHtml("housePreliminaryAssessmentbill.html?wms_cre_credit_head_id=" + row.wms_cre_credit_head_id  + '&customer_name=' + row.customer_name + '&wms_cre_credit_line_customer_change_head_id=' + row.wms_cre_credit_line_customer_change_head_id+ '&mort_flag_name=' + mort_flag_name);
+                dialog = $.ligerDialog.open({
+                    url: url,
+                    title: title_val,
+                    width: 1100,
+                    height: globalUtil.setDialogHeight(850),
+                    onHiddenOrClose: function() {
+                    },
+                    isResize: false
+                }); 
+            }
+        }
+        
+        //贷款详细信息
+        function creditInfo(wms_cre_credit_head_id, version_number) {
+        	var url = "";
+        	//if(version_number == "3") {
+        		url = globalUtil.getHtml("creditManage/houseLoanApply.html?wms_cre_credit_head_id=" + wms_cre_credit_head_id + "&type=1");
+        	/* } else {
+        		url = globalUtil.getHtml("creditManage/checkHouseCredit.html?wms_cre_credit_head_id=" + wms_cre_credit_head_id + "&pageType=ck");
+        	} */
+            globalUtil.openTab(10001, "客户贷款详细信息", url, false);
+        }
+        
+        //获取查询表单数据
+        function initParams() {
+            params = globalUtil.getFormParam("searchbar");
+            if(params.salesman_city_code == '-1') {
+            	params.salesman_city_code = '';
+            }
+        	if(params.mort_flag == '-1'){
+            	params.mort_flag = '';
+            }	
+        }
+        
+        //查询
+        var search = function() {
+            initParams();
+            global_ligerui_extend.search(grid, params);
+        }
+        
+        //退件
+        function toBack() {
+            //判断如果没有选择任何审批人，不允许跳出审批页面。
+            var row = grid.getSelectedRow();
+            rowsled = row;
+            if(row == null) {
+                globalUtil.warnMsg(globalErrorMsg['400105']);//请选择一行记录进行退件
+                return;
+            } else if(row.version_number != '1') {
+           		 globalUtil.warnMsg('当前单据不能进行当前操作！');
+                return;
+            } else {
+                //流程发布实现作为校验 验证是否是老流程还是新流程
+                var value = row.create_timestamp;
+                var year = value.substring(0, 4);
+                var month = value.substring(5, 7);
+                var day = value.substring(8, 10);
+                var temp_date = new Date(year, parseFloat(month) - 1, parseFloat(day));
+                var date2_str = global_param.judge_return;
+                var year2 = date2_str.substring(0, 4);
+                var month2 = date2_str.substring(5, 7);
+                var day2 = date2_str.substring(8, 10);
+                var temp_date_2 = new Date(year2, parseFloat(month2) - 1, parseFloat(day2));
+                if(temp_date < temp_date_2) {
+                    globalUtil.warnMsg(globalErrorMsg['400108']);//该条单据为旧数据,无退件功能
+                    return;
+                }else {
+                    rowsled = row;
+/*                     //获取taskid
+            		var taskinfo = globalUtil.getTaskInfo(row.wms_cre_credit_head_id, '初评预估');
+        			var taskId = taskinfo.taskId;
+        			if(taskId == null || taskId == 'undefined') {
+        				 globalUtil.warnMsg('当前单据异常！');
+                         return;
+        			} */
+                    var url = globalUtil.getHtml("toBackPage.html?wms_cre_credit_head_id=" + row.wms_cre_credit_head_id);
+                    dialog = $.ligerDialog.open({
+                        url:url,
+                        title: '退件',
+                        width: 800,
+                        height: globalUtil.setDialogHeight(250),
+                        onHiddenOrClose: function() {
+                        },
+                        isResize: false
+                    }); 
+                }
+            }
+        }
+        
+        function save(advice, taskId, wms_cre_credit_head_id, dialog) {
+            var paramJson = {};
+            paramJson.advice = advice;
+            paramJson.taskId = taskId;
+            paramJson.wms_cre_credit_head_id = wms_cre_credit_head_id;
+            paramJson.edition_num = rowsled.edition_num;
+            paramJson.debtkey = "3";
+            $.post(globalUtil.getTimestampUrl("/loanreview/watertobackforfd.do"), paramJson,
+				function(data) {
+				    if (data === 'success') {
+				        globalUtil.successMsg(globalErrorMsg['100037'],
+					        function() {                         
+					            dialog.hide();
+					            search();
+					        }
+				        );//退件成功                                                
+				    }else {
+				        globalUtil.errorMsg(globalErrorMsg['100038']); //退件失败
+				    }
+                }
+            ); 
+        }
+    	
+    	//初始化城市
+      	function init_dept_city_sel(json) {
+      		var dept_city_sel_params = {
+  				dest_url: '/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=25',
+  				t_col_name: 'salesman_city_code',
+  				valueField: 'value_code',   //下拉框value对应的值，默认为id
+  				textField: 'value_meaning',    //下拉框text对应的值，默认为text
+  				input_width: 133,
+  				def_val: 'first'
+			};
+      		global_ligerui_extend.initCombox("salesman_city_code", null, dept_city_sel_params);
+      		if(json) {
+    			//把值装载设定
+    			global_ligerui_extend.syncRequestInitComboxData(json, "salesman_city_code");
+    			//让其不可编辑
+    			global_ligerui_extend.disabledCombox("salesman_city_code");
+    		} else {			
+    		    global_ligerui_extend.initComboxDefVal("salesman_city_code");
+    		}
+      	}
+   	 	//初始产品种类
+      	function init_mort_flag_sel(json) {
+      		var dept_city_sel_params = {
+  				dest_url: '/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=147',
+  				t_col_name: 'mort_flag',
+  				valueField: 'value_code',   //下拉框value对应的值，默认为id
+  				textField: 'value_meaning',    //下拉框text对应的值，默认为text
+  				input_width: 133,
+  				def_val: 'first'
+			};
+      		global_ligerui_extend.initCombox("mort_flag", null, dept_city_sel_params);
+      		if(json) {
+    			//把值装载设定
+    			global_ligerui_extend.syncRequestInitComboxData(json, "mort_flag");
+    			//让其不可编辑
+    			global_ligerui_extend.disabledCombox("mort_flag");
+    		} else {			
+    		    global_ligerui_extend.initComboxDefVal("mort_flag");
+    		}
+      	}
+</script>
+</body>
+</html>

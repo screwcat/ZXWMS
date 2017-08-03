@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script type="text/javascript" charset="utf-8"
+	src="../../js/media/js/ZeroClipboard.js"></script>
+<title>增益券实体编码</title>
+<script type="text/javascript">
+		var wms_inve_transa_id =$.query.get("wms_inve_transa_id");
+	$(function() {
+		initInfo();		
+	})
+	
+	//初始化增益券信息
+	function initInfo(){
+		$.ajax({
+			type : 'post',
+			url : globalUtil.getTimestampUrl('/inve/selectWmsInveTransaById.do'),
+			data : {
+				wms_inve_transa_id : wms_inve_transa_id
+			},
+			success : function(json){
+				$("#cus_name_str").text(json.cus_name_str+'：');
+				$("#closing_date").text(json.closing_date);
+				$("#org_product_account").text(json.org_product_account+'万');
+				$("#annualized_income_holder").text(json.annualized_income_holder+'%');
+				$("#id_card_str").text(json.id_card_str);
+				
+			}
+			
+		})
+		
+	}
+	
+	
+	//不发放增益券
+	function close(){
+		globalUtil.confirmMsg("您确定不发放增益券吗？",'提示',function(y){
+			if(y){
+				closeDialog();
+			}
+		}); 
+		
+	}
+	
+	//关闭dialog
+	function closeDialog(){
+		window.parent.dialog.close();
+	}
+	//保存数据
+	function saveGainGouponInfo(){
+		var gain_coupon_code = $("#gain_coupon_code").val();
+		//非空校验
+		if(gain_coupon_code==null || gain_coupon_code==''){
+			globalUtil.warnMsg("请输入增益券编码!"); 
+			return false;
+		}
+		//规范校验 
+		var reg = /^[a-zA-Z]{2}[0-9]{6}$/;
+		var len = gain_coupon_code.length;
+		if(len!=8 || !reg.test(gain_coupon_code)){
+			globalUtil.warnMsg("录入编码不符合规则，请按正确规则录入！<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;正确示例：SY171000"); 
+			$(".l-dialog-content").css({"height":"70px"})
+			return false;
+		}
+		//重复校验 
+		if(!validateGainCouponCode(gain_coupon_code)){
+			globalUtil.warnMsg("增益券编码重复，请重新输入编码！");
+			return false;
+		}
+		
+		$.ajax({
+			type : 'post',
+			url : globalUtil.getTimestampUrl('/inve/saveGainGouponInfo.do'),
+			data : {
+				wms_inve_transa_id_holder : wms_inve_transa_id,
+				gain_coupon_code : gain_coupon_code
+			},
+			success : function(json){
+				if(json>0){
+					globalUtil.alertMsg("增益券发放成功",function(){
+						closeDialog();
+					});
+				}else{
+					globalUtil.warnMsg("增益券发放失败");
+				}
+				$(".l-dialog-close").hide();
+				$(".l-dialog-close-over").hide();
+			}
+			
+		})
+	}
+	
+	//增益券编号重复校验
+	function validateGainCouponCode(code){
+		var fl = true;
+		$.ajax({
+			type : 'post',
+			url : globalUtil.getTimestampUrl('/inve/validateGainCouponCode.do'),
+			data : {
+				gain_coupon_code : code
+			},
+			async : false,
+			success : function(json){
+				if(json>0){
+					fl = false;
+				}
+			}
+		})
+		return fl;
+	}
+	
+	
+	
+</script>
+<style type="text/css">
+	.over{overflow-y:visible;}
+	td{height:50px;}
+	.up_div{width:500px;height:350px;}
+	.down_div{width:500px;height:30px;text-align:right;padding-left:390px;}
+	.body_div{padding:20px 0 0 50px;}
+	.align_r{text-align:right;padding-right:10px;}
+	
+</style>
+</head>
+<body class="over">
+<div  class="body_div over">
+<div class="up_div over">
+	<table>
+		<tr>
+			<td class="align_r"  id="cus_name_str"></td>
+			<td id="id_card_str" ></td>
+		</tr>
+		<tr>
+			<td class="align_r"  >截止日期：</td>
+			<td id="closing_date" ></td>
+		</tr>
+		<tr>
+			<td class="align_r"  >年化金额：</td>
+			<td id="org_product_account"></td>
+		</tr>
+		<tr>
+			<td class="align_r"  >年化利率：</td>
+			<td id="annualized_income_holder"></td>
+		</tr>
+		<tr>
+			<td  class="align_r" ><span style='color:red'>*</span>增益券编码：</td>
+			<td ><input type="text" id="gain_coupon_code" name="gain_coupon_code"></td>
+		</tr>
+	</table>
+</div>
+
+	<div class=" down_div pop-footer5" style=""> 
+	    <a href="javascript:saveGainGouponInfo()" class="btnType1 btnSize1 " style="float:left;">发放增益券</a> 
+	    <a href="javascript:close();" class="btnType1 btnSize1 "style="float:left;margin-left:15px;">不发放增益券</a> 
+	</div>
+</div>
+
+</body>
+</html>

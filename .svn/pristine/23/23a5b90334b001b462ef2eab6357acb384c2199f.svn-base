@@ -1,0 +1,334 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script type="text/javascript" charset="utf-8"
+	src="../../js/media/js/ZeroClipboard.js"></script>
+<title>业务管理>绩效工资审核</title>
+</head>
+<!--style="overflow-y:hidden;"主要实现边框右边无滚动条  -->
+<body style="overflow-y: hidden;">
+	<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<!--查询条件-->
+			<div class="l-panel-search-cond clearfix">
+			
+				<div class="float-l">
+					<div class="l-panel-search-title">所属团队：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="dept_id" />
+					</div>
+				</div>
+				
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;部门经理：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="dept_manager_name" />
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	<div id="centertoolbar" class="minwidth400"></div>
+	<div id="grid"></div>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+        var grid;
+		var toolbar;
+		var params;
+		var columns;
+		
+		//点击列表行所对应数据
+		var selectdate;
+				
+		var menu_id = $.query.get('menu_id');
+        $(function() {
+        	        	
+        	var toolbarItemData = [];
+        	initGrid(); 
+        	
+        	toolbarItemData.push({
+                text: '审核',
+                click: sdupdate,
+                icon: 'modify'
+            });
+        	toolbarItemData.push({
+                line: true
+            });
+        	
+            toolbarItemData.push({
+                text: '查看',
+                click: viewInfo,
+                icon: 'redeem'
+            });
+        	
+            toolbarItemData.push({
+                line: true
+            });
+            toolbarItemData.push({
+                text: '查询',
+                click: search1,
+                icon: 'search'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+            toolbarItemData.push({
+                text: '清空',
+                click:clear,
+                icon: 'empty'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+           
+          	$("#centertoolbar").ligerToolBar({
+            	items: toolbarItemData
+        	});
+          
+          	init_team_name();//初始化查询条件所属团队下拉列表
+            search1();
+        });
+        
+        //修改方法
+        function sdupdate()
+        {       	
+        	var row=grid.getSelectedRow();
+	    	if(row==null){
+	    		globalUtil.warnMsg(globalErrorMsg['800302']);//请选择一行记录进行操作
+	            return;
+	    	}
+        	var datas = grid.getCheckedRows();
+        	var deptIds = "";
+        	var inveSalaryPreTotalIds = "";
+        	var deptNames = "";
+        	
+        	for(var i = 0; i < datas.length; i++)
+        	{
+        		var rowData = datas[i];
+        		deptIds += rowData.dept_id + ",";
+        		inveSalaryPreTotalIds += rowData.wms_inve_salary_pre_total_id + ",";
+        		deptNames += rowData.dept_name + ",";
+        	}
+        	deptIds = deptIds != "" ? deptIds.substring(0,deptIds.length - 1) : "";
+        	        	
+        	inveSalaryPreTotalIds = inveSalaryPreTotalIds != "" ? inveSalaryPreTotalIds.substring(0,inveSalaryPreTotalIds.length - 1) : "";
+        	var url = globalUtil.getHtml("performanceSalarySetting.html?dept_id="+deptIds+"&statics_month="+rowData.statics_month + "&audit_type=" + 1 + "&inveSalaryPreTotalIds="+inveSalaryPreTotalIds + "&deptNames="+deptNames);
+            dialog = $.ligerDialog.open({
+		        url: url,
+		        title: '审核绩效工资设定单',
+		        width: 1350,
+		        height: globalUtil.setDialogHeight(750),
+		        onHiddenOrClose: function(){
+		    	},
+		        isResize: false
+	    	}); 
+            
+        	
+        }
+        
+    	//所属团队
+    	function init_team_name(json){
+    		var ream_name_params ={
+    				dest_url:'/inve/getTeamLis.do?menu_id='+menu_id,
+    				t_col_name:'dept_id',
+    				valueField:'dept_id',   //下拉框value对应的值，默认为id
+    				textField:'dept_name',  //下拉框text对应的值，默认为text
+    				input_width:133,
+    				def_val:'first'
+    		};
+    		
+    		global_ligerui_extend.initCombox("dept_id",null,ream_name_params);
+   		    global_ligerui_extend.initComboxDefVal("dept_id");
+    	}
+    	
+    	
+        //清空所填写内容
+        function clear(){
+        	$("#dept_manager_name").val("");
+        	$("#dept_id").val("请选择");
+        	global_ligerui_extend.setComboxVal("dept_id","-1");
+        }
+        //表格初始化
+        function initGrid() {
+        	columns = [
+			{
+			    display: '一级部门',
+			    name: 'dept_name',
+			    width: 200,
+			    minWidth: 200,
+			    render: function (rowdata, rowindex, value) { 
+					return value;
+				}
+			},        
+        	{
+                display: '二级部门',
+                name: 'team_name',
+                width: 200,
+                minWidth: 200,
+                render: function (rowdata, rowindex, value) { 
+        			return value;
+        		}
+            },{
+           		 display: '部门经理',
+            	 name: 'manager_name',
+            	 width: 120,
+            	 minWidth: 120,
+        	},{
+           		 display: '副总经理',
+            	 name: 'vice_manager_name',
+            	 width: 120,
+            	 minWidth: 120,
+        	},{
+           	 	 display: '开资人数',
+            	 name: 'pay_num',
+             	 width: 200,
+             	 minWidth: 200,
+       		},{
+           	 	 display: '开资月份',
+            	 name: 'statics_month',
+             	 width: 150,
+             	 minWidth: 150,
+       		},{
+           		 display: '提交时间',
+            	 name: 'create_time_str',
+            	 width: 200,
+            	 minWidth: 200,
+        	},{
+           		 display: '单据状态',
+            	 name: 'data_status_str',
+            	 width: 120,
+            	 minWidth: 120,
+        	},
+        	{
+        		 display: '单据主键',
+	           	 name: 'wms_inve_salary_pre_total_id',
+	           	 width: 120,
+	           	 minWidth: 120,
+	           	 hide:1
+        	}
+        	];
+            grid = $("#grid").ligerGrid({
+        		columns: columns,
+        		url: global_param.context_name + '/inve/getPerformanceSalaryAuditInfos.do?menu_id='+menu_id,
+        		sortName: 'statics_month', // 排序列名
+				sortOrder: 'desc', // 排序方式
+        		rownumbers: true,
+        		allowUnSelectRow: true,
+        		usePager: true,
+        		width: '100%',
+        		height: '95%',
+        		heightDiff: -4,
+        		checkbox:true,
+        		rowAttrRender: function(rowdata, rowindex) {
+    				
+        		},
+        		parms: {
+        			_filterParms: -1
+        		},
+        		onCheckAllRow:function(checked, element)
+        		{
+        			var data = grid.getCheckedRows();
+        			for(var i = 0; i < data.length; i++)
+        			{
+        				var rowData = data[i];
+        				if(rowData.data_status_str == "已完成" || rowData.data_status_str=="已完成（系统自动）")
+    					{
+    						if(checked)
+    						{
+    							grid.unselect(rowData);
+    						}
+    					}
+        			}
+        		},
+        		onCheckRow:function(checked, rowdata, rowindex, rowDomElement)
+        		{
+					if(rowdata.data_status_str == "已完成" || rowdata.data_status_str=="已完成（系统自动）")
+					{
+						if(checked)
+						{
+							var row = grid.getRow(rowindex);
+							grid.unselect(row);
+						}
+					}
+        		}
+        		
+            });
+        }
+        
+        //初始化参数
+        function initParams() {
+        	params = globalUtil.getFormParam("searchbar");
+        	if(params.dept_id == '-1'){
+            	params.dept_id = '';
+            }
+        	if(params.data_status == '-1'){
+        		params.data_status = '';
+        	}
+        }
+        
+        //实现数据查询
+        var search = function(flag) {
+        	if(flag) {//刷新到第1页
+	            initParams();
+	            global_ligerui_extend.search(grid, params);
+        	} else {//刷新当前页
+        		research();
+        	}
+        }
+        
+        var search1 = function() {
+        	search(true);
+        }
+        
+        //弹出页关闭后刷新当前页(带当前页码)
+        var research = function() {
+        	initParams();
+        	global_ligerui_extend.research(grid, params);
+        }
+        
+        //查看详细页面
+        function viewInfo()
+        {
+        	var row=grid.getSelectedRow();
+        	if(row==null){
+        		globalUtil.warnMsg(globalErrorMsg['800302']);//请选择一行记录进行操作
+                return;
+        	}else{
+        		var datas = grid.getCheckedRows();
+            	var deptIds = "";
+            	var deptNames = "";
+            	var inveSalaryPreTotalIds = "";
+            	for(var i = 0; i < datas.length; i++)
+            	{
+            		var rowData = datas[i];
+            		deptIds += rowData.dept_id + ",";
+            		deptNames += rowData.dept_name + ",";
+            		inveSalaryPreTotalIds += rowData.wms_inve_salary_pre_total_id + ",";
+
+            	}
+
+            	deptIds = deptIds != "" ? deptIds.substring(0,deptIds.length - 1) : "";
+
+            	inveSalaryPreTotalIds = inveSalaryPreTotalIds != "" ? inveSalaryPreTotalIds.substring(0,inveSalaryPreTotalIds.length - 1) : "";
+        		var url = globalUtil.getHtml("performanceSalaryInfo.html?dept_id="+deptIds+"&statics_month="+row.statics_month+"&deptNames="+deptNames+"&audit_type=1" );
+                dialog = $.ligerDialog.open({
+			        url: url,
+			        title: '审核绩效工资设定单',
+			        width: 1350,
+			        height: globalUtil.setDialogHeight(750),
+			        onHiddenOrClose: function(){
+			    	},
+			        isResize: false
+		    	}); 
+        	}
+        }
+       </script>
+</body>
+</html>

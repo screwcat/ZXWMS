@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.loanfina.persist.WmsFinaTerminationContractDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsFinaTerminationContract">
+		select
+        				wms_fina_termination_contract_id,
+        				wms_cre_credit_head_id,
+        				wms_fina_cre_pay_id,
+        				wms_cre_appro_borrow_protocol_id,
+        				debtor_name,
+        				debtor_identity_id,
+        				protocol_code,
+						date_format(protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+        				protocol_creat_date,
+        				protocol_amount,
+        				loan_amount,
+        				amount_owed,
+        				un_pay_principal,
+        				un_pay_interest,
+        				total_late_fee,
+        				service_fee,
+        				liquidated_damages,
+        				salesman_id,
+        				salesman_name,
+        				team_manager_id,
+        				team_manager_name,
+        				dunning_id,
+        				dunning_name,
+        				total_derate,
+        				cash_payments,
+        				mortgage_sums,
+        				total_amount_repayment,
+        				operator_id,
+        				confirm_id,
+						date_format(create_datetime,'%Y-%m-%d %H:%i:%s') as create_datetime_str,
+        				create_datetime,
+						date_format(last_update_datetime,'%Y-%m-%d %H:%i:%s') as last_update_datetime_str,
+        				last_update_datetime,
+        				enable_flag,
+        				wms_fina_cre_pos_id,
+        				pos_bank_card
+        	from
+        		wms_fina_termination_contract
+        	where
+        				wms_fina_termination_contract_id = #{wms_fina_termination_contract_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_fina_termination_contract_id) as count
+		from wms_fina_termination_contract
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_fina_termination_contract_id,
+				wms_cre_credit_head_id,
+				wms_fina_cre_pay_id,
+				wms_cre_appro_borrow_protocol_id,
+				debtor_name,
+				debtor_identity_id,
+				protocol_code,
+				date_format(protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+				protocol_creat_date,
+				protocol_amount,
+				loan_amount,
+				amount_owed,
+				un_pay_principal,
+				un_pay_interest,
+				total_late_fee,
+				service_fee,
+				liquidated_damages,
+				salesman_id,
+				salesman_name,
+				team_manager_id,
+				team_manager_name,
+				dunning_id,
+				dunning_name,
+				total_derate,
+				cash_payments,
+				mortgage_sums,
+				total_amount_repayment,
+				operator_id,
+				confirm_id,
+				date_format(create_datetime,'%Y-%m-%d %H:%i:%s') as create_datetime_str,
+				create_datetime,
+				date_format(last_update_datetime,'%Y-%m-%d %H:%i:%s') as last_update_datetime_str,
+				last_update_datetime,
+				enable_flag,
+				wms_fina_cre_pos_id,
+        		pos_bank_card
+		from wms_fina_termination_contract
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsFinaTerminationContract" useGeneratedKeys="true" keyProperty="wms_fina_termination_contract_id">
+		INSERT INTO wms_fina_termination_contract
+		(
+				wms_fina_termination_contract_id,
+
+				wms_cre_credit_head_id,
+
+				wms_fina_cre_pay_id,
+
+				wms_cre_appro_borrow_protocol_id,
+
+				debtor_name,
+
+				debtor_identity_id,
+
+				protocol_code,
+
+				protocol_creat_date,
+
+				protocol_amount,
+
+				loan_amount,
+
+				amount_owed,
+
+				un_pay_principal,
+
+				un_pay_interest,
+
+				total_late_fee,
+
+				service_fee,
+
+				liquidated_damages,
+
+				salesman_id,
+
+				salesman_name,
+
+				team_manager_id,
+
+				team_manager_name,
+
+				dunning_id,
+
+				dunning_name,
+
+				total_derate,
+
+				cash_payments,
+
+				mortgage_sums,
+
+				total_amount_repayment,
+
+				operator_id,
+
+				confirm_id,
+
+				create_datetime,
+
+				last_update_datetime,
+
+				enable_flag,
+				
+				wms_fina_cre_pos_id,
+				
+        		pos_bank_card
+		)
+		VALUES
+		(
+				#{wms_fina_termination_contract_id},
+				#{wms_cre_credit_head_id},
+				#{wms_fina_cre_pay_id},
+				#{wms_cre_appro_borrow_protocol_id},
+				#{debtor_name},
+				#{debtor_identity_id},
+				#{protocol_code},
+				#{protocol_creat_date},
+				#{protocol_amount},
+				#{loan_amount},
+				#{amount_owed},
+				#{un_pay_principal},
+				#{un_pay_interest},
+				#{total_late_fee},
+				#{service_fee},
+				#{liquidated_damages},
+				#{salesman_id},
+				#{salesman_name},
+				#{team_manager_id},
+				#{team_manager_name},
+				#{dunning_id},
+				#{dunning_name},
+				#{total_derate},
+				#{cash_payments},
+				#{mortgage_sums},
+				#{total_amount_repayment},
+				#{operator_id},
+				#{confirm_id},
+				#{create_datetime},
+				#{last_update_datetime},
+				#{enable_flag},
+				#{wms_fina_cre_pos_id},
+        		#{pos_bank_card}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsFinaTerminationContract">
+		update wms_fina_termination_contract
+		<set>
+					<if test="wms_fina_termination_contract_id != null">
+						 wms_fina_termination_contract_id = #{wms_fina_termination_contract_id},
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						 wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+					</if>
+					<if test="wms_fina_cre_pay_id != null">
+						 wms_fina_cre_pay_id = #{wms_fina_cre_pay_id},
+					</if>
+					<if test="wms_cre_appro_borrow_protocol_id != null">
+						 wms_cre_appro_borrow_protocol_id = #{wms_cre_appro_borrow_protocol_id},
+					</if>
+					<if test="debtor_name != null">
+						 debtor_name = #{debtor_name},
+					</if>
+					<if test="debtor_identity_id != null">
+						 debtor_identity_id = #{debtor_identity_id},
+					</if>
+					<if test="protocol_code != null">
+						 protocol_code = #{protocol_code},
+					</if>
+					<if test="protocol_creat_date != null">
+						 protocol_creat_date = #{protocol_creat_date},
+					</if>
+					<if test="protocol_amount != null">
+						 protocol_amount = #{protocol_amount},
+					</if>
+					<if test="loan_amount != null">
+						 loan_amount = #{loan_amount},
+					</if>
+					<if test="amount_owed != null">
+						 amount_owed = #{amount_owed},
+					</if>
+					<if test="un_pay_principal != null">
+						 un_pay_principal = #{un_pay_principal},
+					</if>
+					<if test="un_pay_interest != null">
+						 un_pay_interest = #{un_pay_interest},
+					</if>
+					<if test="total_late_fee != null">
+						 total_late_fee = #{total_late_fee},
+					</if>
+					<if test="service_fee != null">
+						 service_fee = #{service_fee},
+					</if>
+					<if test="liquidated_damages != null">
+						 liquidated_damages = #{liquidated_damages},
+					</if>
+					<if test="salesman_id != null">
+						 salesman_id = #{salesman_id},
+					</if>
+					<if test="salesman_name != null">
+						 salesman_name = #{salesman_name},
+					</if>
+					<if test="team_manager_id != null">
+						 team_manager_id = #{team_manager_id},
+					</if>
+					<if test="team_manager_name != null">
+						 team_manager_name = #{team_manager_name},
+					</if>
+					<if test="dunning_id != null">
+						 dunning_id = #{dunning_id},
+					</if>
+					<if test="dunning_name != null">
+						 dunning_name = #{dunning_name},
+					</if>
+					<if test="total_derate != null">
+						 total_derate = #{total_derate},
+					</if>
+					<if test="cash_payments != null">
+						 cash_payments = #{cash_payments},
+					</if>
+					<if test="mortgage_sums != null">
+						 mortgage_sums = #{mortgage_sums},
+					</if>
+					<if test="total_amount_repayment != null">
+						 total_amount_repayment = #{total_amount_repayment},
+					</if>
+					<if test="operator_id != null">
+						 operator_id = #{operator_id},
+					</if>
+					<if test="confirm_id != null">
+						 confirm_id = #{confirm_id},
+					</if>
+					<if test="create_datetime != null">
+						 create_datetime = #{create_datetime},
+					</if>
+					<if test="last_update_datetime != null">
+						 last_update_datetime = #{last_update_datetime},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+					<if test="wms_fina_cre_pos_id !=null">
+						wms_fina_cre_pos_id=#{wms_fina_cre_pos_id},
+					</if>
+					<if test="pos_bank_card !=null">
+						pos_bank_card =#{pos_bank_card},
+					</if>
+	   </set>
+		 where 
+    				wms_fina_termination_contract_id = #{wms_fina_termination_contract_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsFinaTerminationContract" resultType="WmsFinaTerminationContract">
+		select 
+				wms_fina_termination_contract_id,
+				wms_cre_credit_head_id,
+				wms_fina_cre_pay_id,
+				wms_cre_appro_borrow_protocol_id,
+				debtor_name,
+				debtor_identity_id,
+				protocol_code,
+				date_format(protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+				protocol_creat_date,
+				protocol_amount,
+				loan_amount,
+				amount_owed,
+				un_pay_principal,
+				un_pay_interest,
+				total_late_fee,
+				service_fee,
+				liquidated_damages,
+				salesman_id,
+				salesman_name,
+				team_manager_id,
+				team_manager_name,
+				dunning_id,
+				dunning_name,
+				total_derate,
+				cash_payments,
+				mortgage_sums,
+				total_amount_repayment,
+				operator_id,
+				confirm_id,
+				date_format(create_datetime,'%Y-%m-%d %H:%i:%s') as create_datetime_str,
+				create_datetime,
+				date_format(last_update_datetime,'%Y-%m-%d %H:%i:%s') as last_update_datetime_str,
+				last_update_datetime,
+				enable_flag,
+				wms_fina_cre_pos_id,
+				pos_bank_card
+		from
+		wms_fina_termination_contract
+		<where>
+					<if test="wms_fina_termination_contract_id != null">
+						and wms_fina_termination_contract_id = #{wms_fina_termination_contract_id}
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+					</if>
+					<if test="wms_fina_cre_pay_id != null">
+						and wms_fina_cre_pay_id = #{wms_fina_cre_pay_id}
+					</if>
+					<if test="wms_cre_appro_borrow_protocol_id != null">
+						and wms_cre_appro_borrow_protocol_id = #{wms_cre_appro_borrow_protocol_id}
+					</if>
+					<if test="debtor_name != null">
+						and debtor_name = #{debtor_name}
+					</if>
+					<if test="debtor_identity_id != null">
+						and debtor_identity_id = #{debtor_identity_id}
+					</if>
+					<if test="protocol_code != null">
+						and protocol_code = #{protocol_code}
+					</if>
+					<if test="protocol_creat_date != null">
+						and protocol_creat_date = #{protocol_creat_date}
+					</if>
+					<if test="protocol_amount != null">
+						and protocol_amount = #{protocol_amount}
+					</if>
+					<if test="loan_amount != null">
+						and loan_amount = #{loan_amount}
+					</if>
+					<if test="amount_owed != null">
+						and amount_owed = #{amount_owed}
+					</if>
+					<if test="un_pay_principal != null">
+						and un_pay_principal = #{un_pay_principal}
+					</if>
+					<if test="un_pay_interest != null">
+						and un_pay_interest = #{un_pay_interest}
+					</if>
+					<if test="total_late_fee != null">
+						and total_late_fee = #{total_late_fee}
+					</if>
+					<if test="service_fee != null">
+						and service_fee = #{service_fee}
+					</if>
+					<if test="liquidated_damages != null">
+						and liquidated_damages = #{liquidated_damages}
+					</if>
+					<if test="salesman_id != null">
+						and salesman_id = #{salesman_id}
+					</if>
+					<if test="salesman_name != null">
+						and salesman_name = #{salesman_name}
+					</if>
+					<if test="team_manager_id != null">
+						and team_manager_id = #{team_manager_id}
+					</if>
+					<if test="team_manager_name != null">
+						and team_manager_name = #{team_manager_name}
+					</if>
+					<if test="dunning_id != null">
+						and dunning_id = #{dunning_id}
+					</if>
+					<if test="dunning_name != null">
+						and dunning_name = #{dunning_name}
+					</if>
+					<if test="total_derate != null">
+						and total_derate = #{total_derate}
+					</if>
+					<if test="cash_payments != null">
+						and cash_payments = #{cash_payments}
+					</if>
+					<if test="mortgage_sums != null">
+						and mortgage_sums = #{mortgage_sums}
+					</if>
+					<if test="total_amount_repayment != null">
+						and total_amount_repayment = #{total_amount_repayment}
+					</if>
+					<if test="operator_id != null">
+						and operator_id = #{operator_id}
+					</if>
+					<if test="confirm_id != null">
+						and confirm_id = #{confirm_id}
+					</if>
+					<if test="create_datetime != null">
+						and create_datetime = #{create_datetime}
+					</if>
+					<if test="last_update_datetime != null">
+						and last_update_datetime = #{last_update_datetime}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+					<if test="wms_fina_cre_pos_id !=null">
+						wms_fina_cre_pos_id=#{wms_fina_cre_pos_id},
+					</if>
+					<if test="pos_bank_card !=null">
+						pos_bank_card =#{pos_bank_card},
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_fina_termination_contract_id != #{wms_fina_termination_contract_id}
+					</if>
+		</where>
+	</select>
+</mapper> 

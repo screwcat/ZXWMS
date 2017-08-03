@@ -1,0 +1,852 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInvePhoneDao">
+	
+	<!-- 获取特殊菜单项  -->
+	<select id="getSpecialMenuInfosMoa" parameterType="map" resultType="map">
+		SELECT
+			DISTINCT
+			m.menu_remark as menu_code,
+			m.menu_name,
+			m.menu_level,m.menu_sort,
+		 (case when t.role_id is null then 0 else 1 end )as menu_is_show
+		FROM
+			sys_menu m
+			left join (
+				select rm.role_id,rm.menu_id,r.user_id from sys_role_menu_function rm,sys_user_role r where r.role_id = rm.role_id
+			) t on m.id=t.menu_id	and t.user_id = #{personnel_id}		
+					WHERE LEFT(m.menu_remark,2) = '03'
+		order by ${sortname}	
+	</select>
+	
+	<!-- 获取团队清单 -->
+	<select id="getSpecialTeamInfosMoa" parameterType="map" resultType="map">
+		SELECT
+			CONCAT((SELECT dept_name FROM sys_dept WHERE dept_id = t.dept_pid),'/',t.dept_name) AS team_name,
+			t.dept_id AS team_id,
+			0 AS team_is_init
+		FROM
+			sys_dept t
+		WHERE
+			1=1
+		<if test="role_type != null and role_type==0 and dept_ids == null">
+		    AND	FIND_IN_SET(t.dept_id,getMenuData(#{personnel_id}, 110))
+		</if>
+		<if test="dept_id != null">
+			AND t.dept_pid in 
+			<foreach collection="dept_id" item="id" index="index" open="(" separator="," close=")">
+                 #{id}
+            </foreach>
+		</if>
+		<if test="dept_ids != null">
+			AND t.dept_id in 
+			<foreach collection="dept_ids" item="id" index="index" open="(" separator="," close=")">
+                 #{id}
+            </foreach>
+		</if>
+		AND t.dept_level = 6
+		AND FIND_IN_SET(27,getFatherLst(t.dept_id)) > 0
+		ORDER BY t.dept_pid ASC, t.dept_id ASC
+	</select>
+	
+	<select id="getSpecialTeamIdsStr" parameterType="map" resultType="String">
+		SELECT
+			GROUP_CONCAT(t.dept_id)
+		FROM
+			sys_dept t
+		WHERE
+			1=1
+		<if test="role_type != null and role_type==0">
+			AND	FIND_IN_SET(t.dept_id,getMenuData(#{personnel_id}, 110))
+		</if>
+		<if test="dept_id != null">
+			AND t.dept_pid in 
+			<foreach collection="dept_id" item="id" index="index" open="(" separator="," close=")">
+                 #{id}
+            </foreach>
+		</if>
+		AND t.dept_level = 6
+		AND FIND_IN_SET(27,getFatherLst(t.dept_id)) > 0
+		ORDER BY t.dept_pid ASC, t.dept_id ASC
+	</select>
+	
+	<select id="getPersonnelById" parameterType="int" resultType="map">
+		select personnel_deptid from pm_personnel where personnel_id = #{personnel_id}
+	</select>
+	
+	<select id="getSpecialDeptInfosMoa" parameterType="map" resultType="map">
+		SELECT
+			t.dept_name,
+			t.dept_id,
+			0 AS dept_is_init
+		FROM
+			sys_dept t
+		WHERE
+			1=1
+		<if test="role_type != null and role_type==0">
+			AND	FIND_IN_SET(t.dept_id,getMenuData(#{personnel_id}, (select id from sys_menu where menu_remark = #{menu_code})))
+		</if>
+		<if test="dept_id != null">
+			AND t.dept_id in 
+			<foreach collection="dept_id" item="id" index="index" open="(" separator="," close=")">
+                 #{id}
+            </foreach>
+		</if>
+		AND t.dept_level = 5
+		AND FIND_IN_SET(27,getFatherLst(t.dept_id)) > 0
+		ORDER BY t.dept_pid ASC, t.dept_name ASC
+	</select>
+	
+	<select id="getSpecialDeptIdsStr" parameterType="map" resultType="String">
+		SELECT
+			GROUP_CONCAT(t.dept_id)
+		FROM
+			sys_dept t
+		WHERE
+			1=1
+		<if test="role_type != null and role_type==0">
+		   	AND	FIND_IN_SET(t.dept_id,getMenuData(#{personnel_id}, (select id from sys_menu where menu_remark = #{menu_code})))
+		</if>
+		<if test="dept_id != null">
+			AND t.dept_id in 
+			<foreach collection="dept_id" item="id" index="index" open="(" separator="," close=")">
+                 #{id}
+            </foreach>
+		</if>
+		AND t.dept_level = 5
+		AND FIND_IN_SET(27,getFatherLst(t.dept_id)) > 0
+		ORDER BY t.dept_pid ASC, t.dept_name ASC
+	</select>
+	
+	<select id="searchForPhoneAppData" parameterType="map" resultType="map">
+			SELECT
+				'WMS' as sys_name,
+				null as apply_type_id,
+				case when r.redeem_type = 1 then '赎回申请单(未到期)'
+				     when r.redeem_type = 4 then '赎回申请单(到期/超期)'
+				end
+				as apply_type_name,
+				null as original_apply_personnel_name,
+				null as original_apply_personnel_no,
+				CONCAT(t.salesman_name,' ',t.salesman_shortcode,'的客户', t.cus_name, '申请赎回', ROUND(d.redeem_amount/10000), '万元') as content,
+				r.redeem_date as create_timestamp,
+				null as order_relation_id,
+				r.wms_inve_redeem_id as order_id,
+				1 as operable,
+				null as order_state,
+				null as order_relationship,
+				'2' as business_type,
+				'赎回' as business_type_name,
+				r.wms_inve_redeem_id
+			FROM wms_inve_redeem r,wms_inve_redeem_detail d , wms_inve_transa t
+			<where>
+					r.enable_flag=1 and d.enable_flag=1 and t.enable_flag = 1
+				AND 
+					r.wms_inve_redeem_id = d.wms_inve_redeem_id
+				AND d.wms_inve_transa_id = t.wms_inve_transa_id
+				<if test="user_id != null">
+					AND r.special_approval_leader_id=#{user_id} 
+					AND r.data_status=3
+				</if>
+				<if test="user_id == null">
+					AND r.special_approval_leader_id is null 
+					AND r.data_status in(1,2,3)
+				</if>
+				<if test="idList !=null">
+					AND r.wms_inve_redeem_id in
+					<foreach collection="idList" item="wms_inve_redeem_id"
+						index="index" open="(" separator="," close=")">
+						#{wms_inve_redeem_id}
+					</foreach>
+				</if>
+			</where>
+		order by r.redeem_date desc, r.wms_inve_redeem_id desc
+	</select>
+	
+	<select id="getRelatedMeInfos" parameterType="map" resultType="map">
+		SELECT 
+			t1.sys_name,
+			t1.apply_type_id,
+			t1.apply_type_name,
+			t1.original_apply_personnel_name,
+			t1.original_apply_personnel_no,
+			t1.content,
+			t1.create_timestamp,
+			t1.order_relation_id,
+			t1.order_id,
+			t1.operable,
+			t1.order_state,
+			t1.order_relationship,
+			t1.business_type,
+			t1.business_type_name
+		FROM
+		(
+			(SELECT
+				'WMS' AS sys_name,
+				NULL AS apply_type_id,
+				CASE WHEN r.redeem_type = 1 THEN '赎回申请单(未到期)'
+				     WHEN r.redeem_type = 4 THEN '赎回申请单(到期/超期)'
+				END
+				AS apply_type_name,
+				NULL AS original_apply_personnel_name,
+				NULL AS original_apply_personnel_no,
+				CONCAT(t.salesman_name,' ',t.salesman_shortcode,'的客户', t.cus_name, '申请赎回', ROUND(d.redeem_amount/10000), '万元') as content,
+				r.redeem_date AS create_timestamp,
+				NULL AS order_relation_id,
+				r.wms_inve_redeem_id AS order_id,
+				2 AS operable,
+				NULL AS order_state,
+				NULL AS order_relationship,
+				'2' AS business_type,
+				'赎回' AS business_type_name
+			FROM
+				wms_inve_redeem r,
+				wms_inve_redeem_detail d,
+				wms_inve_transa t,
+				pm_personnel p1
+			WHERE
+				1=1
+			and r.wms_inve_redeem_id = d.wms_inve_redeem_id
+			and d.wms_inve_transa_id = t.wms_inve_transa_id
+			and t.bel_salesman_id_id = p1.personnel_id
+			and r.redeem_type in ('1','4')
+			and r.data_status IN (1, 2, 3, 5, 6)
+			and (2>(SELECT COUNT(DISTINCT(p.group_info)) from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id in(r.create_user_id,#{userid}) and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id) 
+			or 1=(SELECT p.group_info from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id =#{userid} and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id))
+			and (1=2
+			<if test="create_user_id !=null">
+				or r.create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_dept_id !=null">
+				or r.create_user_dept_id = #{create_user_dept_id}
+			</if>
+			<if test="salesman_id !=null">
+				or r.salesman_id = #{salesman_id}
+			</if>
+			<if test="salesman_dept_id !=null">
+				or r.salesman_dept_id = #{salesman_dept_id}
+			</if>
+			<if test="deptIds !=null">
+				or r.salesman_dept_id in
+				<foreach collection="deptIds" item="dept_id" index="index"
+					open="(" separator="," close=")">
+					#{dept_id}
+				</foreach>
+			</if>
+			<if test="deptIds_user_id !=null">
+				or FIND_IN_SET(r.salesman_dept_id,getMenuData(#{deptIds_user_id},#{deptIds_menu}))
+			</if>
+			<if test="financial_services !=null">
+				or 1= #{financial_services}
+			</if>
+			<if test="super_user !=null">
+				or 1 = #{super_user}
+			</if>
+			)
+			<if test="list != null">
+				AND
+					r.wms_inve_redeem_id not in
+				<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+					#{item.order_id}
+				</foreach>
+			</if>
+			ORDER BY r.redeem_date DESC
+			LIMIT 0,20)
+			
+			UNION ALL
+		
+			(SELECT
+				'WMS' AS sys_name,
+				NULL AS apply_type_id,
+				'签单喜报' AS apply_type_name,
+				NULL AS original_apply_personnel_name,
+				NULL AS original_apply_personnel_no,
+				CONCAT(t1.salesman_name,' ',t1.salesman_shortcode, '的客户', t1.cus_name, '成功签单', t2.category_name, ROUND(t2.product_account/10000),'万元') AS content,
+				t1.date_of_payment AS create_timestamp,
+				NULL AS order_relation_id,
+				t1.wms_inve_transa_id AS order_id,
+				0 AS operable,
+				NULL AS order_state,
+				NULL AS order_relationship,
+				'1' AS business_type,
+				'上单' AS business_type_name
+			FROM
+				wms_inve_transa t1, wms_inve_transa_prod t2
+			WHERE
+				t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			AND
+				t1.data_status in (4,11)
+			AND t1.enable_flag = 1
+			AND (
+				t1.bel_salesman_id_id = #{personnel_id}
+				OR t1.bel_department_manager_id = #{personnel_id}
+				OR t1.bel_vice_general_manager_id = #{personnel_id}
+				OR t1.bel_center_manager_id = #{personnel_id}
+				OR t1.bel_general_manager_id = #{personnel_id}
+			)
+			order by t1.date_of_payment desc
+			limit 0, 20)
+		) t1
+		ORDER BY t1.create_timestamp DESC
+		LIMIT 0, 20
+	</select>
+	
+	<select id="getAchVicegelListMoa" parameterType="map" resultType="map">
+		(SELECT
+			CONCAT(t.personnel_name,'(',(SELECT dept_name FROM sys_dept WHERE dept_id = t.personnel_deptId AND enable_flag = '1'), ')') AS vice_team_name,
+			t.personnel_deptId AS vice_team_id,
+			t.personnel_id AS vice_personnel_id,
+			0 AS is_init
+		FROM
+			v_personnel_all t,
+			sys_post p
+		WHERE
+			t.personnel_postId = p.post_id
+		AND (
+			p.post_number LIKE 'PCFZXZJL%'
+			OR p.post_number LIKE 'PCFJXZXFZJL%'
+			OR p.post_number LIKE 'PCFZXFZJL%'
+			OR p.post_number LIKE 'PCFZXFGSZJL%'
+			OR p.post_number LIKE 'PCFJXZXFGSZ%'
+		) 
+		AND
+		 (
+		  1=2
+		  <if test="role_type != null and role_type == 1">
+		  	OR 1=1
+		  </if>
+		 )
+		 
+		and t.enable_flag='1'
+		ORDER BY t.personnel_name)
+		
+		UNION ALL
+		
+		(
+		SELECT
+			CONCAT(t3.personnel_name,'(',(SELECT dept_name FROM sys_dept WHERE dept_id = t3.personnel_deptId),')') AS vice_team_name,
+			t3.personnel_deptId AS vice_team_id,
+			t3.personnel_id AS vice_personnel_id,
+			0 AS is_init
+		 FROM
+			wms_inve_transa_non_busi_leader t1, pm_personnel t3
+		WHERE
+			t1.pm_personnel_id = t3.personnel_id
+		AND
+		 (
+		  1=2
+		  <if test="role_type != null and role_type == 1">
+		  	OR 1=1
+		  </if>
+		 )
+		order by t3.personnel_name
+		)
+	</select>
+	
+	<select id="getIncomeCardPadList" parameterType="map" resultType="map">
+		SELECT
+			w2.card_owner_name,
+			right(w2.card_no,4) AS last_card_no,
+			w2.card_no,
+			w2.bank_of_deposit,
+			w2.bank_of_deposit As bank_of_deposit_code,
+			(SELECT value_meaning FROM wms_sys_dict_data WHERE wms_sys_dict_id = 72 AND value_code = w2.bank_of_deposit_pro) AS bank_of_deposit_pro,
+			w2.bank_of_deposit_pro AS bank_of_deposit_pro_code,
+			(SELECT value_meaning FROM wms_sys_dict_data WHERE wms_sys_dict_id = 73 AND value_code = w2.bank_of_deposit_city) AS bank_of_deposit_city,
+			w2.bank_of_deposit_city AS bank_of_deposit_city_code,
+			w2.bank_branch
+		FROM
+			wms_inve_customer_card w2
+		WHERE
+			1=1
+		<if test="id_card != null and id_card != ''">
+			AND w2.id_card = #{id_card}
+		</if>
+		<if test="cus_name != null and cus_name != ''">
+			AND w2.card_owner_name = #{cus_name}
+		</if>
+		AND w2.card_owner_name is NOT null
+		AND w2.card_no is NOT null
+		GROUP BY w2.card_owner_name,w2.bank_of_deposit,w2.bank_branch, w2.card_no
+		ORDER BY w2.create_timestamp DESC
+	</select>
+	
+	
+	<select id="getCategoryInfosByCompanyMainPush" parameterType="PmPersonnel" resultType="map">
+		SELECT
+			t1.category_name,
+			t1.wms_inve_pruduct_category_id,
+			CASE WHEN t1.category_interest_pay_method = 1
+            		  THEN '月返'
+       			 WHEN t1.category_interest_pay_method = 2
+            		  THEN '年返'
+  			END
+  			AS category_interest_pay_method_str,
+  			t1.category_deadline,
+			t1.category_return_rate,
+			(SELECT value_meaning FROM wms_sys_dict_data WHERE wms_sys_dict_id = 79 AND value_code = category_type) AS category_type_str,
+			t1.pruduct_image_small,
+			t1.pruduct_image_big,
+			CONCAT( ROUND( IFNULL(( t1.category_return_rate / 100 * 100000 * t1.category_deadline / 12 + IFNULL(( SELECT reward_interest FROM wms_inve_pruduct_deadline_reward WHERE wms_inve_pruduct_deadline_reward_id = t1.wms_inve_pruduct_category_id ), 0 ) * 100000 ), 0 )), '元' ) AS examples_income
+		FROM
+			wms_inve_pruduct_category t1,
+			wms_inve_pad_best_pruduct t2
+		WHERE
+			t1.wms_inve_pruduct_category_id = t2.wms_inve_pruduct_category_id
+		AND t2.region_number = #{personnel_regionnumber}
+		ORDER BY convert(t1.category_name USING gbk) COLLATE gbk_chinese_ci ASC
+	</select>
+
+	<!-- 根据条件获取产品信息 -->
+	<select id="getCategoryInfos" parameterType="map" resultType="map">
+		select
+			category_name,
+			wms_inve_pruduct_category_id,
+			CASE WHEN category_interest_pay_method = 1
+            		  THEN '月返'
+       			 WHEN category_interest_pay_method = 2
+            		  THEN '年返'
+  			END
+  			AS category_interest_pay_method_str,
+  			category_deadline,
+			category_return_rate,
+			(SELECT value_meaning FROM wms_sys_dict_data WHERE wms_sys_dict_id = 79 AND value_code = category_type) AS category_type_str,
+			pruduct_image_small,
+			pruduct_image_big,
+			CONCAT(IFNULL(ROUND(category_return_rate / 100 * 100000 * category_deadline / 12 + IFNULL((SELECT reward_interest FROM wms_inve_pruduct_deadline_reward WHERE wms_inve_pruduct_deadline_reward_id = wms_inve_pruduct_category_id),0) * 100000),0),'元') as examples_income
+		from wms_inve_pruduct_category
+		where
+			1=1
+			and ( 1=1<if test="cktype == null">
+			 and CURDATE()&gt;=valid_begin_date and CURDATE()&lt;=category_over_time and
+				is_forbidden='0'
+			</if>
+			<if test="category_name != null">
+				and category_name like #{category_name}
+			</if>
+			<if test="platform_user != null">
+				and platform_user like #{platform_user}
+			</if>
+			<if test="idList !=null">
+				and wms_inve_pruduct_category_id in 
+				<foreach collection="idList" item="item" index="index" open="(" separator="," close=")">
+					#{item}
+			  </foreach> 
+			</if>)
+			<if test="wms_inve_pruduct_category_id != null">
+			<![CDATA[
+				or wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id}
+			]]>
+			</if>
+			ORDER BY convert(category_name USING gbk) COLLATE gbk_chinese_ci ASC	
+	</select>
+	
+	<!-- 接口33 根据条件进行查询获取管理佣金按部门经理进行汇总 -->
+	<select id="getTeamCommMonByDeptManagerMoa" parameterType="map" resultType="map">
+		SELECT
+		   (SELECT dept_name FROM sys_dept WHERE dept_id = t3.dept_pid) AS dept_name,
+			t3.dept_name AS team_name,
+			t.dept_id,
+			t.salesman_id AS personnel_id,
+			t2.personnel_name,
+			t2.personnel_shortCode AS personnel_shortcode,
+			FORMAT(ROUND(IFNULL(t.team_comm_mon,0) + IFNULL(t.old_team_comm_mon,0),2) - 0,2) AS team_comm_mon_fmt,
+			ROUND(IFNULL(t.team_comm_mon,0) + IFNULL(t.old_team_comm_mon,0),2) AS team_comm_mon
+		FROM
+			wms_inve_commion_record t,
+			pm_personnel t2,
+			sys_dept t3
+		WHERE t.salesman_id = t2.personnel_id
+		AND t.dept_id = t3.dept_id
+		AND FIND_IN_SET(27,getFatherLst(t3.dept_id)) > 0
+		AND t2.personnel_state != 3
+		<if test="statics_month != null">
+			AND t.statics_month = #{statics_month}
+		</if>
+		<if test="personnel_info != null">
+			AND (t2.personnel_name like '%${personnel_info}%'
+			     OR
+			     t2.personnel_shortCode = #{personnel_info}
+			    )
+		</if>
+		<if test="dept_ids != null">
+			AND t.dept_id in (${dept_ids})
+		</if>
+		and (1=2
+			<if test="salesman_id !=null">
+				or t.salesman_id = #{salesman_id}
+			</if>
+			
+			<if test="deptIds !=null">
+				or t.dept_id in
+				<foreach collection="deptIds" item="dept_id" index="index"
+					open="(" separator="," close=")">
+					#{dept_id}
+				</foreach>
+			</if>
+			
+			<if test="deptIds_user_id !=null">
+				or FIND_IN_SET(t.dept_id,getMenuData(#{deptIds_user_id},#{deptIds_menu}))
+			</if>
+			
+			<if test="super_user !=null">
+				or 1 = #{super_user}
+			</if>
+			)
+		AND IFNULL(IFNULL(t.team_comm_mon,0) + IFNULL(t.old_team_comm_mon,0) ,0) >0
+		ORDER BY t3.dept_name ASC
+		<if test="page != null and page_size != null">
+			LIMIT #{page}, #{page_size}
+		</if>
+	</select>
+	
+	<!-- 接口34 根据条件查询获取管理佣金按客户经理汇总信息 -->
+	<select id="getTeamCommMonBySalemanMoa" parameterType="map" resultType="map">
+		SELECT 
+			t.personnel_id,
+			t.personnel_name,
+			t.personnel_shortCode AS personnel_shortcode,
+			FORMAT(ROUND(SUM(t.team_comm_mon),2) - 0,2) AS team_comm_mon_fmt,
+			ROUND(IFNULL(SUM(t.team_comm_mon),0),2) AS team_comm_mon
+		FROM
+		(
+			SELECT
+				t2.personnel_name,
+				t2.personnel_id,
+				t1.team_comm_mon,
+				t2.personnel_shortCode,
+				(SELECT dept_name FROM sys_dept WHERE dept_id = t1.dept_id) AS dept_name
+			FROM
+				wms_inve_commission_performance_his t1,
+				pm_personnel t2
+			WHERE t1.bel_salesman_id_id = t2.personnel_id
+			AND IFNULL(t1.team_comm_mon,0) > 0
+			<if test="statics_month != null">
+				AND t1.statics_month = #{statics_month}
+			</if>
+			<if test="personnel_id != null">
+				AND t1.team_personnel_id = #{personnel_id}
+			</if>
+			<if test="dept_ids != null">
+				AND t1.dept_id in (${dept_ids})
+			</if>
+		
+			UNION ALL
+			
+			SELECT
+				t2.personnel_name,
+				t2.personnel_id,
+				t1.old_team_comm_mon AS team_comm_mon,
+				t2.personnel_shortCode,
+				(SELECT dept_name FROM sys_dept WHERE dept_id = t1.salesman_dept_id) AS dept_name
+			FROM
+				wms_inve_old_comm_his t1,
+				pm_personnel t2
+			WHERE t1.salesman_id = t2.personnel_id
+			AND IFNULL(t1.old_team_comm_mon,0) > 0
+			<if test="statics_month != null">
+				AND t1.statics_month = #{statics_month}
+			</if>
+			<if test="personnel_id != null">
+				AND t1.department_manager_id = #{personnel_id}
+			</if>
+			<if test="dept_ids != null">
+				AND t1.salesman_dept_id in (${dept_ids})
+			</if>
+		) t
+		GROUP BY t.personnel_id
+		having
+		1=1
+		<if test="personnel_info != null">
+			AND (t.personnel_name like '%${personnel_info}%'
+				OR
+				t.personnel_shortCode = #{personnel_info}
+				)
+		</if>
+		
+		ORDER BY t.dept_name ASC, t.personnel_name ASC
+		<if test="page != null and pagesize != null">
+			Limit #{page}, #{pagesize}
+		</if>
+	</select>
+	
+	<!-- 接口35 根据查询条件进行获取管理佣金按照佣金项进行汇总 -->
+	<select id="getTeamCommMonByItemMoa" parameterType="map" resultType="map">
+		SELECT 
+			t.personnel_name,
+			t.personnel_shortCode AS personnel_shortcode,
+			t.personnel_id,
+			t.dept_name AS team_name,
+			FORMAT(ROUND(IFNULL(sum(t.old_team_comm_mon),0),2) - 0,2) AS old_team_comm_mon_fmt,
+			ROUND(IFNULL(sum(t.old_team_comm_mon),0),2) AS old_team_comm_mon,
+			SUBSTRING_INDEX(GROUP_CONCAT(t.old_team_comm_mon_item ORDER BY t.old_team_comm_mon_item ASC),',',-1) AS old_team_comm_mon_item,
+			FORMAT(ROUND(IFNULL(sum(t.team_comm_mon),0),2) - 0,2) AS new_team_comm_mon_fmt,
+			ROUND(IFNULL(SUM(t.team_comm_mon),0),2) AS new_team_comm_mon,
+			SUBSTRING_INDEX(GROUP_CONCAT(t.new_team_comm_mon_item ORDER BY t.new_team_comm_mon_item ASC),',',1) AS new_team_comm_mon_item,
+			FORMAT(ROUND(IFNULL(SUM(t.team_comm_mon),0) + IFNULL(sum(t.old_team_comm_mon),0),2) - 0,2) AS team_comm_mon_fmt,
+		    ROUND(IFNULL(sum(t.team_comm_mon),0) + IFNULL(sum(t.old_team_comm_mon),0),2) AS team_comm_mon
+		FROM
+		(
+			SELECT
+				t2.personnel_name,
+				t2.personnel_id,
+				t1.team_comm_mon,
+				t2.personnel_shortCode,
+				(SELECT dept_name FROM sys_dept WHERE dept_id = t1.dept_id) AS dept_name,
+				'02' AS new_team_comm_mon_item,
+				NULL AS old_team_comm_mon,
+			    NULL AS old_team_comm_mon_item
+			FROM
+				wms_inve_commission_performance_his t1,
+				pm_personnel t2
+			WHERE t1.bel_salesman_id_id = t2.personnel_id
+			AND t1.statics_month = #{statics_month}
+			AND (t1.salesman_id = #{personnel_id}
+	             OR t1.bel_salesman_id_id = #{personnel_id}
+	            )
+			
+			UNION ALL
+		
+			SELECT
+				t2.personnel_name,
+				t2.personnel_id,
+				NULL AS team_comm_mon,
+				t2.personnel_shortCode,
+				(SELECT dept_name FROM sys_dept WHERE dept_id = t1.salesman_dept_id) AS dept_name,
+				NULL AS new_team_comm_mon_item,
+				t1.old_team_comm_mon,
+				'01' AS old_team_comm_mon_item
+			FROM
+				wms_inve_old_comm_his t1,
+				pm_personnel t2
+			WHERE t1.salesman_id = t2.personnel_id
+			AND t1.statics_month = #{statics_month}
+			AND t1.salesman_id = #{personnel_id}
+		) t
+    	GROUP BY t.personnel_id
+		
+	</select>
+	
+	<!-- 接口36 获取老佣金管理佣金按单据展现 -->
+	<select id="getOldTeamCommMonByData" parameterType="map" resultType="map">
+		SELECT
+			t2.cus_name,
+			FORMAT(ROUND(IFNULL(t1.org_product_account,0),2) - 0,2) AS product_account_fmt,
+			IFNULL(t1.org_product_account,0) AS product_account,
+			DATE_FORMAT(t1.date_of_payment,'%Y/%m/%d') AS date_of_payment,
+			FORMAT(ROUND(IFNULL(t1.redeem_amount,0),2) - 0,2) AS redeem_account_fmt,
+			t1.redeem_amount AS redeem_account,
+			CASE WHEN t1.redeem_date IS NULL THEN ""
+	             ELSE DATE_FORMAT(t1.redeem_date,'%Y/%m/%d') 
+	        END
+			AS redeem_date,
+			t2.bill_code,
+			t3.category_name,
+		  	CONCAT(t3.product_deadline,'月') AS category_deadline,
+			CONCAT(cast(t1.team_comm_coeff*100 as decimal(9,2)),'%') AS stock_comm_coeff,
+			CONCAT(IFNULL(t1.commission_days,0),'天') AS commission_days,
+			DATE_FORMAT(LAST_DAY(CONCAT(#{statics_month},'-','01')),'%d') AS curr_month_days,
+			FORMAT(ROUND(IFNULL(t1.old_team_comm_mon,0),2) - 0,2) AS team_comm_mon_fmt,
+			ROUND(IFNULL(t1.old_team_comm_mon,0), 2) AS team_comm_mon,
+			'0' AS tax_mon_fmt,
+			0 AS tax_mon,
+			FORMAT(ROUND(IFNULL(t1.old_team_comm_mon,0),2) - 0,2) AS act_team_comm_mon_fmt,
+			ROUND(IFNULL(t1.old_team_comm_mon,0),2) AS act_team_comm_mon
+		FROM
+			wms_inve_old_comm_his t1,
+			wms_inve_transa t2,
+			wms_inve_transa_prod t3
+		WHERE
+			t1.wms_inve_transa_id = t2.wms_inve_transa_id
+		AND
+			t1.wms_inve_transa_prod_id = t3.wms_inve_transa_prod_id
+		<if test="statics_month != null">
+			AND
+				t1.statics_month = #{statics_month}
+		</if>
+		<if test="personnel_id != null">
+			AND t1.salesman_id = #{personnel_id}
+		</if>
+		<if test="personnel_info != null">
+			AND t2.cus_name like '%${personnel_info}%'
+		</if>
+		AND IFNULL(t1.old_team_comm_mon,0) > 0
+		order by t2.create_timestamp ASC, t2.wms_inve_transa_id ASC
+		<if test="page != null and pagesize != null">
+			LIMIT #{page}, #{pagesize}
+		</if>
+		
+	</select>
+	
+	<!-- 接口36 获取新佣金管理佣金按单据展现 -->
+	<select id="getNewTeamCommMonByData" parameterType="map" resultType="map">
+		SELECT
+			t2.cus_name,
+			FORMAT(ROUND(IFNULL(investredemp_amount_base,0)) - 0,2)  AS product_account_fmt,
+			IFNULL(investredemp_amount_base,0) AS investredemp_amount,
+			DATE_FORMAT(t1.date_of_payment,'%Y/%m/%d') AS date_of_payment,
+			FORMAT(ROUND(IFNULL(d.redeem_amount,0),2) - 0,2) AS redeem_account_fmt,
+			IFNULL(d.redeem_amount,0) AS redeem_account,
+			CASE WHEN t1.redeem_date IS NULL THEN ""
+	             ELSE DATE_FORMAT(t1.redeem_date,'%Y/%m/%d') 
+	        END
+			AS redeem_date,
+			t2.bill_code,
+			t3.category_name,
+		  	CONCAT(t3.product_deadline,'月') AS category_deadline,
+			CONCAT(cast(t1.team_comm_coeff*100 as decimal(9,2)),'%') AS stock_comm_coeff,
+			CONCAT(t1.commission_days,'天') AS commission_days,
+			DATE_FORMAT(LAST_DAY(CONCAT(#{statics_month},'-','01')),'%d') AS curr_month_days,
+			FORMAT(ROUND(IFNULL(t1.team_comm_mon,0),2) - 0,2) AS team_comm_mon_fmt,
+			ROUND(IFNULL(t1.team_comm_mon,0), 2) AS team_comm_mon,
+			'0' AS tax_mon_fmt,
+			0 AS tax_mon,
+			FORMAT(ROUND(IFNULL(t1.team_comm_mon,0),2) - 0,2) AS act_team_comm_mon_fmt,
+			ROUND(IFNULL(t1.team_comm_mon,0),2) AS act_team_comm_mon
+		FROM
+			wms_inve_commission_performance_his t1
+		INNER JOIN
+			wms_inve_transa t2
+		ON
+			t1.wms_inve_transa_id = t2.wms_inve_transa_id
+		INNER JOIN
+			wms_inve_transa_prod t3
+		ON
+			t1.wms_inve_transa_prod_id = t3.wms_inve_transa_prod_id
+		LEFT JOIN (
+			SELECT
+				b.wms_inve_redeem_id,
+				b.redeem_date,
+				c.redeem_amount
+			FROM
+				wms_inve_redeem b,
+				wms_inve_redeem_detail c
+			WHERE
+				b.wms_inve_redeem_id = c.wms_inve_redeem_id
+			) d
+		on t1.wms_inve_redeem_id=d.wms_inve_redeem_id
+		WHERE
+		1=1
+		<if test="personnel_id != null">
+			AND(
+				t1.bel_salesman_id_id = #{personnel_id}
+			)
+		</if>
+
+		<if test="statics_month != null">
+			AND
+				t1.statics_month = #{statics_month}
+		</if>
+		
+		<if test="personnel_info != null">
+			AND t2.cus_name like '%${personnel_info}%'
+		</if>
+		AND IFNULL(t1.team_comm_mon,0)>0
+		order by t2.create_timestamp ASC, t2.wms_inve_transa_id ASC
+		<if test="page != null and pagesize != null">
+			LIMIT #{page}, #{pagesize}
+		</if>
+	</select>
+	
+	<!-- 接口37 获取副总/中分总/总经理/后线领导佣金情况 -->
+	<select id="getTeamCommMonByManagerMoa" parameterType="map" resultType="map">
+		SELECT 
+			t.personnel_id,
+			t.personnel_name,
+			t.personnel_shortCode AS personnel_shortcode,
+			FORMAT(ROUND(SUM(t.team_comm_mon),2) - 0,2) AS team_comm_mon_fmt,
+			ROUND(IFNULL(SUM(t.team_comm_mon),0),2) AS team_comm_mon
+		FROM
+		(
+			SELECT
+				t2.personnel_name,
+				t2.personnel_id,
+				t1.team_comm_mon,
+				t2.personnel_shortCode,
+				(SELECT dept_name FROM sys_dept WHERE dept_id = t1.dept_id) AS dept_name
+			FROM
+				wms_inve_commission_performance_his t1,
+				pm_personnel t2
+			WHERE t1.bel_salesman_id_id = t2.personnel_id
+			AND t1.statics_month = #{statics_month}
+			AND t1.team_personnel_id = #{personnel_id}
+		
+			UNION ALL
+		
+			SELECT
+				t2.personnel_name,
+				t2.personnel_id,
+				t1.old_team_comm_mon AS team_comm_mon,
+				t2.personnel_shortCode,
+				(SELECT dept_name FROM sys_dept WHERE dept_id = t1.salesman_dept_id) AS dept_name
+			FROM
+				wms_inve_old_comm_his t1,
+				pm_personnel t2
+			WHERE t1.salesman_id = t2.personnel_id
+			AND t1.statics_month = #{statics_month}
+			AND t1.department_manager_id = #{personnel_id}
+		) t
+		where
+		IFNULL(t.team_comm_mon,0) > 0
+		GROUP BY t.personnel_id
+		<if test="personnel_info != null">
+			AND (t.personnel_name like '%${personnel_info}%'
+				OR
+				t.personnel_shortCode = #{personnel_info}
+				)
+		</if>
+		ORDER BY t.dept_name ASC, t.personnel_name ASC
+		<if test="page != null and pagesize != null">
+			Limit #{page}, #{pagesize}
+		</if>
+	</select>
+	
+	<!-- 接口37 获取副总/中分总/总经理/后线领导佣金合计-->
+	<select id="getTeamCommMonByManagerMoaReturnMap" parameterType="map" resultType="map">
+		SELECT 
+			FORMAT(ROUND(SUM(t.team_comm_mon),2) - 0,2) AS team_comm_mon_fmt,
+			ROUND(IFNULL(SUM(t.team_comm_mon),0),2) AS team_comm_mon
+		FROM
+		(
+			SELECT
+				t2.personnel_name,
+				t2.personnel_id,
+				t1.team_comm_mon,
+				t2.personnel_shortCode,
+				(SELECT dept_name FROM sys_dept WHERE dept_id = t1.dept_id) AS dept_name
+			FROM
+				wms_inve_commission_performance_his t1,
+				pm_personnel t2
+			WHERE t1.bel_salesman_id_id = t2.personnel_id
+			AND t1.statics_month = #{statics_month}
+			AND t1.team_personnel_id = #{personnel_id}
+			
+			
+			UNION ALL
+		
+			SELECT
+				t2.personnel_name,
+				t2.personnel_id,
+				t1.old_team_comm_mon AS team_comm_mon,
+				t2.personnel_shortCode,
+				(SELECT dept_name FROM sys_dept WHERE dept_id = t1.salesman_dept_id) AS dept_name
+			FROM
+				wms_inve_old_comm_his t1,
+				pm_personnel t2
+			WHERE t1.salesman_id = t2.personnel_id
+			AND t1.statics_month = #{statics_month}
+			AND t1.department_manager_id = #{personnel_id}
+			
+		) t
+		where
+		1=1
+		<if test="personnel_info != null">
+			AND (t.personnel_name like '%${personnel_info}%'
+				OR
+				t.personnel_shortCode = #{personnel_info}
+			)
+		</if>
+	</select>
+</mapper> 

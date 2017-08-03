@@ -1,0 +1,114 @@
+/* CSS Document */
+
+/*login css*/
+#login_div{
+width:413px;
+height:248px;
+background:url(../images/login_bg.png) left top no-repeat;
+}
+.lg_close{
+width:24px;
+height:23px;
+float:right;
+margin-top:7px;
+margin-right:7px;
+}
+.lg_close img{
+cursor:pointer;
+}
+#login_div .title{
+height:37px;
+}
+.title_t{
+float:left;
+text-align:left;
+height:37px;
+line-height:37px;
+width:200px;
+font-size:14px;
+font-weight:bold;
+color:#fff;
+padding-left:17px;
+}
+#login_div .cotntent{
+width:335px;
+height:158px;
+margin-top:12px;
+margin-left:73px;
+display:inline;
+}
+.tb_login{
+border:0;
+width:100%;
+margin-top:35px;
+}
+.tb_login td{
+height:40px;
+line-height:40px;
+text-align:left;
+}
+.tb_login .tr_btn td{
+padding-top:10px;
+}
+.tb_login td.title{
+text-align:right;
+color:#616265;
+padding-right:10px;
+}
+.wrong_tips td{
+color:#FF0000;
+height:20px;
+line-height:20px;
+}
+.lg_txt{
+height:25px;
+line-height:25px;
+padding-left:3px;
+border:1px solid #919191;
+width:193px;
+}
+a.lg_btn:link{
+display:block;
+width:198px;
+height:28px;
+line-height:28px;
+background:url(../images/btn_bg.png) left top no-repeat;
+color:#fff;
+text-decoration:none;
+text-align:center;
+float:left;
+margin-right:5px;
+}
+a.lg_btn:visited{
+display:block;
+width:198px;
+height:28px;
+line-height:28px;
+color:#fff;
+text-decoration:none;
+text-align:center;
+background:url(../images/btn_bg.png) left top no-repeat;
+float:left;
+margin-right:5px;
+}
+a.lg_btn:hover{
+background:url(../images/btn_bg_hover.png) left top no-repeat;
+}
+a.lg_btn:actived{
+background:url(../images/btn_bg_hover.png) left top no-repeat;
+}
+a.lg_link{
+color:#5785b8;
+text-decoration:none;
+}
+a.lg_link:hover{
+text-decoration:underline;
+}
+.lg_tips{
+height:20px;
+line-height:20px;
+*padding-top:10px;
+text-align:center;
+clear:both;
+color:#616265;
+}

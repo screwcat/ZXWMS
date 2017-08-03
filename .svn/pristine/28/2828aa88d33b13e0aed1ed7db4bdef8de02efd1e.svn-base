@@ -1,0 +1,550 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>信贷放款申请</title>
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script language="Javascript" src="../../js/zx-all.js"> </script>
+
+<style type="text/css">
+.textright {
+	text-align: right;
+}
+
+.textleft {
+	text-align: left;
+}
+/*input_tb css*/
+.input_tb_new {
+	/*border:1px solid #dfdfdf;*/
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.input_tb_new a {
+	color: #056aff;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.input_tb_new td {
+	height: 35px;
+	line-height: 25px;
+	/*border-bottom:1px dashed #d5d5d5;*/
+	padding-top: 3px;
+}
+
+.input_tb_new .tr_title td {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	/*border-bottom:1px solid #dfdfdf;*/
+}
+
+.input_tb_new .tr_last td {
+	border-bottom: 0;
+}
+
+.input_tb_new .title {
+	text-align: right;
+}
+
+.input_tb_new .subtitle {
+	text-align: left;
+	background-color: #d2e1fd;
+	border-top: 1px solid #fff;
+	/*border-left:1px solid #fff;*/
+}
+
+.input_tb_new .tr_btn_input td {
+	background-color: #fbfbfb;
+	/*border-top:1px solid #dbdbdb;*/
+	/*height:40px;*/
+}
+
+.title_tb {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	height: 35px;
+	line-height: 25px;
+	padding-top: 3px;
+}
+
+.data_tb td {
+	height: 30px;
+	line-height: 24px;
+	padding-left: 10px;
+	border-bottom: 1px dashed #e3e4e6;
+	text-align: left;
+}
+</style>
+</head>
+<body>
+	<div class="tab_titleT">
+		<!--查询条件  begin-->
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr valign="bottom" id='trtab1'>
+				<td class="tabbody1" id="tabbody1" onclick="changeTab('tansfer');"
+					tabname='mytab'><div align="center">转账单</div></td>
+			</tr>
+		</table>
+	</div>
+	<div class="pop-center overflow-au" style="top: 30px;">
+		<div id="transfer" class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 5px;">
+			<div class="float-l">
+				<div class="pop-form-title">客户姓名：</div>
+				<div class="pop-form-item">
+					<input type="text" id="debtor_name" style="width: 150px;"
+						readonly="readonly" />
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">合同编号：</div>
+				<div class="pop-form-item">
+					<input type="text" id="protocol_id_year_num" style="width: 150px;"
+						readonly="readonly" />
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">合同日期：</div>
+				<div class="pop-form-item">
+					<input type="text" id="protocol_date" style="width: 150px;"
+						readonly="readonly" />
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">合同金额：</div>
+				<div class="pop-form-item">
+					<input type="text" id="principal_lower" style="width: 134px;"
+						readonly="readonly" />&nbsp;元
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">公证费：</div>
+				<div class="pop-form-item">
+					<input type="text" id="notarial_fee" style="width: 134px;"
+						readonly="readonly" />&nbsp;元
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">平台费：</div>
+				<div class="pop-form-item">
+					<input type="text" id="platform_fee" readonly="readonly"
+						style="width: 135px;" />&nbsp;元
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">利率：</div>
+				<div class="pop-form-item">
+					<input type="text" id="borrow_interest" style="width: 134px;"
+						readonly="readonly" />&nbsp;%
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">转账金额：</div>
+				<div class="pop-form-item">
+					<input type="text" id="loan_amount" style="width: 134px;"
+						readonly="readonly" value=" " />&nbsp;元
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">房产核查费：</div>
+				<div class="pop-form-item">
+				<input type="text" id="check_pay" style="width: 134px;"/>&nbsp;元</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">
+					<span class="redstar">*</span>银行：
+				</div>
+				<div class="pop-form-item">
+					<input type="text" id="receive_bank" style="width: 150px;"
+						isRequired="1" />
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">
+					<span class="redstar">*</span>开户行：
+				</div>
+				<div class="pop-form-item">
+					<input type="text" id="bank_of_deposit" style="width: 150px;"
+						isRequired="1" />
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">
+					<span class="redstar">*</span>卡号：
+				</div>
+				<div class="pop-form-item">
+					<input type="text" id="card_no" style="width: 150px;"
+						isRequired="1" />
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">
+					<span class="redstar">*</span>备注：
+				</div>
+				<div class="pop-form-item">
+					<textarea id="remark" name="remark" rows="35" cols="100"
+						style="width: 698px; height: 80px;" isRequired="1" maxLen="250"></textarea>
+				</div>
+			</div>
+			<div class="float-l  clearboth">
+				<div class="pop-form-title"></div>
+				<div class="pop-form-item"></div>
+			</div>
+			<div class="float-l  clearboth">
+				<div class="pop-form-title"></div>
+				<div class="pop-form-item"></div>
+			</div>
+
+			<!-- 添加的虚线 -->
+			<div class="line clearboth" id="info_l3"></div>
+			<div class="float-l">
+				<div class="pop-form-title" align="right">身份证附件：</div>
+				<div class="pop-form-item" align="right">
+					<table>
+						<tr>
+							<td><div style="width: 637px" id="showIdImage"></div></td>
+							<td id="upload_id"><button
+									onclick="openAddAttDialog('1','showIdImage')" class="btn">上传附件</button></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="float-l  clearboth">
+				<div class="pop-form-title"></div>
+				<div class="pop-form-item"></div>
+			</div>
+			<div class="float-l  clearboth">
+				<div class="pop-form-title"></div>
+				<div class="pop-form-item"></div>
+			</div>
+			<div class="float-l  clearboth">
+				<div class="pop-form-title"></div>
+			</div>
+			<!-- 添加的虚线 -->
+			<div class="line clearboth" id="info_l3"></div>
+			<div class="float-l">
+				<div class="pop-form-title">银行卡附件：</div>
+				<div class="pop-form-item" align="right">
+					<table>
+						<tr>
+							<td><div style="width: 637px" id="showAmountImage"></div></td>
+							<td id="upload_amount"><button
+									onclick="openAddAttDialog('2','showAmountImage')" class="btn">上传附件</button></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 提交功能按钮区 -->
+	<div class="pop-footer5 clearboth" style="bottom: 1px;" id="tb_btn">
+		<input id="tjbtn" onclick="save();" class="btn-saveT"
+			onmouseover="this.className='btn-saveT-over'"
+			onmouseout="this.className='btn-saveT'"
+			onmousedown="this.className='btn-saveT-down'" type="button"
+			style="align: right" />
+	</div>
+
+	<script type="text/javascript">
+	var wms_cre_credit_head_id = $.query.get("wms_cre_credit_head_id");
+	var protocol_id_year_num = $.query.get("protocol_id_year_num");
+	var debtor_name=$.query.get("debtor_name");
+	var protocol_date=$.query.get("protocol_date");
+	var principal_lower=$.query.get("principal_lower");
+	var borrow_interest=$.query.get("borrow_interest");
+	var loan_amount=document.getElementById("loan_amount"); 
+	var interest = $.query.get("interest"); 
+	var principal = $.query.get("principal");
+	var loan_amount = $.query.get('loan_amount');
+	var service_cost_month = $.query.get('service_cost_month');
+	var fileArr = [];//上传附件列表
+	var credit_limit=$.query.get('credit_limit');
+	$(function(){
+		lookpage();
+		company_type(protocol_id_year_num,debtor_name,protocol_date,principal_lower,borrow_interest);	
+		$('#borrow_interest').val(parseFloat($('#borrow_interest').val())+parseFloat(service_cost_month));
+		initForm();
+	});	
+	function initForm(){
+		$.getJSON(globalUtil.getTimestampUrl('/loanfina/borrowandloanappbypk.do'),
+				{
+					"wms_cre_credit_head_id" : wms_cre_credit_head_id
+				},
+				function(json) {	
+					if(json != null){
+						globalUtil.setFormVal("transfer", json);
+						//信贷增加房产核查费字段（放款申请、放款审批），长春默认值为200，沈阳默认值为0  20170706 王宇
+						if(json.check_pay==""||json.check_pay==undefined){
+							if(json.salesman_city_code!=undefined){
+								if("0024"==json.salesman_city_code){
+									$("#check_pay").val("0");
+								}else if("0431"==json.salesman_city_code){
+									$("#check_pay").val("200");
+								}
+							}
+						}else{
+							$("#check_pay").val(json.check_pay);
+						}
+						var fjList=globalUtil.syncGetJson('/loanfina/wmsfinacreloanappattwithoutpaginglist.do',{
+						"wms_fina_cre_loan_app_id": json.wms_fina_cre_loan_app,//期还款台账id
+				        },'POST');
+						var idHtml='';
+						var amountHtml='';
+						for (var i = 0; i < fjList.Rows.length; i++) {
+							fjList.Rows[i].create_timestamp = null;
+							fileArr.push(fjList.Rows[i]);
+							if(fjList.Rows[i].data_type==1){
+								var nnme=fjList.Rows[i].attachment_new_name.replace('/','thxg1');
+								nnme=nnme.replace('/','thxg2');
+								idHtml +='<div style="margin-bottom:8px;" id="delUploadDivId'+nnme+'">';
+								idHtml += '<a  target="_blank"  href="'+global_param.upload_file_url+fjList.Rows[i].attachment_address+'">'+fjList.Rows[i].attachment_old_name+'</a>';
+								idHtml += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\''+nnme+'\')"/>';
+								idHtml += '</div>'
+							}else if(fjList.Rows[i].data_type==2){
+								var nnme=fjList.Rows[i].attachment_new_name.replace('/','thxg1');
+								nnme=nnme.replace('/','thxg2');
+								amountHtml +='<div style="margin-bottom:8px;" id="delUploadDivId'+nnme+'">';
+								amountHtml += '<a  target="_blank"  href="'+global_param.upload_file_url+fjList.Rows[i].attachment_address+'">'+fjList.Rows[i].attachment_old_name+'</a>';
+								amountHtml += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\''+nnme+'\')"/>';
+								amountHtml += '</div>'
+							}
+						}
+						$("#showIdImage").html(idHtml);	
+						$("#showAmountImage").html(amountHtml);
+						$('#borrow_interest').val(parseFloat($('#borrow_interest').val())+parseFloat(json.service_cost_month));
+					}					
+		});		
+	}
+	function lookpage(){
+		$("input[id=debtor_name]").attr({
+			"disabled" : "disabled"
+		});
+		$("input[id=protocol_id_year_num]").attr({
+			"disabled":"disabled"
+		});
+		$("input[id=protocol_date]").attr({
+			"disabled":"disabled"
+		});
+		$("input[id=principal_lower]").attr({
+			"disabled":"disabled"
+		});
+		$("input[id=borrow_interest]").attr({
+			"disabled":"disabled"
+		});
+		$("input[id=refund_number]").attr({
+			"disabled":"disabled"
+		});
+		$("input[id=refund_bank]").attr({
+			"disabled":"disabled"
+		});
+	}	
+	
+	function company_type(protocol_id_year_num,debtor_name,protocol_date,principal_lower,borrow_interest){
+		var protocol_id_year_num1=document.getElementById("protocol_id_year_num");//合同号
+		protocol_id_year_num1.value=protocol_id_year_num;
+		var debtor_name1=document.getElementById("debtor_name");//客户姓名
+		debtor_name1.value=debtor_name;
+		var protocol_date1=document.getElementById("protocol_date");//合同日期
+		protocol_date1.value=protocol_date;
+		var principal_lower1=document.getElementById("principal_lower");//合同金额
+		principal_lower1.value=principal_lower;
+		var borrow_interest1=document.getElementById("borrow_interest");//利率
+		borrow_interest1.value=borrow_interest;
+		var loan_amount1=document.getElementById("loan_amount");//转款余额
+		loan_amount1.value=loan_amount;		
+		//var temp = credit_limit*250;	
+		//计算平台费:新规则：该值=合同金额*2.5%，进位取整，保留到元。修改日期：20141110 16:08
+		$('#platform_fee').val(Math.ceil(parseFloat(principal_lower)*0.025));
+		//计算公证费:公证费计算规则调整，新规则：该值=合同金额*0.3%，进位取整，保留到元。不足300元，按300元收取；超过300元，按实际值收取。修改日期：20141110 16:08
+		var notarial_fee=parseFloat(principal_lower)*0.003;
+		if(notarial_fee<=300){
+			document.getElementById("notarial_fee").value='300';
+		}else{
+			document.getElementById("notarial_fee").value=Math.ceil(notarial_fee);
+		}
+	}
+	//读取上传文件显示上传文件名称
+	function getdictAtt(code,json){
+		var htmlstr = "";
+		for(var i = 0 ;i < json.length; i++){
+			var data = json[i];
+			var data_detail_name = data.data_detail_name;
+			if(code == data.data_detail_name){
+				if(findPicHZ(data.attachment_type.toLowerCase())==-1){
+					htmlstr += '<a  target="_blank"  href="'+global_param.upload_file_url+data.attachment_address+'">'+data.attachment_old_name+'</a>'
+				}else{
+					htmlstr += '<input type="checkbox" id=cb'+data.wms_cre_credit_line_customer_data_attachment_id+' class="radio3" onclick=onCheckCB('+data.wms_cre_credit_line_customer_data_attachment_id+') style="width: auto"/>&nbsp;&nbsp;<a  target="_blank"  href="'+global_param.upload_file_url+data.attachment_address+'">'+data.attachment_old_name+'</a>'
+				}
+			}
+		}
+		return htmlstr;
+	}
+    
+	var dialog_att;
+	/*
+	打开附件上传页面
+	*/
+	function openAddAttDialog(data_type_name,data_detail_name){
+		globalUtil.clearLigerTip("transfer");
+		var url = globalUtil.getHtml("../creditManage/addFileForCre.html?data_type_name="+data_type_name+"&data_detail_name="+data_detail_name);
+		dialog_att = $.ligerDialog.open({
+	        url: url,
+	        title: '上传附件',
+	        width: 650,
+	        height: globalUtil.setDialogHeight(250),
+	        onHiddenOrClose: function(){
+	        	//alert('关闭或隐藏都调用的事件!');
+	    	},
+	        isResize: false
+		});
+	}
+	//上传文件之后显示文件
+	function addAttFile(newfileArr,objid){
+		fileArr = fileArr.concat(newfileArr);
+		var filehtml = $("#"+objid).html();
+		for(var i=0;i<newfileArr.length;i++){
+			var nnme=newfileArr[i].attachment_new_name.replace('/','thxg1');
+			nnme=nnme.replace('/','thxg2');
+			filehtml += '<div id="delUploadDivId'+nnme+'">';
+			filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+newfileArr[i].attachment_address+'">'+newfileArr[i].attachment_old_name+'</a>';
+			filehtml += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\''+nnme+'\')"/>';
+			filehtml += '</div>'
+		}
+		$("#"+objid).html(filehtml);
+	}
+	//删除文件
+	function deleteFile(filename){
+       	$.ligerDialog.confirm(globalErrorMsg['100016'],
+        function(yes) {
+        	if (yes) {
+        		$("#delUploadDivId"+filename).remove();
+        		filename=filename.replace('thxg1','/');
+        		filename=filename.replace('thxg2','/');
+        		for(var i=0;i<fileArr.length;i++){
+        			if(filename == fileArr[i].attachment_new_name){
+        				fileArr.splice(i,1);
+        				break;
+        			}
+        		}
+	    	}                                            
+   		});
+    }
+	
+	var allCreditPicIDs=[];//所有图片Id 从上至下
+	//读取上传文件显示上传文件名称
+	function getdictAtt(code,json){
+		var htmlstr = "";
+		for(var i = 0 ;i < json.length; i++){
+			var data = json[i];
+			var data_detail_name = data.data_detail_name;
+			if(code == data.data_detail_name){
+				if(findPicHZ(data.attachment_type.toLowerCase())==-1){
+					htmlstr += '<a  target="_blank"  href="'+global_param.upload_file_url+data.attachment_address+'">'+data.attachment_old_name+'</a>'
+				}else{
+					htmlstr += '<input type="checkbox" id=cb'+data.wms_cre_credit_line_customer_data_attachment_id+' class="radio3" onclick=onCheckCB('+data.wms_cre_credit_line_customer_data_attachment_id+') style="width: auto"/>&nbsp;&nbsp;<a  target="_blank"  href="'+global_param.upload_file_url+data.attachment_address+'">'+data.attachment_old_name+'</a>'
+				}
+				allCreditPicIDs.push(data.wms_cre_credit_line_customer_data_attachment_id);
+			}
+		}
+		return htmlstr;
+	}
+	
+	var checkedCreditIDs=[];
+	function onCheckCB(id){
+		if($("#cb"+id).is(':checked')){
+			addCheckedCredit(id)
+		}else{
+			removeCheckedCredit(id)
+		}
+	}
+	
+	 // 向checkedCredit中添加id的方法
+    function addCheckedCredit(id) {
+    	if (findCheckedCredit(id) == -1) {
+    		checkedCreditIDs.push(id);
+    	}
+    };
+    // 从checkedCredit中移除id的方法
+    function removeCheckedCredit(id) {
+    	var i  = findCheckedCredit(id);
+    	if (i == -1) {
+    		return;
+    	}
+    	checkedCreditIDs.splice(i, 1);
+    };
+    
+    // 在checkedCredit中查找是否已存在id的方法
+    function findCheckedCredit(id) {
+    	for(var i = 0; i < checkedCreditIDs.length; i++) {
+    		if(checkedCreditIDs[i] == id) {
+    			return i;
+    		}
+    	}
+    	return -1;
+    };
+    
+    var checkedPicNms=['jpg','jpeg','bmp','png','gif'];
+    //检查是否为图片格式
+    function findPicHZ(name) {
+    	for(var i = 0; i < checkedPicNms.length; i++) {
+    		if(checkedPicNms[i] == name) {
+    			return i;
+    		}
+    	}
+    	return -1;
+    };  
+  	//保存
+    function save(){
+    	if(globalVali.checkForm('transfer', true)){    		
+			return;
+		}
+    	if ($('#check_pay').val()!=""&&!globalUtil.isPositiveNum($('#check_pay').val())) {
+			globalUtil.errorMsg(globalErrorMsg['500800']);//核查缴费正整数
+			return;
+		} 
+    	var paramCtinfo = globalUtil.getFormParam("transfer");//获取申请信息
+    	var taskId=$.query.get("taskId");
+    	for(var i=0;i<fileArr.length;i++){
+            fileArr[i].date_type=fileArr[i].data_type;
+            delete fileArr[i].data_type;
+            delete fileArr[i].last_update_timestamp;
+            delete fileArr[i].wms_fina_cre_loan_app_att_id;
+        }
+    	paramCtinfo.fileArr = JSON.stringify(fileArr);//附件
+    	
+		$.post(globalUtil.getTimestampUrl("/loanfina/wmsfinacreloanappsave.do?wms_cre_credit_head_id="+wms_cre_credit_head_id+"&taskId="+taskId), paramCtinfo,
+		function(data) {
+			 if (data === 'success') {
+            	globalUtil.successMsg(globalErrorMsg['100002'],
+            	function(){            	
+            				window.parent.search();	 		
+            		 		closePage();
+            	 });//保存成功            	 
+            }else {
+                globalUtil.errorMsg(globalErrorMsg['100012']); //保存失败
+            }
+        });
+    }
+  
+ 	//关闭本页并刷新查询页面
+    function refreshAndClosePage(){   
+    	window.parent.location.reload();
+    	closePage();
+    }
+ 	//关闭页面
+    function closePage(){
+    	window.parent.dialog.hide();
+    }
+	</script>
+</body>
+</html>

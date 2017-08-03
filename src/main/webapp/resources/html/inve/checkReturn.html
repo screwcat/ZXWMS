@@ -1,0 +1,709 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>理财管理>审核退回列表>赎回修订</title>
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<style type="text/css">
+/*input_tb css*/
+.input_tb {
+	border: 1px solid #dfdfdf;
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.input_tb a {
+	color: #056aff;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.input_tb td {
+	height: 35px;
+	line-height: 25px;
+	border-bottom: 1px dashed #d5d5d5;
+	padding-top: 3px;
+}
+
+.input_tb .tr_title td {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	border-bottom: 1px solid #dfdfdf;
+}
+
+.input_tb .tr_last td {
+	border-bottom: 0;
+}
+
+.input_tb .title {
+	text-align: right;
+}
+
+.input_tb .subtitle {
+	text-align: left;
+	background-color: #d2e1fd;
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+}
+
+.input_tb .tr_btn_input td {
+	background-color: #fbfbfb;
+	/*border-top:1px solid #dbdbdb;*/
+	height: 40px;
+}
+
+.sqrqkinput {
+	width: 190px;
+}
+
+.sqrqkdiv { //
+	height: 35px;
+}
+</style>
+
+<script type="text/javascript">		
+	var wms_inve_customer_id;//客户表ID
+	var wms_inve_transa_id;
+	var wms_inve_redeem_id;
+	var wms_inve_redeem_all_info;
+	var protocol_data;
+	var returnRedeem = [];
+	var taskId;
+	var checkedInveTransaIDs =[];
+	var wms_inve_redeem_detail_ids =[];
+	var bonus_rates =[];
+	var cxdeptid;//原单据部门ID
+	var old_date_of_payment;
+	var bill_source;
+	
+	var now_date = new Date().format("yyyy-MM-dd");
+	var islegal = 1;	//标识位  1代码继续   0代码返回
+
+	$(function() {	
+		wms_inve_redeem_id = $.query.get("wms_inve_redeem_id");
+		taskId =  $.query.get("taskId");
+		cxdeptid=$.query.get("cxdeptid");
+		old_date_of_payment=$.query.get("old_date_of_payment");
+		bill_source=$.query.get("bill_source");
+
+		//获取赎回单据与明细信息
+		wms_inve_redeem_all_info = globalUtil.syncGetJson('/inve/wmsinveredeemallinfobypk.do',{
+			'wms_inve_redeem_id':wms_inve_redeem_id
+	        },'GET');
+		$('.class_redeem').find('[name=redeem_reason]').val(wms_inve_redeem_all_info[0].redeem_reason);
+		for(var i=0;i,i<wms_inve_redeem_all_info.length;i++){
+			checkedInveTransaIDs[i]= wms_inve_redeem_all_info[i].wms_inve_transa_id;
+			wms_inve_transa_id = wms_inve_redeem_all_info[i].wms_inve_transa_id;
+			wms_inve_redeem_detail_ids[i] = wms_inve_redeem_all_info[i].wms_inve_redeem_detail_id;
+			bonus_rates[i]=wms_inve_redeem_all_info[i].bonus_rate;//将利率
+		}
+		//获取上单协议表与产品表信息
+		protocol_data = globalUtil.syncGetJson('/inve/getprotocoldata.do',{
+			'checkedInveTransaIDs': checkedInveTransaIDs.toString(),
+			'wms_inve_redeem_id':wms_inve_redeem_id
+		    },'GET');
+		$('#prompt_date').text(protocol_data.prompt_date);
+		init_redeem_info(wms_inve_redeem_all_info);
+		initradio();
+		init_radio_val();
+	});
+	//初始化radio name值  baisong
+	function initradio(){
+		var j=1;
+		var k=1;
+		$("input[name=is_deduct_money]").each(function(i){
+			$(this).attr("name","is_deduct_money"+j);
+			if(i%2){
+				j++;
+			}
+		});
+		$("input[name=is_deduct_tax_point]").each(function(i){
+			$(this).attr("name","is_deduct_tax_point"+k);
+			if(i%2){
+				k++;
+			}
+		});
+		$(".checkedval").prop("checked",true);//初始化 单选框
+	}
+	//初始化单选框
+	function init_radio_val(){
+		for(var j=0;j<returnRedeem.length;j++){
+			if(returnRedeem[j].is_deduct_tax_point=='1'){
+				$("input[name=is_deduct_tax_point"+(j+2)+"]").each(function(i){
+					if(i==0){
+						$(this).prop("checked",true);
+					}
+				});	
+			}else{
+				$("input[name=is_deduct_tax_point"+(j+2)+"]").each(function(i){
+					if(i==1){
+						$(this).prop("checked",true);
+						$(this).prev().attr("disabled","disabled");
+						$(this).prev().val("");
+					}
+				});	
+			}
+			if(returnRedeem[j].is_deduct_money=='1'){
+				$("input[name=is_deduct_money"+(j+2)+"]").each(function(i){
+					if(i==0){
+						$(this).prop("checked",true);
+					}
+				});	
+			}else{
+				$("input[name=is_deduct_money"+(j+2)+"]").each(function(i){
+					if(i==1){
+						$(this).prop("checked",true);
+						$(this).prev().attr("disabled","disabled");
+						$(this).prev().val("");
+					}
+				});	
+			}
+		}
+	}
+	//关闭对话框
+	function closeDialog() {
+		try{
+ 			window.parent.dialog.hide();
+ 		}catch(e){
+ 			globalUtil.closeCurrentTab();
+ 		}
+	}	
+	//关闭本页并刷新查询页面
+    function refreshAndClosePage(){   
+    	window.parent.search();
+    	window.parent.dialog.hide();
+    }
+	/**
+	 * 修改
+	 */
+	function save(){
+		//提交标识位
+		if(islegal == 0){
+			return;
+		}
+		
+		var k =0;
+		var l;
+		var redeem_company_reason;
+		var is_take_off_damages;
+		$('.class_apply').each(function(i){
+			returnRedeem[i].redeem_amount = $(this).find('[name=redeem_amount]').val()*10000;
+			returnRedeem[i].due_income = $(this).find('[name=due_income]').val();
+			returnRedeem[i].management_fee = $(this).find('[name=management_fee]').val();
+			l = $(this).find('[name=product_account]').val()-$(this).find('[name=redeem_amount]').val();
+			returnRedeem[i].is_fully_redeemed = l==0?1:0;
+			returnRedeem[k].deduct_money = $(this).find('[name=deduct_money]').val();
+			returnRedeem[k].deduct_tax_point = $(this).find('[name=deduct_tax_point]').val();
+			redeem_company_reason = $(this).find("select[name='redeem_company_reason'] option:selected").val();
+			is_take_off_damages = $(this).find('[name=is_take_off_damages]:checked').val()
+		});
+	
+		//获取单选框的值 并复制到对应的数组中 baisong
+		for(var j=0;j<returnRedeem.length;j++){
+			$("input[name=is_deduct_tax_point"+(j+2)+"]").each(function(i){
+				if(this.checked){
+					returnRedeem[j].is_deduct_tax_point=this.value;
+				}
+			});
+			$("input[name=is_deduct_money"+(j+2)+"]").each(function(i){
+				if(this.checked){
+					returnRedeem[j].is_deduct_money=this.value;
+				}
+			});
+			if(returnRedeem[j].is_deduct_money=="1"){
+				if(!globalUtil.isFloat(returnRedeem[j].deduct_money)){
+					globalUtil.warnMsg(globalErrorMsg['900135']);
+					return;
+				}
+			}
+			if(returnRedeem[j].is_deduct_tax_point=="1"){
+				if(!globalUtil.isFloat(returnRedeem[j].deduct_tax_point)){
+					globalUtil.warnMsg(globalErrorMsg['900134']);
+					return;
+				}
+			}
+		}
+		for(var i=0;i<k;i++){
+			if(returnRedeem[k-1].redeem_amount== ''){
+				globalUtil.errorMsg(globalErrorMsg['800504']);
+				return;
+			}
+		}
+		var paramJson = {};
+		paramJson.returnRedeem = JSON.stringify(returnRedeem);
+		paramJson.redeem_date = $('.class_apply:last').find('[name=redeem_date]').val();
+		paramJson.redeem_reason = document.getElementsByName("redeem_reason")[0].value;
+		paramJson.wms_inve_redeem_id = wms_inve_redeem_id;
+		paramJson.taskId = taskId;
+		paramJson.cxdeptid =cxdeptid;
+		paramJson.redeem_company_reason =redeem_company_reason;
+		paramJson.is_take_off_damages = is_take_off_damages;
+		paramJson.redeem_type='1';
+		if(paramJson.redeem_company_reason == '0'){
+			 globalUtil.errorMsg('请选择赎回事由');
+	         return;
+		}
+		if(paramJson.is_take_off_damages == null){
+			 globalUtil.errorMsg('请选择是否收取违约金');
+	         return;
+		}
+		//隐藏提交按钮
+		$("#tjbtn").css("display","none");
+		$.post(globalUtil.getTimestampUrl("/inve/updateWmsInveRedeem.do"), paramJson,
+		        function(data) {
+				//隐藏提交按钮
+				$("#tjbtn").css("display","");
+		        	if (data === 'success') {
+		            	 globalUtil.successMsg(globalErrorMsg['100002'],
+		            			function(){            		 		
+		                		refreshAndClosePage();
+		            	 });//保存成功		            	 
+		            }else if (data === 'dateerror') {
+		            	  globalUtil.errorMsg(globalErrorMsg['800517']);
+		            }else {
+		                globalUtil.errorMsg(globalErrorMsg['100012']); //保存失败
+		            }
+		});	
+	}
+	//初始化申请数据
+	var income_day = []; 
+	var management_fee = [];
+	var remain_interest_day = [];
+	var management_fee_rate = [];
+	var year_days = 365;//初始值-具体值根据实际获取
+	function init_redeem_info(redeem_data){
+		for(var i=0;i<redeem_data.length;i++){
+			var redeem_info = $('<div class="class_redeem class_apply" style="margin:10px"></div>');
+			redeem_info.html($("#redeem_info").html());
+			$('.class_redeem:last').after(redeem_info);
+		}
+	    	$('.class_apply').each(function(i){
+	    		var return_redeem = {};
+	    		remain_interest_day[i] = redeem_data[i].remain_interest_days;
+	    		management_fee_rate[i] =redeem_data[i].management_fee_rate;
+	    		management_fee[i] = redeem_data[i].management_fee != undefined ? redeem_data[i].management_fee : 0;
+	    		$(this).find('[name=prot_code]').val(protocol_data.protocolInfo[i].prot_code);
+	    		$(this).find('[name=cus_name]').val(redeem_data[i].cus_name);
+	    		//$(this).find('[name=id_card]').val(redeem_data[i].id_card);
+				$(this).find('[name=id_card]').val(redeem_data[i].id_card.substring(0,3)+"**********"+redeem_data[i].id_card.substring(15,redeem_data[i].id_card.length));	    					
+
+	    		$(this).find('[name=product_account]').val(parseFloat(redeem_data[i].product_account)/10000);
+	    		$(this).find('[name=category_name]').val(redeem_data[i].category_name);
+	    		$(this).find('[name=product_deadline_name]').val(protocol_data.protocolInfo[i].product_deadline_name);
+	    		$(this).find('[name=redeem_product_interest]').val(redeem_data[i].redeem_product_interest);
+	    		$(this).find('[name=protocol_create_timestamp]').val(protocol_data.protocolInfo[i].create_timestamp_str);
+	    		$(this).find('[name=end_of_date]').val(protocol_data.protocolInfo[i].end_of_date);
+	    		$(this).find('[name=is_enable_return]').val('能');
+	    		$(this).find('[name=redeem_amount]').val(redeem_data[i].redeem_amount/10000);
+	    		
+	    		var bonus_rate_income=(parseFloat(bonus_rates[i]/100/30*redeem_data[i].redeem_amount/10000*remain_interest_day[i]));
+	    		var income_val=parseFloat(parseFloat(redeem_data[i].redeem_product_interest)/100/year_days*redeem_data[i].redeem_amount*remain_interest_day[i]);
+//	    		$(this).find('[name=due_income]').val((parseFloat(bonus_rate_income)+parseFloat(income_val)).toFixed(2));
+	    		
+ 	    		$(this).find('[name=due_income]').val(redeem_data[i].due_income);
+	    		$(this).find('[name=management_fee]').val(redeem_data[i].management_fee);
+	    		$(this).find('[name=deduct_money]').val(redeem_data[i].deduct_money);
+	    		$(this).find('[name=deduct_tax_point]').val(redeem_data[i].deduct_tax_point);
+	    		return_redeem.wms_inve_redeem_detail_id = redeem_data[i].wms_inve_redeem_detail_id;
+	    		return_redeem.wms_inve_transa_id = redeem_data[i].wms_inve_transa_id;
+	    		return_redeem.is_deduct_money=redeem_data[i].is_deduct_money;
+	    		return_redeem.is_deduct_tax_point=redeem_data[i].is_deduct_tax_point;
+	    		returnRedeem.push(return_redeem);
+	    		
+	    		$("select[name='redeem_company_reason']").val(wms_inve_redeem_all_info[0].redeem_company_reason);	    		
+    							 
+	    		if(wms_inve_redeem_all_info[0].is_take_off_damages == 0){
+	    			$('.class_apply:last').find("input[name='is_take_off_damages']:last").attr("checked",true);
+	    		}else if(wms_inve_redeem_all_info[0].is_take_off_damages == 1){
+	    			$('.class_apply:last').find("input[name='is_take_off_damages']:first").attr("checked",true);
+	    		} 
+	    		
+	    		var val = wms_inve_redeem_all_info[0].redeem_company_reason;
+	    		if(val == '1' || val == '3'){
+	    			$("input[name='is_take_off_damages']").attr("disabled", "disabled");
+	    		}else{
+	    			$("input[name='is_take_off_damages']").removeAttr("disabled");
+	    		}
+	    		
+		    	$(this).find('[name=redeem_date]').val(now_date);
+
+	    	});
+    }
+		function changeReason(val){
+			if(val == '1' || val == '3'){
+				$("input[name='is_take_off_damages']").attr("disabled", "disabled");
+				$("input[name='is_take_off_damages']:last").attr("checked",true);
+				$('[name=management_fee]').val(0);
+			}else{
+				$("input[name='is_take_off_damages']").removeAttr("disabled");
+				$("input[name='is_take_off_damages']").removeAttr("checked");
+				$('[name=management_fee]').val(management_fee);
+			}
+		}
+	//验证正整数
+	 function valiInt(ele){
+	 	var val = $(ele).val();
+	 	if(val!='' && !(globalUtil.isNum(val))){
+	 		errorMsg(globalErrorMsg['400106'],ele);
+	 	}
+	 }
+	//控制单选框 如果选择是则  input框可输入--baisong
+		function getdeductmoneya(obj){
+			$(obj).next().attr("disabled",false);
+			$(obj).next().val("0");
+		}
+		//控制单选框 如果选择否则  input框不可输入--baisong
+		function getdeductmoneyb(obj){
+			$(obj).prev().attr("disabled","disabled");
+			$(obj).prev().val("");
+		}
+		//控制单选框 如果选择是则  input框可输入--baisong
+		function getdeducttaxpointa(obj){
+			$(obj).next().attr("disabled",false);
+			$(obj).next().val("0");
+		}
+		//控制单选框 如果选择否则  input框不可输入--baisong
+		function getdeducttaxpointb(obj){
+			$(obj).prev().attr("disabled","disabled");
+			$(obj).prev().val("");
+		}
+	//验证正整数，可以等于0
+	function valiInt1(ele){
+		var val = $(ele).val();
+		var res = /^(-?((0|[1-9]+)|([1-9]\d*)))?$/.test(val)
+		if (val!='' && !res) {
+			errorMsg(globalErrorMsg['400114'],ele);
+        }
+	}
+
+	//用于onblur事件
+	 function valiFloat2(ele){
+	 	var val = $(ele).val();
+	 	
+	 	if(val!='' && (globalUtil.isNum(val.substring(0,val.length-2)) || val.substring(0,val.length-2)==0) && val.substring(val.length-1)=='.'||val==null||val-$(ele).parent().parent().parent().find('[name=product_account]').get(0).value > 0){
+	 		$(ele).val('');
+	 		$(ele).focus();
+	 		globalUtil.errorMsg(globalErrorMsg['800503'],function(ele){
+	 			toIncomeManageFeeClear(ele);
+	 		});
+	 		islegal = 2;
+	 	}
+	 }
+	
+	//验证赎回时间
+		function valiDate2 (){
+			var create_date = $('.class_apply:last').find('[name=protocol_create_timestamp]').val();
+			var redeem_date = $('.class_apply:last').find('[name=redeem_date]').val();
+			if(create_date != null && create_date != ""
+			    			&& redeem_date != null && redeem_date != "") {
+				if(create_date > redeem_date) {    			
+					globalUtil.warnMsg("赎回时间不能早于购买时间");
+					$('.class_apply:last').find('[name=redeem_date]').val("");
+					islegal = 2;
+				}
+			} 
+		}
+	
+	//弹出错误提示框
+	 function errorMsg(msg,ele){
+	 	globalUtil.addMask('1');
+	 	var obj = $.ligerDialog.error(msg, null, null);
+	 	obj.options.onHiddenOrClose = function() {
+	 		$(ele).val('');
+	 		$(ele).focus();
+	 		globalUtil.delMask('1');
+	     };
+	 }
+	 function isPositiveNum(s){//是否为正整数 
+		 var re = /^[0-9]*[1-9][0-9]*$/ ; 
+		  return re.test(s) 
+	} 
+	//计算管理费和应得收益
+	 var redeem_amount;
+	 var prot_code;
+	 function calculateIncomeManageFee(ele){
+		//重复提交 直接 返回
+			if(islegal == 0){
+				return;
+			}
+
+			valiDate2();
+			if(islegal == 2){
+				islegal = 1;
+				return;
+			}
+	     	
+			var redeem_amount = $('.class_apply:last').find('[name=redeem_amount]').val();
+			 
+			var redeem_date = $('.class_apply:last').find('[name=redeem_date]').val();
+
+			var end_of_date = $('.class_apply:last').find('[name=end_of_date]').val();
+
+			if(redeem_amount!='' && !(isPositiveNum(redeem_amount))){
+			 	errorMsg(globalErrorMsg['400106'],ele);
+			 	return;
+			}
+
+			valiFloat2(ele);
+			if(islegal == 2){
+				islegal = 1;
+				return;
+			}
+			
+			if(""==$.trim(redeem_amount) || "" == $.trim(redeem_date)){
+				return;
+			}
+
+			prot_code = $(ele).parent().parent().parent().parent().find('[name=prot_code]').get(0).value;
+			if(prot_code == $('.class_apply').find('[name=prot_code]').get(0).value){
+				 if(end_of_date != null && end_of_date != ""
+		    			&& redeem_date != null && redeem_date != "") {
+					if(end_of_date <= redeem_date && parseInt(redeem_amount) < parseInt($('.class_apply').find('[name=product_account]').val())) {    			
+						 $(ele).val(""); 
+						 globalUtil.errorMsg(globalErrorMsg['901129']); //理财到期请赎回全部金额！
+						 return;
+					}
+				} 		
+				 
+			}
+			//设置标志位  
+			 islegal = 0;	
+			 		
+			 $.getJSON(globalUtil.getTimestampUrl('/inve/checkRedeemDate.do'),
+			    		{
+			    			"redeem_date" : redeem_date
+			    		},
+			    		function(json) {
+			    			if (json === 'dateerror') {
+				            	globalUtil.errorMsg(globalErrorMsg['800517']);
+				          		$('.class_apply:last').find('[name=redeem_date]').val("");
+				          		$('.class_apply:last').find('[name=management_fee]').val("");			         		 
+				          		$('.class_apply:last').find('[name=due_income]').val("");
+				            	islegal = 1;
+				            	return;
+				            }else{
+				      		  $.getJSON(globalUtil.getTimestampUrl('/inve/getRedeemDueIncome.do'),
+				      		    		{
+				      		    			"wms_inve_transa_id" : wms_inve_transa_id,
+				      		    			"old_date_of_payment": old_date_of_payment,
+				      		    			"redeem_amount" : redeem_amount,
+				      		    			"redeem_date_str" : redeem_date,
+				      		    			"bill_source":bill_source
+				      		    		},
+				      		    		function(json) {
+				      	    				$('.class_apply').each(function(i){
+				      	    					
+				      	    					var redeem_company_reason = $(this).find("select[name='redeem_company_reason'] option:selected").val();		//赎回事由
+												if(redeem_company_reason != '1'){
+					      	    					if($(this).find('[name=is_take_off_damages]:checked').val()!='0'){
+						      	    					$(this).find('[name=management_fee]').val(json.protocolInfo[0].management_fee_tmp!=undefined?json.protocolInfo[0].management_fee_tmp:0);
+					      	    					}
+												} 
+				      		    				income_day[i] = json.protocolInfo[i].income_day;
+				      		    				returnRedeem[i].redeem_type = json.protocolInfo[i].redeem_type;
+				      	    					returnRedeem[i].management_fee_rate = json.protocolInfo[0].management_fee!=undefined?json.protocolInfo[0].management_fee:0;
+				      	    					$(this).find('[name=due_income]').val(json.protocolInfo[0].due_income!=undefined?json.protocolInfo[0].due_income:0);
+				      	    					management_fee = json.protocolInfo[0].management_fee_tmp!=undefined?json.protocolInfo[0].management_fee_tmp:0;
+				      		    			});
+				      		    			
+				      	    				islegal = 1;
+
+				      		    		});	 
+				      		 
+				            }
+			  });		    			
+	 }
+	 //清空管理费和应得收益
+	 function toIncomeManageFeeClear(ele){
+		 $(ele).parent().parent().parent().find('[name=due_income]').val('');
+		 $(ele).parent().parent().parent().find('[name=management_fee]').val('');
+	 }
+	 
+	function changeFeeDefault(){
+		$('[name=management_fee]').val(management_fee);
+		
+	}
+	
+	function changeFee(){
+		$('[name=management_fee]').val(0);
+	}
+</script>
+</head>
+<body>
+	<div class="pop-center" id="bill_info">
+		<div class="pop-center overflow-au">
+			<div class="center-content" style="min-width: 550px;">
+				<div id="friendly_prompt" class="warningDiv" align="left">
+					友情告知：赎回单据流程需在本月<font id="prompt_date"></font>日前完成，否则该赎回单据将作废
+				</div>
+				<div class="clearfix class_redeem"
+					style="height: auto; margin-top: 10px; margin-left: 7px">
+					<div class="pop-form-title2">
+						<span style="color: #FF0000;">*</span>赎回事由：
+					</div>
+					<div id="shsy" class="pop-form-item clearfix" style="height: auto">
+						<textarea name="redeem_reason" class="bz_remark"
+							style="resize: none; width: 703px; height: 100px;"
+							maxlength="400"></textarea>
+					</div>
+				</div>
+				<div id="redeem_info" class="class_redeem" style="display: none">
+					<div class="center-title">
+						协议编号：<input name="prot_code" type=text disabled="disabled"
+							style="border-style: none">
+					</div>
+					<div class="center-txt clearfix"
+						style="margin-bottom: 5px; padding: 5px; border: 1px solid #BFBFBF; height: auto;">
+						<div class="float-l">
+							<div class="pop-form-title2">客户姓名：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="cus_name" readonly="readonly"
+									class="input-H4 input-read" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">身份证号：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="id_card" readonly="readonly"
+									class="input-H4 input-read" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">投资金额：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="product_account" readonly="readonly"
+									class="input-H4 input-read" /> 万元
+							</div>
+						</div>
+						<div class="float-l clearboth">
+							<div class="pop-form-title2">产品名称：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="category_name" readonly="readonly"
+									class="input-H4 input-read" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">理财期限：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="product_deadline_name"
+									readonly="readonly" class="input-H4 input-read" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">年化利率：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="redeem_product_interest"
+									readonly="readonly" class="input-H4 input-read" /> %
+							</div>
+						</div>
+						<div class="float-l clearboth">
+							<div class="pop-form-title2 ">购买时间：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="protocol_create_timestamp"
+									readonly="readonly" class="input-H4 input-read" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">到期时间：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="end_of_date" readonly="readonly"
+									class="input-H4 input-read" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">当前能否赎回：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="is_enable_return" readonly="readonly"
+									class="input-H4 input-read" />
+							</div>
+						</div>
+						<div class="float-l clearboth">
+							<div class="pop-form-title2">
+								<span style="color: #FF0000;">*</span>赎回金额：
+							</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="redeem_amount"
+									onchange="calculateIncomeManageFee(this)" isFloat="1"
+									onpaste="return false" /> 万元
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2" style="margin-left: -22px">应得收益：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="due_income" readonly="readonly"
+									class="input-H4 input-read" /> 元
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2" style="margin-left: -12px">应付管理费：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="management_fee" readonly="readonly"
+									class="input-H4 input-read" /> 元
+							</div>
+						</div>
+				<div class="float-l">
+					<div class="pop-form-title2" ><span style="color: #FF0000;">*</span>赎回申请时间：</div>
+					<div class="l-panel-search-item">
+						<input type="text" class="Wdate" name="redeem_date"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+							onchange="calculateIncomeManageFee(this)"
+							style="width: 133px; vertical-align: top;"  class="input-H4" />
+					</div>
+					<div class="pop-form-title2" ><span style="color: #FF0000;">*</span>赎回事由：</div>
+					<div class="l-panel-search-item">
+						<select name="redeem_company_reason" style="width: 135px;" onchange="changeReason(this.value)">
+                              <option value="0">请选择</option>
+                              <option value="1">公司原因</option>
+                              <option value="2">个人原因</option>
+                              <option value="3">协议到期</option>
+                          </select>
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title2" >是否收取手续费：</div>
+					<div class="l-panel-search-item">
+						<input type="radio" style="width:30px;height:18px;vertical-align: middle;" name="is_take_off_damages" id="is_take_off_damages_1" value="1" onclick="changeFeeDefault();"/>收取
+						<input type="radio" style="width:30px;height:18px;vertical-align: middle;" name="is_take_off_damages" id="is_take_off_damages_0" value="0" onclick="changeFee();"/>不收
+					</div>
+				</div>
+				<div class="float-l clearboth">
+							<div class="pop-form-title2" >其他扣款：</div>
+							<div class="l-panel-search-item">
+								<input type="radio" style="width:30px;height:18px;vertical-align: middle;" name="is_deduct_money" value="1" onclick="getdeductmoneya(this)" checked="checked" class="checkedval"/>是
+								<input type="text"  name="deduct_money" class="input-H4 input-read" value="0"/> 元
+								<input type="radio" style="width:30px;height:18px;vertical-align: middle;" name="is_deduct_money" value="0" onclick="getdeductmoneyb(this)" />否
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2" style="margin-left: -12px">是否扣税点：</div>
+							<div class="l-panel-search-item">
+								<input type="radio" style="width:30px;height:18px;vertical-align: middle;" name="is_deduct_tax_point" value="1" onclick="getdeducttaxpointa(this)" checked="checked" class="checkedval"/>是
+								<input type="text"  name="deduct_tax_point" class="input-H4 input-read" value="0"/> 元
+								<input type="radio" style="width:30px;height:18px;vertical-align: middle;" name="is_deduct_tax_point" value="0"  onclick="getdeducttaxpointb(this)" />否
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<div class="pop-footer5 clearboth" style="bottom: 1px;">
+		<input id="tjbtn" class="btn-saveT"
+			onmouseover="this.className='btn-saveT-over'"
+			onmouseout="this.className='btn-saveT'"
+			onmousedown="this.className='btn-saveT-down'" type="button"
+			style="margin-right: 7px;" onclick="save()" /> <input
+			id="cancelBtnId" class="btn-cancel"
+			onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" type="button"
+			onclick="closeDialog()" />
+	</div>
+</body>
+</html>

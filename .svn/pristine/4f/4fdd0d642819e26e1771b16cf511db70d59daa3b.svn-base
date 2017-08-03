@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Cache-Control"
+	content="no-cache,no-store, must-revalidate" />
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="expires" content="0" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<script language="Javascript" src="../../js/zx-all.js"> </script>
+
+<title>债权调整</title>
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+/*input_tb css*/
+.input_tb {
+	border: 1px solid #dfdfdf;
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.input_tb a {
+	color: #056aff;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.input_tb td {
+	height: 35px;
+	line-height: 25px;
+	border-bottom: 1px dashed #d5d5d5;
+	padding-top: 3px;
+}
+
+.input_tb .tr_title td {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	border-bottom: 1px solid #dfdfdf;
+}
+
+.input_tb .tr_last td {
+	border-bottom: 0;
+}
+
+.input_tb .title {
+	text-align: right;
+}
+
+.input_tb .subtitle {
+	text-align: left;
+	background-color: #d2e1fd;
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+}
+
+.input_tb .tr_btn_input td {
+	background-color: #fbfbfb;
+	/*border-top:1px solid #dbdbdb;*/
+	height: 40px;
+}
+</style>
+</head>
+
+<body>
+
+	<div class="tab_titleT">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr valign="bottom" id='trtab1'>
+				<td width="33%" class="tabbody1" id="tabbody1"
+					onclick="changeTab('dsjg');" tabname='mytab'><div
+						align="center">债权调整</div></td>
+			</tr>
+		</table>
+	</div>
+	<div class="pop-center overflow-au" id="div-dsjg" style="top: 30px;">
+		
+	</div>
+
+	<div class="pop-footer5 clearboth" style="bottom: 1px; height: 35px">
+
+		<input id="tjbtn" class="btn-saveT"
+			onmouseover="this.className='btn-saveT-over'"
+			onmouseout="this.className='btn-saveT'"
+			onmousedown="this.className='btn-saveT-down'" type="button"
+			style="margin-right: 7px;" onclick="save()" /> <input
+			id="cancelBtnId" class="btn-cancel"
+			onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" type="button"
+			onclick="closePage();" />
+	</div>
+
+
+
+	<script type="text/javascript">
+			var json;
+			var taskId;
+			var jobFlag;
+			var dsInfo;
+			var hkey=$.query.get('hkey');
+			var matchArray = [];
+			var param = {};
+			var lcdjnum;
+			var wms_inve_redeem_id = $.query.get('wms_inve_redeem_id');
+            $(function ()
+            {
+    	 	 json = globalUtil.syncGetJson('/inve/getInveTransaMatchList.do',{
+    	 		wms_inve_redeem_id: wms_inve_redeem_id,
+                sortname: 'sort_order', // 排序列名
+				sortorder: 'asc' // 排序方式
+            },'POST');
+    	 	lcdjnum = 20000;
+    	 	tab.initTabSub("div-dsjg",630);
+        	if(json.wmsInveRedeemDetail != null ||json.wmsInveRedeemDetail != ""){
+	        	for(var i = 0; i < json.wmsInveRedeemDetail.length; i++){
+	        		tab.addSubTab("理财单据"+""+(i+1), "inveTransaMatch.html?wms_inve_transa_prod_id="+json.wmsInveRedeemDetail[i].wms_inve_transa_prod_id+"&wms_inve_redeem_id="+wms_inve_redeem_id+"&cktype=tz"+"&tabNum="+(lcdjnum+i),lcdjnum+i);
+	        	} 
+        	}
+        	$("#div-dsjg").ligerGetTabManager().selectTabItem(lcdjnum);
+
+        });
+        function save(){
+    		
+        	for(var i = 0; i < json.wmsInveRedeemDetail.length; i++){
+        		var ifm=document.getElementById(""+(lcdjnum+i)+"").contentWindow;
+        		var zqtz = {};
+        		if(ifm.saveAll() != null){
+        			zqtz.transaMatch = ifm.saveAll().transaMatch;
+        			/* if($.isEmptyObject(zqtz.transaMatch) || zqtz.transaMatch == "[]") {
+        	    		globalUtil.errorMsg(globalErrorMsg['800327']); 
+        	    		break;
+        			} */
+        			zqtz.wms_inve_transa_prod_id = ifm.saveAll().wms_inve_transa_prod_id;
+        			zqtz.wms_inve_redeem_id = ifm.saveAll().wms_inve_redeem_id;
+        			matchArray.push(zqtz);
+        		}else{
+        			return;
+        		}
+        			
+        	}
+        	
+        	param.tzInfo  = JSON.stringify(matchArray);
+        	param.wms_inve_redeem_id = wms_inve_redeem_id;
+        	$.post(globalUtil.getTimestampUrl("/inve/wmsinvetransamatchsaveAllInfo.do"), param,
+               		function(data) {
+                	if (data === 'success') {
+                    	 globalUtil.successMsg(globalErrorMsg['100002'], function(){            		 		
+                     		refreshAndClosePage();//保存成功
+                    	 });
+                     } else if(data === 'nomatch'){
+                         globalUtil.errorMsg(globalErrorMsg['800309']); //可转让额度不足，请重新选择债权
+                 		$('#zcbtn').css('display','inline');
+                		$('#tjbtn').css('display','inline');
+                		$('#cancelBtnId').css('display','inline');
+                     } else{
+                         globalUtil.errorMsg(globalErrorMsg['100012']); //保存失败
+                 		$('#zcbtn').css('display','inline');
+                		$('#tjbtn').css('display','inline');
+                		$('#cancelBtnId').css('display','inline');
+                     }
+                });
+        	$('#zcbtn').css('display','none');
+    		$('#tjbtn').css('display','none');
+    		$('#cancelBtnId').css('display','none');
+        }
+
+        //关闭页面
+          function closePage(){
+        	try{
+      			window.parent.dialog.hide();
+      		}catch(e){
+      			globalUtil.closeCurrentTab();
+      		}
+          }
+          
+          //关闭本页并刷新查询页面
+          function refreshAndClosePage(){    	
+          	window.parent.search();
+          	closePage();	
+          }
+         function chooseTab(flag){
+        	 $("#div-dsjg").ligerGetTabManager().selectTabItem(flag);
+         } 
+    	function getGridData(grid){
+   		 grid.endEdit();
+   		 var data_all = grid.getData();
+   		 var griddata = [];
+   		 
+   	     for(var i=0;i<data_all.length;i++){
+   	 		var data = data_all[i];
+   	 		var isEmpty = true;
+   		 		if(data){
+   					for(var key in data){
+   						if($.trim(key) == '' || $.trim(key) == '__status'){continue;}
+   						if(!globalUtil.isEmpty(data[key])){
+   							if(data[key] instanceof Date){
+   								data[key]= data[key].format('yyyy-MM-dd');//格式化日期类型数据
+   							}
+   							isEmpty = false;
+   						}
+   					}
+   				}
+   				if(!isEmpty){
+   					griddata.push(data);
+   				}
+    			}
+    		return griddata;
+   	}
+      
+</script>
+</body>
+</html>

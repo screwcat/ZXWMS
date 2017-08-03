@@ -1,0 +1,220 @@
+.l-icon{ width:16px; height:16px; overflow:hidden;}
+/*新增*/
+.l-icon-add{ background:url('../images/icons/add.gif') no-repeat center;}
+/*.l-panel-btn-over .l-icon-add {background:url('../images/icons/add-over.gif') no-repeat center;}*/
+.l-panel-btn-over .l-icon-add {background:url('../images/icons/add.gif') no-repeat center;}
+/*修改*/
+.l-icon-modify{ background:url('../images/icons/modify.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-modify{ background:url('../images/icons/modify.gif') no-repeat center;}
+/*清空*/
+.l-icon-empty{ background:url('../images/icons/empty.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-empty{ background:url('../images/icons/empty.gif') no-repeat center;}
+/*删除*/
+.l-icon-delete{ background:url('../images/icons/delete.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-delete{ background:url('../images/icons/delete.gif') no-repeat center;}
+/*编辑*/
+.l-icon-edit{ background:url('../images/icons/edit.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-edit{ background:url('../images/icons/edit-over.gif') no-repeat center;}
+/*密码初始化*/
+.l-icon-initialize-pw {background:url('../images/icons/initialize-pw.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-initialize-pw{ background:url('../images/icons/initialize-pw.gif') no-repeat center;}
+/*导出*/
+.l-icon-export{ background:url('../images/icons/export.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-export{ background:url('../images/icons/export.gif') no-repeat center;}
+/*导入*/
+.l-icon-import{ background:url('../images/icons/import.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-import{ background:url('../images/icons/import.gif') no-repeat center;}
+/*重置*/
+.l-icon-reset{ background:url('../images/icons/reset.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-reset{ background:url('../images/icons/reset.gif') no-repeat center;}
+/*保存*/
+.l-icon-save{ background:url('../images/icons/save.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-save{ background:url('../images/icons/save-over.gif') no-repeat center;}
+/*查询*/
+.l-icon-search{ background:url('../images/icons/search.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-search{ background:url('../images/icons/search.gif') no-repeat center;}
+/*权限分配*/
+.l-icon-authority{ background:url('../images/icons/authority.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-authority{ background:url('../images/icons/authority.gif') no-repeat center;}
+/*角色分配*/
+.l-icon-role{ background:url('../images/icons/role.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-role{ background:url('../images/icons/role.gif') no-repeat center;}
+/*审批*/
+.l-icon-approve{ background:url('../images/icons/approve.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-approve{ background:url('../images/icons/approve.gif') no-repeat center;}
+/*批注*/
+.l-icon-postil{ background:url('../images/icons/postil.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-postil{ background:url('../images/icons/postil.gif') no-repeat center;}
+/*签合同*/
+.l-icon-contract{ background:url('../images/icons/contract.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-contract{ background:url('../images/icons/contract.gif') no-repeat center;}
+/*面签*/
+.l-icon-interview{ background:url('../images/icons/interview.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-interview{ background:url('../images/icons/interview.gif') no-repeat center;}
+/*选择贷款客户*/
+.l-icon-chooseLcus{ background:url('../images/icons/chooseLcus.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-chooseLcus{ background:url('../images/icons/chooseLcus.gif') no-repeat center;}
+/*合同打印&打印*/
+.l-icon-print{ background:url('../images/icons/print.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-print{ background:url('../images/icons/print.gif') no-repeat center;}
+/*结清证明打印*/
+.l-icon-clearPrint{ background:url('../images/icons/clearPrint.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-clearPrint{ background:url('../images/icons/clearPrint.gif') no-repeat center;}
+/*放款确认*/
+.l-icon-loanConfirm{ background:url('../images/icons/loanConfirm.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-loanConfirm{ background:url('../images/icons/loanConfirm.gif') no-repeat center;}
+/*正常还款确认*/
+.l-icon-refundConfirm{ background:url('../images/icons/refundConfirm.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-refundConfirm{ background:url('../images/icons/refundConfirm.gif') no-repeat center;}
+/*逾期还款确认*/
+.l-icon-overdueC{ background:url('../images/icons/overdueC.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-overdueC{ background:url('../images/icons/overdueC.gif') no-repeat center;}
+/*提前还款确认*/
+.l-icon-earlyConfirm{ background:url('../images/icons/earlyConfirm.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-earlyConfirm{ background:url('../images/icons/earlyConfirm.gif') no-repeat center;}
+/*提前还款申请*/
+.l-icon-earlyAppl{ background:url('../images/icons/earlyAppl.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-earlyAppl{ background:url('../images/icons/earlyAppl.gif') no-repeat center;}
+/*转件申请*/
+.l-icon-zjApply{ background:url('../images/icons/zjApply.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-zjApply{ background:url('../images/icons/zjApply.gif') no-repeat center;}
+/*转件确认*/
+.l-icon-zjConfirm{ background:url('../images/icons/zjConfirm.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-zjConfirm{ background:url('../images/icons/zjConfirm.gif') no-repeat center;}
+/*审核*/
+.l-icon-audit{ background:url('../images/icons/audit.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-audit{ background:url('../images/icons/audit.gif') no-repeat center;}
+/*退件*/
+.l-icon-return{ background:url('../images/icons/return.gif') no-repeat center;}
+.l-panel-btn-over .l-icon-return{ background:url('../images/icons/return.gif') no-repeat center;}
+
+.show-hide {position:absolute; top:6px; right:8px; z-index:10000; width:16px; height:16px; cursor:pointer;}
+/*显示*/
+.l-icon-show{ background:url('../images/icon/show.gif') no-repeat center;}
+.l-icon-show-over{ background:url('../images/icon/show.gif') no-repeat center;}
+/*隐藏*/
+.l-icon-hide{ background:url('../images/icon/hide.gif') no-repeat center;}
+.l-icon-hide-over{ background:url('../images/icon/hide.gif') no-repeat center;}
+
+/*赎回*/
+.l-icon-redeem{ background:url('../images/icon/redeem.gif') no-repeat center;}
+.l-icon-redeem-over{ background:url('../images/icon/redeem.gif') no-repeat center;}
+
+/*公证*/
+.l-icon-notary{ background:url('../images/icon/notary.gif') no-repeat center;}
+.l-icon-notary-over{ background:url('../images/icon/notary.gif') no-repeat center;}
+
+/*他项*/
+.l-icon-heitem{ background:url('../images/icons/heitem.gif') no-repeat center;}
+.l-icon-heitem-over{ background:url('../images/icons/heitem.gif') no-repeat center;}
+
+/*金额支付*/
+.l-icon-mpay{ background:url('../images/icons/mpay.gif') no-repeat center;}
+.l-icon-mpay-over{ background:url('../images/icons/mpay.gif') no-repeat center;}
+
+/*金额到账*/
+.l-icon-arrival{ background:url('../images/icons/arrival.gif') no-repeat center;}
+.l-icon-arrival-over{ background:url('../images/icons/arrival.gif') no-repeat center;}
+
+/*回款*/
+.l-icon-payment{ background:url('../images/icons/payment.gif') no-repeat center;}
+.l-icon-payment-over{ background:url('../images/icons/payment.gif') no-repeat center;}
+
+/*债权调整*/
+.l-icon-debtadjust{ background:url('../images/icons/debtadjust.gif') no-repeat center;}
+.l-icon-debtadjust-over{ background:url('../images/icons/debtadjust.gif') no-repeat center;}
+
+/*审核*/
+.l-icon-check{ background:url('../images/icons/check.gif') no-repeat center;}
+.l-icon-check-over{ background:url('../images/icons/check.gif') no-repeat center;}
+
+/*确认*/
+.l-icon-confirm{ background:url('../images/icons/confirm.gif') no-repeat center;}
+.l-icon-confirm-over{ background:url('../images/icons/confirm.gif') no-repeat center;}
+
+/*复制*/
+.l-icon-copy{ background:url('../images/icons/copy.gif') no-repeat center;}
+.l-icon-copy-over{ background:url('../images/icons/copy.gif') no-repeat center;}
+
+/*禁用*/
+.l-icon-disable{ background:url('../images/icons/disable.gif') no-repeat center;}
+.l-icon-disable-over{ background:url('../images/icons/disable.gif') no-repeat center;}
+
+/*查看*/
+.l-icon-seelog{ background:url('../images/icons/seelog.gif') no-repeat center;}
+.l-icon-seelog-over{ background:url('../images/icons/seelog.gif') no-repeat center;}
+
+/*电话提醒*/
+.l-icon-phremind{ background:url('../images/icons/phremind.gif') no-repeat center;}
+.l-icon-phremind-over{ background:url('../images/icons/phremind.gif') no-repeat center;}
+
+/*催缴交接*/
+.l-icon-transfer{ background:url('../images/icons/transfer.gif') no-repeat center;}
+.l-icon-transfer-over{ background:url('../images/icons/transfer.gif') no-repeat center;}
+
+/*单据分配*/
+.l-icon-distribution{ background:url('../images/icons/distribution.gif') no-repeat center;}
+.l-icon-distribution-over{ background:url('../images/icons/distribution.gif') no-repeat center;}
+
+/*上门催缴*/
+.l-icon-dcall{ background:url('../images/icons/dcall.gif') no-repeat center;}
+.l-icon-dcall-over{ background:url('../images/icons/dcall.gif') no-repeat center;}
+
+/*忽略*/
+.l-icon-lgnore{ background:url('../images/icons/lgnore.gif') no-repeat center;}
+.l-icon-lgnore-over{ background:url('../images/icons/lgnore.gif') no-repeat center;}
+
+
+
+/*----------*/
+.attendance1, .attendance2, .attendance3, .attendance4, .attendance5 {width:16px; height:16px; vertical-align:middle; text-align:center; margin:0 auto; background-image:url(../images/icons/attendance.gif); background-repeat:no-repeat;}
+.attendance1 {background-position:0 0;}
+.attendance2 {background-position:0 -16px;}
+.attendance3 {background-position:0 -32px;}
+.attendance4 {background-position:0 -48px;}
+.attendance5 {background-position:0 -64px;}
+
+.l-icon-back{ background:url('../images/icons/back.gif') no-repeat center;}
+.l-icon-bluebook{ background:url('../images/icons/bluebook.gif') no-repeat center;}
+.l-icon-bookpen{ background:url('../images/icons/bookpen.gif') no-repeat center;} 
+.l-icon-coffee{ background:url('../images/icons/coffee.gif') no-repeat center;}
+.l-icon-cut{ background:url('../images/icons/cut.gif') no-repeat center;}
+.l-icon-discuss{ background:url('../images/icons/discuss.gif') no-repeat center;} 
+.l-icon-graywarn{ background:url('../images/icons/graywarn.gif') no-repeat center;}
+.l-icon-greenwarn{ background:url('../images/icons/greenwarn.gif') no-repeat center;}
+.l-icon-help{ background:url('../images/icons/help.gif') no-repeat center;}
+.l-icon-home{ background:url('../images/icons/home.gif') no-repeat center;}
+.l-icon-lock{ background:url('../images/icons/lock.gif') no-repeat center;}
+.l-icon-logout{ background:url('../images/icons/logout.gif') no-repeat center;}
+.l-icon-mailbox{ background:url('../images/icons/mailbox.gif') no-repeat center;}
+.l-icon-memeber{ background:url('../images/icons/memeber.gif') no-repeat center;}
+.l-icon-msn{ background:url('../images/icons/msn.gif') no-repeat center;}
+.l-icon-ok{ background:url('../images/icons/ok.gif') no-repeat center;}
+.l-icon-outbox{ background:url('../images/icons/outbox.gif') no-repeat center;}
+.l-icon-pager{ background:url('../images/icons/pager.gif') no-repeat center;}
+.l-icon-photograph{ background:url('../images/icons/photograph.gif') no-repeat center;}
+.l-icon-prev{ background:url('../images/icons/prev.gif') no-repeat center;}
+.l-icon-print{ background:url('../images/icons/print.gif') no-repeat center;}
+.l-icon-qq{ background:url('../images/icons/qq.gif') no-repeat center;}
+.l-icon-refresh{ background:url('../images/icons/refresh.gif') no-repeat center;}
+.l-icon-right{ background:url('../images/icons/right.gif') no-repeat center;}
+.l-icon-save-disabled{ background:url('../images/icons/save-disabled.gif') no-repeat center;}
+.l-icon-save{ background:url('../images/icons/save.gif') no-repeat center;}
+.l-icon-search2{ background:url('../images/icons/search2.gif') no-repeat center;}
+.l-icon-settings{ background:url('../images/icons/settings.gif') no-repeat center;}
+.l-icon-TRUE{ background:url('../images/icons/TRUE.gif') no-repeat center;}
+.l-icon-up{ background:url('../images/icons/up.gif') no-repeat center;}
+.l-icon-role{ background:url('../images/icons/role.gif') no-repeat center;}
+.l-icon-config{ background:url('../images/icons/config.gif') no-repeat center;}
+.l-icon-address{ background:url('../images/icons/address.gif') no-repeat center;}
+.l-icon-process{ background:url('../images/icons/process.gif') no-repeat center;}
+.l-icon-archives{ background:url('../images/icons/archives.gif') no-repeat center;}
+.l-icon-attibutes{ background:url('../images/icons/attibutes.gif') no-repeat center;}
+.l-icon-busy{ background:url('../images/icons/busy.gif') no-repeat center;}
+.l-icon-calendar{ background:url('../images/icons/calendar.gif') no-repeat center;}
+.l-icon-comment{ background:url('../images/icons/comment.gif') no-repeat center;}
+.l-icon-plus{ background:url('../images/icons/plus.gif') no-repeat center;}
+.l-icon-communication{ background:url('../images/icons/communication.gif') no-repeat center;}
+.l-icon-customers{ background:url('../images/icons/customers.gif') no-repeat center;}
+.l-icon-database{ background:url('../images/icons/database.gif') no-repeat center;}
+.l-icon-myaccount{ background:url('../images/icons/myaccount.gif') no-repeat center;}

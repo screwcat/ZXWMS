@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.remind.persist.WmsCreCreditNotarySetDao">
+    <!-- get entity by pk -->
+    <select id="get" parameterType="int" resultType="WmsCreCreditNotarySet">
+        select
+            wms_cre_credit_notary_set_id,
+            warn_role_id,
+            warn_role_name,
+            warn_expire_days,
+            send_message_cycle,
+            send_message_time,
+            send_message_number,
+            is_holiday_send,
+            create_user_id,
+            create_user_name,
+            create_timestamp,
+            last_update_user_id,
+            last_update_timestamp,
+            enable_flag
+        from wms_cre_credit_notary_set
+        where
+            wms_cre_credit_notary_set_id = #{wms_cre_credit_notary_set_id}
+    </select>
+
+    <!-- count num -->
+    <select id="findCount" parameterType="map" resultType="int">
+        select count(wms_cre_credit_notary_set_id) as count
+          from wms_cre_credit_notary_set
+        <where>
+            <if test="paramname != null">
+                <!-- and columnName = #{columnName} -->
+            </if>
+        </where>
+    </select>
+
+    <!-- list -->
+    <select id="search" parameterType="map" resultType="java.util.HashMap">
+        select
+            wms_cre_credit_notary_set_id,
+            warn_role_id,
+            warn_role_name,
+            warn_expire_days,
+            send_message_cycle,
+            send_message_time,
+            send_message_number,
+            is_holiday_send,
+            create_user_id,
+            create_user_name,
+            create_timestamp,
+            last_update_user_id,
+            last_update_timestamp,
+            enable_flag
+          from wms_cre_credit_notary_set
+        <where>
+            <if test="paramname != null">
+                <!-- and columnName = #{columnName} -->
+            </if>
+        </where>
+        <if test="sortname != null and sortorder != null">
+            ORDER BY ${sortname} ${sortorder}
+        </if>
+        <if test="offset != null and pagesize != null">
+            LIMIT ${offset}, ${pagesize}
+        </if>
+    </select>
+
+    <!-- save -->
+    <insert id="save" parameterType="WmsCreCreditNotarySet" useGeneratedKeys="true" keyProperty="wms_cre_credit_notary_set_id">
+        INSERT INTO wms_cre_credit_notary_set (
+            wms_cre_credit_notary_set_id,
+            warn_role_id,
+            warn_role_name,
+            warn_expire_days,
+            send_message_cycle,
+            send_message_time,
+            send_message_number,
+            is_holiday_send,
+            create_user_id,
+            create_user_name,
+            create_timestamp,
+            last_update_user_id,
+            last_update_timestamp,
+            enable_flag
+        )
+        VALUES(
+            #{wms_cre_credit_notary_set_id},
+            #{warn_role_id},
+            #{warn_role_name},
+            #{warn_expire_days},
+            #{send_message_cycle},
+            #{send_message_time},
+            #{send_message_number},
+            #{is_holiday_send},
+            #{create_user_id},
+            #{create_user_name},
+            #{create_timestamp},
+            #{last_update_user_id},
+            #{last_update_timestamp},
+            #{enable_flag}
+        )
+    </insert>
+
+    <!-- update -->
+    <update id="update" parameterType="WmsCreCreditNotarySet">
+        update wms_cre_credit_notary_set
+        <set>
+            <if test="wms_cre_credit_notary_set_id != null">
+                wms_cre_credit_notary_set_id = #{wms_cre_credit_notary_set_id},
+            </if>
+            <if test="warn_role_id != null">
+                warn_role_id = #{warn_role_id},
+            </if>
+            <if test="warn_role_name != null">
+                warn_role_name = #{warn_role_name},
+            </if>
+            <if test="warn_expire_days != null">
+                warn_expire_days = #{warn_expire_days},
+            </if>
+            <if test="send_message_cycle != null">
+                send_message_cycle = #{send_message_cycle},
+            </if>
+            <if test="send_message_time != null">
+                send_message_time = #{send_message_time},
+            </if>
+            <if test="send_message_number != null">
+                send_message_number = #{send_message_number},
+            </if>
+            <if test="is_holiday_send != null">
+                is_holiday_send = #{is_holiday_send},
+            </if>
+            <if test="create_user_id != null">
+                create_user_id = #{create_user_id},
+            </if>
+            <if test="create_user_name != null">
+                create_user_name = #{create_user_name},
+            </if>
+            <if test="create_timestamp != null">
+                create_timestamp = #{create_timestamp},
+            </if>
+            <if test="last_update_user_id != null">
+                last_update_user_id = #{last_update_user_id},
+            </if>
+            <if test="last_update_timestamp != null">
+                last_update_timestamp = #{last_update_timestamp},
+            </if>
+            <if test="enable_flag != null">
+                enable_flag = #{enable_flag},
+            </if>
+        </set>
+        <where>
+            wms_cre_credit_notary_set_id = #{wms_cre_credit_notary_set_id}
+        </where>
+    </update>
+
+    <!-- getListByEntity -->
+    <select id="getListByEntity" parameterType="WmsCreCreditNotarySet" resultType="WmsCreCreditNotarySet">
+        select
+            wms_cre_credit_notary_set_id,
+            warn_role_id,
+            warn_role_name,
+            warn_expire_days,
+            send_message_cycle,
+            send_message_time,
+            send_message_number,
+            is_holiday_send,
+            create_user_id,
+            create_user_name,
+            create_timestamp,
+            last_update_user_id,
+            last_update_timestamp,
+            enable_flag
+        from wms_cre_credit_notary_set
+        <where>
+            <if test="wms_cre_credit_notary_set_id != null">
+                and wms_cre_credit_notary_set_id = #{wms_cre_credit_notary_set_id}
+            </if>
+            <if test="warn_role_id != null">
+                and warn_role_id = #{warn_role_id}
+            </if>
+            <if test="warn_role_name != null">
+                and warn_role_name = #{warn_role_name}
+            </if>
+            <if test="warn_expire_days != null">
+                and warn_expire_days = #{warn_expire_days}
+            </if>
+            <if test="send_message_cycle != null">
+                and send_message_cycle = #{send_message_cycle}
+            </if>
+            <if test="send_message_time != null">
+                and send_message_time = #{send_message_time}
+            </if>
+            <if test="send_message_number != null">
+                and send_message_number = #{send_message_number}
+            </if>
+            <if test="is_holiday_send != null">
+                and is_holiday_send = #{is_holiday_send}
+            </if>
+            <if test="create_user_id != null">
+                and create_user_id = #{create_user_id}
+            </if>
+            <if test="create_user_name != null">
+                and create_user_name = #{create_user_name}
+            </if>
+            <if test="create_timestamp != null">
+                and create_timestamp = #{create_timestamp}
+            </if>
+            <if test="last_update_user_id != null">
+                and last_update_user_id = #{last_update_user_id}
+            </if>
+            <if test="last_update_timestamp != null">
+                and last_update_timestamp = #{last_update_timestamp}
+            </if>
+            <if test="enable_flag != null">
+                and enable_flag = #{enable_flag}
+            </if>
+        </where>
+    </select>
+    
+    
+      <update id="updateEnable" parameterType="WmsCreCreditNotarySet">
+        update wms_cre_credit_notary_set
+        <set>
+            <if test="wms_cre_credit_notary_set_id != null">
+                wms_cre_credit_notary_set_id = #{wms_cre_credit_notary_set_id},
+            </if>
+            <if test="warn_role_id != null">
+                warn_role_id = #{warn_role_id},
+            </if>
+            <if test="warn_role_name != null">
+                warn_role_name = #{warn_role_name},
+            </if>
+            <if test="warn_expire_days != null">
+                warn_expire_days = #{warn_expire_days},
+            </if>
+            <if test="send_message_cycle != null">
+                send_message_cycle = #{send_message_cycle},
+            </if>
+            <if test="send_message_time != null">
+                send_message_time = #{send_message_time},
+            </if>
+            <if test="send_message_number != null">
+                send_message_number = #{send_message_number},
+            </if>
+            <if test="is_holiday_send != null">
+                is_holiday_send = #{is_holiday_send},
+            </if>
+            <if test="create_user_id != null">
+                create_user_id = #{create_user_id},
+            </if>
+            <if test="create_user_name != null">
+                create_user_name = #{create_user_name},
+            </if>
+            <if test="create_timestamp != null">
+                create_timestamp = #{create_timestamp},
+            </if>
+            <if test="last_update_user_id != null">
+                last_update_user_id = #{last_update_user_id},
+            </if>
+            <if test="last_update_timestamp != null">
+                last_update_timestamp = #{last_update_timestamp},
+            </if>
+            <if test="enable_flag != null">
+                enable_flag = #{enable_flag},
+            </if>
+        </set>
+    </update>
+ 	<select id="getWmsCreCreditNotarySetInfo" resultType="WmsCreCreditNotarySet">
+        select
+            wms_cre_credit_notary_set_id,
+            warn_role_id,
+            warn_role_name,
+            warn_expire_days,
+            send_message_cycle,
+            send_message_time,
+            send_message_number,
+            is_holiday_send,
+            create_user_id,
+            create_user_name,
+            create_timestamp,
+            last_update_user_id,
+            last_update_timestamp,
+            enable_flag
+        from wms_cre_credit_notary_set
+        where
+            enable_flag='1'
+    </select>
+</mapper>

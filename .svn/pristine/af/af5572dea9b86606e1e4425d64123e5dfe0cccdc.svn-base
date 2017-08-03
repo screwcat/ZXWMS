@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveSalaryPreItemDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveSalaryPreItem">
+		select
+        				wms_inve_salary_pre_item_id,
+        				wms_inve_salary_pre_total_id,
+        				statics_month,
+        				personnel_deptid,
+        				personnel_id,
+        				personnel_postid,
+        				is_pay_department,
+        				is_pay_vice_general,
+        				is_pay_general,
+        				performance_salary_department,
+        				performance_salary_vice_general,
+        				performance_salary_general,
+        				create_user_id,
+        				create_user_name,
+						date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+        				create_timestamp,
+        				last_update_user_id,
+						date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+        				last_update_timestamp,
+        				enable_flag
+        	from
+        		wms_inve_salary_pre_item
+        	where
+        				wms_inve_salary_pre_item_id = #{wms_inve_salary_pre_item_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_salary_pre_item_id) as count
+		from wms_inve_salary_pre_item
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_inve_salary_pre_item_id,
+				wms_inve_salary_pre_total_id,
+				statics_month,
+				personnel_deptid,
+				personnel_id,
+				personnel_postid,
+				is_pay_department,
+				is_pay_vice_general,
+				is_pay_general,
+				performance_salary_department,
+				performance_salary_vice_general,
+				performance_salary_general,
+				create_user_id,
+				create_user_name,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from wms_inve_salary_pre_item
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveSalaryPreItem" useGeneratedKeys="true" keyProperty="wms_inve_salary_pre_item_id">
+		INSERT INTO wms_inve_salary_pre_item
+		(
+				wms_inve_salary_pre_item_id,
+
+				wms_inve_salary_pre_total_id,
+
+				statics_month,
+
+				personnel_deptid,
+
+				personnel_id,
+
+				personnel_postid,
+
+				is_pay_department,
+
+				is_pay_vice_general,
+
+				is_pay_general,
+
+				performance_salary_department,
+
+				performance_salary_vice_general,
+
+				performance_salary_general,
+
+				create_user_id,
+
+				create_user_name,
+
+				create_timestamp,
+
+				last_update_user_id,
+
+				last_update_timestamp,
+
+				enable_flag
+		)
+		VALUES
+		(
+				#{wms_inve_salary_pre_item_id},
+				#{wms_inve_salary_pre_total_id},
+				#{statics_month},
+				#{personnel_deptid},
+				#{personnel_id},
+				#{personnel_postid},
+				#{is_pay_department},
+				#{is_pay_vice_general},
+				#{is_pay_general},
+				#{performance_salary_department},
+				#{performance_salary_vice_general},
+				#{performance_salary_general},
+				#{create_user_id},
+				#{create_user_name},
+				#{create_timestamp},
+				#{last_update_user_id},
+				#{last_update_timestamp},
+				#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveSalaryPreItem">
+		update wms_inve_salary_pre_item
+		<set>
+					<if test="wms_inve_salary_pre_item_id != null">
+						 wms_inve_salary_pre_item_id = #{wms_inve_salary_pre_item_id},
+					</if>
+					<if test="wms_inve_salary_pre_total_id != null">
+						 wms_inve_salary_pre_total_id = #{wms_inve_salary_pre_total_id},
+					</if>
+					<if test="statics_month != null">
+						 statics_month = #{statics_month},
+					</if>
+					<if test="personnel_deptid != null">
+						 personnel_deptid = #{personnel_deptid},
+					</if>
+					<if test="personnel_id != null">
+						 personnel_id = #{personnel_id},
+					</if>
+					<if test="personnel_postid != null">
+						 personnel_postid = #{personnel_postid},
+					</if>
+					<if test="is_pay_department != null">
+						 is_pay_department = #{is_pay_department},
+					</if>
+					<if test="is_pay_vice_general != null">
+						 is_pay_vice_general = #{is_pay_vice_general},
+					</if>
+					<if test="is_pay_general != null">
+						 is_pay_general = #{is_pay_general},
+					</if>
+					<if test="performance_salary_department != null">
+						 performance_salary_department = #{performance_salary_department},
+					</if>
+					<if test="performance_salary_vice_general != null">
+						 performance_salary_vice_general = #{performance_salary_vice_general},
+					</if>
+					<if test="performance_salary_general != null">
+						 performance_salary_general = #{performance_salary_general},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="create_user_name != null">
+						 create_user_name = #{create_user_name},
+					</if>
+					<if test="create_timestamp != null">
+						 create_timestamp = #{create_timestamp},
+					</if>
+					<if test="last_update_user_id != null">
+						 last_update_user_id = #{last_update_user_id},
+					</if>
+					<if test="last_update_timestamp != null">
+						 last_update_timestamp = #{last_update_timestamp},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+	   </set>
+		 where 
+    				wms_inve_salary_pre_item_id = #{wms_inve_salary_pre_item_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveSalaryPreItem" resultType="WmsInveSalaryPreItem">
+		select 
+				wms_inve_salary_pre_item_id,
+				wms_inve_salary_pre_total_id,
+				statics_month,
+				personnel_deptid,
+				personnel_id,
+				personnel_postid,
+				is_pay_department,
+				is_pay_vice_general,
+				is_pay_general,
+				performance_salary_department,
+				performance_salary_vice_general,
+				performance_salary_general,
+				create_user_id,
+				create_user_name,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from
+		wms_inve_salary_pre_item
+		<where>
+					<if test="wms_inve_salary_pre_item_id != null">
+						and wms_inve_salary_pre_item_id = #{wms_inve_salary_pre_item_id}
+					</if>
+					<if test="wms_inve_salary_pre_total_id != null">
+						and wms_inve_salary_pre_total_id = #{wms_inve_salary_pre_total_id}
+					</if>
+					<if test="statics_month != null">
+						and statics_month = #{statics_month}
+					</if>
+					<if test="personnel_deptid != null">
+						and personnel_deptid = #{personnel_deptid}
+					</if>
+					<if test="personnel_id != null">
+						and personnel_id = #{personnel_id}
+					</if>
+					<if test="personnel_postid != null">
+						and personnel_postid = #{personnel_postid}
+					</if>
+					<if test="is_pay_department != null">
+						and is_pay_department = #{is_pay_department}
+					</if>
+					<if test="is_pay_vice_general != null">
+						and is_pay_vice_general = #{is_pay_vice_general}
+					</if>
+					<if test="is_pay_general != null">
+						and is_pay_general = #{is_pay_general}
+					</if>
+					<if test="performance_salary_department != null">
+						and performance_salary_department = #{performance_salary_department}
+					</if>
+					<if test="performance_salary_vice_general != null">
+						and performance_salary_vice_general = #{performance_salary_vice_general}
+					</if>
+					<if test="performance_salary_general != null">
+						and performance_salary_general = #{performance_salary_general}
+					</if>
+					<if test="create_user_id != null">
+						and create_user_id = #{create_user_id}
+					</if>
+					<if test="create_user_name != null">
+						and create_user_name = #{create_user_name}
+					</if>
+					<if test="create_timestamp != null">
+						and create_timestamp = #{create_timestamp}
+					</if>
+					<if test="last_update_user_id != null">
+						and last_update_user_id = #{last_update_user_id}
+					</if>
+					<if test="last_update_timestamp != null">
+						and last_update_timestamp = #{last_update_timestamp}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_inve_salary_pre_item_id != #{wms_inve_salary_pre_item_id}
+					</if>
+		</where>
+	</select>
+	
+	<select id="getPerformanceSalaryPreItemsByDeptId" parameterType="WmsInveSalaryPreItem" resultType="com.zx.emanage.inve.vo.WmsInveSalaryPreItemSearchBeanVO">
+		select 	
+				it.wms_inve_salary_pre_item_id,
+				it.personnel_id,
+				it.personnel_deptId,
+				it.last_update_user_id,				
+				(select d.dept_name from sys_dept d where d.dept_id = (select p.personnel_deptId from pm_personnel p where  p.personnel_id = it.personnel_id)) as dept_name,				
+				(select CONCAT(p1.personnel_name,p1.personnel_shortCode) from pm_personnel p1 where p1.personnel_id = it.personnel_id) as personnel_name,
+				(select p2.personnel_trialStartTime from pm_personnel p2 where p2.personnel_id = it.personnel_id) as personnel_trialStartTime,
+				(select p.post_name from sys_post p where p.post_id = it.personnel_postid) as post_name,
+				it.is_pay_department,
+  				it.is_pay_vice_general,
+  				ifnull(ifnull(it.is_pay_general,is_pay_vice_general),is_pay_department) as is_pay_general,
+  				it.performance_salary_department,
+  				it.performance_salary_vice_general,
+  				ifnull(ifnull(ifnull(it.performance_salary_general,it.performance_salary_vice_general),performance_salary_department),0) as performance_salary_general,
+  				cm.reinve_mon,
+				cm.per_add_base,
+				cm.per_add_deal,
+				cm.per_stock_all,
+				cm.per_stock_new,
+				cs.per_add_base_cquerter,
+				cs.per_add_deal_cquerter,
+				ls.per_add_base_lquerter,
+				ls.per_add_deal_lquerter
+ 		from 
+			(
+				SELECT 	
+					i.wms_inve_salary_pre_item_id,
+					i.personnel_id,
+					i.personnel_deptId,
+					i.personnel_postid,
+					i.is_pay_department,
+					i.is_pay_vice_general,
+					i.is_pay_general,
+					i.performance_salary_department,
+					i.performance_salary_vice_general,
+  					i.performance_salary_general,
+  					i.last_update_user_id,
+  					i.last_update_timestamp
+				FROM
+					wms_inve_salary_pre_item i where i.statics_month = #{statics_month} and i.personnel_deptid in (${personnel_deptids})
+			) it
+		
+		left join (					
+				SELECT
+					t.personnel_id,
+					ifnull(t.reinve_mon,0) as reinve_mon,
+					ifnull(t.per_add_base,0)-ifnull(t.per_back_base,0) AS per_add_base,
+					ifnull(t.per_add_deal,0)-ifnull(t.per_back_deal,0)+ifnull(t.per_special_add,0) AS per_add_deal,
+					ifnull(t.per_stock_all,0) as per_stock_all,
+        			ifnull(t.per_stock_new_deal,0) as per_stock_new
+				FROM
+					wms_personnel_achievement_his t
+				WHERE						
+					t.statics_month = #{statics_month}				
+				GROUP BY t.personnel_id
+		) cm
+			on it.personnel_id = cm.personnel_id
+				
+		left join (	
+				
+				SELECT
+					t.personnel_id,
+					SUM(ifnull(t.per_add_base,0)-ifnull(t.per_back_base,0)) AS per_add_base_cquerter,
+					SUM(ifnull(t.per_add_deal,0)-ifnull(t.per_back_deal,0)+ifnull(t.per_special_add,0)) AS per_add_deal_cquerter
+				FROM
+					wms_personnel_achievement_his t
+				WHERE						
+						YEAR (
+							CONCAT(t.statics_month, '-01')
+						) = YEAR (CONCAT(#{statics_month}, '-01'))
+						AND QUARTER (
+							CONCAT(t.statics_month, '-01')
+						) = QUARTER (CONCAT(#{statics_month}, '-01'))
+				
+				GROUP BY t.personnel_id
+		) cs
+			on it.personnel_id = cs.personnel_id
+		left join (
+				
+				SELECT
+					t.personnel_id,
+					SUM(ifnull(t.per_add_base,0)-ifnull(t.per_back_base,0)) AS per_add_base_lquerter,
+					SUM(ifnull(t.per_add_deal,0)-ifnull(t.per_back_deal,0)+ifnull(t.per_special_add,0)) AS per_add_deal_lquerter
+				FROM
+					wms_personnel_achievement_his t
+				WHERE
+					CASE WHEN 
+						QUARTER (CONCAT(#{statics_month}, '-01')) = 1 THEN
+						YEAR (
+							CONCAT(t.statics_month, '-01')
+						) = YEAR (
+							date_sub(CONCAT(#{statics_month}, '-01'), INTERVAL 1 YEAR)
+						)
+						AND QUARTER (
+							CONCAT(t.statics_month, '-01')
+						) = 4
+					WHEN QUARTER (CONCAT(#{statics_month}, '-01')) > 1 THEN
+						YEAR (
+							CONCAT(t.statics_month, '-01')
+						) = YEAR (CONCAT(#{statics_month}, '-01'))
+						AND QUARTER (
+							CONCAT(t.statics_month, '-01')
+						) = QUARTER (
+							DATE_SUB(CONCAT(#{statics_month}, '-01'), INTERVAL 1 QUARTER)
+						)
+				END
+				GROUP BY t.personnel_id
+			) ls on it.personnel_id = ls.personnel_id
+	
+			ORDER BY it.personnel_deptId,it.is_pay_general,it.last_update_timestamp desc,it.personnel_id
+	</select>
+	
+	<!-- 更新工资前提配置表子表 -->
+	<update id="updatePerformanceSalaryPreItemsById" parameterType="java.util.ArrayList">
+		 <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+			update wms_inve_salary_pre_item 
+				<set>
+					<if test="item.is_pay_department != null">
+						is_pay_department = #{item.is_pay_department}, 
+					</if>
+					<if test="item.performance_salary_department != null">
+						performance_salary_department = #{item.performance_salary_department}, 
+					</if>
+					<if test="item.is_pay_vice_general != null">
+						is_pay_vice_general = #{item.is_pay_vice_general}, 
+					</if>
+					<if test="item.performance_salary_vice_general != null">
+						performance_salary_vice_general = #{item.performance_salary_vice_general}, 
+					</if>
+					<if test="item.is_pay_general != null">
+						is_pay_general = #{item.is_pay_general}, 
+					</if>
+					<if test="item.performance_salary_general != null">
+	                	performance_salary_general = #{item.performance_salary_general},
+					</if>
+	                last_update_user_id = #{item.last_update_user_id},
+	                last_update_timestamp = now()
+	             </set>
+				where 
+					wms_inve_salary_pre_item_id = #{item.wms_inve_salary_pre_item_id} 
+		 </foreach>
+	</update>
+	
+	<select id="getDeptPayNum" parameterType="com.zx.emanage.inve.vo.WmsInveSalaryPreTotalSearchBeanVO" resultType="com.zx.emanage.util.gen.entity.WmsInveSalaryPreTotal">
+		select  
+			i.personnel_deptId as dept_id,
+			COUNT(1) as pay_num,
+			#{last_update_user_id} as last_update_user_id,
+			i.statics_month
+		from wms_inve_salary_pre_item i 
+		where 
+			i.statics_month = #{statics_month}
+			and i.personnel_deptId in (${dept_ids})
+			and is_pay_general = 1
+			group by i.personnel_deptId
+	</select>
+	
+	<!-- 更新工资前提配置表子表 -->
+	<update id="updateViceGeneralPerformanceSalary" parameterType="map">
+			update 
+				wms_inve_salary_pre_item 
+			set
+				is_pay_vice_general = null, 
+				performance_salary_vice_general = null, 					
+                last_update_user_id = #{last_update_user_id},
+                last_update_timestamp = now()
+			where 
+				is_pay_department is not null
+				and statics_month = #{statics_month} 
+				and personnel_deptId in (${dept_ids})
+	</update>
+</mapper> 

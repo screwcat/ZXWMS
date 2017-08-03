@@ -1,0 +1,434 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<link href="../../css/ligerui-main.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<title>审批</title>
+<style type="text/css">
+.td_title {
+	background: none repeat scroll 0 0 #EAF0FB;
+}
+
+.tb_input TD {
+	background: none repeat scroll 0 0 #FFFFFF;
+	padding: 3px 1px 1px 4px;
+}
+
+table td {
+	border-color: #BFBFBF;
+}
+
+.radio5 {
+	margin-bottom: -3px;
+}
+
+.readonly {
+	background-color: rgb(235, 235, 228);
+}
+</style>
+
+</head>
+<body>
+	<!-- 页面加载的时候，审批流程为显示 -->
+	<hr />
+	<div class="float-l clearboth" style="height: 10px;"></div>
+	<div class="center-content clearboth" style="min-width: 300px;">
+		<div class="center-title">流程历程</div>
+		<div class="center-txt" style="margin-bottom: 10px;">
+			<div id="grid"></div>
+		</div>
+	</div>
+	<div class="center-content clearboth" style="min-width: 600px; margin-top: 0px">
+		<div class="center-title">评估结果</div>
+		<hr />
+		<div id="grid_idea">
+			<table align="center" border="1" cellpadding="0" cellspacing="2" style="border-color: #BFBFBF" width="100%" style="font-size: 10.5pt;">
+				<tr>
+					<td width="50%" colspan="3" style="padding-left: 20px;">
+						<div class="float-l" style="float: left; margin-top: 6px;">
+							<input type="radio" name="result" id="result1" class="radio5" value="1" checked="checked" /><label for="result1">通过</label><input type="radio" name="result" id="result2" class="radio5" value="2" /><label for="result2">退件</label> <input type="radio" name="result" id="result3" class="radio5" value="3" /><label for="result3">拒件</label> <input type="radio" name="result" id="result4" class="radio5" value="4" /><label for="result4">直接核查</label>
+						</div>
+						<div class="float-l" style="margin-left: 30px;">
+							<div class="l-panel-search-title" style="line-height: 30px;">初评额度：</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="vehicle_evaluation_price_begin" style="width: 80px; margin-right: 5px;" />— <input type="text" id="vehicle_evaluation_price_end" style="width: 80px; margin-left: 5px;" />万元
+							</div>
+							<div class="l-panel-search-title" style="line-height: 30px;"><span style="color:red">*</span>核查缴费金额：</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="check_pay" style="width: 80px; margin-left: 5px;" />元
+							</div>
+						</div>
+						<div class="float-l" style="float: left; margin-top: 6px; margin-bottom: 6px; clear: both">
+							<input type="radio" id="FinalReview" name="result" class="radio5" value="5" /><label for="FinalReview">曾终审，审批额度为：</label><input type="text" id="old_appro_limit" style="width: 80px;margin-right: 5px;" isRequired="1" isFloat="1" scope="a" maxVal="9999" minVal="0" />万元，是否需重新房产核查：<input type="radio" name="is_again_appl" id="is_again_appl1" class="radio5" value="1" checked="checked" /><label for="is_again_appl1">是</label><input type="radio" name="is_again_appl" id="is_again_appl0" class="radio5" value="0" checked="checked" /><label for="is_again_appl0">否</label>
+						</div>
+					</td>
+					<tr>
+						<td class="td_title" width="14%" align="center" rowspan="2">审批意见</td>
+						<td><select id="assessment_advice_info"></select></td>
+					</tr>
+					<tr>
+						<td colspan="2" nowrap="nowrap"><textarea id="advice" name="advice" rows="100" style="width: 830px; height: 130px; resize: none;"></textarea></td>
+					</tr>
+			</table>
+		</div>
+	</div>
+	<div class="pop-footer5 clearboth" style="bottom: 1px;">
+		<input id="tjbtn" class="btn-saveT" onmouseover="this.className='btn-saveT-over'" onmouseout="this.className='btn-saveT'" onmousedown="this.className='btn-saveT-down'" type="button" style="margin-right: 7px;" onclick="save()" /> <input id="cancelBtnId" class="btn-cancel" onmouseover="this.className='btn-cancel-over'" onmouseout="this.className='btn-cancel'" onmousedown="this.className='btn-cancel-down'" type="button" onclick="closeDialog();" />
+	</div>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+		var approvalType = $.query.get('approvalType');
+		var grid;
+		var dialog;
+		var columns;
+		var approve_type;
+		var wms_cre_credit_head_id = $.query.get('wms_cre_credit_head_id');
+		var vehicle_evaluation_price = $.query.get('vehicle_evaluation_price');
+
+		var paramObj = {};
+		var reqMap = {};
+		$(function() {
+			//初始化评估金额
+			if (vehicle_evaluation_price != null && vehicle_evaluation_price != '' && typeof (vehicle_evaluation_price) != 'undefined') {
+				if (vehicle_evaluation_price.indexOf('-') > 0 && vehicle_evaluation_price.indexOf('--') < 0) {
+					$('#vehicle_evaluation_price_begin').val(vehicle_evaluation_price.split('-')[0]);
+					$('#vehicle_evaluation_price_end').val(vehicle_evaluation_price.split('-')[1]);
+				}
+			}
+			reqMap.customer_name = $.query.get("customer_name");
+			reqMap.house_building_area = $.query.get("house_building_area");
+			reqMap.house_address = $.query.get("house_address");
+			$.ajax({
+				type : "POST",
+				url : global_param.context_name + "/loanreview/getFinalAuditAmount.do",
+				async : false,
+				cache : false,
+				dataType : "json",
+				data : reqMap,
+				success : function(data) {
+					if (data > 0) {
+						$("#FinalReview").prop("checked", "checked");
+						$("#vehicle_evaluation_price_begin,#vehicle_evaluation_price_end,#check_pay").val("").attr("disabled", "disabled");
+						$("#old_appro_limit").val(data);
+					} else {
+						$("input[name=is_again_appl],#old_appro_limit").attr("disabled", "disabled");
+					}
+				}
+			});
+			initGrid();
+			search();
+			initAdviceInfo();
+		});
+
+		//初始化表单
+		function initForm() {
+			$.getJSON(globalUtil.getTimestampUrl('/loanreview/getapproval.do'), {
+				"wms_cre_credit_head_id" : wms_cre_credit_head_id
+			}, function(json) {
+				var appro_eval = -1;
+				var pass = -1;
+				var advice;
+				if (approvalType == 1) {
+					appro_eval = json.water_appro_eval;
+					if (json.water_appro_result != null) {
+						pass = json.water_appro_result;
+					}
+					advice = json.water_appro_advice;
+				} else if (approvalType == 2) {
+					appro_eval = json.phone_appro_eval;
+					if (json.phone_appro_result != null) {
+						pass = json.phone_appro_result;
+					}
+					advice = json.phone_appro_advice;
+				}
+				$("[name=water_appro_eval]").each(function() {
+					if ($(this).val() == appro_eval) {
+						$(this).attr('checked', 'checked');
+						return false;
+					}
+				});
+				if (pass != -1) {
+					$("[name=pass]").each(function() {
+						if ($(this).val() == (pass == 1 ? "true" : "false")) {
+							$(this).attr('checked', 'checked');
+							return false;
+						}
+					});
+				}
+				$('#advice').val(advice);
+			});
+		}
+
+		function initGrid() {
+			columns = [ {
+				display : '节点名称',
+				name : 'taskName',
+				width : 140,
+				minWidth : 140,
+				render : function(rowdata, rowindex, value) {
+					if (rowdata.taskName == '证信审批') {
+						return '征信审批';
+					} else if (rowdata.taskName == '信息审批') {
+						return '信息调查';
+					}
+					return value;
+				}
+			}, {
+				display : '审批人',
+				name : 'approvers',
+				width : 100,
+				minWidth : 100,
+				render : function(rowdata, rowindex, value) {
+					if (rowdata.approvers == '贷前证信复核员') {
+						return '贷前征信复核员';
+					}
+					return value;
+				}
+			}, {
+				display : '审批人部门',
+				name : 'personnel_deptName',
+				width : 150,
+				minWidth : 150
+			}, {
+				display : '职务',
+				name : 'personnel_postName',
+				width : 100,
+				minWidth : 100
+			}, {
+				display : '审批结果',
+				name : 'approveResult',
+				width : 100,
+				minWidth : 100
+			}, {
+				display : '审批意见',
+				name : 'approveAdvice',
+				width : 180,
+				minWidth : 180
+			}, {
+				display : '审批时间',
+				name : 'approveTime',
+				width : 160,
+				minWidth : 160
+			} ];
+
+			grid = $("#grid").ligerGrid({
+				columns : columns,
+				url : global_param.context_name + '/loancheck/houseCreditWorkFlowView.do?wms_cre_credit_head_id=' + wms_cre_credit_head_id,
+				rownumbers : true,
+				allowUnSelectRow : true,
+				usePager : false,
+				width : '100%',
+				height : 120,
+				heightDiff : -4,
+				parms : {
+					_filterParms : -1
+				}
+			});
+		}
+
+		$("input[name=result]").click(function() {
+			switch ($(this).val()) {
+			case "2": {//退件
+				$("#vehicle_evaluation_price_begin,#vehicle_evaluation_price_end,#check_pay").val("").attr("disabled", "disabled");
+				$("#assessment_advice_info").hide();
+				$("input[name=is_again_appl],#old_appro_limit").attr("disabled", "disabled");
+				$("#old_appro_limit").val("");
+				break;
+			}
+			case "3": { //拒件
+				$("#vehicle_evaluation_price_begin,#vehicle_evaluation_price_end,#check_pay").val("").attr("disabled", "disabled");
+				$("#assessment_advice_info").show();
+				$("input[name=is_again_appl],#old_appro_limit").attr("disabled", "disabled");
+				$("#old_appro_limit").val("");
+				break;
+			}
+			case "4": {//直接核查
+				$("#assessment_advice_info").hide();
+				$("#vehicle_evaluation_price_begin,#vehicle_evaluation_price_end,#check_pay").removeAttr("disabled");
+				$("#vehicle_evaluation_price_begin,#vehicle_evaluation_price_end").val("").attr("disabled", "disabled");
+				$("input[name=is_again_appl],#old_appro_limit").attr("disabled", "disabled");
+				$("#old_appro_limit").val("");
+				break;
+			}
+			case "5": {//曾终审
+				$("#assessment_advice_info").hide();
+				$("#vehicle_evaluation_price_begin,#vehicle_evaluation_price_end,#check_pay").val("").attr("disabled", "disabled");
+				$("input[name=is_again_appl],#old_appro_limit").removeAttr("disabled");
+				if ($("input[name=is_again_appl]:checked").val() == 1) {
+					$("#check_pay").removeAttr("disabled");
+				} else {
+					$("#check_pay").val("").attr("disabled", "disabled");
+				}
+				break;
+			}
+			default: {//通过
+				$("#assessment_advice_info").hide();
+				$("#vehicle_evaluation_price_begin,#vehicle_evaluation_price_end,#check_pay").removeAttr("disabled");
+				$("input[name=is_again_appl],#old_appro_limit").attr("disabled", "disabled");
+				$("#old_appro_limit").val("");
+			}
+			}
+		});
+		$("input[name=is_again_appl]").click(function() {
+			if ($(this).val() == 1) {
+				$("#check_pay").removeAttr("disabled");
+			} else {
+				$("#check_pay").val("").attr("disabled", "disabled");
+			}
+		});
+		function save() {
+			paramObj.approval_result = $('input[name=result]:checked').val();
+			paramObj.approval_advice = $('#advice').val();
+			paramObj.assessment_advice_val = $('#assessment_advice_info').val();
+			paramObj.old_appro_limit = $('#old_appro_limit').val();
+			paramObj.is_again_appl = $("input[name=is_again_appl]:checked").val();
+			if (paramObj.assessment_advice_val != "-1") {
+				paramObj.assessment_advice_info = $('#assessment_advice_info').find("option:selected").text();
+			} else {
+				paramObj.assessment_advice_info = "";
+			}
+			switch (paramObj.approval_result) {
+			case "1": {
+				if ($('#vehicle_evaluation_price_begin').val() == '') {
+					globalUtil.errorMsg(globalErrorMsg['1710011']);
+					return;
+				}
+				if (!globalUtil.isPositiveNum($('#vehicle_evaluation_price_begin').val())) {
+					globalUtil.errorMsg(globalErrorMsg['1710012']);
+					return;
+				}
+				if ($('#vehicle_evaluation_price_end').val() == '') {
+					globalUtil.errorMsg(globalErrorMsg['1710013']);
+					return;
+				}
+				if (!globalUtil.isPositiveNum($('#vehicle_evaluation_price_end').val())) {
+					globalUtil.errorMsg(globalErrorMsg['1710014']);
+					return;
+				}
+				if (parseInt($('#vehicle_evaluation_price_begin').val()) > parseInt($('#vehicle_evaluation_price_end').val())) {
+					globalUtil.errorMsg(globalErrorMsg['1710015']);
+					return;
+				}
+				if ($('#check_pay').val() == '') {
+					globalUtil.errorMsg(globalErrorMsg['1500004']);
+					return;
+				}
+				if (!globalUtil.isPositiveNum($('#check_pay').val())) {
+					globalUtil.errorMsg(globalErrorMsg['1500006']);
+					return;
+				}
+				if (parseInt($('#check_pay').val()) < 0) {
+					globalUtil.errorMsg(globalErrorMsg['1500005']);
+					return;
+				}
+				break;
+			}
+			case "2": {
+				if (paramObj.approval_advice == '') {
+					globalUtil.errorMsg(globalErrorMsg['1710010']);
+					return;
+				}
+				break;
+			}
+			case "3": {
+				if ($('#assessment_advice_info').val() == "-1") {
+					if (paramObj.approval_advice == '') {
+						globalUtil.errorMsg(globalErrorMsg['1710010']);
+						return;
+					}
+				}
+				break;
+			}
+			case "4": {
+				if ($('#check_pay').val() == '') {
+					globalUtil.errorMsg(globalErrorMsg['1500004']);
+					return;
+				}
+				if (!globalUtil.isPositiveNum($('#check_pay').val())) {
+					globalUtil.errorMsg(globalErrorMsg['1500006']);
+					return;
+				}
+				if (parseInt($('#check_pay').val()) < 0) {
+					globalUtil.errorMsg(globalErrorMsg['1500005']);
+					return;
+				}
+				break;
+			}
+			default: {//5
+				if ($("input[name=is_again_appl]:checked").val() == "1") {
+					if ($('#check_pay').val() == '') {
+						globalUtil.errorMsg(globalErrorMsg['1500004']);
+						return;
+					}
+					if (!globalUtil.isPositiveNum($('#check_pay').val())) {
+						globalUtil.errorMsg(globalErrorMsg['1500006']);
+						return;
+					}
+					if (parseInt($('#check_pay').val()) < 0) {
+						globalUtil.errorMsg(globalErrorMsg['1500005']);
+						return;
+					}
+				}
+				if ($("#old_appro_limit").val() == "") {
+					globalUtil.errorMsg(globalErrorMsg['1500007']);
+					return;
+				}
+				if (!globalUtil.isPositiveNum($("#old_appro_limit").val())) {
+					globalUtil.errorMsg(globalErrorMsg['1500008']);
+					return;
+				}
+				if (parseInt($("#old_appro_limit").val()) <= 0) {
+					globalUtil.errorMsg(globalErrorMsg['1500009']);
+					return;
+				}
+				break;
+			}
+			}
+			paramObj.vehicle_evaluation_price = $('#vehicle_evaluation_price_begin').val() + '-' + $('#vehicle_evaluation_price_end').val();
+			if (paramObj.vehicle_evaluation_price == '-') {
+				paramObj.vehicle_evaluation_price = '--';
+			}
+			paramObj.check_pay = $('#check_pay').val();
+			$('body').startLoading();
+			window.parent.saveForChildrenPage(paramObj);
+		}
+
+		//查询
+		function search() {
+			global_ligerui_extend.search(grid);
+		}
+
+		function close() {
+			dialog.close();
+			search();
+		}
+
+		function closeDialog() {
+			window.parent.dialog.hide();
+		}
+
+		function stopLoading() {
+			$('body').stopLoading();
+		}
+		function initAdviceInfo() {
+			$.ajax({
+				type : "GET",
+				url : global_param.context_name + "/sysmanage/getAssessmentAdviceInfo.do",
+				async : false,
+				dataType : "json",
+				data : {},
+				success : function(data) {
+					$("#assessment_advice_info").append("<option value='-1'>———请选择————</option>");
+					for (var i = 0; i < data.length; i++) {
+						$("#assessment_advice_info").append("<option value='"+data[i].assessment_advice_titile+"'>" + data[i].assessment_advice_info + "</option>");
+					}
+				}
+			});
+			$("#assessment_advice_info").hide();
+		}
+	</script>
+</body>
+</html>

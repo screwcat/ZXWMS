@@ -1,0 +1,584 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>财富管理系统</title>
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<style>
+/*input_tb css*/
+.input_tb {
+	border: 1px solid #dfdfdf;
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.input_tb a {
+	color: #056aff;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.input_tb td {
+	height: 35px;
+	line-height: 25px;
+	border-bottom: 1px dashed #d5d5d5;
+	padding-top: 3px;
+}
+
+.input_tb .tr_title td {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	border-bottom: 1px solid #dfdfdf;
+}
+
+.input_tb .tr_last td {
+	border-bottom: 0;
+}
+
+.input_tb .title {
+	text-align: right;
+}
+
+.input_tb .subtitle {
+	text-align: left;
+	background-color: #d2e1fd;
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+}
+
+.input_tb .tr_btn_input td {
+	background-color: #fbfbfb;
+	/*border-top:1px solid #dbdbdb;*/
+	height: 40px;
+}
+</style>
+
+<script type="text/javascript">
+var wms_cre_credit_head_id='';
+
+
+/**
+ * 提供给翻页按钮调用的方法
+ */
+function changeTab(id) {
+	var divwt1 = document.getElementById("divwt1"); //个人银行流水tab
+	var divwt2 = document.getElementById("divwt2"); //企业银行流水tab
+	var divwt3 = document.getElementById("divwt3"); //个人银行贷款tab
+	var divwt4 = document.getElementById("divwt4"); //个人非银贷款tab
+
+	if (id == 'divwt1') {
+		divwt1.style.display = '';
+		divwt2.style.display = 'none';
+		divwt3.style.display = 'none';
+		divwt4.style.display = 'none';
+		document.getElementById("tabbody1").className = "tabbody1";
+		document.getElementById("tabbody2").className = "tabbody2";
+		document.getElementById("tabbody3").className = "tabbody2";
+		document.getElementById("tabbody4").className = "tabbody2";
+	} else if (id == 'divwt2') {
+		divwt1.style.display = 'none';
+		divwt2.style.display = '';
+		divwt3.style.display = 'none';
+		divwt4.style.display = 'none';
+		document.getElementById("tabbody1").className = "tabbody2";
+		document.getElementById("tabbody2").className = "tabbody1";
+		document.getElementById("tabbody3").className = "tabbody2";
+		document.getElementById("tabbody4").className = "tabbody2";
+	} else if (id == 'divwt3') {
+		divwt1.style.display = 'none';
+		divwt2.style.display = 'none';
+		divwt3.style.display = '';
+		divwt4.style.display = 'none';
+		document.getElementById("tabbody1").className = "tabbody2";
+		document.getElementById("tabbody2").className = "tabbody2";
+		document.getElementById("tabbody3").className = "tabbody1";
+		document.getElementById("tabbody4").className = "tabbody2";
+	}else if (id == 'divwt4') {
+		divwt1.style.display = 'none';
+		divwt2.style.display = 'none';
+		divwt3.style.display = 'none';
+		divwt4.style.display = '';
+		document.getElementById("tabbody1").className = "tabbody2";
+		document.getElementById("tabbody2").className = "tabbody2";
+		document.getElementById("tabbody3").className = "tabbody2";
+		document.getElementById("tabbody4").className = "tabbody1";
+	}
+};
+
+var grid_divwt1;
+var grid_divwt1_data={};//个人银行流水数据
+
+var grid_divwt2;
+var grid_divwt2_data={};//企业银行流水数据
+
+var grid_divwt3;
+var grid_divwt3_data={};//个人银行贷款数据
+
+var grid_divwt4;
+var grid_divwt4_data={};//个人非银贷款数据
+
+var addid="";//区分div id
+
+$(function() {	
+	//获取wms_cre_credit_head_id
+	wms_cre_credit_head_id=$.query.get('wms_cre_credit_head_id');
+});
+
+//加载流水div
+$(initGrid)
+
+//添加4个流水grid
+function initGrid() {
+	//查询审批数据
+	grid_divwt1_data = globalUtil.syncGetJson('/loancheck/wmscrecreditlinebankstreamdoquery.do',{
+		wms_cre_credit_head_id: wms_cre_credit_head_id, // 贷款id
+		'query_type': '1', // 个人与企业  或  银行与非银
+		'query_tb':'1'
+        },'POST');
+	
+	grid_divwt2_data = globalUtil.syncGetJson('/loancheck/wmscrecreditlinebankstreamdoquery.do',{
+		wms_cre_credit_head_id: wms_cre_credit_head_id, // 贷款id
+		'query_type': '2', // 个人与企业  或  银行与非银
+		'query_tb':'1'
+        },'POST');
+	
+	var jsonLoanTypeVal = globalUtil.syncGetJson('/sysmanage/wmssysdictdatabydictid.do',{
+        'isEmpty': 'true', // 
+		'wms_sys_dict_id': 12 // 
+        },'GET');
+	
+	/*
+	var dklxArr=[];
+	for(var i=0;i<parseInt(jsonLoanTypeVal.length);i++){
+	  	var thid=jsonLoanTypeVal[i].value_code;
+	  	var thval=jsonLoanTypeVal[i].value_meaning;
+	  	alert(thid)
+	  	if(thval=='请选择'){
+	  		dklxArr.push({"loan_type":'',"dklxvle":jsonLoanTypeVal[i].value_meaning})
+	  	}else {
+	  		dklxArr.push({"loan_type":jsonLoanTypeVal[i].value_code,"dklxvle":jsonLoanTypeVal[i].value_meaning})
+		}
+		
+	}*/
+	
+	grid_divwt3_data = globalUtil.syncGetJson('/loancheck/wmscrecreditlinebankstreamdoquery.do',{
+		wms_cre_credit_head_id: wms_cre_credit_head_id, // 贷款id
+		'query_type': '1', // 个人与企业  或  银行与非银
+		'query_tb':'2'
+        },'POST');
+	for(var i=0;i<parseInt(grid_divwt3_data.Rows.length);i++){
+		/*
+		for(var j=0;j<parseInt(dklxArr.length);j++){
+			if(grid_divwt3_data.Rows[i].loan_type==dklxArr[j].dklxid){
+				alert(dklxArr[j].dklxvle)
+				grid_divwt3_data.Rows[i].loan_type=dklxArr[j].dklxvle;
+				break;
+			}
+		}*/
+		if(grid_divwt3_data.Rows[i].is_contract==1){
+			grid_divwt3_data.Rows[i].is_contract='有'
+		}else if(grid_divwt3_data.Rows[i].is_contract==0){
+			grid_divwt3_data.Rows[i].is_contract='无'
+		}
+		if(grid_divwt3_data.Rows[i].is_stream==1){
+			grid_divwt3_data.Rows[i].is_stream='有'
+		}else if(grid_divwt3_data.Rows[i].is_stream==0){
+			grid_divwt3_data.Rows[i].is_stream='无'
+		}
+	}
+	
+	grid_divwt4_data = globalUtil.syncGetJson('/loancheck/wmscrecreditlinebankstreamdoquery.do',{
+		wms_cre_credit_head_id: wms_cre_credit_head_id, // 贷款id
+		'query_type': '2', // 个人与企业  或  银行与非银
+		'query_tb':'2'
+        },'POST');
+	
+	for(var i=0;i<parseInt(grid_divwt4_data.Rows.length);i++){
+		
+		if(grid_divwt4_data.Rows[i].is_mortgage==1){
+			grid_divwt4_data.Rows[i].is_mortgage='有'
+		}else if(grid_divwt4_data.Rows[i].is_mortgage==0){
+			grid_divwt4_data.Rows[i].is_mortgage='无'
+		}
+		if(grid_divwt4_data.Rows[i].is_contract==1){
+			grid_divwt4_data.Rows[i].is_contract='有'
+		}else if(grid_divwt4_data.Rows[i].is_contract==0){
+			grid_divwt4_data.Rows[i].is_contract='无'
+		}
+		if(grid_divwt4_data.Rows[i].is_stream==1){
+			grid_divwt4_data.Rows[i].is_stream='有'
+		}else if(grid_divwt4_data.Rows[i].is_stream==0){
+			grid_divwt4_data.Rows[i].is_stream='无'
+		}
+	}
+	
+	//个人银行流水grid
+	var columns1 = [{
+		display: '帐户名',
+		name: 'account_name',
+		align: 'left', // 默认居中
+		width: 115
+	},{
+		display: '与申请人关系',
+		name: 'proposer_relation',
+		align: 'left', // 默认居中
+		width: 115
+	},{
+		display: '帐号',
+		name: 'account',
+		align: 'left', // 默认居中
+		width: 135
+	},{
+		display: '所属银行',
+		name: 'belongs_bank',
+		align: 'left', // 默认居中
+		width: 125
+	},{
+		display: '起始日期',
+		name: 'start_date',
+		align: 'left', // 默认居中
+		width: 125,
+		 type: 'date', format: 'yyyy-MM-dd'
+	},{
+		display: '结束日期',
+		name: 'end_date',
+		align: 'left', // 默认居中
+		width: 125,
+		type: 'date', format: 'yyyy-MM-dd'
+	},{
+		display: '详情',
+		name: 'detail_condition',
+		align: 'left', // 默认居中
+		width: 160,
+		render: function (rowdata, rowindex, value) {			
+			if(value!=undefined){
+				var dataArr = value.split('\n');
+				var result='';
+				jQuery.each(dataArr,function(i,data){
+					var dataLength=parseInt(data.length);
+					if(dataLength>13){
+						for(j=0;j<(dataLength%13==0? parseInt(dataLength)/13 : parseInt(dataLength)/13+1);j++){
+							if(j<(dataLength%13==0? parseInt(dataLength)/13 : parseInt(dataLength)/13-1)){
+								result+=data.substring(13*j,(13*(j+1)));
+									result+='\n';
+							}else{
+								result+=data.substring(13*j,dataLength);
+								result+='\n';
+							}						
+						}					
+					}else{
+						result+=data;
+						result+='\n';
+					}
+				});		
+				var  length =rowdata.detail_condition.length;
+	         	if(length<=35&&length>0){
+	         		return '<div title="'+result.substring(0,result.length-1)+'">'+result.substring(0,result.length-1).replace(/\n/g,'<br />')+'...'+'</div>';
+	         	}else if(length>35){
+	         		return '<div title="'+result.substring(0,result.length-1)+'">'+result.substring(0,35).replace(/\n/g,'<br />')+'...'+'</div>';
+	         	}				
+			}        	
+		}
+	}];
+	
+	grid_divwt1 = $("#grid-divwt1").ligerGrid({ // maingrid为表格div所在id
+		columns: columns1,
+		fixedCellHeight:true,
+		rowHeight:66,
+		data:grid_divwt1_data,
+		allowUnSelectRow: true, // 是否允许反选列，可编辑表格不可反选，查询可反选（如上下表格联动时），默认为false
+		usePager: false, // 是否分页支持，默认为true
+		rownumbers: true,
+		width: '100%',
+		height: 240,
+		heightDiff: -4,
+		enabledEdit: true
+	});
+	//个人银行流水grid 结束
+	
+	//企业银行流水grid 
+	var columns2 = [{
+		display: '帐户名',
+		name: 'account_name',
+		align: 'left', // 默认居中
+		width: 140
+	},{
+		display: '帐号',
+		name: 'account',
+		align: 'left', // 默认居中
+		width: 150
+	},{
+		display: '所属银行',
+		name: 'belongs_bank',
+		align: 'left', // 默认居中
+		width: 150
+	},{
+		display: '起始日期',
+		name: 'start_date',
+		align: 'left', // 默认居中
+		width: 145,
+		 type: 'date', format: 'yyyy-MM-dd'
+	},{
+		display: '结束日期',
+		name: 'end_date',
+		align: 'left', // 默认居中
+		width: 145,
+		type: 'date', format: 'yyyy-MM-dd'
+	},{
+		display: '详情',
+		name: 'detail_condition',
+		align: 'left', // 默认居中
+		width: 170,
+		render: function (rowdata, rowindex, value) {			
+			if(value!=undefined){
+				var dataArr = value.split('\n');
+				var result='';
+				jQuery.each(dataArr,function(i,data){
+					var dataLength=parseInt(data.length);
+					if(dataLength>13){
+						for(j=0;j<(dataLength%13==0? parseInt(dataLength)/13 : parseInt(dataLength)/13+1);j++){
+							if(j<(dataLength%13==0? parseInt(dataLength)/13 : parseInt(dataLength)/13-1)){
+								result+=data.substring(13*j,(13*(j+1)));
+									result+='\n';
+							}else{
+								result+=data.substring(13*j,dataLength);
+								result+='\n';
+							}						
+						}					
+					}else{
+						result+=data;
+						result+='\n';
+					}
+				});		
+				var  length =rowdata.detail_condition.length;
+	         	if(length<=35&&length>0){
+	         		return '<div title="'+result.substring(0,result.length-1)+'">'+result.substring(0,result.length-1).replace(/\n/g,'<br />')+'...'+'</div>';
+	         	}else if(length>35){
+	         		return '<div title="'+result.substring(0,result.length-1)+'">'+result.substring(0,35).replace(/\n/g,'<br />')+'...'+'</div>';
+	         	}				
+			}        	
+		}
+	}];
+	
+	grid_divwt2 = $("#grid-divwt2").ligerGrid({ // maingrid为表格div所在id
+		columns: columns2,
+		fixedCellHeight:true,
+		rowHeight:66,
+		data:grid_divwt2_data,
+		allowUnSelectRow: true, // 是否允许反选列，可编辑表格不可反选，查询可反选（如上下表格联动时），默认为false
+		usePager: false, // 是否分页支持，默认为true
+		rownumbers: true,
+		width: '100%',
+		height: 240,
+		heightDiff: -4,
+		enabledEdit: true
+	});
+	//企业银行流水grid 结束
+
+	//个人银行贷款grid
+	
+	var columns3 = [{
+		display: '银行名称',
+		name: 'name',
+		align: 'left', // 默认居中
+		width: 140
+	},{
+		display: '贷款金额',
+		name: 'credit_money',
+		align: 'left', // 默认居中
+		width: 140
+	},{
+		display: '期限',
+		name: 'time_limit',
+		align: 'left', // 默认居中
+		width: 110
+	},{
+		display: '起始日期',
+		name: 'start_date',
+		align: 'left', // 默认居中
+		width: 130,
+		 type: 'date', format: 'yyyy-MM-dd'
+	},{
+		display: '月还款',
+		name: 'repayment_per_month',
+		align: 'left', // 默认居中
+		width: 110
+	},{
+		display: '贷款种类',
+		name: 'loan_type',
+		align: 'left',
+		width: 90,
+		render: function(rowdata, rowindex, value) {
+			for(var i=0;i<parseInt(jsonLoanTypeVal.length);i++){
+			  	if(value==jsonLoanTypeVal[i].value_code)
+			  	   return jsonLoanTypeVal[i].value_meaning;
+			  	
+			}}
+	},{
+		display: '有无合同',
+		name: 'is_contract',
+		align: 'left',
+		width: 90
+	},{
+		display: '有无流水',
+		name: 'is_stream',
+		align: 'left',
+		width: 90
+	}];
+	
+	grid_divwt3 = $("#grid-divwt3").ligerGrid({ // maingrid为表格div所在id
+		columns: columns3,
+		data:grid_divwt3_data,
+		allowUnSelectRow: true, // 是否允许反选列，可编辑表格不可反选，查询可反选（如上下表格联动时），默认为false
+		usePager: false, // 是否分页支持，默认为true
+		rownumbers: true,
+		width: '100%',
+		height: 240,
+		heightDiff: -4,
+		enabledEdit: true
+	});
+	//个人银行贷款grid 结束
+	
+	//个人非银贷款grid 
+	var columns4 = [{
+		display: '非银机构名称',
+		name: 'name',
+		align: 'left', // 默认居中
+		width: 130
+	},{
+		display: '贷款金额',
+		name: 'credit_money',
+		align: 'left', // 默认居中
+		width: 140
+	},{
+		display: '期限',
+		name: 'time_limit',
+		align: 'left', // 默认居中
+		width: 120
+	},{
+		display: '起始日期',
+		name: 'start_date',
+		align: 'left', // 默认居中
+		width: 130,
+		 type: 'date', format: 'yyyy-MM-dd'
+	},{
+		display: '月还款',
+		name: 'repayment_per_month',
+		align: 'left', // 默认居中
+		width: 110
+	},{
+		display: '有无抵押',
+		name: 'is_mortgage',
+		align: 'left',
+		width: 90
+	},{
+		display: '有无合同',
+		name: 'is_contract',
+		align: 'left',
+		width: 90
+	},{
+		display: '有无流水',
+		name: 'is_stream',
+		align: 'left',
+		width: 90
+	}];
+	
+	grid_divwt4 = $("#grid-divwt4").ligerGrid({ // maingrid为表格div所在id
+		columns: columns4,
+		data:grid_divwt4_data,
+		allowUnSelectRow: true, // 是否允许反选列，可编辑表格不可反选，查询可反选（如上下表格联动时），默认为false
+		usePager: false, // 是否分页支持，默认为true
+		rownumbers: true,
+		width: '100%',
+		height: 240,
+		heightDiff: -4,
+		enabledEdit: true
+	});
+	//个人银行贷款grid 结束
+}
+
+/**
+*关闭窗口
+*/
+function closeDialog() {
+	window.parent.dialog.hide();
+}
+</script>
+</head>
+<body>
+
+	<div class="pop-center overflow-au" id="myForm">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr valign="bottom" id='trtab1'>
+				<td class="tabbody1" id="tabbody1" onclick="changeTab('divwt1');"><div
+						align="center">个人银行流水</div></td>
+				<td class="tabbody2" id="tabbody2" onclick="changeTab('divwt2');"><div
+						align="center">企业银行流水</div></td>
+				<td class="tabbody3" id="tabbody3" onclick="changeTab('divwt3');"><div
+						align="center">个人银行贷款</div></td>
+				<td class="tabbody3" id="tabbody4" onclick="changeTab('divwt4');"><div
+						align="center">个人非银贷款</div></td>
+			</tr>
+		</table>
+		<div id="divwt1" class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 15px;">
+			<div class="float-l clearboth" style="height: 10px;"></div>
+			<div class="center-content clearboth" style="min-width: 700px;">
+				<div class="center-title">个人银行流水</div>
+				<div class="center-txt" style="margin-bottom: 10px;">
+					<div id="toolbar-divwt1" class="minwidth400"></div>
+					<div id="grid-divwt1"></div>
+				</div>
+			</div>
+		</div>
+		<!-- 个人银行流水 -->
+		<div id="divwt2" class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 15px; display: none">
+			<div class="float-l clearboth" style="height: 10px;"></div>
+			<div class="center-content clearboth" style="min-width: 700px;">
+				<div class="center-title">企业银行流水</div>
+				<div class="center-txt" style="margin-bottom: 10px;">
+					<div id="toolbar-divwt2" class="minwidth400"></div>
+					<div id="grid-divwt2"></div>
+				</div>
+			</div>
+		</div>
+		<!-- 企业银行流水 -->
+		<div id="divwt3" class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 15px; display: none">
+			<div class="float-l clearboth" style="height: 10px;"></div>
+			<div class="center-content clearboth" style="min-width: 700px;">
+				<div class="center-title">个人银行贷款</div>
+				<div class="center-txt" style="margin-bottom: 10px;">
+					<div id="toolbar-divwt3" class="minwidth400"></div>
+					<div id="grid-divwt3"></div>
+				</div>
+			</div>
+		</div>
+		<!-- 个人银行贷款-->
+		<div id="divwt4" class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 15px; display: none">
+			<div class="float-l clearboth" style="height: 10px;"></div>
+			<div class="center-content clearboth" style="min-width: 700px;">
+				<div class="center-title">个人非银贷款</div>
+				<div class="center-txt" style="margin-bottom: 10px;">
+					<div id="toolbar-divwt4" class="minwidth400"></div>
+					<div id="grid-divwt4"></div>
+				</div>
+			</div>
+		</div>
+		<!-- 个人非银贷款-->
+	</div>
+	<div class="pop-footer5 clearboth" style="bottom: 1px;">
+		<input id="cancelBtnId" class="btn-cancel"
+			onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" type="button"
+			onclick="closeDialog();" />
+	</div>
+</body>
+</html>

@@ -1,0 +1,1049 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>贷款完善、查询</title>
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<style type="text/css">
+.textright {
+	text-align: right;
+}
+
+.textleft {
+	text-align: left;
+}
+/*input_tb css*/
+.input_tb_new {
+	/*border:1px solid #dfdfdf;*/
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.input_tb_new a {
+	color: #056aff;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.input_tb_new td {
+	height: 35px;
+	line-height: 25px;
+	/*border-bottom:1px dashed #d5d5d5;*/
+	padding-top: 3px;
+}
+
+.input_tb_new .tr_title td {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	/*border-bottom:1px solid #dfdfdf;*/
+}
+
+.input_tb_new .tr_last td {
+	border-bottom: 0;
+}
+
+.input_tb_new .title {
+	text-align: right;
+}
+
+.input_tb_new .subtitle {
+	text-align: left;
+	background-color: #d2e1fd;
+	border-top: 1px solid #fff;
+	/*border-left:1px solid #fff;*/
+}
+
+.input_tb_new .tr_btn_input td {
+	background-color: #fbfbfb;
+	/*border-top:1px solid #dbdbdb;*/
+	/*height:40px;*/
+}
+
+.title_tb {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	/*border:1px solid #dfdfdf;8/
+border-bottom:0;
+}
+.title_tb .title_txt{
+float:left;
+}
+.title_tb .title_btn{
+float:right;
+margin-top:2px;
+font-weight:normal;
+}
+.input_tb_new td {
+    /*border-bottom: 1px dashed #D5D5D5;*/
+	height: 35px;
+	line-height: 25px;
+	padding-top: 3px;
+}
+
+.data_tb td {
+	height: 30px;
+	line-height: 24px;
+	padding-left: 10px;
+	border-bottom: 1px dashed #e3e4e6;
+	text-align: left;
+}
+</style>
+
+<script type="text/javascript">
+	var grid, toolbar, dialog, columns,griddyfc,columnsdyfc;
+	var checkedCustomerAll;
+	var modifyJsonCus = new Array(); //modifyCreCustorm.html 客户信息修改页面 json数据  用于保存页面修改前修改后的数据。
+	var enabledEditFlag=true;
+	var isCommit = false;//是否已经按过了提交按钮
+	
+	//贷款信息的主表id
+	var wms_cre_credit_head_id;
+	var pageType;
+	var fileArr = [];//上传附件列表	
+	var taskId;
+	
+	$(function() {	
+		//globalUtil.clearLigerWhenScroll('waicengdiv');
+		//------------------------------------------------获取贷款主表id进行数据的显示------------------------------------
+		wms_cre_credit_head_id=$.query.get('wms_cre_credit_head_id');
+		pageType=$.query.get('pageType');
+		taskId=$.query.get('taskId');
+		//只有进行申请贷款的时候，才可以显示初始化附件上传界面
+		var url =globalUtil.getTimestampUrl('/cremanage/wmscrecreditheadinfobypk.do');
+		$.getJSON(
+			url,
+			{'wms_cre_credit_head_id':wms_cre_credit_head_id},
+			function (json){
+				//设置显示信息的方法
+				setCreditVal(json);
+				
+				initGrid();
+				//初始化抵押房产信息
+				init_dyfcgrid();
+				//初始化抵押车产信息
+				init_dyccgrid();
+				
+				init_cre_loan_type(json);//加载信用贷款产品类型
+				//初始化联系人tab页
+				addLinkTab();
+				init_LinkManTab();
+				
+				//使全部的输入框不可编辑
+				lookpage();
+			});
+				//cspgShow();
+			});
+		
+	    //修改用户信息
+        var modify=function (){
+    	//选择某一行的操作
+        var row = grid.getSelectedRow();
+    	//判断是否为空    
+    	if (row == null) {
+            	globalUtil.warnMsg(globalErrorMsg['100000']);//请选择一行记录进行修改
+                return;
+    	}
+    	//可以获取改行的所有字段属性alert(row.status);//0代表暂存  1代表提交
+    	if(row.status==0 || row.status==1){
+    		//判断是否已经点击过修改功能
+    		var url = globalUtil.getHtml("modifyCreCustorm.html?wms_cus_customer_id="+row.wms_cus_customer_id);
+    		var len = modifyJsonCus.length;
+    		for(var i =len-1; i>=0; i--){
+    			var data = modifyJsonCus[i];
+    			if(row.wms_cus_customer_id == data.wms_cus_customer_id){
+    				url = globalUtil.getHtml("modifyCreCustorm.html?datajson="+JSON.stringify(data));
+    				break;
+    			}
+    		}
+        	
+        	dialog = $.ligerDialog.open({
+		        url: url,
+		        title: '修改用户信息',
+		        width: 900,
+		        height: globalUtil.setDialogHeight(450),
+		        onHiddenOrClose: function(){
+		    	},
+		        isResize: false
+	    	});
+    	}else{
+    		 globalUtil.warnMsg(globalErrorMsg['200200']);
+    		 return;
+    	}
+    };
+    
+	//车辆贷款产品种类
+	function init_cre_loan_type(json){
+		var cre_loan_type_params ={
+				dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=75',
+				t_col_name:'cre_loan_type',
+				valueField:'value_code',   //下拉框value对应的值，默认为id
+				textField:'value_meaning',    //下拉框text对应的值，默认为text
+				def_val:'first'
+				};
+		global_ligerui_extend.initCombox("cre_loan_type",null,cre_loan_type_params);
+		if(json){
+			//把值装载设定
+			global_ligerui_extend.syncRequestInitComboxData(json,"cre_loan_type");
+			//让其不可编辑
+			global_ligerui_extend.disabledCombox("cre_loan_type");
+			
+		}else{			
+		    global_ligerui_extend.initComboxDefVal("cre_loan_type");
+		}
+	}
+    
+    function addLinkTab(){
+		 tab.initTabSub("allLinkManDiv", 400, -1);
+		 tab.tabObj.removeAll();
+	}
+    
+	
+	function reCreType(){
+	}
+    
+    /*
+	初始化显示联系人tab页
+	*/
+	var tabLinkArrAll=[];
+    var zdrTabID='';
+	function init_LinkManTab(){
+		var data_all = globalUtil.syncGetJson('/cremanage/wmscrecreditlinecustomerchangeheadwithoutpaginglist.do',{
+			'wms_cre_credit_head_id':wms_cre_credit_head_id
+	        },'POST');
+		var link_data_all = globalUtil.syncGetJson('/cremanage/wmscrecustomerchangelinecontactwithoutpaginglist.do',{
+			'wms_cre_credit_line_customer_change_head_id':wms_cre_credit_head_id,
+			'sortname':'wms_cre_credit_head_id'
+	        },'POST');
+		tabLinkArrAll=link_data_all.Rows;
+		for(var i=0;i<data_all.Rows.length;i++){
+	    	var isMaShowStr='';
+			if(data_all.Rows[i]["is_major"]=="1"){
+				isMaShowStr="主贷人："+data_all.Rows[i].customer_name;
+				zdrTabID=data_all.Rows[i]['wms_cre_credit_line_customer_change_head_id']+'linktab';
+			}else{
+				isMaShowStr="共同贷款人："+data_all.Rows[i].customer_name;
+			}
+			tab.addSubTab(isMaShowStr, 'carCreditLinkMan.html?mcclcchid='+data_all.Rows[i]['wms_cre_credit_line_customer_change_head_id'], data_all.Rows[i]['wms_cre_credit_line_customer_change_head_id']+'linktab', true);
+	    }
+		//将主贷人tab移至第一个
+		moveZDRTabToFirst(zdrTabID);
+		$("#allLinkManDiv").ligerGetTabManager().selectTabItem(zdrTabID);
+	};
+	
+	//将主贷人tab移至第一个
+	function moveZDRTabToFirst(zdTabID){
+		var newZDRIndex=$("#allLinkManDiv").ligerGetTabManager().tab.links.ul.find(">li[tabid=" + zdTabID +"]").index();
+		var lastIndex=$("#allLinkManDiv").ligerGetTabManager().tab.links.ul.find(">li").last().index();
+		if(newZDRIndex!=0&&(newZDRIndex!=lastIndex)){
+			for (var tabI = newZDRIndex; tabI > 0; tabI--) {
+				var to=$("#allLinkManDiv").ligerGetTabManager().tab.links.ul.find(">li").last();
+				var from=$("#allLinkManDiv").ligerGetTabManager().tab.links.ul.find(">li").eq(tabI-1);
+				to.after(from);
+			}
+		}else if (newZDRIndex!=0&&(newZDRIndex==lastIndex)) {
+			var from=$("#allLinkManDiv").ligerGetTabManager().tab.links.ul.find(">li").last();
+			var to=$("#allLinkManDiv").ligerGetTabManager().tab.links.ul.find(">li").eq(0);
+			to.before(from);
+		}
+	}
+	
+	function forTabSJ(mcclcchid){
+		var tabArrCD=[];
+		for (var taIndex = 0; taIndex < tabLinkArrAll.length; taIndex++) {
+			if(tabLinkArrAll[taIndex]['wms_cre_credit_line_customer_change_head_id']==mcclcchid){
+				tabArrCD=tabArrCD.concat(tabLinkArrAll[taIndex]);
+			}
+		}
+		return tabArrCD;
+	}
+    
+  	//实现查看单个表单信息的方法
+	function setCreditVal(json){
+		//------------------------贷款信息-----------------------------------
+ 		//借款用途
+		$('#credit_purpose').val(json.credit_purpose);
+ 		//可接收每月最高还款额
+		$('#max_repayment_limit_per_month').val(json.max_repayment_limit_per_month);
+ 		//申请贷款额度
+ 		$('#credit_limit').val(json.credit_limit);
+ 		//申请最长还款期限
+ 		$('#max_repayment_time_limit').val(json.max_repayment_time_limit);
+ 		//是否抵押
+ 		$('#is_vehicle').val(json.is_vehicle);
+ 		//业务员 判断如果业务员名称或者用户名编号存在 显示  否则不显示 
+ 		if(json.salesman_name !='' || json.salesman_shortcode !=null){
+ 			$('#salesman_name').val(json.salesman_name+"/"+json.salesman_shortcode); 			
+ 		}
+ 		//利率
+ 		$('#loan_interest_rate').val(json.loan_interest_rate);
+	}
+	//---------------------实现当查看用户贷款数据，不能够编辑的方法------------------------
+	function lookpage(){
+		$("input[type=text]").attr({
+			"disabled" : "disabled"
+		});
+		//使全部的单选按钮不可编辑
+		$("input[type=radio]").attr({
+			"disabled" : "disabled"
+		});
+		//使全部下来框按不可编辑
+		$("select").attr({
+			"disabled" : "disabled"
+		});
+		//使所有多选框不可编辑
+		$("input[type=checkbox]").attr({
+			"disabled" : "disabled"
+		});
+		//使个人textArea不可编辑
+		$('#person_condition').attr({
+			"disabled" : "disabled"
+		});
+		info_l1.style.display='none';
+		info_l2.style.display='none';
+		info_l3.style.display='none';
+		
+		if(pageType=='ck'){
+			$("#tdupdPicBtn").html('');
+			$("#tdupdPicBtnxxws").html('');
+			document.getElementById("tjbtn").style.display = 'none';
+			var fjList=globalUtil.syncGetJson('/loanreview/wmscrecarphousingattwithoutpaginglist.do',{
+				wms_cre_credit_head_id: wms_cre_credit_head_id, // 贷款id'
+		        },'POST');
+				var td3Html='';
+				var CSHtml='';
+				for (var i = 0; i < fjList.Rows.length; i++) {
+					if(fjList.Rows[i].data_type==1){
+						td3Html += '<div id="delUploadDivId'+fjList.Rows[i].attachment_new_name+'">';
+						td3Html += '<a  target="_blank"  href="'+global_param.upload_file_url+fjList.Rows[i].attachment_address+'">'+fjList.Rows[i].attachment_old_name+'</a>';
+						td3Html += '</div>'
+					}else if(fjList.Rows[i].data_type==2){
+			    		CSHtml += '<div id="delUploadDivId'+fjList.Rows[i].attachment_new_name+'">';
+						CSHtml += '<a  target="_blank"  href="'+global_param.upload_file_url+fjList.Rows[i].attachment_address+'">'+fjList.Rows[i].attachment_old_name+'</a>';
+						CSHtml += '</div>'
+					}
+				}
+				
+				$("#CSshowPic").html(CSHtml); 
+				$("#tdshowPic").html(td3Html);
+		}else if (pageType=='ws') {
+			cspgShow(1);
+			$("#plswpic").html('');
+			document.getElementById("cancelBtnId").style.display = 'none';
+		}else if (pageType=='wsqck') {
+			$("#tdupdPicBtn").html('');
+			$("#tdupdPicBtnxxws").html('');
+			cspgShow(1);
+			document.getElementById("tjbtn").style.display = 'none';
+			//document.getElementById("tabbody3").style.display = 'none';
+		}
+	}
+    function cspgShow(str){
+    	var fjList=globalUtil.syncGetJson('/loanreview/wmscrecarphousingattwithoutpaginglist.do',{
+			wms_cre_credit_head_id: wms_cre_credit_head_id, // 贷款id'
+	        },'POST');
+    	var CSHtml='';
+    	var td3Html='';
+    	
+    	for (var i = 0; i < fjList.Rows.length; i++) {
+    		if(fjList.Rows[i].data_type==2){
+    			CSHtml += '<div id="delUploadDivId'+fjList.Rows[i].attachment_new_name+'">';
+				CSHtml += '<a  target="_blank"  href="'+global_param.upload_file_url+fjList.Rows[i].attachment_address+'">'+fjList.Rows[i].attachment_old_name+'</a>';
+				CSHtml += '</div>'
+    		}
+    		if(fjList.Rows[i].data_type==1&&str==1){
+    			if(fjList.Rows[i].create_timestamp){
+					fjList.Rows[i].create_timestamp=(new Date(fjList.Rows[i].create_timestamp)).format('yyyy-MM-dd hh:mm:ss');
+				}
+				if(fjList.Rows[i].last_update_timestamp){
+					fjList.Rows[i].last_update_timestamp=(new Date(fjList.Rows[i].last_update_timestamp)).format('yyyy-MM-dd hh:mm:ss');
+				}
+    			fileArr = fileArr.concat(fjList.Rows[i]);
+    			var nnme=fjList.Rows[i].attachment_new_name.replace('/','thxg1');
+				nnme=nnme.replace('/','thxg2');
+				td3Html += '<div id="delUploadDivId'+nnme+'">';
+				td3Html += '<a  target="_blank"  href="'+global_param.upload_file_url+fjList.Rows[i].attachment_address+'">'+fjList.Rows[i].attachment_old_name+'</a>';
+				td3Html += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\''+nnme+'\')"/>';
+				td3Html += '</div>'
+			}
+    	}
+    	/* if(str==1){
+    		$("#tdshowPic").html(td3Html);
+    	} */
+    	$("#tdshowPic").html(td3Html);
+    	$("#CSshowPic").html(CSHtml);   	
+    }	
+    function addlinkmanbtn(){
+    	addlinkman(false);
+    }
+	/*
+	添加联系人信息
+	*/
+	function addlinkman(withoutBtn){
+		var rowindex = document.getElementById("link_man_tb").rows.length;
+		var row = document.getElementById("link_man_tb").insertRow(rowindex);
+		var td1 = row.insertCell(0);
+		td1.setAttribute("class","left_title");
+		var datestr = '<select name="contact_relation_type'+rowindex+'"><option value="直系亲属">直系亲属</option><option value="保人">保人</option><option value="同事(朋友)">同事(朋友)</option></select>';
+		td1.innerHTML = datestr;
+		var td2 = row.insertCell(1);
+		td2.innerHTML = '<input name="contact_name" type="text" style="width: 150px;" />';
+		var td3 = row.insertCell(2);
+		td3.innerHTML = '<input name="contact_relation_description" type="text" style="width: 150px;" />';
+		var td4 = row.insertCell(3);
+		td4.innerHTML = '<input name="contact_mobile_phone"  type="text" style="width: 150px;" />';
+		var td5 = row.insertCell(4);
+		td5.setAttribute("class","left_title");
+		var deltext = "<a name=\"scbtn\" onclick=\"dellinkman(this)\" href=\"#\">删除</a>";
+		var text = '<input name="audit_result1" type="text" style="width: 40px;" disabled="disabled" /> '; 
+		text += '<input name="audit_result2" type="text" style="width: 40px;" disabled="disabled" /> ';
+		text += '<input name="audit_result3" type="text" style="width: 40px;" disabled="disabled" /> ';
+		if(withoutBtn){
+			td5.innerHTML = text;
+		}else{
+			td5.innerHTML = text+deltext;
+		}
+	}
+	/*
+	set联系人信息的值
+	*/
+	function setLinkManVal(dataArr){
+		//判断超出6条备用信息，不显示后面删除按钮
+		if(dataArr.length > 4){
+			var len = dataArr.length - 4;
+			for(var j=0;j<len;j++){
+				addlinkman(true);
+			}
+		}
+		//var contact_relation_type = document.getElementsByName("contact_relation_type");
+		var contact_name = document.getElementsByName("contact_name");
+		var contact_relation_description = document.getElementsByName("contact_relation_description");
+		var contact_mobile_phone = document.getElementsByName("contact_mobile_phone");
+		var audit_result1 = document.getElementsByName("audit_result1");
+		var audit_result2 = document.getElementsByName("audit_result2");
+		var audit_result3 = document.getElementsByName("audit_result3");
+		for(var i=0;i<dataArr.length;i++){
+			var data = dataArr[i];
+			if(i>3){
+				//获取值保证不唯一性
+				$("select[name='contact_relation_type"+(i+1)+"']").val(data.contact_relation_type);
+				//$(contact_relation_type[i]).val(data.contact_relation_type);
+			}
+			$(contact_name[i]).val(data.contact_name);
+			$(contact_relation_description[i]).val(data.contact_relation_description);
+			$(contact_mobile_phone[i]).val(data.contact_mobile_phone);
+			$(audit_result1[i]).val(data.audit_result1);
+			$(audit_result2[i]).val(data.audit_result2);
+			$(audit_result3[i]).val(data.audit_result3);
+		}
+	}
+	
+	
+	var dialog_att;
+	/*
+	打开附件上传页面
+	*/
+	function openAddAttDialog(data_type_name,data_detail_name){
+		var url = globalUtil.getHtml("addFileForCre.html?data_type_name="+data_type_name+"&data_detail_name="+data_detail_name);
+		dialog_att = $.ligerDialog.open({
+	        url: url,
+	        title: '上传附件',
+	        width: 650,
+	        height: globalUtil.setDialogHeight(250),
+	        onHiddenOrClose: function(){
+	        	//alert('关闭或隐藏都调用的事件!');
+	    	},
+	        isResize: false
+		});
+	}
+	//添加上传文件的信息链接
+	function addAttFile(newfileArr,objid){
+		fileArr = fileArr.concat(newfileArr);
+		var filehtml = $("#"+objid).html();
+		for(var i=0;i<newfileArr.length;i++){
+			var nnme=newfileArr[i].attachment_new_name.replace('/','thxg1');
+			nnme=nnme.replace('/','thxg2');
+			filehtml += '<div id="delUploadDivId'+nnme+'">';
+			filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+newfileArr[i].attachment_address+'">'+newfileArr[i].attachment_old_name+'</a>';
+			filehtml += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\''+nnme+'\')"/>';
+			filehtml += '</div>'
+		}
+		$("#"+objid).html(filehtml);
+	}
+	
+    function deleteFile(filename){
+       	$.ligerDialog.confirm(globalErrorMsg['100016'],
+        function(yes) {
+        	if (yes) {
+        		$("#delUploadDivId"+filename).remove();
+        		filename=filename.replace('thxg1','/');
+        		filename=filename.replace('thxg2','/');
+        		for(var i=0;i<fileArr.length;i++){
+        			if(filename == fileArr[i].attachment_new_name){
+        				fileArr.splice(i,1);
+        				break;
+        			}
+        		}
+	    	}                                            
+   		});
+    }
+    var ismjArr=[{"is_major":'1',"ismjval":"是"},{"is_major":'0',"ismjval":"否"}];
+	//贷款客户表格初始化
+	function initGrid() {
+		columns = [ {
+			display : '客户姓名',
+			name : 'customer_name',
+			width : 110,
+			minWidth : 110,
+			//添加超链接的东西
+            render: function (rowdata, rowindex, value) { 
+                if(rowdata.wms_cre_credit_line_customer_change_head_id){
+                //实现根据变更用户主键id 获取其所有修改过后的信息
+            	return '<a href="javascript:customerInfo('+rowdata.wms_cre_credit_line_customer_change_head_id+');" style="color:#056AFF;text-decoration: none;">'+value+'</a>';                	
+                }else{
+                return value;                	
+                }
+    		}
+		}, {
+			display : '身份证号',
+			name : 'id_card',
+			width : 160,
+			minWidth : 160,
+		}, {
+			display: '是否主贷人',
+			name: 'is_major',
+			width: 90,
+			 editor: { 
+					type: 'select', // 该列为可编辑状态
+					data: ismjArr, 
+					valueField: 'is_major', 
+					textField: 'ismjval',
+					ext:{
+						onChangeValue: function(value){ // 单元格内容发生变化时的触发事件
+							
+						}
+					}   
+				},
+			render: function (rowdata, nowRowIndex, value, column) {
+					return global_ligerui_extend.gridRenderSelectedValue(rowdata, nowRowIndex, value, column);
+			}
+		}, {
+            display: '电话号码1',
+            name: 'mobile_telephone1',
+            width: 130,
+            minWidth: 130
+        },{
+            display: '电话号码2',
+            name: 'mobile_telephone2',
+            width: 130,
+            minWidth: 130
+        }, {
+			display : '性别',
+			name : 'gender',
+			width : 40,
+			minWidth : 40,
+			render: function (rowdata,rowindex,value) { // 数据处理方法，不需处理时可去除
+				if(value == 1){
+					value = "男";
+				}else if(value == 0){
+					value = "女";
+				}
+				return value;
+			}
+		}, {
+			display : '录入时间',
+			name : 'create_timestamp',
+			width : 160,
+			minWidth : 160
+		} ];
+		var custData = globalUtil.syncGetJson('/cremanage/wmscrecreditlinecustomerchangeheadwithoutpaginglist.do',{
+			'wms_cre_credit_head_id': wms_cre_credit_head_id // 
+            },'GET');
+		grid = $("#grid").ligerGrid({
+			data:custData,
+			columns : columns,
+			sortOrder:'asc', // 排序方式
+			rownumbers : true,
+			allowUnSelectRow : true,
+			usePager : false,
+			width : '100%',
+			height : 160,
+			heightDiff : -4,
+			parms : {
+				_filterParms : -1
+			},
+			onLoaded:function(){
+				alert("11111")
+			}
+		});
+	}
+	
+	var isHouseLoan=[{"is_house_loan":'1',"isHouseLoanName":"是"},{"is_house_loan":'0',"isHouseLoanName":"否"}];
+	//抵押房贷信息初始化
+	function init_dyfcgrid(){
+		columnsdyfc = [{
+			display: '房产证号',
+			name: 'house_no',
+			align: 'left', // 默认居中
+			width: 200,
+			minWidth: 200
+		},{
+			display: '建筑面积（平方米）',
+			name: 'built_area',
+			align: 'left', // 默认居中
+			width: 120,
+			minWidth: 120
+		},{
+			display: '房屋是否有贷款',
+			name: 'is_house_loan',
+			align: 'left', // 默认居中
+			width: 100,
+			minWidth: 100,
+			editor: { type: 'select',data: isHouseLoan, valueField: 'is_house_loan', textField: 'isHouseLoanName', maxlength:250,
+				ext:{
+					onChangeValue: function(value){ // 单元格内容发生变化时的触发事件
+						
+					}
+				}  },
+			render: function (rowdata, nowRowIndex, value, column) {
+				is_house_loan = value;
+				if(value == null || value == "") {
+					return ""
+				} else {
+					return global_ligerui_extend.gridRenderSelectedValue(rowdata, nowRowIndex, value, column);
+				}
+			}
+		},{
+			display: '详细地址',
+			name: 'house_address',
+			align: 'left', // 默认居中
+			width: 300,
+			minWidth: 300
+		}];
+		
+		var grid_dyfc_data= globalUtil.syncGetJson('/cremanage/wmscrecarcustomerhouseallinfowithmccidf.do',{
+			'wms_cre_credit_head_id': wms_cre_credit_head_id // 
+        },'GET');
+		if(grid_dyfc_data.Rows&&grid_dyfc_data.Rows.length>0){
+			grid_dyfc_data.Rows[0].house_address=grid_dyfc_data.Rows[0].house_address_province+"省 "+grid_dyfc_data.Rows[0].house_address_city+"市  "+grid_dyfc_data.Rows[0].house_address_district+"区  "+grid_dyfc_data.Rows[0].house_address_more;
+			
+			init_hours_belong(grid_dyfc_data.Rows[0].house_situation);
+		}
+		
+		
+		griddyfc = $("#griddyfc").ligerGrid({ // maingrid为表格div所在id
+			data:grid_dyfc_data,
+			columns: columnsdyfc,
+			allowAdjustColWidth:false,
+			allowUnSelectRow: true, // 是否允许反选列，可编辑表格不可反选，查询可反选（如上下表格联动时），默认为false
+			usePager: false, // 是否分页支持，默认为true
+			rownumbers: true,
+			width: '100%',
+			height:100,
+			heightDiff: -4,
+			enabledEdit: true
+		});
+		
+	}
+	
+	//抵押车贷信息初始化
+	function init_dyccgrid(){
+		columnsdycc = [{
+			display: '车辆名称',
+			name: 'car_name',
+			align: 'left', // 默认居中
+			width: 160,
+			minWidth: 160
+		},{
+			display: '车牌号',
+			name: 'car_no',
+			align: 'left', // 默认居中
+			width: 160,
+			minWidth: 160
+		},{
+			display: '车辆购买日期',
+			name: 'car_purchase_time',
+			align: 'left', // 默认居中
+			width: 160,
+			minWidth: 160,
+			type: 'date', 
+			format: 'yyyy-MM-dd'
+		}];
+		
+		var grid_dycc_data= globalUtil.syncGetJson('/cremanage/wmscrecarcustomercarallinfowithmccidf.do',{
+			'wms_cre_credit_head_id': wms_cre_credit_head_id // 
+        },'GET');
+		
+		griddycc = $("#griddycc").ligerGrid({ // maingrid为表格div所在id
+			data: grid_dycc_data,
+			columns: columnsdycc,
+			allowAdjustColWidth:false,
+			allowUnSelectRow: true, // 是否允许反选列，可编辑表格不可反选，查询可反选（如上下表格联动时），默认为false
+			usePager: false, // 是否分页支持，默认为true
+			rownumbers: true,
+			width: '100%',
+			height:100,
+			heightDiff: -4,
+			enabledEdit: true
+		});
+	}
+	
+	//页面切换
+	function changeTab(id) {
+		var dkinfo = document.getElementById("dkinfo"); //个人资料tab
+		var khzlmxinfo = document.getElementById("khzlmxinfo"); //工作信息tab
+		var cspginfo = document.getElementById("cspginfo"); //初审评估表tab
+		if (id == 'khinfo') {
+			document.getElementById("tabbody1").className = "tabbody1";
+			document.getElementById("tabbody2").className = "tabbody2";
+			document.getElementById("tabbody3").className = "tabbody2";
+			dkinfo.style.display = '';
+			khzlmxinfo.style.display = 'none';
+			cspginfo.style.display = 'none';
+		} else if (id == 'khzlmxinfo') {
+			document.getElementById("tabbody1").className = "tabbody2";
+			document.getElementById("tabbody2").className = "tabbody1";
+			document.getElementById("tabbody3").className = "tabbody2";
+			dkinfo.style.display = 'none';
+			khzlmxinfo.style.display = '';
+			cspginfo.style.display = 'none';
+		}else if (id == 'cspginfo') {
+			document.getElementById("tabbody1").className = "tabbody2";
+			document.getElementById("tabbody2").className = "tabbody2";
+			document.getElementById("tabbody3").className = "tabbody1";
+			dkinfo.style.display = 'none';
+			khzlmxinfo.style.display = 'none';
+			cspginfo.style.display = '';
+		}
+	};
+	
+	
+	function submitInfo(){
+		/* if(fileArr.length==0){
+			$('#tabbody2').trigger('click');
+			globalUtil.errorMsg(globalErrorMsg['300111']);
+			return;
+		} */
+		var url = globalUtil.getHtml("carInfoApprove.html?wms_cre_credit_head_id="+wms_cre_credit_head_id + "&sigle=1");
+		dialog=$.ligerDialog.open({
+			url:url,
+			title: '审批',
+	        width: 1000,
+	        height: globalUtil.setDialogHeight(550),
+	        onHiddenOrClose: function(){
+	    	},
+	        isResize: false
+		});
+	};
+	
+	//房产归属初始化
+	 function init_hours_belong(val) {
+		 var hours_belong_data = globalUtil.syncGetJson('/sysmanage/wmssysdictdatabydictidempty.do',{'wms_sys_dict_id' : '76'},'GET');
+		 if(!$.isEmptyObject(hours_belong_data)) {
+			 var hoursBelongHtml = "";
+			 $.each(hours_belong_data, function(i, obj) {
+				 hoursBelongHtml += "<input type='radio' name='hours_belong' class='radio3' id='hours_belong_"+obj.value_code+"' value='"+obj.value_code+"' /><label for='hours_belong_"+obj.value_code+"'>" + obj.value_meaning + "</label>&nbsp;&nbsp;&nbsp;";
+			 });
+			 
+			 $("#hours_belong").append(hoursBelongHtml);
+		 }
+		 if(val) {
+			 $(":radio[name='hours_belong'][value='"+val+"']").attr("checked","checked");
+		 } 
+	 }
+	
+	//提交
+	function appresult(paramJson){
+		var jsonStr={};
+		jsonStr.fileArr = JSON.stringify(fileArr);//附件
+		jsonStr.wms_cre_credit_head_id=wms_cre_credit_head_id;
+		jsonStr.pass=paramJson.pass;
+		jsonStr.advice=paramJson.advice;
+		jsonStr.taskId=taskId;
+		$("#tb_btn").css("display","none");//隐藏按钮 
+		$.post(globalUtil.getTimestampUrl("/cremanage/wmscrecarattsave.do"),
+				jsonStr, function(data) {
+					if (data === 'OK') {
+						globalUtil.successMsg(globalErrorMsg['100002'],
+								function() {
+									//关闭刷新父页面
+									refreshAndClosePage();
+								});//保存成功
+					}else {
+						globalUtil.errorMsg(globalErrorMsg['100012']); //保存失败
+						$("#tb_btn").css("display","");//显示按钮 
+					}
+				});
+	}
+
+	//查看用户变更后的页面信息
+	function customerInfo(wms_cre_credit_line_customer_change_head_id){
+		var url = globalUtil.getHtml("checkCreCustorm.html?wms_cre_credit_line_customer_change_head_id="+wms_cre_credit_line_customer_change_head_id+"&cktype=ck");
+    	dialog = $.ligerDialog.open({
+	        url: url,
+	        title: '客户变更信息',
+	        width: 900,
+	        height: globalUtil.setDialogHeight(470),
+	        onHiddenOrClose: function(){
+	    	},
+	        isResize: false
+    	});
+	}
+	
+	//清理指定DIV下的所有LigerTip控件
+	function clearLigerTip(divId){
+		var elementArr = $("#"+divId+" *");
+		jQuery.each(elementArr.get(), function(i, element) {
+			$(element).ligerHideTip();
+		});
+	}
+	 //关闭本页并刷新查询页面
+    function refreshAndClosePage(){   
+    	window.parent.search();0
+    	closeDialog();
+    }
+    function closeDialog() {
+		if(window.parent.dialog===dialog){
+			try{
+				globalUtil.closeCurrentTab();
+			}catch(e){
+				try{
+					window.close();
+				}catch(e){
+					
+				}
+			}
+		}else {
+			try{
+				window.parent.dialog.hide();
+			}catch(e){
+				try{
+					globalUtil.closeCurrentTab();
+				}catch(e){
+					try{
+						window.close();
+					}catch(e){
+						
+					}
+				}
+			}
+		}
+	}
+	//-----------------------------------------------------------------------------
+	function closepage(){
+        dialog.close();
+    }
+</script>
+</head>
+<body>
+
+	<div class="tab_titleT">
+		<!--查询条件  begin-->
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr valign="bottom" id='trtab1'>
+				<td class="tabbody1" id="tabbody1" onclick="changeTab('khinfo');"
+					tabname='mytab'><div align="center">贷款信息</div></td>
+				<td class="tabbody2" id="tabbody3" onclick="changeTab('cspginfo');"
+					tabname='mytab'><div align="center">信息完善</div></td>
+				<td class="tabbody2" id="tabbody2"
+					onclick="changeTab('khzlmxinfo');" tabname='mytab'><div
+						align="center">客户资料明细</div></td>
+			</tr>
+		</table>
+	</div>
+	<div class="pop-center overflow-au" id="waicengdiv" style="top: 30px;height:600px">
+		<!-- ------------------------------------------------------------------贷款信息 begin------------------------------------------------------------------ -->
+		<div id="dkinfo" class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 5px;">
+			<div class="l-panel-search-cond clearfix" id="info_l1">
+				<div class="float-l">
+					<div class="l-panel-search-item">
+						<font>*可以通过新增<font style="color: red;">贷款客户</font>精确选择客户，通过新增抵押房产信息精确选择抵押房产，选择之后，需添加联系人信息、抵押房产用途，之后提交。
+							<br />
+						<font style="color: blue;">注：联系人信息必须填写三个亲属、一位担保人信息，且确保号码真实有效并能打通，外地号码前加“0”。</font></font>
+					</div>
+				</div>
+			</div>
+			<!-- 空白区域 -->
+			<div class="l-panel-search-cond clearfix" id="info_l2">
+				<div class="float-l">
+					<div class="l-panel-search-item"></div>
+				</div>
+			</div>
+			<!-- 添加的虚线 -->
+			<div class="line clearboth" id="info_l3"></div>
+			<div class="l-panel-search-cond clearfix" id='main_t'>
+				<div class="float-l">
+					<div class="l-panel-search-title">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;借款用途:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="credit_purpose" style="width: 450px"
+							isRequired="1" />
+					</div>
+				</div>
+				<div class="float-l ">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;车贷产品种类:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="cre_loan_type" ligeruiSelectIsRequired="1" />
+					</div>
+				</div>
+				<div class="float-l clearboth">
+					<div class="l-panel-search-title">申请最长还款期限:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="max_repayment_time_limit"
+							style="width: 95px" isRequired="1" isPositiveInteger="1"
+							minVal="1" maxVal="120" scope="a" /> (月)
+					</div>
+				</div>
+				<div class="float-l ">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可接受每月最高还款额:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="max_repayment_limit_per_month"
+							style="width: 95px" isRequired="1" isFloat="1" minVal="0"
+							maxVal="1000000" /> (元/月)
+					</div>
+
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;申请贷款额度:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="credit_limit" style="width: 95px" onblur="sumMoney();"
+							isRequired="1" isFloat="1" minVal="0" maxVal="100000000" /> (元)
+					</div>
+				</div>
+				<div class="float-l clearboth">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;贷款利率:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="loan_interest_rate" style="width:95px"  disabled="disabled" 
+							minVal="0" maxVal="100"/> %
+					</div>
+				</div>
+				
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;车辆是否抵押:</div>
+					<div class="l-panel-search-item">
+						<select style="width: 50px;" id="is_vehicle" disabled="disabled">
+							<option value="0">否</option>
+							<option value="1">是</option>
+						</select>
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;业务员:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="salesman_name" style="width: 95px"
+							readonly="readonly" isRequired="1" scope="a" />
+					</div>
+					<div style="display: none;">
+						<input id="salesman_id" type="text" style="width: 150px" />
+					</div>
+					<div style="display: none;">
+						<input id="salesman_code" type="text" style="width: 150px" />
+					</div>
+					<div style="display: none;">
+						<input id="city" type="text" style="width: 150px" />
+					</div>
+					<div style="display: none;">
+						<input id="salesman_city_code" type="text" style="width: 150px" />
+					</div>
+					<div style="display: none;">
+						<input id="salesman_dept_id" type="text" style="width: 150px" />
+					</div>
+				</div>
+			</div>
+			<!-- 贷款客户-->
+			<div class="center-content clearboth" style="min-width: 500px;">
+				<div class="center-title">贷款客户</div>
+				<div class="center-txt" style="margin-bottom: 5px;">
+					<div id="centertoolbar" class="minwidth400"></div>
+					<div id="grid"></div>
+				</div>
+			</div>
+			<!-- 贷款客户 -->
+			<!-- 抵押车产信息 -->
+			<div class="center-content clearboth" style="min-width: 500px;">
+				<div class="center-title">抵押车产信息</div>
+				<div class="center-txt" style="margin-bottom: 5px;">
+					<div id="centertoolbardycc" class="minwidth400"></div>
+					<div id="griddycc"></div>
+				</div>
+			</div>
+			<!-- 抵押车产信息 -->
+			<!-- 抵押房产信息 -->
+			<div class="center-content clearboth" style="min-width: 500px;">
+				<div class="center-title">抵押房产信息</div>
+				<div class="center-txt" style="margin-bottom: 5px;">
+					<div id="centertoolbardyfc" class="minwidth400"></div>
+					<!-- 房产所属人：本人房产， 保证人房产，暂住人房产-->
+					<div id="hours_belong" style="margin-left: 100px;"></div>
+					<div id="griddyfc"></div>
+				</div>
+			</div>
+			<!-- 抵押房产信息 -->
+			<div id="allLinkManDiv"></div>
+		</div>
+		<!-- ------------------------------------------------------------------贷款信息 end------------------------------------------------------------------ -->
+		<div id="khzlmxinfo" class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 5px; display: none">
+			<div>
+				<table cellspacing="1" cellpadding="1" class="input_tb" id="att_tb">
+					<tr>
+						<td colspan="2" align="left">申请资料</td>
+						<td align="right"><div id='plswpic'></div></td>
+					</tr>
+					<tr>
+						<td align="left"><span style="color: #333333;">客户资料：</span></td>
+						<td id="tdshowPic"></td>
+						<td id="tdupdPicBtn" class="textleft" align="left"><a
+							href="#" onclick="openAddAttDialog('1','tdshowPic')"
+							class="btn" style="display:" style="display:none">上传附件</a></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<!-- ------------------------------------------------------------------申请资料 end------------------------------------------------------------------ -->
+		<div id="cspginfo" class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 5px; display: none">
+			<div>
+				<table cellspacing="1" cellpadding="1" class="input_tb" id="att_tb">
+					<tr>
+						<td colspan="2" align="left">信息完善</td>
+						<td align="right"><div id='plswpic'></div></td>
+					</tr>
+					<tr>
+						<td align="left"><span>&nbsp;&nbsp;&nbsp;</span><span
+							style="color: #333333;">信息完善：</span></td>
+						<td id="CSshowPic"></td>
+						<td id="tdupdPicBtnxxws" class="textleft" align="left"><a
+							href="#" onclick="openAddAttDialog('2','CSshowPic')"
+							class="btn" style="display:" style="display:none">上传附件</a></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+	<!-- 提交功能按钮区 -->
+	<div class="pop-footer5 clearboth" style="bottom: 1px;" id="tb_btn">
+		<input id="tjbtn" onclick="submitInfo();" class="btn-saveT"
+			onmouseover="this.className='btn-saveT-over'"
+			onmouseout="this.className='btn-saveT'"
+			onmousedown="this.className='btn-saveT-down'" type="button"
+			style="margin-right: 7px;" /> <input id="cancelBtnId"
+			class="btn-cancel" onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" type="button"
+			onclick="closeDialog();" />
+	</div>
+</body>
+</html>

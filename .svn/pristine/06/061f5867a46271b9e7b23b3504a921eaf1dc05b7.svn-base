@@ -1,0 +1,485 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/media/js/ZeroClipboard.js"></script>
+<title>过期恢复</title>
+</head>
+<body style="overflow-y: hidden;">
+    <div class="l-panel-search clearfix centertoolbar-w">
+        <div id="searchbar" class="l-searchbar clearfix">
+            <!--查询条件-->
+            <div class="l-panel-search-cond clearfix">
+                <div class="float-l clearboth">
+                    <div class="l-panel-search-title">单据编号：</div>
+                    <div class="l-panel-search-item">
+                        <input type="text" id="bill_code" />
+                    </div>
+                </div>
+                <div class="float-l" style="margin-left: -15px;">
+                    <div class="l-panel-search-title">业务员/工号：</div>
+                    <div class="l-panel-search-item">
+                        <input type="text" id="salesman_name_str" />
+                    </div>
+                </div>
+                <div class="float-l">
+                    <div class="l-panel-search-title">申请时间：</div>
+                    <div class="l-panel-search-item">
+                        <input id="create_timestamp_begin" class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+							style="width: 133px; vertical-align: top;" />
+                    </div>
+                </div>
+                <div class="float-l" style="margin-left: 22px;">
+                    <div class="l-panel-search-title">至</div>
+                    <div class="l-panel-search-item" style="margin-left: 31px;">
+                        <input id="create_timestamp_end" class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+							style="width: 133px; vertical-align: top;" />
+                    </div>
+                </div>
+                <div class="float-l clearboth">
+                    <div class="l-panel-search-title">客户姓名：</div>
+                    <div class="l-panel-search-item">
+                        <input type="text" id="customer_name" />
+                    </div>
+                </div>
+                <div class="float-l">
+                    <div class="l-panel-search-title">身份证号：</div>
+                    <div class="l-panel-search-item">
+                        <input type="text" id="id_card" />
+                    </div>
+                </div>
+                <div class="float-l" style="margin-left: 26px;">
+					<div class="l-panel-search-title">城市：</div>
+					<div class="l-panel-search-item">
+						<select id="salesman_city_code">
+						</select>
+					</div>
+				</div>
+				<div class="float-l">
+                    <div class="l-panel-search-title">到期状态：</div>
+                    <div class="l-panel-search-item">
+                    	<select id="maturity_status">
+                    	</select>
+                    </div>
+                </div>
+                 <div class="float-l clearboth">
+                    <div class="l-panel-search-title">抵押形式：</div>
+					<div class="l-panel-search-item">
+						<select id="mort_flag" ></select>
+					</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="centertoolbar" class="minwidth400"></div>
+    <div id="grid"></div>
+    <!-- 工具条初始化 -->
+    <script type="text/javascript">
+        var grid;
+        var toolbar;
+        var params;
+        var dialog;
+        var columns;
+        $(function() {
+        	globalUtil.init_select_value('salesman_city_code', 'value_code', 'value_meaning', true, '25');
+			globalUtil.init_select_value('maturity_status', 'value_code', 'value_meaning', false, '125');
+            initGrid();
+            var toolbarItemData = [];
+            toolbarItemData.push({
+                text: '延期',
+                click: assessment,
+                icon: 'approve'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+            toolbarItemData.push({
+                text: '恢复',
+                click: toBack,
+                icon: 'return'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+            toolbarItemData.push({
+                text: '查询',
+                click:search,
+                icon: 'search'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+            toolbarItemData.push({
+                text: '清空',
+                click: clear,
+                icon: 'empty'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+            toolbarItemData.push({
+                text: '导出Excel',
+                icon: 'export',
+                id: 'ToolTables_XLS_2'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+            $("#centertoolbar").ligerToolBar({
+                 items: toolbarItemData
+            });
+            search();
+            registerCvs();
+            init_mort_flag_sel();
+        });
+        
+        //导出表格
+        function registerCvs() {
+            var moviePath = "../../js/media/swf/copy_csv_xls_pdf.swf";
+            var fileName = '终审恢复信息.xls';
+            var titleJson = '';
+            var dataJson = '';
+            var obj = $("div[toolbarid='ToolTables_XLS_2']")[0];//获取菜单对象
+            var getDataFun = function(){
+                var text = {};
+                initParams();
+                //实现导出的时候，规定导出的具体内容
+                text.title = {
+                	'bill_code': '单据编号',
+                	'create_timestamp_str': '申请时间',
+                	'mort_flag_name':'抵押形式',	
+                	'remain_days': '剩余天数',
+                	'customer_name': '客户姓名',
+                	'id_card': '身份证号',
+                	'credit_limit': '贷款金额(万元)',
+                    'salesman_name_str': '业务员/工号',
+                    'city': '城市',
+                    'final_result_name': '终审审批',
+                    'house_appro_result_name': '房产核查',
+                    'assessment_result_name': '初评审批',
+                    'bill_status_name': '单据状态'
+                };//定义需要导出的列名以及列名与数据的对应关系
+                var json = globalUtil.syncGetJson("/cremanage/searchWmsCreCreditAutoExpirewithpaginglist.do?sortname=bill_code&is_page=0", params);//同步获取需要导出的数据内容
+                text.data = json.Rows;
+                return text;
+            };
+            registerXlsFlashBtn(moviePath, fileName, titleJson, dataJson, obj, getDataFun);
+        }
+        //初始抵押形式
+	    function  init_mort_flag_sel(){
+			globalUtil.init_select_value('mort_flag', 'value_code', 'value_meaning', true, '147');
+		}
+        //清空所填写内容
+        function clear() {
+           $('#searchbar input').val('');
+           $("#salesman_city_code").val("请选择");
+           global_ligerui_extend.setComboxVal("salesman_city_code", "-1");
+           $("#mort_flag").val("-1");
+           search();
+        }
+        
+        //表格初始化
+        function initGrid() {
+            columns = [{
+                display: '单据编号',
+                name: 'bill_code',
+                width: 130,
+                minWidth: 130,
+                //添加超链接的东西
+                render: function (rowdata, rowindex, value) { 
+                    return '<a href="javascript:creditInfo(' + rowdata.wms_cre_credit_head_id + ',' + rowdata.version_number + ');" style="color:#056AFF;text-decoration: none;">' + value + '</a>';
+                }
+            }, {
+                display: '申请时间',
+                name: 'create_timestamp_str',
+                width: 130,
+                minWidth: 130
+            }, {
+                display: '抵押形式',
+                name: 'mort_flag_name',
+                width: 100,
+                minWidth: 100,
+            }, {
+                display: '剩余天数',
+                name: 'remain_days',
+                width: 130,
+                minWidth: 130
+                
+            }, {
+                display: '客户姓名',
+                name: 'customer_name',
+                width: 120,
+                minWidth: 120
+            }, {
+                display: '身份证号',
+                name: 'id_card',
+                width: 120,
+                minWidth: 120
+            }, {
+                display: '贷款金额(万元)',
+                name: 'credit_limit',
+                width: 120,
+                minWidth: 120
+            }, {
+                display: '业务员/工号',
+                name: 'salesman_name_str',
+                width: 100,
+                minWidth: 100   
+            }, {
+                display: '城市',
+                name: 'city',
+                width: 100,
+                minWidth: 100,
+                isSort: false
+            }, {
+            	display: '终审审批',
+            	name: 'final_result',
+                width: 100,
+                minWidth: 100,
+                //添加超链接
+                render: function (rowdata, rowindex, value) { 
+                	if(value == 'false') {
+            			return '<a href="javascript:finalApproval(\'' + rowdata.wms_cre_credit_head_id + '\',\''+rowdata.customer_name + '\');" style="color:#056AFF;text-decoration: none;">' + '拒贷' + '</a>';
+            		} else if(value == 'true') {
+            			return '<a href="javascript:finalApproval(\'' + rowdata.wms_cre_credit_head_id+'\',\'' + rowdata.customer_name + '\');" style="color:#056AFF;text-decoration: none;">' + '通过' + '</a>';
+            		} else {
+            			return '待审批';
+            		}
+                }   
+            }, {
+                display: '房产核查',
+                name: 'house_appro_result',
+                width:70,
+                minWidth:70,
+                render: function (rowdata, rowindex, value) { 
+                	if(value == '0') {
+            			return '<a href="javascript:propertyVerification(' + rowdata.wms_cre_credit_head_id + ');" style="color:#056AFF;text-decoration: none;">' + '不符合' + '</a>';
+            		} else if(value == '1') {
+            			return '<a href="javascript:propertyVerification(' + rowdata.wms_cre_credit_head_id + ');" style="color:#056AFF;text-decoration: none;">' + '符合' + '</a>';
+            		} else {
+            			return '待审批';
+            		}
+               }
+            },{
+                display: '初评审批',
+                name: 'assessment_result',
+                width:70,
+                minWidth:70,
+                render: function (rowdata, rowindex, value) { 
+                	if(value == '1'){
+            			return '<a href="javascript:houseAssessment(\'' + rowdata.wms_cre_credit_head_id + '\',\''+rowdata.customer_name + '\', ' + rowdata.wms_cre_credit_line_customer_change_head_id + ',' + rowdata.edition_num + ');" style="color:#056AFF;text-decoration: none;">' + '通过' + '</a>';
+            		} else if(value == '2') {
+            			return '<a href="javascript:houseAssessment(\'' + rowdata.wms_cre_credit_head_id + '\',\''+rowdata.customer_name + '\', ' + rowdata.wms_cre_credit_line_customer_change_head_id + ',' + rowdata.edition_num + ');" style="color:#056AFF;text-decoration: none;">' + '退件' + '</a>';
+            		} else if(value == '3') {
+            			return '<a href="javascript:houseAssessment(\'' + rowdata.wms_cre_credit_head_id + '\',\''+rowdata.customer_name + '\', ' + rowdata.wms_cre_credit_line_customer_change_head_id + ',' + rowdata.edition_num + ');" style="color:#056AFF;text-decoration: none;">' + '拒件' + '</a>';
+            		} else if(value == '4') {
+            			return '<a href="javascript:houseAssessment(\'' + rowdata.wms_cre_credit_head_id + '\',\''+rowdata.customer_name + '\', ' + rowdata.wms_cre_credit_line_customer_change_head_id + ',' + rowdata.edition_num + ');" style="color:#056AFF;text-decoration: none;">' + '直接核查' + '</a>';
+            		} else if(value == '5') {
+            			return '<a href="javascript:houseAssessment(\'' + rowdata.wms_cre_credit_head_id + '\',\''+rowdata.customer_name + '\', ' + rowdata.wms_cre_credit_line_customer_change_head_id + ',' + rowdata.edition_num + ');" style="color:#056AFF;text-decoration: none;">' + '曾终审' + '</a>';
+            		} else {
+            			return '待审批';
+            		}
+               }
+            }, {
+                display: '单据状态',
+                name: 'bill_status_name',
+                width: 100,
+                minWidth: 100
+            }, {
+                display: '流程历程',
+                width: 100,
+                minWidth: 100,
+                //添加超链接
+                render: function (rowdata, rowindex, value) { 
+                    return '<a href="javascript:approvalProcess(' + rowdata.wms_cre_credit_head_id + ');" style="color:#056AFF;text-decoration: none;">' + "查看" + '</a>';
+                }
+            }];
+            
+            grid = $("#grid").ligerGrid({
+                columns: columns,
+                url: global_param.context_name + '/cremanage/searchWmsCreCreditAutoExpirewithpaginglist.do',
+                sortName: 'bill_code', // 排序列名
+                sortOrder: 'desc', // 排序方式
+                rownumbers: true,
+                allowUnSelectRow: true,
+                usePager: true,
+                enabledSort: true,
+                width: '100%',
+                height: '95%',
+                heightDiff: -4,
+                parms: {
+                    _filterParms: -1
+                }
+            });
+        } 
+        
+        //查看流程历程
+        var rowsled;//行对象       
+        function approvalProcess(wms_cre_credit_head_id) {
+            var url = globalUtil.getHtml("../creditManage/houseApprovalProcess.html?wms_cre_credit_head_id=" + wms_cre_credit_head_id);
+            dialog = $.ligerDialog.open({
+                url:url,
+                title: '查看',
+                width: 1000,
+                height: globalUtil.setDialogHeight(500),
+                onHiddenOrClose: function() {
+                },
+                isResize: false
+            });
+        }
+        
+        //评估
+        function houseAssessment(wms_cre_credit_head_id, customer_name, wms_cre_credit_line_customer_change_head_id, edition_num) {
+	        var url = globalUtil.getHtml("../loanreview/housePreliminaryAssessmentbill.html?cktype=ck&wms_cre_credit_head_id=" + wms_cre_credit_head_id + '&customer_name=' + customer_name + '&wms_cre_credit_line_customer_change_head_id=' + wms_cre_credit_line_customer_change_head_id + '&edition_num=' + edition_num);
+	        dialog = $.ligerDialog.open({
+	            url: url,
+	            title: '房产评估单',
+	            width: 1100,
+	            height: globalUtil.setDialogHeight(850),
+	            onHiddenOrClose: function() {
+	            },
+	            isResize: false
+	        }); 
+        }
+        
+        //贷款详细信息
+        function creditInfo(wms_cre_credit_head_id, version_number) {
+        	var url = "";
+        	//if(version_number == "2") {
+        		url = globalUtil.getHtml("creditManage/houseLoanApply.html?wms_cre_credit_head_id=" + wms_cre_credit_head_id + "&type=1");
+        	/* } else {
+        		url = globalUtil.getHtml("creditManage/checkHouseCredit.html?wms_cre_credit_head_id=" + wms_cre_credit_head_id + "&pageType=ck");
+        	} */
+            globalUtil.openTab(1001, "客户贷款详细信息", url, false);
+        }
+        
+        //获取查询表单数据
+        function initParams() {
+            params = globalUtil.getFormParam("searchbar");
+            params.salesman_city_code = $('#salesman_city_code').val();
+            params.maturity_status = $('#maturity_status').val();
+            if(params.salesman_city_code == '-1') {
+            	params.salesman_city_code = '';
+            }
+            params.mort_flag=$("#mort_flag").val();
+        	if(params.mort_flag == '-1'){
+            	params.mort_flag = '';
+            }		
+        }
+        
+        //查询
+        var search = function() {
+            initParams();
+            global_ligerui_extend.search(grid, params);
+        }
+        
+        //终审审批
+        function finalApproval(wms_cre_credit_head_id) {
+        	var url = globalUtil.getHtml("houseLoanAppro.html?wms_cre_credit_head_id=" + wms_cre_credit_head_id + "&cktype=ck");
+        	dialog = $.ligerDialog.open({
+		        url: url,
+		        title: '终审审批详细信息',
+		        width: 1100, 
+		        height: globalUtil.setDialogHeight(350),
+		        onHiddenOrClose: function() {
+		    	},
+		        isResize: false
+	    	});
+        }
+        
+        //房产核查
+        function propertyVerification(wms_cre_credit_head_id) {
+        	var url = globalUtil.getHtml("../loanreview/houseCardApproval.html?wms_cre_credit_head_id=" + wms_cre_credit_head_id + "&cktype=ck");
+        	dialog = $.ligerDialog.open({
+		        url: url,
+		        title: '办件审批详细信息',
+		        width: 1000, 
+		        height: globalUtil.setDialogHeight(750),
+		        onHiddenOrClose: function() {
+		    	},
+		        isResize: false
+	    	});
+        }
+        
+        //房产评估
+        function propertyEvaluation(wms_cre_credit_head_id, customer_name) {
+        	var url = globalUtil.getHtml("../loanreview/housePreliminaryAssessmentbill.html?customer_name=" + customer_name + "&wms_cre_credit_head_id=" + wms_cre_credit_head_id + "&cktype=ck");
+        	dialog = $.ligerDialog.open({
+		        url: url,
+		        title: '评估审核详细信息',
+		        width: 1100, 
+		        height: globalUtil.setDialogHeight(850),
+		        onHiddenOrClose: function() {
+		    	},
+		        isResize: false
+	    	});
+        }
+        
+        //延期
+        function assessment() {
+        	//判断如果没有选择任何审批人，不允许跳出审批页面。
+            var row = grid.getSelectedRow();
+            if(row == null) {
+                globalUtil.warnMsg(globalErrorMsg['100031']);//请选择一行记录
+                return;
+            } else if(row.bill_status == 'EZ') {
+            	globalUtil.warnMsg(globalErrorMsg['170022']);
+                return;
+            } else {
+            	 var title_val='单据延期';
+				 if(row.mort_flag_name!=undefined&&row.mort_flag_name!=""){
+					 title_val='单据延期'+"  ##"+row.mort_flag_name+"##"; 
+				 }
+	        	var url = globalUtil.getHtml("finalBillsExpired.html?wms_cre_credit_head_id=" + row.wms_cre_credit_head_id + '&json=' + JSON.stringify(row));
+	            dialog = $.ligerDialog.open({
+	                url: url,
+	                title: title_val,
+	                width: 1200,
+	                height: globalUtil.setDialogHeight(500),
+	                onHiddenOrClose: function() {
+	                },
+	                isResize: false
+	            });
+            }
+        }
+        
+        //恢复
+        function toBack() {
+        	//判断如果没有选择任何审批人，不允许跳出审批页面。
+            var row = grid.getSelectedRow();
+            if(row == null) {
+                globalUtil.warnMsg(globalErrorMsg['100031']);//请选择一行记录
+                return;
+            } else if(row.bill_status != 'EZ') {
+            	globalUtil.warnMsg(globalErrorMsg['170023']);
+                return;
+            }  else {
+            	 var title_val='单据恢复';
+				 if(row.mort_flag_name!=undefined&&row.mort_flag_name!=""){
+					 title_val='单据恢复'+"  ##"+row.mort_flag_name+"##"; 
+				 }
+	        	var url = globalUtil.getHtml("finalBillsRestored.html?wms_cre_credit_head_id=" + row.wms_cre_credit_head_id + '&json=' + JSON.stringify(row));
+	            dialog = $.ligerDialog.open({
+	                url: url,
+	                title: title_val,
+	                width: 1200,
+	                height: globalUtil.setDialogHeight(500),
+	                onHiddenOrClose: function() {
+	                },
+	                isResize: false
+	            });
+            }
+        }
+        
+    	
+        
+</script>
+</body>
+</html>

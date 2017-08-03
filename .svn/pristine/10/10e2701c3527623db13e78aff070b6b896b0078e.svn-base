@@ -1,0 +1,581 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>变更申请</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+
+
+<style>
+
+.fr {
+	float: right;
+	width: 400px;
+	text-align: right;
+}
+
+.fl {
+	float: left;
+	width: 400px;
+}
+
+.first_div_title {
+	width: 200px;
+	background-color: #d7d7d7;
+	height: 30px;
+	font-size: 12pt;
+	font-weight: blod;
+}
+
+.clear_float {
+	clear: both;
+}
+
+.addNewChanges_textarea {
+	width: 90%;
+}
+
+.addNewChanges_span {
+	display: block;
+	float: left;
+	padding-top: 10px;
+}
+
+
+.third_div {
+	height: 160px;
+	border: 1px solid #d7d7d7;
+}
+
+.second_div {
+	height: 340px;
+	border: 1px solid #d7d7d7;
+}
+
+.first_div {
+	height: 150px;
+	border: 1px solid #d7d7d7;
+}
+
+body {
+	padding: 0 10px 0 10px
+}
+
+</style>
+<script type="text/javascript">
+var pageInfo;
+var fileArr = [];
+var grid_data = {
+    "Rows": []
+};
+
+$(function() {
+	
+    init_page_Info();
+    initgrid();
+    $("#financial_documents_bar").ligerToolBar({
+        items: toolbar
+    });
+})
+
+var toolbar = [];
+toolbar.push({
+    text: '选择单据',
+    click: selectBill,
+    icon : 'add'
+});
+var columns = [{
+    display: '单据编号',
+    name: 'bill_code',
+    width: 150,
+    render: function(rowdata, rowindex, value) {
+        var html = init_href(rowdata);
+        return html;
+    }
+},
+{
+    display: '客户姓名',
+    name: 'cus_name',
+    width: 150
+},
+{
+    display: '有效证件',
+    name: 'id_card',
+    width: 150
+},
+{
+    display: '理财产品',
+    name: 'category_name',
+    width: 150
+},
+{
+    display: '投资金额(万元)',
+    name: 'product_account1',
+    width: 150
+},
+{
+    display: '合同编号',
+    name: 'financial_bill_code',
+    width: 150
+},
+{
+    display: '合同生效日期',
+    name: 'date_of_payment',
+    width: 150
+},
+{
+    display: '归属客户经理',
+    name: 'salesman_name',
+    width: 150,
+    render: function(rowdata, rowindex, value) {
+        return value + rowdata.personnel_shortCode;
+    }
+},
+{
+    display: '收益卡信息',
+    name: 'bank_name',
+    width: 150
+},
+{
+    display: '操作',
+    name: 'option',
+    width: 150,
+    render: function(rowdata, rowindex, value) {
+        var html = "<a href='javascript:void(0)' id='del" + rowdata.wms_inve_transa_id + "' onclick=deleteBill(" + rowdata.wms_inve_transa_id + ") >删除</a>"
+        return html;
+    }
+}]
+
+function initgrid(id) {
+
+    grid = $("#financial_documents_table").ligerGrid({
+        columns: columns,
+        rownumbers: true,
+        usePager: false,
+        width: '100%',
+        height: '270',
+        heightDiff: -4
+    });
+}
+//刷新数据
+function refresh_datagrid() {
+    grid.loadData(grid_data);
+    if (grid_data != null && grid_data.Rows.length > 0) {
+        $("#card_owner_name").val(grid_data.Rows[0].cus_name);
+    }
+}
+//删除单据
+function deleteBill(id) {
+    var rows = grid_data.Rows;
+    if (rows == null || rows.length == 0) {
+        return false;
+    }
+    //遍历grid数据
+    for (var i = 0; i < rows.length; i++) {
+        if (rows[i].wms_inve_transa_id == id) {
+            //如果单据的id和所删除的单据id相同，则删除这个元素
+            rows = rows.splice(i, 1)
+            //刷新grid数据
+            refresh_datagrid();
+            return true;
+        }
+    }
+}
+
+//选择单据
+function selectBill() {
+    var url = globalUtil.getHtml("selectDocuments.html");
+    dialog = $.ligerDialog.open({
+        url: url,
+        title: '选择理财单据',
+        width: '900',
+        height: globalUtil.setDialogHeight(520),
+        isResize: false
+    });
+}
+
+//生成单据编号 
+function init_page_Info() {
+
+    $.ajax({
+        type: "POST",
+        url: global_param.context_name + "/inve/initPageInfo.do",
+        success: function(data) {
+            pageInfo = data;
+            var str_left = "单据编号 [" + pageInfo.bill_number + "]";
+            var str_right = "本单据于" + pageInfo.nowDate + "[" + data.user.realname + "" + data.user.userCode + "]创建";
+            $("#left_title").text(str_left);
+            $("#right_title").text(str_right);
+        }
+    });
+
+    //变更类型
+    $("#change_type").ligerComboBox({
+        width: 135,
+        data: [{
+            text: '收益卡调整',
+            id: 1
+        }],
+        value: '1'
+    });
+
+    init_bank_of_deposit_pro();
+    
+    
+}
+
+
+
+
+//客户收益卡信息-初始化省
+function init_bank_of_deposit_pro(json) {
+	var bank_of_deposit_pro_params = {
+		dest_url:  "/inve/selectDictInfo.do",
+		t_col_name : 'bank_of_deposit_pro',
+		valueField : 'value_code', //下拉框value对应的值，默认为id
+		textField : 'value_meaning', //下拉框text对应的值，默认为text
+		input_width : 135,
+		def_val : 'first'
+	};
+	global_ligerui_extend.initCombox("bank_of_deposit_pro", null, bank_of_deposit_pro_params);
+	if (json) {
+		//把值装载设定
+		global_ligerui_extend.syncRequestInitComboxData(json, "bank_of_deposit_pro");
+	} else {
+		global_ligerui_extend.initComboxDefVal("bank_of_deposit_pro");
+	}
+}
+
+//客户收益卡信息-当点击省的时候,加载市
+function getCityData1() {
+	var jsondata0;
+	init_bank_of_deposit_city($("#bank_of_deposit_pro_hidden").val(), jsondata0)
+}
+
+//客户收益卡信息-获取市
+function init_bank_of_deposit_city(p_wms_sys_dict_data_id, json) {
+	var bank_of_deposit_city_params = {
+			dest_url:  "/inve/selectDictInfo.do?dict_id="+p_wms_sys_dict_data_id,
+		t_col_name : 'bank_of_deposit_city',
+		valueField : 'value_code', //下拉框value对应的值，默认为id
+		textField : 'value_meaning', //下拉框text对应的值，默认为text
+		input_width : 135,//下拉框长度
+		def_val : 'first'
+	};
+	global_ligerui_extend.initCombox("bank_of_deposit_city", null, bank_of_deposit_city_params);
+
+	if (json) {
+		//把值装载设定
+		global_ligerui_extend.syncRequestInitComboxData(json, "bank_of_deposit_city");
+	} else {
+		global_ligerui_extend.initComboxDefVal("bank_of_deposit_city");
+	}
+}
+
+
+	// //初始化查看单据详情超链接
+	function init_href(rowdata,bill_code) {
+		var wms_inve_transa_id = rowdata.wms_inve_transa_id;
+		var wms_inve_transa_prod_id = rowdata.wms_inve_transa_prod_id;
+		var bill_code = rowdata.bill_code;
+		var html;
+		//单据编号超链接
+		var str;
+		var status;
+		
+		$.ajax({
+			url :globalUtil
+			.getTimestampUrl('/inve/wmsinvetransadSearchStatus.do'),
+			data:{
+				'wms_inve_transa_id' : wms_inve_transa_id
+			},
+		type : "post",
+		 async : false  ,
+		 success : function(data){ 
+			 status = data;
+				if (status == "1" || status == "2" || status == "7"
+						|| status == "9" || status == "10") {
+					str = "addFinancialManagement.html?wms_inve_transa_id="
+							+ wms_inve_transa_id
+							+ "&wms_inve_transa_prod_id="
+							+ wms_inve_transa_prod_id
+							+ "&cktype=ck";
+				} else {
+					str = "addFinancialManagement.html?zftype=zf&wms_inve_transa_id="
+							+ wms_inve_transa_id
+							+ "&wms_inve_transa_prod_id="
+							+ wms_inve_transa_prod_id
+							+ "&cktype=ck";
+				}
+				html = "<a href="+str+" target='_Blank' >"
+						+ bill_code + "</a>"
+		 }
+		})
+		return html;
+	}
+	/*
+	 打开附件上传页面
+	 */
+	function openAddAttDialog(data_type_name, data_detail_name) {
+		var url = globalUtil.getHtml("../creditManage/addFileForCre.html?data_type_name="
+				+ data_type_name + "&data_detail_name=" + data_detail_name);
+		dialog_att = $.ligerDialog.open({
+			url : url,
+			title : '上传附件',
+			width : 650,
+			height : globalUtil.setDialogHeight(250),
+			onHiddenOrClose : function() {
+				//alert('关闭或隐藏都调用的事件!');
+			},
+			isResize : false
+		});
+	}
+
+	//添加上传文件的信息链接
+	function addAttFile(newfileArr, objid) {
+		fileArr = fileArr.concat(newfileArr);
+		var filehtml = $("#" + objid).html();
+		for (var i = 0; i < newfileArr.length; i++) {
+			var nnme = newfileArr[i].attachment_new_name.replace('/', 'thxg1');
+			nnme = nnme.replace('/', 'thxg2');
+			filehtml += '<div style="float:left;" id="delUploadDivId'+nnme+'">';
+			filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+newfileArr[i].attachment_address+'">'
+					+ newfileArr[i].attachment_old_name + '</a>';
+			filehtml += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\''
+					+ nnme + '\')"/>';
+			filehtml += '</div>'
+		}
+		$("#" + objid).html(filehtml);
+	}
+	 //删除上传文件的信息链接
+	 function deleteFile(filename){
+	       	$.ligerDialog.confirm(globalErrorMsg['100016'],
+	        function(yes) {
+	        	if (yes) {
+	        		$("#delUploadDivId"+filename).remove();
+	        		filename=filename.replace('thxg1','/');
+	        		filename=filename.replace('thxg2','/');
+	        		for(var i=0;i<fileArr.length;i++){
+	        			if(filename == fileArr[i].attachment_new_name){
+	        				fileArr.splice(i,1);
+	        				break;
+	        			}
+	        		}
+		    	}                                            
+	   		});
+	    }
+	 var saveparm = {};
+	 //验证 参数
+	 function save_param(){
+		 var attinfo_html = $("#attInfo").html();
+		 var info =["请上传附件",
+		            "变更事由不能为空",
+		            "请选择理财单据",
+		            "请输入卡主姓名",
+		            "请输入收益卡号",
+		            "请输入银行名称",
+		            "请输入所属省",
+		            "请输入所属市",
+		            "请输入支行名称"
+		            ]
+		 saveparm = {
+		cus_name : $("#card_owner_name").val(),
+		data_status:1,
+		bill_code: pageInfo.bill_number,
+// 		变更类型
+		change_type	: $("#change_type").ligerComboBox("getValue"),
+		 //附件信息提示
+		 attinfo :  JSON.stringify(fileArr),
+		 //变更事由
+		  remark : $("#remark").val(),
+		 //选择单据
+		  griddata :  JSON.stringify(grid.getData())  ,
+// 		 卡主姓名
+		  card_owner_name : $("#card_owner_name").val(),
+// 		  收益卡号
+		  card_no :$("#card_no").val(),
+// 		 银行名称
+		 bank_of_deposit :$("#bank_of_deposit").val(),
+// 		 开户行(省)
+		 bank_of_deposit_pro: $("#bank_of_deposit_pro").ligerComboBox("getValue"),
+// 		 开户行(市)
+		 bank_of_deposit_city: $("#bank_of_deposit_city").ligerComboBox("getValue"),
+// 		 开户行所属支行
+		 bank_branch: $("#bank_branch").val()
+		 }
+		 if(attinfo_html==null||attinfo_html==''){
+			 globalUtil.warnMsg(info[0]);
+			 return false;
+		 }
+		 if(saveparm.remark==null||saveparm.remark==''){
+			 globalUtil.warnMsg(info[1]);
+			 return false;
+		 }
+		 if(saveparm.card_owner_name==null||saveparm.card_owner_name==''){
+			 globalUtil.warnMsg(info[2]);
+			 return false;
+		 }
+		 
+		 if(saveparm.card_no==null||saveparm.card_no==''){
+			 globalUtil.warnMsg(info[4]);
+			 return false;
+		 }
+		 if(saveparm.bank_of_deposit==null||saveparm.bank_of_deposit==''){
+			 globalUtil.warnMsg(info[5]);
+			 return false;
+		 }
+		 if(saveparm.bank_of_deposit_pro==null||saveparm.bank_of_deposit_pro==''||saveparm.bank_of_deposit_pro=="def"){
+			 globalUtil.warnMsg(info[6]);
+			 return false;
+		 }
+		 if(saveparm.bank_of_deposit_city==null||saveparm.bank_of_deposit_city==''||saveparm.bank_of_deposit_city=="def"){
+			 globalUtil.warnMsg(info[7]);
+			 return false;
+		 }
+		 if(saveparm.bank_branch==null||saveparm.bank_branch==''){
+			 globalUtil.warnMsg(info[8]);
+			 return false;
+		 }
+		 
+			if( saveparm.bank_of_deposit.indexOf("邮政储蓄") >= 0)
+			{
+				$("#bank_of_deposit").val("");
+				globalUtil.errorMsg("暂不支持邮政储蓄银行卡,请更换其它银行卡");
+				return false;
+			}
+		 return true;
+	 }
+	 
+	 
+	 
+		var save_flag = false;
+	 //保存单据
+	 function save(){
+		var fl =   save_param();
+		if(!fl){
+			return fl;
+		}
+		if(save_flag){
+			return false;}
+		save_flag  = true;
+		 $.ajax({
+				type : "POST",
+				url : global_param.context_name + "/inve/saveChangeAppInfo.do",
+				data : saveparm,
+				success : function(data) {
+					save_flag = false;
+				if(data=="true"){
+					window.parent.search();
+					closeDialog();
+				}
+				}
+			}); 
+	 }
+	 
+		//关闭
+		function closeDialog() {
+			window.parent.dialog.close();
+		}
+</script>
+</head>
+<body>
+	<div class="tabbody1" style="text-align:center;font-size:12pt">
+		变更申请单
+	</div>
+	<div>
+		<div class="fl" id="left_title"></div>
+		<div class="fr" id="right_title"></div>
+	</div>
+	<div class="clear_float first_div"  style="height:150px; overflow-x: hidden; overflow-y: auto;">
+		<div class=" center-title">步骤1：设定类型及事由</div>
+		<div class="fl" style="padding-top: 10px;">
+			<div class="" style="width: 63px; float: left"><span class="redstar">*</span>变更类型:</div>
+			<div style="float: left;">
+				<input type="text" id="change_type" name="change_type">
+			</div>
+		</div>
+		<div class="fl">
+			<div style="float: left;"><span class="redstar">*</span>附件信息:</div>
+			<div id="attInfo" style="float: left;"></div>
+			<input class="btn-uploadF"
+				onmouseover="this.className='btn-uploadF-over'"
+				onmouseout="this.className='btn-uploadF'"
+				onmousedown="this.className='btn-uploadF-down'" type="button"
+				style="margin-right: 7px;" onclick="openAddAttDialog('','attInfo')"
+				style="display:none" />
+		</div>
+
+		<div class="clear_float" style="padding-top: 10px;height:70px;">
+			<span class="addNewChanges_span"><span class="redstar">*</span>变更事由:</span>
+			<textarea id="remark" class="addNewChanges_textarea"  style="height:50px;"  ></textarea>
+		</div>
+	</div>
+	<div class="second_div" style="padding-top: 20px;">
+		<div class="center-title">步骤2：选择理财单据</div>
+		<div id="financial_documents_bar"></div>
+		<div id="financial_documents_table"></div>
+	</div>
+	<div class="third_div">
+		<div class="center-title" >步骤3：设定新收益卡信息</div>
+		<div class="l-panel-search-cond clearfix" style="padding:20px 0 0 100px;width:850px;">
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="redstar">*</span>卡主姓名：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="card_owner_name"  disabled="disabled"/>
+					</div>
+				</div>
+				
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="redstar">*</span>收益卡号：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="card_no" />
+					</div>
+				</div>
+				
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="redstar">*</span>银行名称：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="bank_of_deposit" />
+					</div>
+				</div>
+				
+				<div class="" >
+					<div class="l-panel-search-title" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="redstar">*</span>所属省：</div>
+					<div class="l-panel-search-item" style="margin-left:17px;">
+						<input type="text" id="bank_of_deposit_pro" onchange="getCityData1()" />
+					</div>
+				</div>
+				
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="redstar">*</span>所属市：</div>
+					<div class="l-panel-search-item" style="margin-left:17px;">
+						<input type="text" id="bank_of_deposit_city" />
+					</div>
+				</div>
+				
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="redstar">*</span>支行名称：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="bank_branch" />
+					</div>
+				</div>
+			</div>
+		
+	</div>
+	<div>
+		<div class=" clearboth" style="text-align: center;">
+			<input id="tjbtn" class="btn-saveT"
+				onmouseover="this.className='btn-saveT-over'"
+				onmouseout="this.className='btn-saveT'"
+				onmousedown="this.className='btn-saveT-down'" type="button"
+				style="margin-right: 7px;" onclick="save()" /> <input
+				id="cancelBtnId" class="btn-close"
+				onmouseover="this.className='btn-close-over'"
+				onmouseout="this.className='btn-close'"
+				onmousedown="this.className='btn-close-down'" type="button"
+				onclick="closeDialog();" />
+		</div>
+	</div>
+</body>
+</html>

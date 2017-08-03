@@ -1,0 +1,243 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>财富管理系统</title>
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<style type="text/css">
+/*input_tb css*/
+.input_tb {
+	border: 1px solid #dfdfdf;
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.input_tb a {
+	color: #056aff;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.input_tb td {
+	height: 35px;
+	line-height: 25px;
+	border-bottom: 1px dashed #d5d5d5;
+	padding-top: 3px;
+}
+
+.input_tb .tr_title td {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	border-bottom: 1px solid #dfdfdf;
+}
+
+.input_tb .tr_last td {
+	border-bottom: 0;
+}
+
+.input_tb .title {
+	text-align: right;
+}
+
+.input_tb .subtitle {
+	text-align: left;
+	background-color: #d2e1fd;
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+}
+
+.input_tb .tr_btn_input td {
+	background-color: #fbfbfb;
+	/*border-top:1px solid #dbdbdb;*/
+	height: 40px;
+}
+
+.sqrqkinput {
+	width: 190px;
+}
+
+.sqrqkdiv { //
+	height: 35px;
+}
+</style>
+
+<script type="text/javascript">		
+	var wms_cre_credit_head_id;//贷款ID
+	var taskId;
+	var cktype="0";//是否为只读页面
+	var fileArr = [];//上传附件列表	
+	$(function() {					
+		wms_cre_credit_head_id = $.query.get("wms_cre_credit_head_id");	
+		taskId = $.query.get("taskId");	
+		cktype = $.query.get("cktype");	
+		if (cktype=='ck') {	//当是只读页面时
+			$('#zcbtn').css('display','none');
+			$('#uploadButton').css('display','none');
+			init_attr();
+		}	
+	});
+
+	//跳转到审批页面
+	function sp(){
+		isCommit = true;
+		globalUtil.clearLigerTip("sqrqk");//清理客户信息LigerTip控件
+		//当在申请人情况信息页面时，检查各表单的数据
+		if($('#sqrqk').css('display')!='none' && globalVali.checkForm("sqrqk",false)){
+			return;
+		}
+		//当在个人固定资产信息页面时，检查各表单的数据
+		else if($('#grgdzc').css('display')!='none' && globalVali.checkForm("sqrqk",false)){
+			globalUtil.clearLigerTip("sqrqk");
+			globalUtil.warnMsg(globalErrorMsg['100116']);			
+			return;
+		}
+		var url = globalUtil.getHtml("../creditManage/spapprove.html?wms_cre_credit_head_id="+wms_cre_credit_head_id);
+		dialog=$.ligerDialog.open({
+			url:url,
+			title: '审批',
+	        width: 1000,
+	        height: globalUtil.setDialogHeight(500),
+	        onHiddenOrClose: function(){
+	    	},
+	        isResize: false
+		});  
+	}
+	//执行页面保存
+	function save(approveWorkFlowVO){			
+		var paramJson ={};
+		paramJson.fileArr = JSON.stringify(fileArr);//附件
+		paramJson.pass=approveWorkFlowVO.pass;
+		paramJson.advice=approveWorkFlowVO.advice;	
+		paramJson.taskId = taskId;
+		$.post(globalUtil.getTimestampUrl("/loancheck/wmscrecreditlineapplicantsaveforadd.do?wms_cre_credit_head_id="+wms_cre_credit_head_id), paramJson,
+        function(data) {
+        	if (data === 'success') {
+            	 globalUtil.successMsg(globalErrorMsg['100002'],
+            		function(){            		 		
+                		refreshAndClosePage();
+            	 });//保存成功
+            	 
+            }else {
+                globalUtil.errorMsg(globalErrorMsg['100012']); //保存失败
+            }
+        });		
+	}
+	//关闭页面
+    function closePage(){
+    	window.parent.dialog.hide();
+    }
+    
+    //关闭本页并刷新查询页面
+    function refreshAndClosePage(){   
+    	window.parent.search();
+    	closePage();
+    }
+    /*
+	打开附件上传页面
+	*/
+	function openAddAttDialog(){
+		var url = globalUtil.getHtml("../creditManage/addFileForCre.html");
+		dialog_att = $.ligerDialog.open({
+	        url: url,
+	        title: '上传附件',
+	        width: 650,
+	        height: globalUtil.setDialogHeight(250),
+	        onHiddenOrClose: function(){
+	        	//alert('关闭或隐藏都调用的事件!');
+	    	},
+	        isResize: false
+		});
+	}
+    //获取上传附件内容，并且只能查看功能
+	function init_attr(){
+		$.getJSON(globalUtil.getTimestampUrl('/loancheck/getfilelist.do?data_type=1&wms_cre_credit_head_id='+wms_cre_credit_head_id),
+				{},
+				function(jsonArr) {
+					var filehtml = $("#fileinfo").html();
+					for(var i=0;i<jsonArr.length;i++){
+						var nnme=jsonArr[i].attachment_new_name.replace('/','thxg1');
+						nnme=nnme.replace('/','thxg2');
+						filehtml += '<div id="delUploadDivId'+nnme+'">';
+						filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+jsonArr[i].attachment_address+'">'+jsonArr[i].attachment_old_name+'</a>';
+						filehtml += '</div>'
+					}
+					$("#fileinfo").html(filehtml);
+				});	    
+	}
+    //添加上传文件的信息链接
+	function addAttFile(newfileArr,objid){
+		fileArr = fileArr.concat(newfileArr);
+		var filehtml = $("#fileinfo").html();
+		for(var i=0;i<newfileArr.length;i++){
+			var nnme=newfileArr[i].attachment_new_name.replace('/','thxg1');
+			nnme=nnme.replace('/','thxg2');
+			filehtml += '<div id="delUploadDivId'+nnme+'">';
+			filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+newfileArr[i].attachment_address+'">'+newfileArr[i].attachment_old_name+'</a>';
+			filehtml += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\''+nnme+'\')"/>';
+			filehtml += '</div>'
+		}		
+		$("#fileinfo").html(filehtml);
+	}
+    //删除上传文件的信息链接
+	function deleteFile(filename){
+       	$.ligerDialog.confirm(globalErrorMsg['100016'],
+        function(yes) {
+        	if (yes) {
+        		$("#delUploadDivId"+filename).remove();
+        		filename=filename.replace('thxg1','/');
+        		filename=filename.replace('thxg2','/');
+        		for(var i=0;i<fileArr.length;i++){
+        			if(filename == fileArr[i].attachment_new_name){
+        				fileArr.splice(i,1);
+        				break;
+        			}
+        		}
+	    	}                                            
+   		});
+    }
+</script>
+</head>
+<body>
+	<div class="tab_titleT">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr valign="bottom" id='trtab1'>
+				<td class="tabbody1" id="tabbody1" tabname='mytab'><div
+						align="center">征信审核</div></td>
+			</tr>
+		</table>
+	</div>
+	<div class="pop-center overflow-au" style="top: 30px;">
+		<div id="sqrqk" class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 25px;">
+			<div class="float-l clearboth" style="height: 10px;"></div>
+			<div class="center-content clearboth">
+				<div class="float-l sqrqkdiv">
+					<div class="pop-form-title">征信报告：</div>
+					<div class="pop-form-item">
+						<a class="btn" href="#" onclick="openAddAttDialog()"
+							id="uploadButton">上传附件</a>
+					</div>
+					<div class="pop-form-item" id="fileinfo"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="pop-footer5 clearboth" style="bottom: 1px;">
+		<input id="zcbtn" class="btn-saveT"
+			onmouseover="this.className='btn-saveT-over'"
+			onmouseout="this.className='btn-saveT'"
+			onmousedown="this.className='btn-saveT-down'" type="button"
+			style="margin-right: 7px;" onclick="sp()" /> <input id="cancelBtnId"
+			class="btn-cancel" onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" type="button"
+			onclick="closePage();" />
+	</div>
+</body>
+</html>

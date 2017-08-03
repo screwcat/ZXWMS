@@ -1,0 +1,300 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-
+
+transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<link href="../../css/ligerui-main.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<title>赎回查看</title>
+<style type="text/css">
+.dialogTitleType1 {height:46px; width:auto; margin:0 auto; padding-left:20px; padding-right:20px; text-align:left; background:#dbeefd;}
+.dialogTitleType1 p.title {display:inline-block; text-align:left; line-height:46px; font-size:12px; color:#0080ed; font-weight:bold;}
+.dialogTitleType1 p.rightGrey {float:right; color:#676b73; display:inline-block; text-align:right; line-height:46px;}
+.dialogSectionType1 {width:auto; height:auto; margin:0 auto; padding:0; text-align:left;}
+.dialogSectionType1 div {width:auto; height:auto; margin-top:20px; padding-left:20px; padding-right:20px; text-align:left; display:block;}
+.dialogSectionType1 hr.hrSolid {width:100%; height:1px; border-top:1px solid #dcdcdc; border-bottom:none; border-left:none; border-right:none; margin:0; padding:0; shadow:none;}
+.dialogSectionType1 hr.hrDashed {width:100%; height:1px; border-top:1px dashed #dcdcdc; border-bottom:none; border-left:none; border-right:none; margin:0; padding:0; shadow:none;}
+.dialogUlType1 {width:auto; height:auto; margin:0; padding:0; display:block; clear:both;}
+.dialogUlType1 p {line-height:24px;}
+.dialogUlType1 li {float:left;}
+.dialogUlType1 li.li-Title1, .dialogUlType1 li.li-Title2 {width:180px; height:auto; margin:0 20px 0 0; padding:0; text-align:right;}
+.dialogUlType1 li.li-Title1 p {display:inline-block; width:auto; height:24px; margin:0; padding:0 20px; text-align:center; background:#ededed; border-radius:12px;}
+.dialogUlType1 li.li-Title2 p {display:inline-block; width:auto; height:24px; margin:0; padding:0 20px; text-align:center; background:#faefd2; border-radius:12px;}
+.dialogUlType1 li.liType1 {width:auto; height:auto; margin:0; padding:0; text-align:left;}
+.dialogUlType1 li.liType1 div {margin:0; padding:0;}
+.dialogUlType1 li.liType1 div + div {margin:10px 0 0 0;}
+.dialogUlType1 li.liType1 p {font-size:12px; white-space:nowrap;}
+.dialogUlType1 li.liType1 p.name1 {display:inline-block; width:100px; height:auto; margin:0; padding:0; text-align:right; color:#686b72;}
+.dialogUlType1 li.liType1 p.name2{display:inline-block; width:150px; height:auto; margin:0; padding:0; text-align:right; color:#686b72;}
+.dialogUlType1 li.liType1 p.value {display:inline-block; width:100px; height:auto; margin:0; padding:0; text-align:left; font-weight:bold;}
+.dialogUlType1 li.liType1 p.valueAlone1 {display:inline-block; width:100px; height:auto; margin:0; padding:0; text-align:right; font-weight:bold;}
+
+i.brace_blue {display:inline-block; width:20px; height:79px; margin:0; padding:0; vertical-align:middle; background:url('../../images/decorate/brace_blue.png') 0 0 no-repeat;}
+.orange {color:#ff8a00;}
+.div_backY {background:#fefaef; padding-top:20px; padding-bottom:20px;}
+
+
+.dialogFooter {height:auto; background-color:#fafafa; position:absolute; width:100%; left:0; bottom:0; margin:0 auto; text-align:center; padding:10px 0; border-top:1px solid #e6e4e3;}
+</style>
+
+<script type="text/javascript">
+	var personnel_id;
+	var statics_month;
+	var personnel_trialStartTime;
+	var personnel_name;
+	var cur_month;
+	
+	$(function() {
+		//获取单据ID
+		personnel_id = $.query.get("personnel_id");	
+        statics_month = $.query.get("statics_month");
+
+        personnel_trialStartTime = $.query.get("personnel_trialStartTime");
+        personnel_name = $.query.get("personnel_name");
+        //初始化标题信息
+        init_title();
+      	//初始化业绩信息
+		init_info();
+		
+	});
+	
+	//初始化各项标题
+	function init_title(){
+		$("#personnel_trialStartTime").text(personnel_trialStartTime);
+		$("#personnel_name").text(personnel_name);
+		cur_month = statics_month.substr(5,statics_month.length);
+		$(".cur_month").text(cur_month);
+	}
+	//初始化业绩信息
+	function init_info(){
+		$.getJSON(globalUtil.getTimestampUrl('/inve/getPersonnelAchievementByPid.do'),
+	    		{
+	    			"personnel_id" : personnel_id,
+	    			"statics_month" : statics_month
+	    		},
+	    		function(json) {
+	    			$("#per_add_base").text(json.per_add_base!=undefined?json.per_add_base:0);
+	    			$("#per_add_deal_sum").text(json.per_add_deal_sum!=undefined?json.per_add_deal_sum:0);
+	    			$("#per_redeem_base").text(json.per_redeem_base!=undefined?json.per_redeem_base:0);
+	    			$("#per_clear_add").text(json.per_clear_add!=undefined?json.per_clear_add:0);	    			
+	    			$("#per_stock_all").text(json.per_stock_all!=undefined?json.per_stock_all:0);
+	    			$("#per_stock_all_deal").text(json.per_stock_all_deal!=undefined?json.per_stock_all_deal:0);
+	    			$("#per_stock_new").text(json.per_stock_new!=undefined?json.per_stock_new:0);
+	    			$("#per_stock_new_deal").text(json.per_stock_new_deal!=undefined?json.per_stock_new_deal:0);
+	 
+	    			$("#lseason_sum_add_deal").text(json.lseason_sum_add_deal!=undefined?json.lseason_sum_add_deal:0);
+	    			$("#cseason_sum_add_deal").text(json.cseason_sum_add_deal!=undefined?json.cseason_sum_add_deal:0);
+	    			//季度标题
+	    			$("#lseason_title").text(json.lseason_title);
+	    			$("#cseason_title").text(json.cseason_title);
+	    			//上季度月份标题
+	    			$("#lseason_fmonth_title").text(json.lseason_fmonth.substr(5,7));
+	    			$("#lseason_smonth_title").text(json.lseason_smonth.substr(5,7));
+	    			$("#lseason_tmonth_title").text(json.lseason_tmonth.substr(5,7));
+	    			//本季度月份标题
+	    			$("#cseason_fmonth_title").text(json.cseason_fmonth.substr(5,7));
+	    			$("#cseason_smonth_title").text(json.cseason_smonth.substr(5,7));
+	    			$("#cseason_tmonth_title").text(json.cseason_tmonth.substr(5,7));
+	    			
+	    			//上季度各月份业绩
+	    			if(personnel_trialStartTime.substr(0,7) > json.lseason_fmonth){
+		    			$("#lseason_fmonth_add_deal").text("    --    ");
+	    			}else{
+		    			$("#lseason_fmonth_add_deal").text(json.lseason_fmonth_add_deal!=undefined?json.lseason_fmonth_add_deal:0);
+	    			}
+	    			
+	    			if(personnel_trialStartTime.substr(0,7) > json.lseason_smonth){
+		    			$("#lseason_smonth_add_deal").text("    --    ");
+	    			}else{
+		    			$("#lseason_smonth_add_deal").text(json.lseason_smonth_add_deal!=undefined?json.lseason_smonth_add_deal:0);
+	    			}
+	    			
+	    			if(personnel_trialStartTime.substr(0,7) > json.lseason_tmonth){
+		    			$("#lseason_tmonth_add_deal").text("    --    ");
+	    			}else{
+		    			$("#lseason_tmonth_add_deal").text(json.lseason_tmonth_add_deal!=undefined?json.lseason_tmonth_add_deal:0);
+	    			}
+	    			
+	    			//本季度各月份业绩
+	    			if(personnel_trialStartTime.substr(0,7) > json.cseason_fmonth){
+		    			$("#cseason_fmonth_add_deal").text("    --   ");	    			
+	    			}else{
+		    			$("#cseason_fmonth_add_deal").text(json.cseason_fmonth_add_deal!=undefined?json.cseason_fmonth_add_deal:0);	    			
+	    			}
+	    			//当月小于计算业绩所在月份  业绩赋值为--	    			
+	    			if(json.curTime_str < json.cseason_smonth || personnel_trialStartTime.substr(0,7) > json.cseason_smonth){
+		    			$("#cseason_smonth_add_deal").text("    --    ");
+	    			}else{
+		    			$("#cseason_smonth_add_deal").text(json.cseason_smonth_add_deal!=undefined?json.cseason_smonth_add_deal:0);
+	    			}
+	    			//当月小于计算业绩所在月份  业绩赋值为--
+	    			if(json.curTime_str < json.cseason_tmonth || personnel_trialStartTime.substr(0,7) > json.cseason_tmonth){
+		    			$("#cseason_tmonth_add_deal").text("    --    ");
+	    			}else{
+		    			$("#cseason_tmonth_add_deal").text(json.cseason_tmonth_add_deal!=undefined?json.cseason_tmonth_add_deal:0);
+	    			}
+	    			
+	    		});
+		
+	}
+	/**
+	*关闭窗口
+	*/
+	function closeDialog() {
+		try{
+ 			window.parent.dialog.hide();
+ 		}catch(e){
+ 			globalUtil.closeCurrentTab();
+ 		}
+	}
+	
+</script>
+</head>
+<body>
+    <div class="center-content overflow-au" style="min-width: 550px;">
+        <div class="dialogTitleType1">
+            <p class="title">
+              <span id="personnel_name"></span>
+            </p>
+            <p class="rightGrey">入职时间：<span id="personnel_trialStartTime"></span></p>
+        </div>	
+        <section class="dialogSectionType1">
+            <div class="clearfix">
+                <ul class="dialogUlType1">
+                    <li class="li-Title1">
+                        <p><span class="cur_month"></span>月新增业绩</p>
+                    </li>
+                    <li class="liType1">
+                        <p class="name1">签单金额：</p>
+                        <p class="value"><span id="per_add_base"></span>  元</p>
+                    </li>
+                    <li class="liType1">
+                        <p class="name2">合计年化（全部产品）：</p>
+                        <p class="value"><span id="per_add_deal_sum"></span>  元</p>
+                    </li>
+                </ul>
+            </div>
+            <div class="clearfix">
+                <ul class="dialogUlType1">
+                    <li class="li-Title1">
+                        <p><span class="cur_month"></span>月赎回业绩</p>
+                    </li>
+                    <li class="liType1">
+                        <p class="valueAlone1"><span id="per_redeem_base"></span>  元</p>
+                    </li>
+                </ul>
+            </div>
+            <div class="clearfix">
+                <ul class="dialogUlType1">
+                    <li class="li-Title1">
+                        <p><span class="cur_month"></span>月净增业绩</p>
+                    </li>
+                    <li class="liType1">
+                        <p class="valueAlone1"><span id="per_clear_add"></span>  元</p>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <hr class="hrSolid" />
+            </div>
+        </section>	
+        <section class="dialogSectionType1">
+          <div class="clearfix">
+              <ul class="dialogUlType1">
+                    <li class="li-Title1">
+                        <p><span id="lseason_title"></span>季度新增业绩</p>
+                    </li>
+                    <li class="liType1">
+                        <div>
+                            <p class="name1"><span id="lseason_fmonth_title"></span>月-年化：</p>
+                            <p class="value"><span id="lseason_fmonth_add_deal"></span>  元</p>
+                        </div>
+                        <div>
+                            <p class="name1"><span id="lseason_smonth_title"></span>月-年化：</p>
+                            <p class="value"><span id="lseason_smonth_add_deal"></span>  元</p>
+                        </div>
+                        <div>
+                            <p class="name1"><span id="lseason_tmonth_title"></span>月-年化：</p>
+                            <p class="value"><span id="lseason_tmonth_add_deal"></span>  元</p>
+                        </div>
+                    </li>
+                    <li class="liType1" style="margin-top:7px;">
+                        <i class="brace_blue"></i>
+                        <p class="name1">季度合计：</p>
+                        <p class="value orange"><span id="lseason_sum_add_deal"></span>  元</p>
+                    </li>
+                </ul>
+          </div>
+          <div>
+              <hr class="hrDashed" />
+          </div>
+          <div class="clearfix">
+              <ul class="dialogUlType1">
+                    <li class="li-Title1">
+                        <p><span id="cseason_title"></span>季度新增业绩</p>
+                    </li>
+                    <li class="liType1">
+                        <div>
+                            <p class="name1"><span id="cseason_fmonth_title"></span>月-年化：</p>
+                            <p class="value"><span id="cseason_fmonth_add_deal"></span>  元</p>
+                        </div>
+                        <div>
+                            <p class="name1"><span id="cseason_smonth_title"></span>月-年化：</p>
+                            <p class="value"><span id="cseason_smonth_add_deal"></span>  元</p>
+                        </div>
+                        <div>
+                            <p class="name1"><span id="cseason_tmonth_title"></span>月-年化：</p>
+                            <p class="value"><span id="cseason_tmonth_add_deal"></span>  元</p>
+                        </div>
+                    </li>
+                    <li class="liType1" style="margin-top:7px;">
+                        <i class="brace_blue"></i>
+                        <p class="name1">季度合计：</p>
+                        <p class="value orange"><span id="cseason_sum_add_deal"></span>  元</p>
+                    </li>
+                </ul>
+          </div>
+        </section>	
+        
+		<section class="dialogSectionType1">
+		    <div class="div_backY clearfix">
+		        <ul class="dialogUlType1">
+                    <li class="li-Title2">
+                        <p>截止<span class="cur_month"></span>月底个人存量</p>
+                    </li>
+                    <li class="liType1">
+                        <div>
+                            <p class="name1">全部-非年化：</p>
+                            <p class="value"><span id="per_stock_all"></span>  元</p>
+                        </div>
+                        <div>
+                            <p class="name1">新产品-非年化：</p>
+                            <p class="value"><span id="per_stock_new"></span>  元</p>
+                        </div>
+                    </li>
+                    <li class="liType1">
+                        <div>
+                            <p class="name2">全部-年化：</p>
+                            <p class="value"><span id="per_stock_all_deal"></span>  元</p>
+                        </div>
+                        <div>
+                            <p class="name2">新产品-年化：</p>
+                            <p class="value"><span id="per_stock_new_deal"></span>  元</p>
+                        </div>
+                    </li>
+                </ul>
+		    </div>
+		</section>		
+    </div>
+	<div class="dialogFooter">
+		<input id="cancelBtnId" class="btn-cancel"
+			onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" type="button" onclick="closeDialog();" />
+	</div>
+	
+</body>
+</html>

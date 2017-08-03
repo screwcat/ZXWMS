@@ -1,0 +1,321 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>系统管理>pos机管理</title>
+
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script language="Javascript" src="../../js/zx-all.js"> </script>
+<style>
+/*input_tb css*/
+.input_tb {
+	border: 1px solid #dfdfdf;
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.input_tb a {
+	color: #056aff;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.input_tb td {
+	height: 35px;
+	line-height: 25px;
+	border-bottom: 1px dashed #d5d5d5;
+	padding-top: 3px;
+}
+
+.input_tb .tr_title td {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	border-bottom: 1px solid #dfdfdf;
+}
+
+.input_tb .tr_last td {
+	border-bottom: 0;
+}
+
+.input_tb .title {
+	text-align: right;
+}
+
+.input_tb .subtitle {
+	text-align: left;
+	background-color: #d2e1fd;
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+}
+
+.input_tb .tr_btn_input td {
+	background-color: #fbfbfb;
+	/*border-top:1px solid #dbdbdb;*/
+	height: 40px;
+}
+</style>
+
+<script type="text/javascript">
+
+var grid_divwt1;
+var grid_divwt1_data={};
+
+$(function(){
+	var toolbarItemData1 = [];
+	toolbarItemData1.push({
+		text : '新增',
+		click: addRows,
+		icon : 'add'
+	});
+	toolbarItemData1.push({
+		line : true
+	});
+	$("#toolbar-divwt1").ligerToolBar({
+		items : toolbarItemData1
+	});
+	initGrid();
+	global_ligerui_extend.search(grid_divwt1, "");
+});
+
+function initGrid() {
+	
+	var isEnableArr=[{"enable_flag":"1","enable_flag_val":'是'},{"enable_flag":"0","enable_flag_val":'否'}];
+	
+	var columns1 = [{
+		display: '<font color=red>*</font>POS机编号',
+		name: 'pos_code',
+		resizable: false,
+		width: 160,
+		minWidth: 160,
+		editor: {
+			type: 'text'
+		}
+	},{
+		display: 'POS机名称',
+		name: 'pos_name',
+		resizable: false,
+		width: 200,
+		minWidth: 200,
+		editor: {
+			type: 'text'
+		}
+	},{
+		display: '<font color=red>*</font>所属银行',
+		name: 'pos_bank',
+		resizable: false,
+		width: 200,
+		minWidth: 200,
+		editor: {
+			type: 'text'
+		}
+	},{
+		display: '<font color=red>*</font>关联银行卡号',
+		name: 'pos_bank_card',
+		resizable: false,
+		width: 220,
+		minWidth: 220,
+		editor: {
+			type: 'text'
+		}
+	},{
+		display: '单笔手续费率(%)',
+		name: 'sigle_poundage',
+		resizable: false,
+		width: 160,
+		minWidth: 160,
+		editor: {
+			type: 'text'
+		}
+	},{
+		display: '封顶手续费(万元)',
+		name: 'most_poundage',
+		resizable: false,
+		width: 160,
+		minWidth: 160,
+		editor: {
+			type: 'text'
+		}
+	},{
+		display: '是否有效',
+		name: 'enable_flag',
+		resizable: false,
+		width: 80,
+		minWidth: 80,
+		editor: { 
+			type: 'select', // 该列为可编辑状态
+			data: isEnableArr, 
+			valueField: 'enable_flag', 
+			textField: 'enable_flag_val' 
+		},
+		render: function (rowdata, nowRowIndex, value, column) {
+			return global_ligerui_extend.gridRenderSelectedValue(rowdata, nowRowIndex, value, column);
+		}
+	},{
+		display: '备注',
+		name: 'remark',
+		resizable: false,
+		width: 300,
+		minWidth: 300,
+		editor: {
+			type: 'text'
+		}
+	}];
+	
+	grid_divwt1 = $("#grid-divwt1").ligerGrid({ // maingrid为表格div所在id
+		columns: columns1,
+		url: global_param.context_name + '/inve/wmsinveposwithpaginglist.do',
+		sortName: 'wms_inve_pos_id', // 排序列名
+		sortOrder: 'desc', // 排序方式
+		rownumbers: true,
+		usePager: true, // 是否分页支持，默认为true
+		enabledEdit: true,
+		width: '100%',
+		height:'90%',
+		heightDiff: -4,
+		parms: {
+			_filterParms: -1
+		}
+	});
+}
+
+//添加grid行
+function addRows() {
+	var manager = $("#grid-divwt1").ligerGetGridManager();   
+	manager.endEdit();
+	manager.addRow({'pos_code':'','pos_name':'','pos_bank':'','pos_bank_card':'','sigle_poundage':'','most_poundage':'','enable_flag':'1','remark':''});
+}
+
+/**
+*关闭窗口
+*/
+function closeDialog() {
+	window.parent.dialog.hide();
+}
+
+//提交金额信息
+function save(){
+	var jsonStr={};
+	var checkFlag=true;
+	var posdata;
+	var posCodeArr=new Array();
+	posdata=getGridData(grid_divwt1);
+	var stringifyPosData=[];
+	for (var i = 0; i < posdata.length; i++) {
+		if(posdata[i].pos_code==''||posdata[i].pos_bank==''||posdata[i].pos_bank_card==''){
+			if(posdata[i].pos_code==''&&posdata[i].pos_bank==''&&posdata[i].pos_bank_card==''){
+				continue;
+			}else {
+				globalUtil.warnMsg(globalErrorMsg['800212']);
+				checkFlag=false;
+				return;
+			}
+		}
+		posdata[i].create_timestamp='';
+		posdata[i].last_update_timestamp='';
+		posCodeArr.push(posdata[i].pos_code);
+		stringifyPosData.push(posdata[i]);
+	}
+	for (var i = 0; i < posCodeArr.length; i++) {
+		for (var j = 0; j < posCodeArr.length; j++) {
+			if(i!=j){
+				if(posCodeArr[i]==posCodeArr[j]){
+					globalUtil.warnMsg(globalErrorMsg['800213']);
+					checkFlag=false;
+					return;
+				}
+			}
+		}
+	}
+	if(!checkFlag){
+		return;
+	}
+	jsonStr.beanJSON=JSON.stringify(stringifyPosData);
+	$.post(globalUtil.getTimestampUrl("/inve/wmsinveposdochange.do"),
+		jsonStr, function(data) {
+		if (data == 'success') {
+			//保存成功，提示信息！
+			 globalUtil.successMsg(globalErrorMsg['100002'],
+						function() {
+							 location.href=location.href;
+						});//保存成功
+		} else {
+			globalUtil.errorMsg(globalErrorMsg['100012']); //保存失败
+		}
+	});
+}
+
+/*
+获取表格数据，去除全部为空的记录
+*/
+function getGridData(grid){
+	grid.endEdit();
+		var data_all = grid.getData();
+		var griddata = [];
+		for(var i=0;i<data_all.length;i++){
+			var data = data_all[i];
+			var isEmpty = true;
+			if(data){
+				for(var key in data){
+					if($.trim(key) == '' || $.trim(key) == '__status'){continue;}
+					if(!globalUtil.isEmpty(data[key])){
+						if(data[key] instanceof Date){
+							data[key]= data[key].format('yyyy-MM-dd');//格式化日期类型数据
+						}
+						isEmpty = false;
+					}
+				}
+			}
+			if(!isEmpty){
+				griddata.push(data);
+			}
+		}
+	return griddata;
+}
+
+function closeTabAndRes(){
+	parent.window.search();
+	closeDialog();
+}
+</script>
+</head>
+<body>
+	<div>
+		<div class="pop-center overflow-au" id="myForm">
+			<div id="divpart1" class="pop-formDiv clearfix"
+				style="margin: 5px; margin-top: 5px;">
+				<div class="float-l clearboth" style="height: 25px;"></div>
+				<div class="center-content clearboth" style="min-width: 700px;">
+					<div class="center-title">
+						<font color="black">pos机信息</font>
+					</div>
+					<div class="center-txt" style="margin-bottom: 15px;"
+						id="divpart1_1">
+						<div id="toolbar-divwt1" class="minwidth400"></div>
+						<div id="grid-divwt1"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="tab_titleT">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr valign="bottom" id='trtab1'>
+					<td class="tabbody1" id="tabbody1" tabname='mytab'
+						style="width: 33%"><div align="center" id="khinfo_div"
+							class="tab_step tab_step101">pos机信息</div></td>
+				</tr>
+			</table>
+		</div>
+		<div class="pop-footer5">
+			<input id="tjbtn" class="btn-saveT"
+				onmouseover="this.className='btn-saveT-over'"
+				onmouseout="this.className='btn-saveT'"
+				onmousedown="this.className='btn-saveT-down'" type="button"
+				style="margin-right: 7px;" onclick="save()" />
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/media/js/ZeroClipboard.js"></script>
+<title>还款查询列表</title>
+</head>
+<body style="overflow-y: hidden;">
+	<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<!--查询条件-->
+			<div class="l-panel-search-cond clearfix">
+				<div class="float-l">
+					<div class="l-panel-search-title" style="margin-left: 16px">单据编号：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="bill_code" />
+					</div>
+				</div>
+				<div class="float-l" style="margin-left: 12px;">
+					<div class="l-panel-search-title" style="margin-left: 16px">业务员：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="salesman_name_str" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title" style="margin-left: 16px">还款日期：</div>
+					<div class="l-panel-search-item">
+						<input id="current_repay_date" class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+							style="width: 133px; vertical-align: top;" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title" style="margin-left: 16px">还款状态：</div>
+					<div class="l-panel-search-item">
+						<select id="repay_status">
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="l-panel-search-cond clearfix">
+				<div class="float-l">
+					<div class="l-panel-search-title" style="margin-left: 16px">客户姓名：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="customer_name" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title" style="margin-left: 16px">联系电话：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="mobile_telephone" />
+					</div>
+				</div>
+				<div class="float-l" style="margin-left: 35px">
+					<div class="l-panel-search-title">产品：</div>
+					<div class="l-panel-search-item">
+						<select id="category_id">
+		                </select>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="centertoolbar" class="minwidth400"></div>
+	<div id="grid"></div>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+		var grid;
+		var toolbar;
+		var params;
+		var dialog;
+		var columns;
+		var selectrow;
+		
+		//产品下拉框
+		globalUtil.init_select_value("category_id", "wms_sys_dict_data_id", "value_meaning", "true", "26,27");
+		//还款状态下拉框
+		globalUtil.init_select_value("repay_status", "value_code", "value_meaning", "true", "122");
+		
+		$(function() {
+			initGrid();
+			var toolbarItemData = [];
+			toolbarItemData.push({
+				text : '正常还款',
+				click : normal_repayment,
+				icon : 'approve'
+			});
+			toolbarItemData.push({
+				line : true
+			});
+			toolbarItemData.push({
+				text : '历史查询',
+				click : history_search,
+				icon : 'search'
+			});
+			toolbarItemData.push({
+				line : true
+			});
+			toolbarItemData.push({
+				text : '查询',
+				click : search,
+				icon : 'search'
+			});
+			toolbarItemData.push({
+				line : true
+			});
+			toolbarItemData.push({
+				text : '清空',
+				click : clear,
+				icon : 'empty'
+			});
+			toolbarItemData.push({
+				line : true
+			});
+			toolbarItemData.push({
+				text : '导出Excel',
+				icon : 'export',
+				id : 'ToolTables_XLS_2'
+			});
+			toolbarItemData.push({
+				line : true
+			});
+			$("#centertoolbar").ligerToolBar({
+				items : toolbarItemData
+			});
+			search();
+			registerCsv();
+		});
+		
+		function initParams() {
+            params = globalUtil.getFormParam("searchbar");
+            if($('#category_id').val() != -1) {
+				params.category_id = $('#category_id').val();
+			}
+            if($('#category_id').val() != -1) {
+				params.category_id = $('#category_id').val();
+			}
+			if($('#repay_status').val() != -1) {
+				params.repay_status = $('#repay_status').val();
+			}
+        }
+		
+		//实现数据导出功能
+		function registerCsv() {
+			var moviePath = "../../js/media/swf/copy_csv_xls_pdf.swf";
+			var fileName = '还款查询.xls';
+			var titleJson = '';
+			var dataJson = '';
+			var obj = $("div[toolbarid='ToolTables_XLS_2']")[0];//获取菜单对象
+			var getDataFun = function() {
+				var text = {};
+				text.title = {
+					'bill_code' : '单据编号',
+					'current_repay_date' : '还款日期',
+					'repay_status_name' : '还款状态',
+					'bill_type_name' : '业务状态',
+					'the_number' : '次数',
+					'customer_name' : '客户姓名',
+					'mobile_telephone' : '联系电话',
+					'com_debtor_name' : '共贷人姓名',
+					'com_debtor_tel' : '共贷人电话',
+					'send_message_number' : '短信发送电话',
+					'category_name' : '产品',
+					'principal_lower' : '合同金额（元）',
+					'borrow_deadline' : '还款期数',
+					'refund_limit_month' : '月还款金额（元）',
+					'repay_period' : '已还期数',
+					'refund_bank' : '开户银行',
+					'refund_number' : '银行卡号',
+					'track_handle_result' : '跟踪处理结果',
+					'salesman_name_str' : '业务员/工号',
+					'team_manager_name' : '团队经理',
+					'sales_epartment_name' : '所属营业部',
+					'warn_remak' : '备注',
+					'bill_code_group' : '组合贷编号'
+				};
+				
+				//定义需要导出的列名以及列名与数据的对应关系
+				initParams();
+				var json = globalUtil.syncPostJson("/remind/searchRepaymentSearchList.do?sortname=cast(principal_lower as decimal)&sortorder=desc&need_paging_flag=0", params);//同步获取需要导出的数据内容
+				text.data = json.Rows;
+				return text;
+			};
+			registerXlsFlashBtn(moviePath, fileName, titleJson, dataJson, obj, getDataFun);
+		}
+		
+		//清空所填写内容
+		function clear() {
+			$("#searchbar input").each(function () {
+				$(this).val('');
+			});
+			$('#category_id').val('-1');
+			$('#repay_status').val('-1');
+			search();
+		}
+		
+		//表格初始化
+		function initGrid() {
+			columns = [{
+				display : '单据编号',
+				name : 'bill_code',
+				minWidth : 130,
+			}, {
+				display : '还款日期',
+				name : 'current_repay_date',
+				minWidth : 130,
+			}, {
+				display : '还款状态',
+				name : 'repay_status_name',
+				minWidth : 70,
+			}, {
+				display : '业务状态',
+				name : 'bill_type_name',
+				width : 60,
+			}, {
+				display : '次数',
+				name : 'the_number',
+				width : 40,
+			}, {
+				display : '客户姓名',
+				name : 'customer_name',
+				minWidth : 100,
+			}, {
+				display : '联系电话',
+				name : 'mobile_telephone',
+				minWidth : 100,
+			}, {
+				display : '共贷人姓名',
+				name : 'com_debtor_name',
+				minWidth : 100,
+			}, {
+				display : '共贷人电话',
+				name : 'com_debtor_tel',
+				minWidth : 100,
+			}, {
+				display : '短信发送电话',
+				name : 'send_message_number',
+				minWidth : 160,
+			}, {
+				display : '产品',
+				name : 'category_name',
+				minWidth : 100,
+			}, {
+				display : '合同金额（元）',
+				name : 'principal_lower',
+				minWidth : 100,
+			}, {
+				display : '还款期数',
+				name : 'borrow_deadline',
+				minWidth : 80,
+			}, {
+				display : '月还款金额（元）',
+				name : 'refund_limit_month',
+				minWidth : 120,
+			}, {
+				display : '已还期数',
+				name : 'repay_period',
+				minWidth : 80,
+			}, {
+				display : '开户银行',
+				name : 'refund_bank',
+				minWidth : 100,
+			}, {
+				display : '银行卡号',
+				name : 'refund_number',
+				minWidth : 120,
+			}, {
+				display : '跟踪处理结果',
+				name : 'track_handle_result',
+				minWidth : 100,
+			}, {
+				display : '联系人信息',
+				name : 'phone_handle_result',
+				width : 160,
+				//添加超链接
+                render: function (rowdata, rowindex, value) { 
+                	   var wms_cre_credit_head_id=rowdata.wms_cre_credit_head_id;
+                	   if(rowdata.old_wms_cre_credit_head_id!=null&&rowdata.old_wms_cre_credit_head_id!=undefined){
+                		   wms_cre_credit_head_id=rowdata.old_wms_cre_credit_head_id;
+                	   }
+                	   if(wms_cre_credit_head_id==null||wms_cre_credit_head_id==""||wms_cre_credit_head_id==undefined){
+                		   return "----";   
+                	   }
+        			return '<a href="javascript:contactsInfo('+wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+"查看"+'</a>';
+                }
+			}, {
+				display : '业务员/工号',
+				name : 'salesman_name_str',
+				minWidth : 100,
+			}, {
+				display : '团队经理',
+				name : 'team_manager_name',
+				minWidth : 100,
+			}, {
+				display : '所属营业部',
+				name : 'sales_epartment_name',
+				minWidth : 120,
+			}, {
+				display : '备注',
+				name : 'warn_remak',
+				minWidth : 300,
+			},{
+				display : '组合贷编号',
+				name : 'bill_code_group',
+				minWidth : 150,
+			}];
+			
+			grid = $("#grid").ligerGrid({
+				columns : columns,
+				url : global_param.context_name + '/remind/searchRepaymentSearchList.do',
+				sortName : 'cast(principal_lower as decimal)', // 排序列名
+				sortOrder : 'desc', // 排序方式
+				rownumbers : true,
+				allowUnSelectRow : true,
+				usePager : true,
+				enabledSort: true,
+				width : '100%',
+				height : '95%',
+				heightDiff : -4,
+				parms : {
+					_filterParms : -1
+				}
+			});
+		}
+		//联系人信息
+        function contactsInfo(wms_cre_credit_head_id){
+          	var url = globalUtil.getHtml("../loanappro/contactsInfo.html?wms_cre_credit_head_id="+wms_cre_credit_head_id);
+         		dialog=$.ligerDialog.open({
+         			url:url,
+         			title: '联系人信息',
+  		        width: 1000,
+  		        height: globalUtil.setDialogHeight(550),
+  		        onHiddenOrClose: function(){
+  		    	},
+  		        isResize: false
+         		});
+          }
+		//正常还款
+		function normal_repayment() {
+			var row = grid.getSelectedRow();
+			if(row == null) {
+                globalUtil.warnMsg(globalErrorMsg['100031']);//请选择一行记录
+                return;
+			} else if(row.repay_status != 7) {
+				globalUtil.warnMsg(globalErrorMsg['1700037']);//只能对移交公司的单据做正常还款
+                return;
+			} else {
+				globalUtil.confirmMsg(globalErrorMsg['1700035'], 
+					function(yes) {
+			            if(yes) {
+			            	var reqMap = {};
+			            	reqMap.wms_cre_credit_notary_warn_id = row.wms_cre_credit_notary_warn_id;
+			            	reqMap.borrow_deadline = row.borrow_deadline;
+			            	reqMap.repay_status = '1';//正常
+			            	var current_repay_date = row.current_repay_date;
+			            	reqMap.current_repay_date = new Date((new Date()).getTime() + 1000 * 60 * 60 * 24 * 30).format("yyyy-MM-dd");//将还款日期变更为下一个月的提醒日(30天之后)
+			            	$.ajax({
+			        	        url: global_param.context_name + '/creditManage/WmsCreCreditNotaryWarnUpdate.do',
+			        	        type: 'POST',
+			        	        data: reqMap,
+			        	        async: false,
+			        	        success: function(data) {
+			        	        	if(data == "success") {
+			        	        		globalUtil.successMsg(globalErrorMsg['100002'], function() {  
+			        	        			search();
+			        	                });
+			        	        	} else {
+			        	        		globalUtil.warnMsg(globalErrorMsg['100012']);
+			        	        	}
+			        	        }
+			        	    });
+			            }
+		        	}
+				);
+			}
+		}
+		
+		//历史查询
+		function history_search() {
+			var row = grid.getSelectedRow();
+			if(row == null) {
+                globalUtil.warnMsg(globalErrorMsg['100031']);//请选择一行记录
+                return;
+			} else {
+			    var url = globalUtil.getHtml("HistorySearch.html?wms_cre_credit_notary_warn_id=" + row.wms_cre_credit_notary_warn_id);
+	            dialog = $.ligerDialog.open({
+		            url: url,
+		           	title: '历史查询',
+		           	width: 850,
+	 		        height: globalUtil.setDialogHeight(500),
+		 		    onHiddenOrClose: function() {
+		 		    },
+		 		    isResize: false
+	        	});    
+			}
+		}
+		
+		//查询
+		function search() {
+			initParams();
+			if($('#category_id').val() != -1) {
+				params.category_id = $('#category_id').val();
+			}
+			if($('#repay_status').val() != -1) {
+				params.repay_status = $('#repay_status').val();
+			}
+            global_ligerui_extend.search(grid, params);
+		}
+		
+		//查询：当前页
+		function research() {
+			initParams();
+            global_ligerui_extend.research(grid, params);
+		}
+		
+		function closeDialog() {
+    	    dialog.hide();
+    	    search();
+        }
+		
+	</script>
+</body>
+</html>

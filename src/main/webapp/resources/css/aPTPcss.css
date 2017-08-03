@@ -1,0 +1,110 @@
+@charset "utf-8";
+/* CSS Document */
+a, abbr, acronym, address, applet, article, aside, audio, b, blockquote, big, center, canvas, caption, cite, code, command, datalist, dd, del, details, dfn, dl, div, dt, em, embed, fieldset, figcaption, figure, font, footer, form, h1, h2, h3, h4, h5, h6, header, hgroup, html, i, iframe, img, ins, kbd, keygen, label, legend, li, meter, nav, object, ol, output, p, pre, progress, q, s, samp, section, small, span, source, strike, strong, table, tbody, tfoot, thead, th, tr, tdvideo, tt, u, ul, var {
+	background: transparent;
+	border: 0 none;
+	font-size: 100%;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	vertical-align: top;
+}
+header, section, footer, aside, nav, main, article, figure {
+    display: block; 
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+table, table td {
+	padding: 0;
+	border: none;
+	border-collapse: collapse;
+	border-spacing:0;
+}
+img {
+	vertical-align: top; border:0;
+}
+embed {
+	vertical-align: top;
+}
+* {
+	border: none
+}
+*{font:13px/1.5 Tahoma, Helvetica, Arial, "Microsoft YaHei", "宋体"; color:#717171;}
+*{margin:0; padding:0; z-index: auto;}
+a {text-decoration:none; color:#0e9aeb;}
+a:hover {color:#ff8d01; text-decoration:underline;}
+.clear {clear:both;}
+.position-re {position:relative;}
+.position-ab {position:absolute;}
+.left {float:left}
+.right {float:right}
+.clearfix:after {
+	visibility: hidden;
+	display: block;
+	font-size: 0;
+	content: ".";
+	clear: both;
+	height: 0;
+} /*-----for FF,Chrome-----*/
+* html .clearfix {zoom: 1;} /*----for ie6----*/
+*:first-child + html .clearfix {zoom: 1;} /*----for ie7----*/
+
+
+/*--PTP滚动信息嵌入模块--*/
+.PTPinfo {width:auto; height:auto; margin:0; padding:0; position:absolute; top:1px; right:0; z-index:2000;}
+.PTPinfo-back {width:auto; height:auto; margin:0; padding:0;}
+.PTPinfo-open {width:auto; min-width:260px; height:auto; background:url(../images/aPTPlayout/ptpInfo-open.png) left top no-repeat; margin:0; padding-left:16px; padding-top:56px; text-align:right;}
+.PTPinfo-open .PTPinfoMain {width:auto; height:auto; background-color:#0164a9; border-radius:0 0 0 10px; padding:0 15px 25px 20px; margin:0;}
+.PTPinfo-open .PTPinfoMain .tabMain {width:30px; height:auto; background:#FFC; float:left;}
+.PTPinfo-open .PTPinfoMain .infoCon {width:260px; height:auto; min-height:220px; background:#fff; float:right; border-radius:10px;}
+.PTPinfo-open .button {position:absolute; top:28px; right:10px;}
+
+.PTPinfoMain .infoCon ul {width:auto; height:auto; margin:10px; text-align:left;}
+.PTPinfoMain .infoCon ul li {margin:0;}
+.PTPinfoMain .infoCon ul li + li {margin-top:10px;}
+.PTPinfoMain .infoCon .arrowR-ico2 {margin-right:0;}
+.PTPinfoMain .infoCon ul li a {line-height:1.6; display:inline-block; word-break:break-all; word-wrap:break-word; width:220px;}
+
+
+/*--图标样式--*/
+.icon {display:inline-block; vertical-align:middle; background:url(../images/aPTPlayout/icon-main.png) no-repeat; margin-right:5px;}
+.arrowR-ico1 {background-position:0 0; width:16px; height:16px;}
+.arrowR-ico2 {background-position:0 -16px; width:16px; height:16px;}
+
+/*--button按钮样式--*/
+.PTPinfo-clbtn {margin:0; padding:0; overflow:hidden; background-image:url(../images/aPTPlayout/icon-main.png); background-repeat:no-repeat; cursor:pointer;} 
+a.PTPinfo-clbtn {background-position:-16px 0; display:block; width:24px; height:24px; text-decoration:none;}
+a.PTPinfo-clbtn:hover {background-position:-16px -24px; text-decoration:none;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

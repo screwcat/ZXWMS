@@ -1,0 +1,625 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.loanreview.persist.WmsCreCarpHouseCheckDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsCreCarpHouseCheck">
+		select
+        				wms_cre_carp_house_check_id,
+        				wms_cre_credit_head_id,
+        				customer_name,
+        				house_address,
+        				house_building_area,
+        				total_floor,
+        				house_layer,
+        				community_name,
+        				housing_pattern,
+        				building_age,
+        				decoration_standard,
+        				house_usage,
+        				online_fold,
+        				house_transaction_price,
+        				is_active,
+        				house_people_review,
+        				rental_price,
+        				housing_towards,
+        				common_occupants,
+        				residential_environ,
+        				residential_manage,
+        				facilities,
+        				remark,
+        				transaction_price,
+        				create_user_id,
+        				create_user_name,
+						date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+        				create_timestamp,
+        				last_update_user_id,
+						date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+        				last_update_timestamp,
+        				enable_flag
+        	from
+        		wms_cre_carp_house_check
+        	where
+        				wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cre_carp_house_check_id) as count
+		from wms_cre_carp_house_check
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_cre_carp_house_check_id,
+				wms_cre_credit_head_id,
+				customer_name,
+				house_address,
+				house_building_area,
+				total_floor,
+				house_layer,
+				community_name,
+				housing_pattern,
+				building_age,
+				decoration_standard,
+				house_usage,
+				online_fold,
+				house_transaction_price,
+				is_active,
+				house_people_review,
+				rental_price,
+				housing_towards,
+				common_occupants,
+				residential_environ,
+				residential_manage,
+				facilities,
+				remark,
+				transaction_price,
+				create_user_id,
+				create_user_name,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from wms_cre_carp_house_check
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreCarpHouseCheck" useGeneratedKeys="true" keyProperty="wms_cre_carp_house_check_id">
+		INSERT INTO wms_cre_carp_house_check
+		(
+				wms_cre_carp_house_check_id,
+
+				wms_cre_credit_head_id,
+
+				customer_name,
+
+				house_address,
+
+				house_building_area,
+
+				total_floor,
+
+				house_layer,
+
+				community_name,
+
+				housing_pattern,
+
+				building_age,
+
+				decoration_standard,
+
+				house_usage,
+
+				online_fold,
+
+				house_transaction_price,
+
+				is_active,
+
+				house_people_review,
+
+				rental_price,
+
+				housing_towards,
+
+				common_occupants,
+
+				residential_environ,
+
+				residential_manage,
+
+				facilities,
+
+				remark,
+
+				transaction_price,
+
+				create_user_id,
+
+				create_user_name,
+
+				create_timestamp,
+
+				last_update_user_id,
+
+				last_update_timestamp,
+
+				enable_flag
+		)
+		VALUES
+		(
+				#{wms_cre_carp_house_check_id},
+				#{wms_cre_credit_head_id},
+				#{customer_name},
+				#{house_address},
+				#{house_building_area},
+				#{total_floor},
+				#{house_layer},
+				#{community_name},
+				#{housing_pattern},
+				#{building_age},
+				#{decoration_standard},
+				#{house_usage},
+				#{online_fold},
+				#{house_transaction_price},
+				#{is_active},
+				#{house_people_review},
+				#{rental_price},
+				#{housing_towards},
+				#{common_occupants},
+				#{residential_environ},
+				#{residential_manage},
+				#{facilities},
+				#{remark},
+				#{transaction_price},
+				#{create_user_id},
+				#{create_user_name},
+				#{create_timestamp},
+				#{last_update_user_id},
+				#{last_update_timestamp},
+				#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreCarpHouseCheck">
+		update wms_cre_carp_house_check
+		<set>
+					<if test="wms_cre_carp_house_check_id != null">
+						 wms_cre_carp_house_check_id = #{wms_cre_carp_house_check_id},
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						 wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+					</if>
+					<if test="customer_name != null">
+						 customer_name = #{customer_name},
+					</if>
+					<if test="house_address != null">
+						 house_address = #{house_address},
+					</if>
+					<if test="house_building_area != null">
+						 house_building_area = #{house_building_area},
+					</if>
+					<if test="total_floor != null">
+						 total_floor = #{total_floor},
+					</if>
+					<if test="house_layer != null">
+						 house_layer = #{house_layer},
+					</if>
+					<if test="community_name != null">
+						 community_name = #{community_name},
+					</if>
+					<if test="housing_pattern != null">
+						 housing_pattern = #{housing_pattern},
+					</if>
+					<if test="building_age != null">
+						 building_age = #{building_age},
+					</if>
+					<if test="decoration_standard != null">
+						 decoration_standard = #{decoration_standard},
+					</if>
+					<if test="house_usage != null">
+						 house_usage = #{house_usage},
+					</if>
+					<if test="online_fold != null">
+						 online_fold = #{online_fold},
+					</if>
+					<if test="house_transaction_price != null">
+						 house_transaction_price = #{house_transaction_price},
+					</if>
+					<if test="is_active != null">
+						 is_active = #{is_active},
+					</if>
+					<if test="house_people_review != null">
+						 house_people_review = #{house_people_review},
+					</if>
+					<if test="rental_price != null">
+						 rental_price = #{rental_price},
+					</if>
+					<if test="housing_towards != null">
+						 housing_towards = #{housing_towards},
+					</if>
+					<if test="common_occupants != null">
+						 common_occupants = #{common_occupants},
+					</if>
+					<if test="residential_environ != null">
+						 residential_environ = #{residential_environ},
+					</if>
+					<if test="residential_manage != null">
+						 residential_manage = #{residential_manage},
+					</if>
+					<if test="facilities != null">
+						 facilities = #{facilities},
+					</if>
+					<if test="remark != null">
+						 remark = #{remark},
+					</if>
+					<if test="transaction_price != null">
+						 transaction_price = #{transaction_price},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="create_user_name != null">
+						 create_user_name = #{create_user_name},
+					</if>
+					<if test="create_timestamp != null">
+						 create_timestamp = #{create_timestamp},
+					</if>
+					<if test="last_update_user_id != null">
+						 last_update_user_id = #{last_update_user_id},
+					</if>
+					<if test="last_update_timestamp != null">
+						 last_update_timestamp = #{last_update_timestamp},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+	   </set>
+		 where 
+    				wms_cre_carp_house_check_id = #{wms_cre_carp_house_check_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreCarpHouseCheck" resultType="WmsCreCarpHouseCheck">
+		select 
+				wms_cre_carp_house_check_id,
+				wms_cre_credit_head_id,
+				customer_name,
+				house_address,
+				house_building_area,
+				total_floor,
+				house_layer,
+				community_name,
+				housing_pattern,
+				building_age,
+				decoration_standard,
+				house_usage,
+				online_fold,
+				house_transaction_price,
+				is_active,
+				house_people_review,
+				rental_price,
+				housing_towards,
+				common_occupants,
+				residential_environ,
+				residential_manage,
+				facilities,
+				remark,
+				transaction_price,
+				create_user_id,
+				create_user_name,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from
+		wms_cre_carp_house_check
+		<where>
+					<if test="wms_cre_carp_house_check_id != null">
+						and wms_cre_carp_house_check_id = #{wms_cre_carp_house_check_id}
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+					</if>
+					<if test="customer_name != null">
+						and customer_name = #{customer_name}
+					</if>
+					<if test="house_address != null">
+						and house_address = #{house_address}
+					</if>
+					<if test="house_building_area != null">
+						and house_building_area = #{house_building_area}
+					</if>
+					<if test="total_floor != null">
+						and total_floor = #{total_floor}
+					</if>
+					<if test="house_layer != null">
+						and house_layer = #{house_layer}
+					</if>
+					<if test="community_name != null">
+						and community_name = #{community_name}
+					</if>
+					<if test="housing_pattern != null">
+						and housing_pattern = #{housing_pattern}
+					</if>
+					<if test="building_age != null">
+						and building_age = #{building_age}
+					</if>
+					<if test="decoration_standard != null">
+						and decoration_standard = #{decoration_standard}
+					</if>
+					<if test="house_usage != null">
+						and house_usage = #{house_usage}
+					</if>
+					<if test="online_fold != null">
+						and online_fold = #{online_fold}
+					</if>
+					<if test="house_transaction_price != null">
+						and house_transaction_price = #{house_transaction_price}
+					</if>
+					<if test="is_active != null">
+						and is_active = #{is_active}
+					</if>
+					<if test="house_people_review != null">
+						and house_people_review = #{house_people_review}
+					</if>
+					<if test="rental_price != null">
+						and rental_price = #{rental_price}
+					</if>
+					<if test="housing_towards != null">
+						and housing_towards = #{housing_towards}
+					</if>
+					<if test="common_occupants != null">
+						and common_occupants = #{common_occupants}
+					</if>
+					<if test="residential_environ != null">
+						and residential_environ = #{residential_environ}
+					</if>
+					<if test="residential_manage != null">
+						and residential_manage = #{residential_manage}
+					</if>
+					<if test="facilities != null">
+						and facilities = #{facilities}
+					</if>
+					<if test="remark != null">
+						and remark = #{remark}
+					</if>
+					<if test="transaction_price != null">
+						and transaction_price = #{transaction_price}
+					</if>
+					<if test="create_user_id != null">
+						and create_user_id = #{create_user_id}
+					</if>
+					<if test="create_user_name != null">
+						and create_user_name = #{create_user_name}
+					</if>
+					<if test="create_timestamp != null">
+						and create_timestamp = #{create_timestamp}
+					</if>
+					<if test="last_update_user_id != null">
+						and last_update_user_id = #{last_update_user_id}
+					</if>
+					<if test="last_update_timestamp != null">
+						and last_update_timestamp = #{last_update_timestamp}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_cre_carp_house_check_id != #{wms_cre_carp_house_check_id}
+					</if>
+		</where>
+	</select>
+	<!--删除记录 -->
+	<delete id="deleteRecord" parameterType="Integer">
+		delete from
+		wms_cre_carp_house_check
+		where wms_cre_credit_head_id =
+		#{wms_cre_credit_head_id}
+	</delete>
+	<!-- 查询车贷办件审核列表 ，返回List<Map>对象 -->
+	<select id="searchForCdCardForAdd" parameterType="map"
+		resultType="java.util.HashMap">
+		select
+		t1.wms_cre_credit_head_id,
+		t1.bill_code,
+		t1.credit_purpose,
+		t1.max_repayment_limit_per_month,
+		t1.credit_limit,
+		t1.max_repayment_time_limit,
+		t1.enter_file_way,
+		t1.payroll_payment_way,
+		t1.data_type,
+		t1.is_complete,
+		t1.reference_type,
+		t1.is_other_corporation_done,
+		t1.is_to_public_stream,
+		t1.is_house_certificate_original,
+		t1.is_check,
+		t1.person_condition,
+		t1.salesman_id,
+		t1.salesman_code,
+		t1.salesman_name,
+		t1.city,
+		t1.cre_type,
+		t1.bill_status,
+		(select value_meaning from wms_sys_dict_data where value_code = bill_status
+		and wms_sys_dict_id = 24)as bill_status_name,
+		t1.water_appro_user_id,
+		t1.water_appro_user_name,
+		date_format(t1.water_appro_timestamp,'%Y-%m-%d %H:%i:%s') as water_appro_timestamp,
+		t1.water_appro_result,
+		t1.info_appro_user_id,
+		t1.info_appro_user_name,
+		date_format(t1.info_appro_timestamp,'%Y-%m-%d %H:%i:%s') as info_appro_timestamp,
+		t1.info_appro_result,
+		t1.phone_appro_user_id,
+		t1.phone_appro_user_name,
+		date_format(t1.phone_appro_timestamp,'%Y-%m-%d %H:%i:%s')as phone_appro_timestamp,
+		t1.phone_appro_result,
+		t1.certificate_appro_user_id,
+		t1.certificate_appro_user_name,
+
+		date_format(t1.certificate_appro_timestamp,'%Y-%m-%d %H:%i:%s') as certificate_appro_timestamp,
+		t1.certificate_appro_result,
+
+		t1.create_user_id,
+		t1.create_user_name,
+		date_format(t1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp,
+		t1.last_update_user_id,
+		date_format(t1.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp,
+		t1.enable_flag,
+		t1.is_link_repeat,
+		t1.profession_type,
+		t1.is_verify,
+		t1.house_appro_result,
+		t1.cre_loan_type,
+		t1.loan_interest_rate,
+		t2.wms_cre_credit_line_customer_change_head_id,
+		t2.wms_cre_credit_head_id,
+		t2.wms_cus_customer_head_id,
+		t2.customer_code,
+		t2.customer_name,
+		t2.customer_ever_name,
+		t2.customer_category,
+		t2.gender,
+		t2.max_degree,
+		date_format(t2.birthday,'%Y-%m-%d') as birthday,
+		t2.id_card,
+		t2.province,
+		t2.city,
+		t2.district,
+		t2.address_more,
+		t2.has_children,
+		t2.children_name,
+		t2.children_address,
+		t2.children_telephone,
+		t2.has_married,
+		t2.has_house,
+		t2.current_address_province,
+		t2.current_address_city,
+		t2.current_address_district,
+		t2.current_address_more,
+		t2.post_code,
+		t2.fixed_telephone,
+		t2.mobile_telephone1,
+		t2.service_password1,
+		t2.mobile_telephone2,
+		t2.service_password2,
+		t2.personal_year_income,
+		t2.customer_email,
+		t2.credit_card_limit,
+		t2.common_occupants,
+		t2.status,
+		t2.create_user_id,
+		t2.create_user_name,
+		date_format(t2.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp,
+		t2.last_update_user_id,
+		date_format(t2.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp,
+		t2.enable_flag,
+		t1.is_review_back,
+		t1.water_appro_result_page,
+		t1.info_appro_result_page,
+		t1.phone_appro_result_page,
+		t1.certificate_appro_result_page,
+		t1.house_appro_result_page,
+		t1.salesman_shortcode,
+		t1.create_user_city_code,
+		CONCAT(t1.salesman_name,"/",t1.salesman_shortcode) as salesman_name_str
+		from wms_cre_credit_head t1,wms_cre_credit_line_customer_change_head t2
+		<where>
+			t1.wms_cre_credit_head_id=t2.wms_cre_credit_head_id and
+			t2.is_major='1' and t1.cre_type='3'
+			and t1.create_user_city_code = #{create_user_city_code}
+			<if test="id_card != null">
+				and t2.id_card = #{id_card}
+			</if>
+			<if test="idList !=null">
+				and t1.wms_cre_credit_head_id in
+				<foreach collection="idList" item="wms_cre_credit_head_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_cre_credit_head_id}
+				</foreach>
+			</if>
+			and t1.enable_flag='1'
+			<if test="bill_code != null">
+				and t1.bill_code like '${bill_code}'
+			</if>
+			<if test="customer_name != null">
+				and t2.customer_name like '${customer_name}'
+			</if>
+			<if test="create_user_id != null">
+				and t1.create_user_id != #{create_user_id}
+			</if>
+			<if test="mobile_telephone != null">
+				and (t2.mobile_telephone1 like '${mobile_telephone}' or
+				t2.mobile_telephone2 like '${mobile_telephone}')
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<!-- 查询数据条数，直接返回int类型条数 -->
+	<select id="findCountForCdCardForAdd" parameterType="map"
+		resultType="int">
+		select count(t1.wms_cre_credit_head_id) as count
+		from
+		wms_cre_credit_head t1,wms_cre_credit_line_customer_change_head t2
+		<where>
+			t1.wms_cre_credit_head_id=t2.wms_cre_credit_head_id and
+			t2.is_major='1' and t1.cre_type='3'
+			and t1.create_user_city_code = #{create_user_city_code}
+			<if test="id_card != null">
+				and t2.id_card = #{id_card}
+			</if>
+			<if test="idList !=null">
+				and t1.wms_cre_credit_head_id in
+				<foreach collection="idList" item="wms_cre_credit_head_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_cre_credit_head_id}
+				</foreach>
+			</if>
+			and t1.enable_flag='1'
+			<if test="bill_code != null">
+				and t1.bill_code like '${bill_code}'
+			</if>
+			<if test="customer_name != null">
+				and t2.customer_name like '${customer_name}'
+			</if>
+			<if test="create_user_id != null">
+				and t1.create_user_id != #{create_user_id}
+			</if>
+			<if test="mobile_telephone != null">
+				and (t2.mobile_telephone1 like '${mobile_telephone}' or
+				t2.mobile_telephone2 like '${mobile_telephone}')
+			</if>
+		</where>
+	</select>
+</mapper> 

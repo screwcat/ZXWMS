@@ -1,0 +1,221 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script language="Javascript" src="../../js/zx-all.js"> </script>
+<title>部门管理</title>
+
+</head>
+<style>
+.l-layout-left {
+	border: 1px solid #bfbfbf;
+}
+</style>
+<body style="padding: 10px;">
+	<div id="left-center" leftwidth="320">
+		<!-- 左侧div-->
+		<div position="left" title="部门结构" style="overflow: auto;">
+			<!-- 左侧菜单树div-->
+			<div id='treeDivId'>
+				<ul id="tree_div_id">
+				</ul>
+			</div>
+		</div>
+		<div position="center" title="人员信息" style="overflow: auto;">
+			<!-- 查询条件 -->
+			<div class="l-panel-search clearfix centertoolbar-w">
+				<div id="searchbar" class="l-searchbar clearfix">
+					<div class="l-panel-search-cond clearfix">
+						<div class="float-l">
+							<div class="l-panel-search-title">员工编号:</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="personnel_shortcode" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="l-panel-search-title">员工姓名:</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="personnel_name" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 工具栏 -->
+			<div id="centertoolbar" class="minwidth400 position-re clearboth">
+			</div>
+			<!-- 表格div-->
+			<div id="grid-personnel" style="margin: 0; padding: 0"></div>
+		</div>
+	</div>
+</body>
+</html>
+<!-- 上侧工具条按钮事件 -->
+<script type="text/javascript">
+	var deptTreeManage;
+	
+	var grid_personnel;
+
+	var header = $.query.get('header');
+	
+	var personnel_info = [];
+	
+    var grid_personnel_data = {};
+    
+    $(function() {
+    	//初始化部门树
+        initDeptTree();
+        //初始化员工信息
+        init_top_grid();
+        
+        var layout = $("#left-center").ligerLayout({
+        	minLeftWidth:320,
+            onHeightChanged: function(options) {
+                $('#treeDivId').height(options.middleHeight - 58);
+            },
+            onEndResize: function(options) {
+                deptTreeManage.setTreeWidth($(".l-layout-left").width() - globalUtil.getTreeMaxLevel(deptTreeManage) * 22);
+            }
+        });
+        //添加工具条内容
+        var toolbarItemData = [];
+   	 	toolbarItemData.push({
+            text: '保存',
+            click: save,
+            icon: 'save'
+        });
+   	 	toolbarItemData.push({
+	         text: '查询',
+	         click:search1,
+	         icon: 'search'
+     	});
+     	toolbarItemData.push({
+         	line: true
+     	});
+   	 	//进行工具显示
+	   $("#centertoolbar").ligerToolBar({
+	       items: toolbarItemData
+	   	});
+    });
+    //初始化系统部门树
+	var initDeptTree = function(){
+    	
+		deptTreeManage = $("#tree_div_id").ligerTree({
+            url: globalUtil.getTimestampUrl("/sysmanage/getdepttree.do"),
+            //是否动画显示
+            slide: true,
+            checkbox: false,
+            onSelect: onSelect,
+            onBeforeCancelSelect:onCancle,
+            nodeWidth: 120,
+            single: true,
+            parentIcon: null,
+            childIcon: null,
+            onExpand: function(node) {
+                changeTreeHeight();
+            },
+            onSuccess: function() {
+                changeTreeHeight();
+                this.setTreeWidth($(".l-layout-left").width() - globalUtil.getTreeMaxLevel(this) * 22);
+            },
+            onCollapse: function(node) {
+                changeTreeHeight();
+            }
+        });
+	};
+	
+    var changeTreeHeight = function() {
+        $('#treeDivId').height($(".l-layout-left").height() - 58);
+    };   
+    
+	var params = {};
+	//隐藏右侧显示内容
+	function onCancle(){
+		params = {};
+		params._filterParms = '-1';
+		global_ligerui_extend.search(grid_personnel, params);
+		//$("#maingrid").hide();
+	}
+	//当点击树具体部门时,进行相关数据查询
+    function onSelect() {
+        search();
+    }
+    //树的刷新
+    function treeClear() {
+    	deptTreeManage.destroy();
+    	var treeDivId = document.getElementById("treeDivId");
+    	treeDivId.innerHTML = '<div id="tree_div_id"></div>';
+    	initDeptTree();
+    }
+    //员工信息显示列表
+    function init_top_grid(){
+    	
+    	columns = [{
+            display: '公司名称',
+            name: 'personnel_organcode',
+            width: 150
+        },{
+            display: '部门名称',
+            name: 'personnel_deptname',
+            width: 130
+        },{
+            display: '员工姓名',
+            name: 'personnel_name',
+            width: 100,
+            minWidth: 100
+        },{
+            display: '员工编号',
+            name: 'personnel_shortcode',
+            width: 90,
+            minWidth: 90
+        },{
+        	display:'职务',
+        	name:'personnel_postname',
+        	width:100,
+        	minWidth:100
+        }];
+      	grid_personnel = $("#grid-personnel").ligerGrid({
+         		columns: columns,
+         		url:global_param.context_name + '/sysmanage/getListByDeptIdorCode.do',
+         		sortName: '', // 排序列名
+     			sortOrder: 'asc', // 排序方式
+         		rownumbers: true,
+         		allowUnSelectRow: true,
+         		usePager: false,
+         		width: '100%',
+         		height: '100%',
+         		heightDiff: -4,
+         		parms: {
+         			_filterParms: -1
+         		}
+             });
+      	}
+    //通过点击左边树具体部门实现查询结果显示
+    function search(){
+    	params ={};
+    	var node = deptTreeManage.getSelected();
+    		params.deptId=node.data.id;    	
+    	global_ligerui_extend.search(grid_personnel, params);
+    }
+    
+    //通过给定特定条件查询出员工信息
+    function search1(){
+    	params ={};
+    	params=globalUtil.getFormParam('searchbar');
+    	global_ligerui_extend.search(grid_personnel, params);
+    }
+    //实现将查询到的数据进行保存
+    function save(){
+    	//选择某一行的操作
+        var row = grid_personnel.getSelectedRow();
+    	//判断是否为空    
+    	if (row == null) {
+           	globalUtil.warnMsg(globalErrorMsg['100031']);//请选择一行记录进行修改
+            return;
+    	}
+    	personnel_info = grid_personnel.getSelectedRow();
+    	window.parent.getCheckedPersonnelAll(personnel_info, header);
+    	window.parent.spfcDialog.close();
+    }
+</script>

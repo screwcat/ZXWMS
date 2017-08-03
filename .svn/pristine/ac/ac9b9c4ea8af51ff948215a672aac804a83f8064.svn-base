@@ -1,0 +1,141 @@
+package com.zx.emanage.inve.service.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.zx.emanage.inve.persist.WmsInveCommionRecordDao;
+import com.zx.emanage.inve.persist.WmsInveOldCommBaseDataSpecialHisDao;
+import com.zx.emanage.inve.persist.WmsInveOldCommHisDao;
+import com.zx.emanage.inve.service.WmsJasperExportService;
+import com.zx.sframe.util.ExpertUtil;
+import com.zx.sframe.util.JasperUtil;
+
+@Service("wmsJasperExportService")
+public class WmsJasperExportServiceImpl implements WmsJasperExportService{
+	
+	@Autowired
+	private WmsInveCommionRecordDao wmsinvecommionrecordDao;
+	
+	@Autowired
+	private WmsInveOldCommBaseDataSpecialHisDao wmsInveOldCommBaseDataSpecialHisDao;
+	
+	@Autowired
+	WmsInveOldCommHisDao wmsInveOldCommHisDao;
+  /**
+   * 理财佣金导出jasperreport
+  */
+  @Override
+  @Transactional
+  public Map<String,Object> transferConfirmationformExport(HttpServletRequest request,HttpServletResponse response,String export_month) {
+	
+        Map<String, Object> map = null;
+	 //导出报表类型
+	String type = "excel";
+	    
+	//jasper文件路径
+	String tax_url = "wmsInveTaxation.jasper";			//新增税费jasper
+	String stock_url = "wmsInveStock.jasper";			//存量jasper
+	String mag_com_url = "wmsInveManagment.jasper";		//管理提成jasper
+	String pen_com_url = "wmsInvePen.jasper";			//老产品个人佣金jasper
+	String tem_com_url = "wmsInveTeam.jasper";			//老产品团队佣金jasper
+	String payment_url = "wmsInvePayment.jasper";		//打款表jasper
+	List<String> listUrl = new ArrayList<String>();
+	listUrl.add(tax_url);
+	listUrl.add(stock_url);
+	listUrl.add(mag_com_url);
+	listUrl.add(pen_com_url);
+	listUrl.add(tem_com_url);
+	listUrl.add(payment_url);
+
+	//生成报表文件名
+	String defaultFilename =export_month+"佣金报表_平台版本";
+	    
+
+	Map<String,Object> pmap = new HashMap<String,Object>();
+	
+	
+	Map<String, Object> paramMap = new HashMap<String, Object>();
+    paramMap.put("export_month", export_month);
+	
+    List<Map<String,Object>> tList = wmsinvecommionrecordDao.getWmsInveTaxationByCondition(paramMap);
+    List<Map<String,Object>> sList = wmsinvecommionrecordDao.getWmsInveStockByCondition(paramMap);
+    List<Map<String,Object>> mList = wmsinvecommionrecordDao.getWmsInveCommionByCondition(paramMap);
+    List<Map<String,Object>> pyList = wmsinvecommionrecordDao.getWmsInvePaymentByCondition(paramMap);
+
+    pmap.put("tax_title", export_month+"佣金_新增奖及税费");
+    pmap.put("stock_title", export_month+"佣金_存量奖");
+    pmap.put("mag_title", export_month+"佣金_管理提成奖");
+    pmap.put("pen_title", export_month+"佣金_老产品个人佣金");
+    pmap.put("team_title", export_month+"佣金_老产品团队佣金");
+
+	pmap.put("tList", tList);
+	pmap.put("sList", sList);
+	pmap.put("mList", mList);
+	pmap.put("pList", new ArrayList<String>());
+	pmap.put("tcList", new ArrayList<String>());
+	pmap.put("pyList", pyList);
+	//下载
+	return JasperUtil.export(pmap, type, listUrl, defaultFilename, request, response);
+  }
+  
+  
+  /**
+   * 理财佣金导出poi
+  */
+  @Override
+  @Transactional
+  public void transferConfirmationformExportPoi(HttpServletRequest request,HttpServletResponse response,String export_month) {
+	  
+	    Map<String, Object> paramMap = new HashMap<String, Object>();
+	    paramMap.put("export_month", export_month);
+		
+	    List<Map<String,Object>> tList = wmsinvecommionrecordDao.getWmsInveTaxationByCondition(paramMap);
+	    List<Map<String,Object>> sList = wmsinvecommionrecordDao.getWmsInveStockByCondition(paramMap);
+	    List<Map<String,Object>> mList = wmsinvecommionrecordDao.getWmsInveCommionByCondition(paramMap);
+	    List<Map<String,Object>> pyList = wmsinvecommionrecordDao.getWmsInvePaymentByCondition(paramMap);
+	    List<Map<String,Object>> cmList = wmsInveOldCommHisDao.getWmsInvePerOldCommByCondition(paramMap);
+	    List<Map<String,Object>> cbList = wmsInveOldCommBaseDataSpecialHisDao.getWmsInveOldCommBaseDataByCondition(paramMap);
+
+	    //sheet 参数list
+	    Map<String,Object> listMap = new HashMap<String,Object>();   
+	    
+	    Map<String, Object> titleMap = new HashMap<String, Object>();
+	    titleMap.put("新增奖及税费", export_month+"佣金_新增奖及税费");
+		titleMap.put("存量奖", export_month+"佣金_存量奖");
+		titleMap.put("管理提成奖", export_month+"佣金_管理提成奖");
+		titleMap.put("老产品个人佣金", export_month+"佣金_老产品个人佣金");
+		titleMap.put("老产品团队佣金", export_month+"佣金_老产品团队佣金");
+	    
+		listMap.put("新增奖及税费", tList);
+	    listMap.put("存量奖", sList);
+	    listMap.put("管理提成奖", mList);
+	    listMap.put("老产品个人佣金", cmList);
+	    listMap.put("老产品团队佣金", cmList);
+	    listMap.put("部门经理留原团队业绩管理提成", cbList);
+	    listMap.put("打款表", pyList);
+	    listMap.put("titles", titleMap);
+	    
+
+    	try {
+//    		String out_file_name = export_month +"佣金报表_平台版本.xls";
+//			PoiExportUtil.doexport("佣金报表模板.xls", listMap,out_file_name,response);
+    		String out_file_name = export_month +"佣金报表_平台版本.xls";
+    		ExpertUtil eu = new ExpertUtil();
+    		eu.expertExcel("佣金报表模板.xls", listMap, out_file_name, "titles", 2, response);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+  }
+}

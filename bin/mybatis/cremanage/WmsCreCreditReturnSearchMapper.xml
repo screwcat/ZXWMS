@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.cremanage.persist.WmsCreCreditReturnSearchDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsCreCreditReturnSearch">
+		select
+        				wms_cre_credit_return_search_id,
+        				wms_cre_credit_head_id,
+        				bill_code,
+						date_format(head_create_datetime,'%Y-%m-%d %H:%i:%s') as head_create_datetime_str,
+        				head_create_datetime,
+        				cre_type,
+        				cre_loan_type,
+        				cus_name,
+        				credit_limit,
+        				audit_group,
+        				audit_reason,
+						date_format(audit_time,'%Y-%m-%d %H:%i:%s') as audit_time_str,
+        				audit_time,
+        				city_name,
+        				city_code,
+        				store_name,
+        				store_deptid,
+        				create_user_name,
+        				create_user_id,
+        				salesman_name,
+        				salesman_id,
+						date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+        				create_timestamp,
+						date_format(last_update_datetamp,'%Y-%m-%d %H:%i:%s') as last_update_datetamp_str,
+        				last_update_datetamp,
+        				enable_flag
+        	from
+        		wms_cre_credit_return_search
+        	where
+        				wms_cre_credit_return_search_id = #{wms_cre_credit_return_search_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cre_credit_return_search_id) as count
+		from wms_cre_credit_return_search
+		<where>
+			1=1
+			<if test="bill_code != null">
+				and bill_code like #{bill_code}
+			</if>
+			<if test="salesman_name != null">
+				and salesman_name like #{salesman_name}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name like #{create_user_name}
+			</if>
+			<if test="head_create_datetime_start != null">
+			<![CDATA[
+				and head_create_datetime >= #{head_create_datetime_start}
+			]]>
+			</if>
+			<if test="head_create_datetime_end != null">
+			<![CDATA[
+				and head_create_datetime <= #{head_create_datetime_end}
+			]]>
+			</if>
+			<if test="audit_time_start != null">
+			<![CDATA[
+				and audit_time >= #{audit_time_start}
+			]]>
+			</if>
+			<if test="audit_time_end != null">
+			<![CDATA[
+				and audit_time <= #{audit_time_end}
+			]]>
+			</if>
+			<if test="dept_city_sel != null">
+				and city_code = #{dept_city_sel}
+			</if>
+			<if test="dept_name_sel != null">
+				and store_deptid = #{dept_name_sel}
+			</if>
+		</where>
+	</select>
+
+	<!-- 退件查询/Excel导出 -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_cre_credit_return_search_id,
+				wms_cre_credit_head_id,
+				bill_code,
+				date_format(head_create_datetime,'%Y-%m-%d %H:%i:%s') as head_create_datetime_str,
+				head_create_datetime,
+				cre_type,
+				cre_loan_type,
+				CONCAT(
+			    	(select d.value_meaning from wms_sys_dict_data d where d.value_code=cre_type and d.wms_sys_dict_id=15),
+			    	'/',
+			    	(select d.value_meaning from wms_sys_dict_data d where d.wms_sys_dict_data_id=cre_loan_type)
+			    	) as type_cre_loan, 
+				cus_name,
+				credit_limit,
+				audit_group,
+				audit_reason,
+				date_format(audit_time,'%Y-%m-%d %H:%i:%s') as audit_time_str,
+				audit_time,
+				city_name,
+				city_code,
+				store_name,
+				store_deptid,
+				create_user_name,
+				create_user_id,
+				salesman_name,
+				salesman_id,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				date_format(last_update_datetamp,'%Y-%m-%d %H:%i:%s') as last_update_datetamp_str,
+				last_update_datetamp,
+				enable_flag
+		from wms_cre_credit_return_search
+		<where>
+			1=1
+			<if test="bill_code != null">
+				and bill_code like #{bill_code}
+			</if>
+			<if test="salesman_name != null">
+				and salesman_name like #{salesman_name}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name like #{create_user_name}
+			</if>
+			<if test="head_create_datetime_start != null">
+			<![CDATA[
+				and head_create_datetime >= #{head_create_datetime_start}
+			]]>
+			</if>
+			<if test="head_create_datetime_end != null">
+			<![CDATA[
+				and head_create_datetime <  date_add(#{head_create_datetime_end}, interval 1 day)
+			]]>
+			</if>
+			<if test="audit_time_start != null">
+			<![CDATA[
+				and audit_time >= #{audit_time_start}
+			]]>
+			</if>
+			<if test="audit_time_end != null">
+			<![CDATA[
+				and audit_time < date_add(#{audit_time_end}, interval 1 day)
+			]]>
+			</if>
+			<if test="dept_city_sel != null">
+				and city_code = #{dept_city_sel}
+			</if>
+			<if test="dept_name_sel != null">
+				and store_deptid = #{dept_name_sel}
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreCreditReturnSearch" useGeneratedKeys="true" keyProperty="wms_cre_credit_return_search_id">
+		INSERT INTO wms_cre_credit_return_search
+		(
+				wms_cre_credit_return_search_id,
+
+				wms_cre_credit_head_id,
+
+				bill_code,
+
+				head_create_datetime,
+
+				cre_type,
+
+				cre_loan_type,
+
+				cus_name,
+
+				credit_limit,
+
+				audit_group,
+
+				audit_reason,
+
+				audit_time,
+
+				city_name,
+
+				city_code,
+
+				store_name,
+
+				store_deptid,
+
+				create_user_name,
+
+				create_user_id,
+
+				salesman_name,
+
+				salesman_id,
+
+				create_timestamp,
+
+				last_update_datetamp,
+
+				enable_flag
+		)
+		VALUES
+		(
+				#{wms_cre_credit_return_search_id},
+				#{wms_cre_credit_head_id},
+				#{bill_code},
+				#{head_create_datetime},
+				#{cre_type},
+				#{cre_loan_type},
+				#{cus_name},
+				#{credit_limit},
+				#{audit_group},
+				#{audit_reason},
+				#{audit_time},
+				#{city_name},
+				#{city_code},
+				#{store_name},
+				#{store_deptid},
+				#{create_user_name},
+				#{create_user_id},
+				#{salesman_name},
+				#{salesman_id},
+				#{create_timestamp},
+				#{last_update_datetamp},
+				#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreCreditReturnSearch">
+		update wms_cre_credit_return_search
+		<set>
+					<if test="wms_cre_credit_return_search_id != null">
+						 wms_cre_credit_return_search_id = #{wms_cre_credit_return_search_id},
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						 wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+					</if>
+					<if test="bill_code != null">
+						 bill_code = #{bill_code},
+					</if>
+					<if test="head_create_datetime != null">
+						 head_create_datetime = #{head_create_datetime},
+					</if>
+					<if test="cre_type != null">
+						 cre_type = #{cre_type},
+					</if>
+					<if test="cre_loan_type != null">
+						 cre_loan_type = #{cre_loan_type},
+					</if>
+					<if test="cus_name != null">
+						 cus_name = #{cus_name},
+					</if>
+					<if test="credit_limit != null">
+						 credit_limit = #{credit_limit},
+					</if>
+					<if test="audit_group != null">
+						 audit_group = #{audit_group},
+					</if>
+					<if test="audit_reason != null">
+						 audit_reason = #{audit_reason},
+					</if>
+					<if test="audit_time != null">
+						 audit_time = #{audit_time},
+					</if>
+					<if test="city_name != null">
+						 city_name = #{city_name},
+					</if>
+					<if test="city_code != null">
+						 city_code = #{city_code},
+					</if>
+					<if test="store_name != null">
+						 store_name = #{store_name},
+					</if>
+					<if test="store_deptid != null">
+						 store_deptid = #{store_deptid},
+					</if>
+					<if test="create_user_name != null">
+						 create_user_name = #{create_user_name},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="salesman_name != null">
+						 salesman_name = #{salesman_name},
+					</if>
+					<if test="salesman_id != null">
+						 salesman_id = #{salesman_id},
+					</if>
+					<if test="create_timestamp != null">
+						 create_timestamp = #{create_timestamp},
+					</if>
+					<if test="last_update_datetamp != null">
+						 last_update_datetamp = #{last_update_datetamp},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+	   </set>
+		 where 
+    				wms_cre_credit_return_search_id = #{wms_cre_credit_return_search_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreCreditReturnSearch" resultType="WmsCreCreditReturnSearch">
+		select 
+				wms_cre_credit_return_search_id,
+				wms_cre_credit_head_id,
+				bill_code,
+				date_format(head_create_datetime,'%Y-%m-%d %H:%i:%s') as head_create_datetime_str,
+				head_create_datetime,
+				cre_type,
+				cre_loan_type,
+				cus_name,
+				credit_limit,
+				audit_group,
+				audit_reason,
+				date_format(audit_time,'%Y-%m-%d %H:%i:%s') as audit_time_str,
+				audit_time,
+				city_name,
+				city_code,
+				store_name,
+				store_deptid,
+				create_user_name,
+				create_user_id,
+				salesman_name,
+				salesman_id,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				date_format(last_update_datetamp,'%Y-%m-%d %H:%i:%s') as last_update_datetamp_str,
+				last_update_datetamp,
+				enable_flag
+		from
+		wms_cre_credit_return_search
+		<where>
+					<if test="wms_cre_credit_return_search_id != null">
+						and wms_cre_credit_return_search_id = #{wms_cre_credit_return_search_id}
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+					</if>
+					<if test="bill_code != null">
+						and bill_code = #{bill_code}
+					</if>
+					<if test="head_create_datetime != null">
+						and head_create_datetime = #{head_create_datetime}
+					</if>
+					<if test="cre_type != null">
+						and cre_type = #{cre_type}
+					</if>
+					<if test="cre_loan_type != null">
+						and cre_loan_type = #{cre_loan_type}
+					</if>
+					<if test="cus_name != null">
+						and cus_name = #{cus_name}
+					</if>
+					<if test="credit_limit != null">
+						and credit_limit = #{credit_limit}
+					</if>
+					<if test="audit_group != null">
+						and audit_group = #{audit_group}
+					</if>
+					<if test="audit_reason != null">
+						and audit_reason = #{audit_reason}
+					</if>
+					<if test="audit_time != null">
+						and audit_time = #{audit_time}
+					</if>
+					<if test="city_name != null">
+						and city_name = #{city_name}
+					</if>
+					<if test="city_code != null">
+						and city_code = #{city_code}
+					</if>
+					<if test="store_name != null">
+						and store_name = #{store_name}
+					</if>
+					<if test="store_deptid != null">
+						and store_deptid = #{store_deptid}
+					</if>
+					<if test="create_user_name != null">
+						and create_user_name = #{create_user_name}
+					</if>
+					<if test="create_user_id != null">
+						and create_user_id = #{create_user_id}
+					</if>
+					<if test="salesman_name != null">
+						and salesman_name = #{salesman_name}
+					</if>
+					<if test="salesman_id != null">
+						and salesman_id = #{salesman_id}
+					</if>
+					<if test="create_timestamp != null">
+						and create_timestamp = #{create_timestamp}
+					</if>
+					<if test="last_update_datetamp != null">
+						and last_update_datetamp = #{last_update_datetamp}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_cre_credit_return_search_id != #{wms_cre_credit_return_search_id}
+					</if>
+		</where>
+	</select>
+	
+	<!-- 插入退件信息 -->
+	<insert id="addWmsCreCreditReturnInfo" parameterType="java.util.HashMap" useGeneratedKeys="true" keyProperty="wms_cre_credit_return_search_id">
+		INSERT INTO wms_cre_credit_return_search
+		(
+				wms_cre_credit_head_id,
+
+				bill_code,
+
+				head_create_datetime,
+
+				cre_type,
+
+				cre_loan_type,
+
+				cus_name,
+
+				credit_limit,
+
+				audit_group,
+
+				audit_reason,
+
+				audit_time,
+
+				city_name,
+
+				city_code,
+
+				store_name,
+
+				store_deptid,
+
+				create_user_name,
+
+				create_user_id,
+
+				salesman_name,
+
+				salesman_id,
+
+				create_timestamp,
+
+				last_update_datetamp,
+
+				enable_flag
+		)
+		VALUES
+		(
+				#{wms_cre_credit_head_id},
+				#{bill_code},
+				#{head_create_datetime},
+				#{cre_type},
+				#{cre_loan_type},
+				#{cus_name},
+				#{credit_limit},
+				#{audit_group},
+				#{audit_reason},
+				#{audit_time},
+				#{city_name},
+				#{city_code},
+				#{store_name},
+				#{store_deptId},
+				#{create_user_name},
+				#{create_user_id},
+				#{salesman_name},
+				#{salesman_id},
+				#{create_timestamp},
+				#{last_update_datetamp},
+				#{enable_flag}
+		);
+	</insert>
+	
+</mapper> 

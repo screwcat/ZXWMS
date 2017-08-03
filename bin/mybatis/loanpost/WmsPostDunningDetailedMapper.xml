@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.loanpost.persist.WmsPostDunningDetailedDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsPostDunningDetailed">
+		select
+        				wms_post_dunning_detailed_id,
+        				wms_post_dunning_head_id,
+        				wms_fina_cre_pay_id,
+        				wms_cre_credit_head_id,
+						date_format(dunning_datetime,'%Y-%m-%d') as dunning_datetime_str,
+        				dunning_datetime,
+        				dunning_name,
+        				dunning_remark,
+        				enable_flag,
+        				dunning_id,
+        				dunning_deptid
+        	from
+        		wms_post_dunning_detailed
+        	where
+        				wms_post_dunning_detailed_id = #{wms_post_dunning_detailed_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_post_dunning_detailed_id) as count
+		from wms_post_dunning_detailed
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_post_dunning_detailed_id,
+				wms_post_dunning_head_id,
+				wms_fina_cre_pay_id,
+				wms_cre_credit_head_id,
+				date_format(dunning_datetime,'%Y-%m-%d') as dunning_datetime_str,
+				dunning_datetime,
+				dunning_name,
+				dunning_remark,
+				enable_flag,
+				dunning_id,
+				dunning_deptid
+		from wms_post_dunning_detailed
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsPostDunningDetailed" useGeneratedKeys="true" keyProperty="wms_post_dunning_detailed_id">
+		INSERT INTO wms_post_dunning_detailed
+		(
+				wms_post_dunning_detailed_id,
+
+				wms_post_dunning_head_id,
+
+				wms_fina_cre_pay_id,
+
+				wms_cre_credit_head_id,
+
+				dunning_datetime,
+
+				dunning_name,
+
+				dunning_remark,
+
+				enable_flag,
+
+				dunning_id,
+
+				dunning_deptid
+		)
+		VALUES
+		(
+				#{wms_post_dunning_detailed_id},
+				#{wms_post_dunning_head_id},
+				#{wms_fina_cre_pay_id},
+				#{wms_cre_credit_head_id},
+				#{dunning_datetime},
+				#{dunning_name},
+				#{dunning_remark},
+				#{enable_flag},
+				#{dunning_id},
+				#{dunning_deptid}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsPostDunningDetailed">
+		update wms_post_dunning_detailed
+		<set>
+					<if test="wms_post_dunning_detailed_id != null">
+						 wms_post_dunning_detailed_id = #{wms_post_dunning_detailed_id},
+					</if>
+					<if test="wms_post_dunning_head_id != null">
+						 wms_post_dunning_head_id = #{wms_post_dunning_head_id},
+					</if>
+					<if test="wms_fina_cre_pay_id != null">
+						 wms_fina_cre_pay_id = #{wms_fina_cre_pay_id},
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						 wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+					</if>
+					<if test="dunning_datetime != null">
+						 dunning_datetime = #{dunning_datetime},
+					</if>
+					<if test="dunning_name != null">
+						 dunning_name = #{dunning_name},
+					</if>
+					<if test="dunning_remark != null">
+						 dunning_remark = #{dunning_remark},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+					<if test="dunning_id != null">
+						 dunning_id = #{dunning_id},
+					</if>
+					<if test="dunning_deptid != null">
+						 dunning_deptid = #{dunning_deptid},
+					</if>
+	   </set>
+		 where 
+    				wms_post_dunning_detailed_id = #{wms_post_dunning_detailed_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsPostDunningDetailed" resultType="WmsPostDunningDetailed">
+		select 
+				wms_post_dunning_detailed_id,
+				wms_post_dunning_head_id,
+				wms_fina_cre_pay_id,
+				wms_cre_credit_head_id,
+				date_format(dunning_datetime,'%Y-%m-%d') as dunning_datetime_str,
+				dunning_datetime,
+				dunning_name,
+				dunning_remark,
+				enable_flag,
+				dunning_id,
+				dunning_deptid
+		from
+		wms_post_dunning_detailed
+		<where>
+					<if test="wms_post_dunning_detailed_id != null">
+						and wms_post_dunning_detailed_id = #{wms_post_dunning_detailed_id}
+					</if>
+					<if test="wms_post_dunning_head_id != null">
+						and wms_post_dunning_head_id = #{wms_post_dunning_head_id}
+					</if>
+					<if test="wms_fina_cre_pay_id != null">
+						and wms_fina_cre_pay_id = #{wms_fina_cre_pay_id}
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+					</if>
+					<if test="dunning_datetime != null">
+						and dunning_datetime = #{dunning_datetime}
+					</if>
+					<if test="dunning_name != null">
+						and dunning_name = #{dunning_name}
+					</if>
+					<if test="dunning_remark != null">
+						and dunning_remark = #{dunning_remark}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+					<if test="dunning_id != null">
+						and dunning_id = #{dunning_id}
+					</if>
+					<if test="dunning_deptid != null">
+						and dunning_deptid = #{dunning_deptid}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_post_dunning_detailed_id != #{wms_post_dunning_detailed_id}
+					</if>
+		</where>
+	</select>
+	
+	<select id="getWmsPostDunningDetailedInfo" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+		select 
+				wms_post_dunning_detailed_id,
+				wms_post_dunning_head_id,
+				wms_fina_cre_pay_id,
+				wms_cre_credit_head_id,
+				date_format(dunning_datetime,'%Y-%m-%d') as dunning_datetime_str,
+				dunning_datetime,
+				dunning_name,
+				dunning_remark,
+				enable_flag,
+				dunning_id,
+				dunning_deptid
+		from wms_post_dunning_detailed
+		where wms_post_dunning_head_id = #{wms_post_dunning_head_id}
+			and enable_flag = '1'
+	</select>
+</mapper> 

@@ -1,0 +1,16 @@
+package com.zx.emanage.telUserLoanInfo.persist;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.zx.sframe.util.mybatis.MyBatisRepository;
+import com.zx.sframe.util.mybatis.BaseDao;
+import com.zx.emanage.util.gen.entity.WmsCreCreditNotificationMessage;
+
+@MyBatisRepository
+public interface WmsCreCreditNotificationMessageDao extends BaseDao <WmsCreCreditNotificationMessage> {
+
+	void updateMessageFlag(@Param("messageid")Integer wms_cre_credit_notification_message_id);
+
+	void updateMessageStatus(@Param("user_id")Integer user_id);
+
+}

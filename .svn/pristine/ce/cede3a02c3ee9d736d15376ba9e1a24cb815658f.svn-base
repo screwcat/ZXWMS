@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveClerkProtocolTransaCrepkgDao">
+	
+	<insert id="save" parameterType="WmsInveClerkProtocolTransaCrepkg">
+		insert into wms_inve_clerk_protocol_transa_crepkg
+		(
+			wms_inve_transa_id,
+			wms_inve_clerk_protocol_id,
+			wms_inve_transa_crepkg_ids,
+			create_user_id,
+			create_timestamp,
+			last_update_user_id,
+			last_update_timestamp,
+			enable_flag
+		)
+		values
+		(
+			#{wms_inve_transa_id },
+			#{wms_inve_clerk_protocol_id },
+			#{wms_inve_transa_crepkg_ids },
+			#{create_user_id },
+			#{create_timestamp },
+			#{last_update_user_id },
+			#{last_update_timestamp },
+			#{enable_flag }
+		)
+	</insert>
+	
+	<update id="updateProtocolTransaCrepkg" parameterType="map">
+		update 
+			wms_inve_clerk_protocol_transa_crepkg
+		set
+			enable_flag = '0',
+			last_update_user_id = #{userId },
+			last_update_timestamp = now()
+		where
+			wms_inve_transa_id = #{transaId }
+			and wms_inve_clerk_protocol_id = #{protocolId }
+			and enable_flag = '1'
+	</update>
+	
+	<select id="getWmsInveClerkProtocolTransaCrepkg" parameterType="map" resultType="WmsInveClerkProtocolTransaCrepkg">
+		SELECT
+			t1.wms_inve_transa_id,
+			t1.wms_inve_clerk_protocol_transa_crepkg_id,
+			t1.wms_inve_transa_crepkg_ids,
+			t1.create_timestamp		
+		FROM
+			wms_inve_clerk_protocol_transa_crepkg t1
+		WHERE
+			t1.enable_flag = 1
+		AND 		
+			t1.wms_inve_transa_id = #{wms_inve_transa_id}
+		AND
+			t1.wms_inve_clerk_protocol_id = #{wms_inve_clerk_protocol_id}
+		ORDER BY create_timestamp desc
+	</select>
+</mapper>

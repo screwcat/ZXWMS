@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.loanappro.persist.WmsCreCreditServiceTypeDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsCreCreditServiceType">
+		select
+        				wms_cre_credit_service_type_id,
+        				wms_cre_credit_head_id,
+        				pre_wms_cre_credit_head_id,
+        				old_wms_cre_credit_head_id,
+        				wms_cre_credit_notary_warn_id,
+        				pre_wms_cre_credit_notary_warn_id,
+        				old_wms_cre_credit_notary_warn_id,
+        				bill_code,
+						date_format(operating_time,'%Y-%m-%d %H:%i:%s') as operating_time_str,
+        				operating_time,
+        				the_number,
+        				create_user_id,
+        				create_user_name,
+						date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+        				create_timestamp,
+        				last_update_user_id,
+						date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+        				last_update_timestamp,
+        				enable_flag
+        	from
+        		wms_cre_credit_service_type
+        	where
+        				wms_cre_credit_service_type_id = #{wms_cre_credit_service_type_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cre_credit_service_type_id) as count
+		from wms_cre_credit_service_type
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_cre_credit_service_type_id,
+				wms_cre_credit_head_id,
+				pre_wms_cre_credit_head_id,
+				old_wms_cre_credit_head_id,
+				wms_cre_credit_notary_warn_id,
+				pre_wms_cre_credit_notary_warn_id,
+				old_wms_cre_credit_notary_warn_id,
+				bill_code,
+				date_format(operating_time,'%Y-%m-%d %H:%i:%s') as operating_time_str,
+				operating_time,
+				the_number,
+				create_user_id,
+				create_user_name,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from wms_cre_credit_service_type
+		<where>
+			<if test="wms_cre_credit_head_id != null">
+				 and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="pre_wms_cre_credit_head_id != null">
+				 and pre_wms_cre_credit_head_id = #{pre_wms_cre_credit_head_id}
+			</if>
+			<if test="old_wms_cre_credit_head_id != null">
+				 and old_wms_cre_credit_head_id = #{old_wms_cre_credit_head_id}
+			</if>
+			
+			<if test="wms_cre_credit_notary_warn_id != null">
+				 and wms_cre_credit_notary_warn_id = #{wms_cre_credit_notary_warn_id}
+			</if>
+			<if test="pre_wms_cre_credit_notary_warn_id != null">
+				 and pre_wms_cre_credit_notary_warn_id = #{pre_wms_cre_credit_notary_warn_id}
+			</if>
+			<if test="old_wms_cre_credit_notary_warn_id != null">
+				 and old_wms_cre_credit_notary_warn_id = #{old_wms_cre_credit_notary_warn_id}
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreCreditServiceType" useGeneratedKeys="true" keyProperty="wms_cre_credit_service_type_id">
+		INSERT INTO wms_cre_credit_service_type
+		(
+				wms_cre_credit_service_type_id,
+
+				wms_cre_credit_head_id,
+
+				pre_wms_cre_credit_head_id,
+
+				old_wms_cre_credit_head_id,
+
+				wms_cre_credit_notary_warn_id,
+
+				pre_wms_cre_credit_notary_warn_id,
+
+				old_wms_cre_credit_notary_warn_id,
+
+				bill_code,
+
+				operating_time,
+
+				the_number,
+
+				create_user_id,
+
+				create_user_name,
+
+				create_timestamp,
+
+				last_update_user_id,
+
+				last_update_timestamp,
+
+				enable_flag
+		)
+		VALUES
+		(
+				#{wms_cre_credit_service_type_id},
+				#{wms_cre_credit_head_id},
+				#{pre_wms_cre_credit_head_id},
+				#{old_wms_cre_credit_head_id},
+				#{wms_cre_credit_notary_warn_id},
+				#{pre_wms_cre_credit_notary_warn_id},
+				#{old_wms_cre_credit_notary_warn_id},
+				#{bill_code},
+				#{operating_time},
+				#{the_number},
+				#{create_user_id},
+				#{create_user_name},
+				#{create_timestamp},
+				#{last_update_user_id},
+				#{last_update_timestamp},
+				#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreCreditServiceType">
+		update wms_cre_credit_service_type
+		<set>
+					<if test="wms_cre_credit_service_type_id != null">
+						 wms_cre_credit_service_type_id = #{wms_cre_credit_service_type_id},
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						 wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+					</if>
+					<if test="pre_wms_cre_credit_head_id != null">
+						 pre_wms_cre_credit_head_id = #{pre_wms_cre_credit_head_id},
+					</if>
+					<if test="old_wms_cre_credit_head_id != null">
+						 old_wms_cre_credit_head_id = #{old_wms_cre_credit_head_id},
+					</if>
+					<if test="wms_cre_credit_notary_warn_id != null">
+						 wms_cre_credit_notary_warn_id = #{wms_cre_credit_notary_warn_id},
+					</if>
+					<if test="pre_wms_cre_credit_notary_warn_id != null">
+						 pre_wms_cre_credit_notary_warn_id = #{pre_wms_cre_credit_notary_warn_id},
+					</if>
+					<if test="old_wms_cre_credit_notary_warn_id != null">
+						 old_wms_cre_credit_notary_warn_id = #{old_wms_cre_credit_notary_warn_id},
+					</if>
+					<if test="bill_code != null">
+						 bill_code = #{bill_code},
+					</if>
+					<if test="operating_time != null">
+						 operating_time = #{operating_time},
+					</if>
+					<if test="the_number != null">
+						 the_number = #{the_number},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="create_user_name != null">
+						 create_user_name = #{create_user_name},
+					</if>
+					<if test="create_timestamp != null">
+						 create_timestamp = #{create_timestamp},
+					</if>
+					<if test="last_update_user_id != null">
+						 last_update_user_id = #{last_update_user_id},
+					</if>
+					<if test="last_update_timestamp != null">
+						 last_update_timestamp = #{last_update_timestamp},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+	   </set>
+		 <where> 
+    				<if test="wms_cre_credit_service_type_id != null">
+						and wms_cre_credit_service_type_id = #{wms_cre_credit_service_type_id}
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+					</if>
+					<if test="pre_wms_cre_credit_head_id != null">
+						and pre_wms_cre_credit_head_id = #{pre_wms_cre_credit_head_id}
+					</if>
+					<if test="pre_wms_cre_credit_notary_warn_id != null">
+						and pre_wms_cre_credit_notary_warn_id = #{pre_wms_cre_credit_notary_warn_id}
+					</if>
+		</where>
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreCreditServiceType" resultType="WmsCreCreditServiceType">
+		select 
+				wms_cre_credit_service_type_id,
+				wms_cre_credit_head_id,
+				pre_wms_cre_credit_head_id,
+				old_wms_cre_credit_head_id,
+				wms_cre_credit_notary_warn_id,
+				pre_wms_cre_credit_notary_warn_id,
+				old_wms_cre_credit_notary_warn_id,
+				bill_code,
+				date_format(operating_time,'%Y-%m-%d %H:%i:%s') as operating_time_str,
+				operating_time,
+				the_number,
+				create_user_id,
+				create_user_name,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from
+		wms_cre_credit_service_type
+		<where>
+					<if test="wms_cre_credit_service_type_id != null">
+						and wms_cre_credit_service_type_id = #{wms_cre_credit_service_type_id}
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+					</if>
+					<if test="pre_wms_cre_credit_head_id != null">
+						and pre_wms_cre_credit_head_id = #{pre_wms_cre_credit_head_id}
+					</if>
+					<if test="old_wms_cre_credit_head_id != null">
+						and old_wms_cre_credit_head_id = #{old_wms_cre_credit_head_id}
+					</if>
+					<if test="wms_cre_credit_notary_warn_id != null">
+						and wms_cre_credit_notary_warn_id = #{wms_cre_credit_notary_warn_id}
+					</if>
+					<if test="pre_wms_cre_credit_notary_warn_id != null">
+						and pre_wms_cre_credit_notary_warn_id = #{pre_wms_cre_credit_notary_warn_id}
+					</if>
+					<if test="old_wms_cre_credit_notary_warn_id != null">
+						and old_wms_cre_credit_notary_warn_id = #{old_wms_cre_credit_notary_warn_id}
+					</if>
+					<if test="bill_code != null">
+						and bill_code = #{bill_code}
+					</if>
+					<if test="operating_time != null">
+						and operating_time = #{operating_time}
+					</if>
+					<if test="the_number != null">
+						and the_number = #{the_number}
+					</if>
+					<if test="create_user_id != null">
+						and create_user_id = #{create_user_id}
+					</if>
+					<if test="create_user_name != null">
+						and create_user_name = #{create_user_name}
+					</if>
+					<if test="create_timestamp != null">
+						and create_timestamp = #{create_timestamp}
+					</if>
+					<if test="last_update_user_id != null">
+						and last_update_user_id = #{last_update_user_id}
+					</if>
+					<if test="last_update_timestamp != null">
+						and last_update_timestamp = #{last_update_timestamp}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_cre_credit_service_type_id != #{wms_cre_credit_service_type_id}
+					</if>
+		</where>
+	</select>
+	
+	
+	
+	<!-- 更新用户 -->
+	<update id="updateTht_Number" parameterType="WmsCreCreditServiceType">
+		update wms_cre_credit_service_type
+		<set>
+					<if test="wms_cre_credit_service_type_id != null">
+						 wms_cre_credit_service_type_id = #{wms_cre_credit_service_type_id},
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						 wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+					</if>
+					<if test="pre_wms_cre_credit_head_id != null">
+						 pre_wms_cre_credit_head_id = #{pre_wms_cre_credit_head_id},
+					</if>
+					<if test="old_wms_cre_credit_head_id != null">
+						 old_wms_cre_credit_head_id = #{old_wms_cre_credit_head_id},
+					</if>
+					<if test="wms_cre_credit_notary_warn_id != null">
+						 wms_cre_credit_notary_warn_id = #{wms_cre_credit_notary_warn_id},
+					</if>
+					<if test="pre_wms_cre_credit_notary_warn_id != null">
+						 pre_wms_cre_credit_notary_warn_id = #{pre_wms_cre_credit_notary_warn_id},
+					</if>
+					<if test="old_wms_cre_credit_notary_warn_id != null">
+						 old_wms_cre_credit_notary_warn_id = #{old_wms_cre_credit_notary_warn_id},
+					</if>
+					<if test="bill_code != null">
+						 bill_code = #{bill_code},
+					</if>
+					<if test="operating_time != null">
+						 operating_time = #{operating_time},
+					</if>
+					<if test="the_number != null">
+						 the_number = #{the_number},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="create_user_name != null">
+						 create_user_name = #{create_user_name},
+					</if>
+					<if test="create_timestamp != null">
+						 create_timestamp = #{create_timestamp},
+					</if>
+					<if test="last_update_user_id != null">
+						 last_update_user_id = #{last_update_user_id},
+					</if>
+					<if test="last_update_timestamp != null">
+						 last_update_timestamp = #{last_update_timestamp},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+	   </set>
+		 where 
+    				wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</update>
+		<!-- 更新用户 同步数据使用-->
+	<update id="updateSyn" parameterType="WmsCreCreditServiceType">
+		update wms_cre_credit_service_type
+		<set>
+					<if test="wms_cre_credit_service_type_id != null">
+						 wms_cre_credit_service_type_id = #{wms_cre_credit_service_type_id},
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						 wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+					</if>
+					<if test="pre_wms_cre_credit_head_id != null">
+						 pre_wms_cre_credit_head_id = #{pre_wms_cre_credit_head_id},
+					</if>
+					<if test="old_wms_cre_credit_head_id != null">
+						 old_wms_cre_credit_head_id = #{old_wms_cre_credit_head_id},
+					</if>
+					<if test="wms_cre_credit_notary_warn_id != null">
+						 wms_cre_credit_notary_warn_id = #{wms_cre_credit_notary_warn_id},
+					</if>
+					<if test="pre_wms_cre_credit_notary_warn_id != null">
+						 pre_wms_cre_credit_notary_warn_id = #{pre_wms_cre_credit_notary_warn_id},
+					</if>
+					<if test="old_wms_cre_credit_notary_warn_id != null">
+						 old_wms_cre_credit_notary_warn_id = #{old_wms_cre_credit_notary_warn_id},
+					</if>
+					<if test="bill_code != null">
+						 bill_code = #{bill_code},
+					</if>
+					<if test="operating_time != null">
+						 operating_time = #{operating_time},
+					</if>
+					<if test="the_number != null">
+						 the_number = #{the_number},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="create_user_name != null">
+						 create_user_name = #{create_user_name},
+					</if>
+					<if test="create_timestamp != null">
+						 create_timestamp = #{create_timestamp},
+					</if>
+					<if test="last_update_user_id != null">
+						 last_update_user_id = #{last_update_user_id},
+					</if>
+					<if test="last_update_timestamp != null">
+						 last_update_timestamp = #{last_update_timestamp},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+	   </set>
+		 <where> 
+					<if test="wms_cre_credit_head_id != null">
+						and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+					</if>
+		</where>
+	</update>
+</mapper> 

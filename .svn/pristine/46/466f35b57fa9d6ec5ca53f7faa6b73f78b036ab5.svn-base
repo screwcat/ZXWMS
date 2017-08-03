@@ -1,0 +1,2844 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.loanappro.persist.WmsCreApproBorrowProtocolDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsCreApproBorrowProtocol">
+		select
+		wms_cre_appro_id,
+		protocol_id_year,
+		protocol_id_num,
+		date_format(protocol_date,'%Y-%m-%d') as protocol_date_str,
+		protocol_date,
+		creditor_name,
+		creditor_identity_id,
+		debtor_name,
+		debtor_identity_id,
+		creditor_address,
+		debtor_address,
+		creditor_tel,
+		debtor_tel,
+		debtor_fixed_line,
+		principal_caps,
+		principal_lower,
+		borrow_deadline,
+		date_format(borrow_begin_date,'%Y-%m-%d') as borrow_begin_date_str,
+		borrow_begin_date,
+		date_format(borrow_end_date,'%Y-%m-%d') as borrow_end_date_str,
+		borrow_end_date,
+		borrow_purpose,
+		borrow_interest,
+		refund_bank,
+		refund_number,
+		refund_name,
+		refund_limit_month,
+		refund_day,
+		liquidated_damages,
+		wms_cre_credit_head_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_cre_appro_borrow_protocol
+		where
+		wms_cre_appro_id = #{wms_cre_appro_id}
+	</select>
+	<select id="getBorrowProtocolByFK" parameterType="int"
+		resultType="WmsCreApproBorrowProtocol">
+		select
+		wms_cre_appro_id,
+		protocol_id_year,
+		protocol_id_num,
+		CONCAT(protocol_id_year,'年第',protocol_id_num,'号') as protocol_id_year_num,
+		date_format(protocol_date,'%Y-%m-%d') as protocol_date_str,
+		protocol_date,
+		creditor_name,
+		creditor_identity_id,
+		debtor_name,
+		debtor_identity_id,
+		creditor_address,
+		debtor_address,
+		creditor_tel,
+		debtor_tel,
+		debtor_fixed_line,
+		principal_caps,
+		principal_lower,
+		borrow_deadline,
+		date_format(borrow_begin_date,'%Y-%m-%d') as borrow_begin_date_str,
+		borrow_begin_date,
+		date_format(borrow_end_date,'%Y-%m-%d') as borrow_end_date_str,
+		borrow_end_date,
+		borrow_purpose,
+		borrow_interest,
+		refund_bank,
+		refund_number,
+		refund_name,
+		refund_limit_month,
+		refund_day,
+		liquidated_damages,
+		wms_cre_credit_head_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		protocol_type,
+		com_debtor_name,
+		com_debtor_identity_id,
+		com_debtor_address,
+		com_debtor_tel,
+		com_debtor_fixed_line,
+		refund_principal_month_lower,
+		refund_principal_month_caps,
+		refund_interest_month_lower,
+		refund_interest_month_caps,
+		refund_limit_month_caps,
+		compensate,
+		yuqi_damages,
+		compensate_caps,
+		borrow_interest_caps,
+		enable_flag,
+		principal,
+		interest,
+		org_repay_principal,
+		org_repay_interest,
+		refund_limit_month_lower,
+		plan_borrow_date,
+		loan_amount,
+		company,
+		cheque_number,
+		bill_number,
+		deduct_money,
+		payment_contract_type,
+		creditor_zip_code,  
+		
+		debtor_zip_code, 
+		  
+   		embezzlement_damages,
+   		
+    	loan_currency,  
+    	   
+   		debtor_residence_address,
+   		
+   		protocol_d_num
+		
+		from
+		wms_cre_appro_borrow_protocol
+		where
+		wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</select>
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cre_appro_id) as count
+		from
+		wms_cre_appro_borrow_protocol
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		wms_cre_appro_id,
+		protocol_id_year,
+		protocol_id_num,
+		date_format(protocol_date,'%Y-%m-%d') as protocol_date_str,
+		protocol_date,
+		creditor_name,
+		creditor_identity_id,
+		debtor_name,
+		debtor_identity_id,
+		creditor_address,
+		debtor_address,
+		creditor_tel,
+		debtor_tel,
+		debtor_fixed_line,
+		principal_caps,
+		principal_lower,
+		borrow_deadline,
+		date_format(borrow_begin_date,'%Y-%m-%d') as borrow_begin_date_str,
+		borrow_begin_date,
+		date_format(borrow_end_date,'%Y-%m-%d') as borrow_end_date_str,
+		borrow_end_date,
+		borrow_purpose,
+		borrow_interest,
+		refund_bank,
+		refund_number,
+		refund_name,
+		refund_limit_month,
+		refund_day,
+		liquidated_damages,
+		wms_cre_credit_head_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from wms_cre_appro_borrow_protocol
+		<where>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder != ''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize != null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreApproBorrowProtocol"
+		useGeneratedKeys="true" keyProperty="wms_cre_appro_id">
+		INSERT INTO wms_cre_appro_borrow_protocol
+		(
+		wms_cre_appro_id,
+
+		protocol_id_year,
+
+		protocol_id_num,
+
+		protocol_date,
+
+		creditor_name,
+
+		creditor_identity_id,
+
+		debtor_name,
+
+		debtor_identity_id,
+
+		creditor_address,
+
+		debtor_address,
+
+		creditor_tel,
+
+		debtor_tel,
+
+		debtor_fixed_line,
+
+		principal_caps,
+
+		principal_lower,
+
+		borrow_deadline,
+
+		borrow_begin_date,
+
+		borrow_end_date,
+
+		borrow_purpose,
+
+		borrow_interest,
+
+		refund_bank,
+
+		refund_number,
+
+		refund_name,
+
+		refund_limit_month,
+
+		refund_day,
+
+		liquidated_damages,
+
+		wms_cre_credit_head_id,
+
+		create_user_id,
+
+		create_user_name,
+
+		create_timestamp,
+
+		last_update_user_id,
+
+		last_update_timestamp,
+
+		enable_flag,
+
+		protocol_type,
+
+		com_debtor_name,
+
+		com_debtor_identity_id,
+
+		com_debtor_address,
+
+		com_debtor_tel,
+
+		com_debtor_fixed_line,
+
+		refund_principal_month_lower,
+
+		refund_principal_month_caps,
+
+		refund_interest_month_lower,
+
+		refund_interest_month_caps,
+
+		refund_limit_month_caps,
+
+		compensate,
+
+		yuqi_damages,
+
+		compensate_caps,
+
+		yuqi_damages_caps,
+
+		protocol_id_year_num,
+		
+		principal,
+
+		interest,
+
+		org_repay_principal,
+
+		org_repay_interest,
+
+		refund_limit_month_lower,
+
+		plan_borrow_date,
+
+		loan_amount,
+
+		company,
+
+		cheque_number,
+
+		bill_number,
+
+		deduct_money,
+
+		cash_transfer_lower,
+
+		sign_place,
+
+		replace_pay_money_caps,
+
+		replace_pay_money_lower,
+
+		payment_contract_type,
+		
+		creditor_zip_code,  
+		
+		debtor_zip_code, 
+		  
+   		embezzlement_damages,
+   		
+    	loan_currency,  
+    	   
+   		debtor_residence_address,
+   		
+   		protocol_d_num,
+   		justice_type
+   		
+
+		)
+		VALUES
+		(
+		#{wms_cre_appro_id},
+		#{protocol_id_year},
+		#{protocol_id_num},
+		#{protocol_date},
+		#{creditor_name},
+		#{creditor_identity_id},
+		#{debtor_name},
+		#{debtor_identity_id},
+		#{creditor_address},
+		#{debtor_address},
+		#{creditor_tel},
+		#{debtor_tel},
+		#{debtor_fixed_line},
+		#{principal_caps},
+		#{principal_lower},
+		#{borrow_deadline},
+		#{borrow_begin_date},
+		#{borrow_end_date},
+		#{borrow_purpose},
+		#{borrow_interest},
+		#{refund_bank},
+		#{refund_number},
+		#{refund_name},
+		#{refund_limit_month},
+		#{refund_day},
+		#{liquidated_damages},
+		#{wms_cre_credit_head_id},
+		#{create_user_id},
+		#{create_user_name},
+		#{create_timestamp},
+		#{last_update_user_id},
+		#{last_update_timestamp},
+		#{enable_flag},
+		#{protocol_type},
+		#{com_debtor_name},
+		#{com_debtor_identity_id},
+		#{com_debtor_address},
+		#{com_debtor_tel},
+		#{com_debtor_fixed_line},
+		#{refund_principal_month_lower},
+		#{refund_principal_month_caps},
+		#{refund_interest_month_lower},
+		#{refund_interest_month_caps},
+		#{refund_limit_month_caps},
+		#{compensate},
+		#{yuqi_damages},
+		#{compensate_caps},
+		#{yuqi_damages_caps},
+		#{protocol_id_year_num},
+		#{principal},
+		#{interest},
+		#{org_repay_principal},
+		#{org_repay_interest},
+		#{refund_limit_month_lower},
+		#{plan_borrow_date},
+		#{loan_amount},
+		#{company},
+		#{cheque_number},
+		#{bill_number},
+		#{deduct_money},
+		#{cash_transfer_lower},
+		#{sign_place},
+		#{replace_pay_money_caps},
+		#{replace_pay_money_lower},
+		#{payment_contract_type},
+		#{creditor_zip_code},  
+		#{debtor_zip_code}, 
+   		#{embezzlement_damages},
+    	#{loan_currency},  
+   		#{debtor_residence_address},
+   		#{protocol_d_num},
+   		#{justice_type}
+		);
+	</insert>
+
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreApproBorrowProtocol">
+		update wms_cre_appro_borrow_protocol
+		<set>
+			<if test="wms_cre_appro_id != null">
+				wms_cre_appro_id = #{wms_cre_appro_id},
+			</if>
+			<if test="protocol_id_year != null">
+				protocol_id_year = #{protocol_id_year},
+			</if>
+			<if test="protocol_id_num != null">
+				protocol_id_num = #{protocol_id_num},
+			</if>
+			<if test="protocol_date != null">
+				protocol_date = #{protocol_date},
+			</if>
+			<if test="creditor_name != null">
+				creditor_name = #{creditor_name},
+			</if>
+			<if test="creditor_identity_id != null">
+				creditor_identity_id = #{creditor_identity_id},
+			</if>
+			<if test="debtor_name != null">
+				debtor_name = #{debtor_name},
+			</if>
+			<if test="debtor_identity_id != null">
+				debtor_identity_id = #{debtor_identity_id},
+			</if>
+			<if test="creditor_address != null">
+				creditor_address = #{creditor_address},
+			</if>
+			<if test="debtor_address != null">
+				debtor_address = #{debtor_address},
+			</if>
+			<if test="creditor_tel != null">
+				creditor_tel = #{creditor_tel},
+			</if>
+			<if test="debtor_tel != null">
+				debtor_tel = #{debtor_tel},
+			</if>
+			<if test="debtor_fixed_line != null">
+				debtor_fixed_line = #{debtor_fixed_line},
+			</if>
+			<if test="principal_caps != null">
+				principal_caps = #{principal_caps},
+			</if>
+			<if test="principal_lower != null">
+				principal_lower = #{principal_lower},
+			</if>
+			<if test="borrow_deadline != null">
+				borrow_deadline = #{borrow_deadline},
+			</if>
+			<if test="borrow_begin_date != null">
+				borrow_begin_date = #{borrow_begin_date},
+			</if>
+			<if test="borrow_end_date != null">
+				borrow_end_date = #{borrow_end_date},
+			</if>
+			<if test="borrow_purpose != null">
+				borrow_purpose = #{borrow_purpose},
+			</if>
+			<if test="borrow_interest != null">
+				borrow_interest = #{borrow_interest},
+			</if>
+			<if test="refund_bank != null">
+				refund_bank = #{refund_bank},
+			</if>
+			<if test="refund_number != null">
+				refund_number = #{refund_number},
+			</if>
+			<if test="refund_name != null">
+				refund_name = #{refund_name},
+			</if>
+			<if test="refund_limit_month != null">
+				refund_limit_month = #{refund_limit_month},
+			</if>
+			<if test="refund_day != null">
+				refund_day = #{refund_day},
+			</if>
+			<if test="liquidated_damages != null">
+				liquidated_damages = #{liquidated_damages},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+			<if test="loan_amount != null">
+                loan_amount = #{loan_amount},
+            </if>
+            <if test="payment_contract_type != null">
+                payment_contract_type = #{payment_contract_type},
+            </if>
+		</set>
+		where
+		1=1
+		<if test="wms_cre_appro_id != null">
+			and wms_cre_appro_id = #{wms_cre_appro_id}
+		</if>
+		<if test="wms_cre_credit_head_id != null">
+			and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+		</if>
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreApproBorrowProtocol"
+		resultType="WmsCreApproBorrowProtocol">
+		select
+		wms_cre_appro_id,
+		protocol_id_year,
+		protocol_id_num,
+		date_format(protocol_date,'%Y-%m-%d') as protocol_date_str,
+		protocol_date,
+		creditor_name,
+		creditor_identity_id,
+		debtor_name,
+		debtor_identity_id,
+		creditor_address,
+		debtor_address,
+		creditor_tel,
+		debtor_tel,
+		debtor_fixed_line,
+		principal_caps,
+		principal_lower,
+		borrow_deadline,
+		date_format(borrow_begin_date,'%Y-%m-%d') as borrow_begin_date_str,
+		borrow_begin_date,
+		date_format(borrow_end_date,'%Y-%m-%d') as borrow_end_date_str,
+		borrow_end_date,
+		borrow_purpose,
+		borrow_interest,
+		refund_bank,
+		refund_number,
+		refund_name,
+		refund_limit_month,
+		refund_day,
+		liquidated_damages,
+		wms_cre_credit_head_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_cre_appro_borrow_protocol
+		<where>
+			<if test="wms_cre_appro_id != null">
+				and wms_cre_appro_id = #{wms_cre_appro_id}
+			</if>
+			<if test="protocol_id_year != null">
+				and protocol_id_year = #{protocol_id_year}
+			</if>
+			<if test="protocol_id_num != null">
+				and protocol_id_num = #{protocol_id_num}
+			</if>
+			<if test="protocol_date != null">
+				and protocol_date = #{protocol_date}
+			</if>
+			<if test="creditor_name != null">
+				and creditor_name = #{creditor_name}
+			</if>
+			<if test="creditor_identity_id != null">
+				and creditor_identity_id = #{creditor_identity_id}
+			</if>
+			<if test="debtor_name != null">
+				and debtor_name = #{debtor_name}
+			</if>
+			<if test="debtor_identity_id != null">
+				and debtor_identity_id = #{debtor_identity_id}
+			</if>
+			<if test="creditor_address != null">
+				and creditor_address = #{creditor_address}
+			</if>
+			<if test="debtor_address != null">
+				and debtor_address = #{debtor_address}
+			</if>
+			<if test="creditor_tel != null">
+				and creditor_tel = #{creditor_tel}
+			</if>
+			<if test="debtor_tel != null">
+				and debtor_tel = #{debtor_tel}
+			</if>
+			<if test="debtor_fixed_line != null">
+				and debtor_fixed_line = #{debtor_fixed_line}
+			</if>
+			<if test="principal_caps != null">
+				and principal_caps = #{principal_caps}
+			</if>
+			<if test="principal_lower != null">
+				and principal_lower = #{principal_lower}
+			</if>
+			<if test="borrow_deadline != null">
+				and borrow_deadline = #{borrow_deadline}
+			</if>
+			<if test="borrow_begin_date != null">
+				and borrow_begin_date = #{borrow_begin_date}
+			</if>
+			<if test="borrow_end_date != null">
+				and borrow_end_date = #{borrow_end_date}
+			</if>
+			<if test="borrow_purpose != null">
+				and borrow_purpose = #{borrow_purpose}
+			</if>
+			<if test="borrow_interest != null">
+				and borrow_interest = #{borrow_interest}
+			</if>
+			<if test="refund_bank != null">
+				and refund_bank = #{refund_bank}
+			</if>
+			<if test="refund_number != null">
+				and refund_number = #{refund_number}
+			</if>
+			<if test="refund_name != null">
+				and refund_name = #{refund_name}
+			</if>
+			<if test="refund_limit_month != null">
+				and refund_limit_month = #{refund_limit_month}
+			</if>
+			<if test="refund_day != null">
+				and refund_day = #{refund_day}
+			</if>
+			<if test="liquidated_damages != null">
+				and liquidated_damages = #{liquidated_damages}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name = #{create_user_name}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id = #{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+
+		</where>
+	</select>
+	<!-- save 用于房产终审 签合同 白松 -->
+	<insert id="saveforhouse" parameterType="WmsCreApproBorrowProtocol"
+		useGeneratedKeys="true" keyProperty="wms_cre_appro_id">
+		INSERT INTO
+		wms_cre_appro_borrow_protocol
+		(
+		wms_cre_appro_id,
+
+		protocol_id_year,
+
+		protocol_id_num,
+
+		protocol_date,
+
+		creditor_name,
+
+		creditor_identity_id,
+
+		debtor_name,
+
+		debtor_identity_id,
+
+		creditor_address,
+
+		debtor_address,
+
+		creditor_tel,
+
+		debtor_tel,
+
+		debtor_fixed_line,
+
+		principal_caps,
+
+		principal_lower,
+
+		borrow_deadline,
+
+		borrow_begin_date,
+
+		borrow_end_date,
+
+		borrow_purpose,
+
+		borrow_interest,
+
+		refund_bank,
+
+		refund_number,
+
+		refund_name,
+
+		refund_limit_month,
+
+		refund_day,
+
+		liquidated_damages,
+
+		wms_cre_credit_head_id,
+
+		create_user_id,
+
+		create_user_name,
+
+		create_timestamp,
+
+		last_update_user_id,
+
+		last_update_timestamp,
+
+		enable_flag,
+
+		protocol_type,
+
+		com_debtor_name,
+
+		com_debtor_identity_id,
+
+		com_debtor_address,
+
+		com_debtor_tel,
+
+		com_debtor_fixed_line,
+
+		refund_principal_month_lower,
+
+		refund_principal_month_caps,
+
+		refund_interest_month_lower,
+
+		refund_interest_month_caps,
+
+		refund_limit_month_caps,
+
+		compensate,
+
+		yuqi_damages,
+
+		compensate_caps,
+
+		yuqi_damages_caps,
+
+		protocol_id_year_num,
+
+		borrow_interest_caps,
+
+		principal,
+
+		interest,
+
+		org_repay_principal,
+
+		org_repay_interest,
+
+		refund_limit_month_lower,
+
+		plan_borrow_date,
+
+		loan_amount,
+
+		company,
+
+		cheque_number,
+
+		bill_number,
+
+		deduct_money,
+
+		house_estimate,
+
+		sign_place,
+
+		house_sale,
+
+		dispute_solve,
+
+		court_name,
+
+		arbitrate_name,
+
+		second_house_address,
+
+		a_c_relation,
+
+		c_house_address ,
+
+		replace_pay_money_caps,
+
+		replace_pay_money_lower,
+
+		cash_transfer_lower,
+		
+		payment_contract_type,
+		
+	    weiyuejin,
+	
+	    first_refund_date,
+	
+	    second_refund_date,
+	
+	    creditor_loan_name,
+	
+	    creditor_loan_number,
+	
+	    creditor_loan_bank,
+	
+	    debtor_loan_name,
+	
+	    debtor_loan_number,
+	
+	    debtor_loan_bank,
+	    
+        protocol_refund_interest_month,
+        
+		creditor_zip_code,  
+		
+		debtor_zip_code, 
+		  
+   		embezzlement_damages,
+   		
+    	loan_currency,  
+    	   
+   		debtor_residence_address,
+   		
+   		protocol_d_num
+        
+
+		)
+		VALUES
+		(
+		#{wms_cre_appro_id},
+		#{protocol_id_year},
+		#{protocol_id_num},
+		#{protocol_date},
+		#{creditor_name},
+		#{creditor_identity_id},
+		#{debtor_name},
+		#{debtor_identity_id},
+		#{creditor_address},
+		#{debtor_address},
+		#{creditor_tel},
+		#{debtor_tel},
+		#{debtor_fixed_line},
+		#{principal_caps},
+		#{principal_lower},
+		#{borrow_deadline},
+		#{borrow_begin_date},
+		#{borrow_end_date},
+		#{borrow_purpose},
+		#{borrow_interest},
+		#{refund_bank},
+		#{refund_number},
+		#{refund_name},
+		#{refund_limit_month},
+		#{refund_day},
+		#{liquidated_damages},
+		#{wms_cre_credit_head_id},
+		#{create_user_id},
+		#{create_user_name},
+		#{create_timestamp},
+		#{last_update_user_id},
+		#{last_update_timestamp},
+		#{enable_flag},
+		#{protocol_type},
+		#{com_debtor_name},
+		#{com_debtor_identity_id},
+		#{com_debtor_address},
+		#{com_debtor_tel},
+		#{com_debtor_fixed_line},
+		#{refund_principal_month_lower},
+		#{refund_principal_month_caps},
+		#{refund_interest_month_lower},
+		#{refund_interest_month_caps},
+		#{refund_limit_month_caps},
+		#{compensate},
+		#{yuqi_damages},
+		#{compensate_caps},
+		#{yuqi_damages_caps},
+		#{protocol_id_year_num},
+		#{borrow_interest_caps},
+		#{principal},
+		#{interest},
+		#{org_repay_principal},
+		#{org_repay_interest},
+		#{refund_limit_month_lower},
+		#{plan_borrow_date},
+		#{loan_amount},
+		#{company},
+		#{cheque_number},
+		#{bill_number},
+		#{deduct_money},
+		#{house_estimate},
+		#{sign_place},
+		#{house_sale},
+		#{dispute_solve},
+		#{court_name},
+		#{arbitrate_name},
+		#{second_house_address},
+		#{a_c_relation},
+		#{c_house_address},
+		#{replace_pay_money_caps},
+		#{replace_pay_money_lower},
+		#{cash_transfer_lower},
+		#{payment_contract_type},
+		#{weiyuejin},
+	    #{first_refund_date},
+	    #{second_refund_date},
+	    #{creditor_loan_name},
+	    #{creditor_loan_number},
+	    #{creditor_loan_bank},
+	    #{debtor_loan_name},
+	    #{debtor_loan_number},
+	    #{debtor_loan_bank},
+		#{protocol_refund_interest_month},
+		#{creditor_zip_code},  
+		#{debtor_zip_code}, 
+   		#{embezzlement_damages},
+    	#{loan_currency},    
+   		#{debtor_residence_address},
+   		#{protocol_d_num}
+		
+		);
+	</insert>
+
+	<!-- 更新 -->	<!-- 用于房产终审 签合同 白松 -->
+	<update id="updateforhouse" parameterType="WmsCreApproBorrowProtocol">
+		update wms_cre_appro_borrow_protocol
+		<set>
+			<if test="wms_cre_appro_id != null">
+				wms_cre_appro_id = #{wms_cre_appro_id},
+			</if>
+			<if test="protocol_id_year != null">
+				protocol_id_year = #{protocol_id_year},
+			</if>
+			<if test="protocol_id_num != null">
+				protocol_id_num = #{protocol_id_num},
+			</if>
+			<if test="protocol_date != null">
+				protocol_date = #{protocol_date},
+			</if>
+			<if test="creditor_name != null">
+				creditor_name = #{creditor_name},
+			</if>
+			<if test="creditor_identity_id != null">
+				creditor_identity_id = #{creditor_identity_id},
+			</if>
+			<if test="debtor_name != null">
+				debtor_name = #{debtor_name},
+			</if>
+			<if test="debtor_identity_id != null">
+				debtor_identity_id = #{debtor_identity_id},
+			</if>
+			<if test="creditor_address != null">
+				creditor_address = #{creditor_address},
+			</if>
+			<if test="debtor_address != null">
+				debtor_address = #{debtor_address},
+			</if>
+			<if test="creditor_tel != null">
+				creditor_tel = #{creditor_tel},
+			</if>
+			<if test="debtor_tel != null">
+				debtor_tel = #{debtor_tel},
+			</if>
+			<if test="debtor_fixed_line != null">
+				debtor_fixed_line = #{debtor_fixed_line},
+			</if>
+			<if test="principal_caps != null">
+				principal_caps = #{principal_caps},
+			</if>
+			<if test="principal_lower != null">
+				principal_lower = #{principal_lower},
+			</if>
+			<if test="borrow_deadline != null">
+				borrow_deadline = #{borrow_deadline},
+			</if>
+			<if test="borrow_begin_date != null">
+				borrow_begin_date = #{borrow_begin_date},
+			</if>
+			<if test="borrow_end_date != null">
+				borrow_end_date = #{borrow_end_date},
+			</if>
+			<if test="borrow_purpose != null">
+				borrow_purpose = #{borrow_purpose},
+			</if>
+			<if test="borrow_interest != null">
+				borrow_interest = #{borrow_interest},
+			</if>
+			<if test="refund_bank != null">
+				refund_bank = #{refund_bank},
+			</if>
+			<if test="refund_number != null">
+				refund_number = #{refund_number},
+			</if>
+			<if test="refund_name != null">
+				refund_name = #{refund_name},
+			</if>
+			<if test="refund_limit_month != null">
+				refund_limit_month = #{refund_limit_month},
+			</if>
+			<if test="refund_day != null">
+				refund_day = #{refund_day},
+			</if>
+			<if test="liquidated_damages != null">
+				liquidated_damages = #{liquidated_damages},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+			<if test="protocol_type != null">
+				protocol_type = #{protocol_type},
+			</if>
+			<if test="com_debtor_name != null">
+				com_debtor_name = #{com_debtor_name},
+			</if>
+			<if test="com_debtor_identity_id != null">
+				com_debtor_identity_id = #{com_debtor_identity_id},
+			</if>
+			<if test="com_debtor_address != null">
+				com_debtor_address = #{com_debtor_address},
+			</if>
+			<if test="com_debtor_tel != null">
+				com_debtor_tel = #{com_debtor_tel},
+			</if>
+			<if test="com_debtor_fixed_line != null">
+				com_debtor_fixed_line = #{com_debtor_fixed_line},
+			</if>
+			<if test="refund_principal_month_lower != null">
+				refund_principal_month_lower = #{refund_principal_month_lower},
+			</if>
+			<if test="refund_principal_month_caps != null">
+				refund_principal_month_caps = #{refund_principal_month_caps},
+			</if>
+			<if test="refund_interest_month_lower != null">
+				refund_interest_month_lower = #{refund_interest_month_lower},
+			</if>
+			<if test="refund_interest_month_caps != null">
+				refund_interest_month_caps = #{refund_interest_month_caps},
+			</if>
+			<if test="refund_limit_month_caps != null">
+				refund_limit_month_caps = #{refund_limit_month_caps},
+			</if>
+			<if test="compensate != null">
+				compensate = #{compensate},
+			</if>
+			<if test="yuqi_damages != null">
+				yuqi_damages = #{yuqi_damages},
+			</if>
+			<if test="compensate_caps != null">
+				compensate_caps = #{compensate_caps},
+			</if>
+			<if test="yuqi_damages_caps != null">
+				yuqi_damages_caps = #{yuqi_damages_caps},
+			</if>
+			<if test="protocol_id_year_num != null">
+				protocol_id_year_num = #{protocol_id_year_num},
+			</if>
+			<if test="borrow_interest_caps != null">
+				borrow_interest_caps = #{borrow_interest_caps},
+			</if>
+		</set>
+		where
+		wms_cre_appro_id = #{wms_cre_appro_id}
+	</update>
+	<select id="getobjforhouse" parameterType="int" resultType="java.util.HashMap">
+		select
+		b.wms_cre_appro_id,
+
+		b.protocol_id_year,
+
+		b.protocol_id_num,
+
+		b.protocol_date,
+
+		b.creditor_name,
+
+		b.creditor_identity_id,
+
+		b.debtor_name,
+
+		b.debtor_identity_id,
+
+		b.creditor_address,
+
+		b.debtor_address,
+
+		b.creditor_tel,
+
+		b.debtor_tel,
+
+		b.debtor_fixed_line,
+
+		b.principal_caps,
+
+		b.principal_lower,
+
+		b.borrow_deadline,
+
+		b.borrow_begin_date,
+
+		b.borrow_end_date,
+
+		b.borrow_purpose,
+
+		b.borrow_interest,
+
+		b.refund_bank,
+
+		b.refund_number,
+
+		b.refund_name,
+
+		b.refund_limit_month,
+
+		b.refund_day,
+
+		b.liquidated_damages,
+
+		b.wms_cre_credit_head_id,
+
+		b.create_user_id,
+
+		b.create_user_name,
+
+		b.create_timestamp,
+
+		b.last_update_user_id,
+
+		b.last_update_timestamp,
+
+		b.enable_flag,
+
+		b.protocol_type,
+		
+		b.payment_contract_type,
+
+		(case b.payment_contract_type when '1' then '等额本息' when '2' then '先息后本' end) as protocol_type_name,
+
+		b.com_debtor_name,
+
+		b.com_debtor_identity_id,
+
+		b.com_debtor_address,
+
+		b.com_debtor_tel,
+
+		b.com_debtor_fixed_line,
+
+		b.refund_principal_month_lower,
+
+		b.refund_principal_month_caps,
+
+		b.refund_interest_month_lower,
+
+		b.refund_interest_month_caps,
+
+		b.refund_limit_month_caps,
+
+		b.compensate,
+
+		b.yuqi_damages,
+
+		b.compensate_caps,
+
+		b.yuqi_damages_caps,
+
+		b.protocol_id_year_num,
+
+		b.borrow_interest_caps,
+		
+		b.protocol_refund_interest_month,
+		
+		b.it_cost_fee,
+		
+		b.expedited_fee,
+		
+		debtor_loan_name,
+		
+		debtor_loan_number,
+		
+		debtor_loan_bank,
+
+		s.wms_cre_appro_service_protocol_id,
+
+		s.protocol_id_year,
+
+		s.protocol_id_num,
+
+		s.protocol_date,
+
+		s.borrower_name,
+
+		s.borrower_identity_id,
+
+		s.second_borrower_name,
+
+		s.second_borrower_identity_id,
+
+		s.borrower_address,
+
+		s.addressee_name,
+
+		s.addressee_tel,
+
+		s.refund_deadline,
+
+		s.refund_day,
+
+		s.wms_cre_credit_head_id,
+
+		s.create_user_id,
+
+		s.create_user_name,
+
+		s.create_timestamp,
+
+		s.last_update_user_id,
+
+		s.last_update_timestamp,
+
+		s.enable_flag,
+
+		s.consult_service_cost,
+
+		s.jujian_service_cost,
+
+		s.service_cost_month,
+		
+		s.service_refund_interest_month_caps,
+		
+		s.service_refund_interest_month_lower,
+		
+		s.service_refund_principal_month_lower,
+		
+		s.service_cost_type,
+
+		b.org_repay_interest,
+
+		b.refund_limit_month_lower,
+
+		b.plan_borrow_date,
+
+		b.loan_amount,
+
+		b.company,
+
+		b.cheque_number,
+
+		b.bill_number,
+
+		b.deduct_money,
+
+		s.owner,
+
+		b.org_repay_principal,
+
+		b.house_estimate,
+
+		b.sign_place,
+
+		b.house_sale,
+
+		b.dispute_solve,
+
+		b.court_name,
+
+		b.arbitrate_name,
+
+		b.second_house_address,
+
+		b.a_c_relation,
+
+		b.c_house_address,
+
+		b.replace_pay_money_caps,
+
+		b.replace_pay_money_lower,
+
+		b.cash_transfer_lower,
+		
+		b.weiyuejin,
+	
+	    b.first_refund_date,
+	
+	    b.second_refund_date,
+	
+	    b.creditor_loan_name,
+	
+	    b.creditor_loan_number,
+	
+	    b.creditor_loan_bank,
+	
+	    b.debtor_loan_name,
+	
+	    b.debtor_loan_number,
+	
+	    b.debtor_loan_bank,
+	    
+	    b.creditor_zip_code,  
+		
+		b.debtor_zip_code, 
+		  
+   		b.embezzlement_damages,
+   		
+    	b.loan_currency,  
+    	   
+   		b.debtor_residence_address,
+   		
+   		b.protocol_d_num,
+	    
+		h.cre_type,
+		
+		h.appro_limit,
+		
+		h.cre_loan_type,
+		
+		h.max_repayment_time_limit
+
+		from
+		wms_cre_appro_borrow_protocol b, wms_cre_appro_service_protocol s,wms_cre_credit_head h
+		where
+		b.enable_flag=1 and s.enable_flag=1
+		and b.wms_cre_credit_head_id = h.wms_cre_credit_head_id
+		and b.wms_cre_credit_head_id = s.wms_cre_credit_head_id
+		and b.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+		and s.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</select>
+	<!-- 通过签订日期 客户姓名 联系电话 确定数据唯一性 -->
+	<select id="getProtocolId" parameterType="map" resultType="String">
+		select 
+		protocol_id_num 
+		from  
+		wms_cre_appro_borrow_protocol 
+		where 
+		protocol_date=#{protocol_date} and debtor_name=#{debtor_name} and debtor_tel=#{debtor_tel};
+	</select>
+	<select id="getobjforcar" parameterType="int" resultType="java.util.HashMap">
+		select
+		b.wms_cre_appro_id,
+
+		b.protocol_id_year,
+
+		b.protocol_id_num,
+
+		b.protocol_date,
+
+		b.creditor_name,
+
+		b.creditor_identity_id,
+
+		b.debtor_name,
+
+		b.debtor_identity_id,
+
+		b.creditor_address,
+
+		b.debtor_address,
+
+		b.creditor_tel,
+
+		b.debtor_tel,
+
+		b.debtor_fixed_line,
+
+		b.principal_caps,
+
+		b.principal_lower,
+
+		b.borrow_deadline,
+
+		b.borrow_begin_date,
+
+		b.borrow_end_date,
+
+		b.borrow_purpose,
+
+		b.borrow_interest,
+
+		b.refund_bank,
+
+		b.refund_number,
+
+		b.refund_name,
+
+		b.refund_limit_month,
+
+		b.refund_day,
+
+		b.liquidated_damages,
+
+		b.wms_cre_credit_head_id,
+
+		b.create_user_id,
+
+		b.create_user_name,
+
+		b.create_timestamp,
+
+		b.last_update_user_id,
+
+		b.last_update_timestamp,
+
+		b.enable_flag,
+
+		b.protocol_type,
+		
+		b.payment_contract_type,
+
+		(case b.payment_contract_type when '1' then '等额本息' when '2' then '先息后本' end) as protocol_type_name,
+
+		b.com_debtor_name,
+
+		b.com_debtor_identity_id,
+
+		b.com_debtor_address,
+
+		b.com_debtor_tel,
+
+		b.com_debtor_fixed_line,
+
+		b.refund_principal_month_lower,
+
+		b.refund_principal_month_caps,
+
+		b.refund_interest_month_lower,
+
+		b.refund_interest_month_caps,
+
+		b.refund_limit_month_caps,
+
+		b.compensate,
+
+		b.yuqi_damages,
+
+		b.compensate_caps,
+
+		b.yuqi_damages_caps,
+
+		b.protocol_id_year_num,
+
+		b.borrow_interest_caps,
+		
+		b.protocol_refund_interest_month,
+
+		s.wms_cre_appro_service_protocol_id,
+
+		s.protocol_id_year,
+
+		s.protocol_id_num,
+
+		s.protocol_date,
+
+		s.borrower_name,
+
+		s.borrower_identity_id,
+
+		s.second_borrower_name,
+
+		s.second_borrower_identity_id,
+
+		s.borrower_address,
+
+		s.addressee_name,
+
+		s.addressee_tel,
+
+		s.refund_deadline,
+
+		s.refund_day,
+
+		s.wms_cre_credit_head_id,
+
+		s.create_user_id,
+
+		s.create_user_name,
+
+		s.create_timestamp,
+
+		s.last_update_user_id,
+
+		s.last_update_timestamp,
+
+		s.enable_flag,
+
+		s.consult_service_cost,
+
+		s.jujian_service_cost,
+
+		s.service_cost_month,
+		
+		s.service_refund_interest_month_caps,
+		
+		s.service_refund_interest_month_lower,
+		
+		s.service_refund_principal_month_lower,
+
+		b.org_repay_interest,
+
+		b.refund_limit_month_lower,
+
+		b.plan_borrow_date,
+
+		b.loan_amount,
+
+		b.company,
+
+		b.cheque_number,
+
+		b.bill_number,
+
+		b.deduct_money,
+
+		s.owner,
+
+		b.org_repay_principal,
+
+		b.house_estimate,
+
+		b.sign_place,
+
+		b.house_sale,
+
+		b.dispute_solve,
+
+		b.court_name,
+
+		b.arbitrate_name,
+
+		b.second_house_address,
+
+		b.a_c_relation,
+
+		b.c_house_address,
+
+		b.replace_pay_money_caps,
+
+		b.replace_pay_money_lower,
+
+		b.cash_transfer_lower,
+		
+		b.weiyuejin,
+	
+	    b.first_refund_date,
+	
+	    b.second_refund_date,
+	
+	    b.creditor_loan_name,
+	
+	    b.creditor_loan_number,
+	
+	    b.creditor_loan_bank,
+	
+	    b.debtor_loan_name,
+	
+	    b.debtor_loan_number,
+	
+	    b.debtor_loan_bank,
+	    
+		h.cre_loan_type,
+		
+		h.appro_limit
+
+		from
+		wms_cre_appro_borrow_protocol b, wms_cre_appro_service_protocol s,wms_cre_credit_head h
+		where
+		b.enable_flag=1 and s.enable_flag=1
+		and b.wms_cre_credit_head_id = h.wms_cre_credit_head_id
+		and b.wms_cre_credit_head_id = s.wms_cre_credit_head_id
+		and b.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+		and s.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</select>
+	<!--  /**
+     * Description :通过wms_cre_credit_head_id获取对应的合同信息
+     */ -->
+	<select id="getNumberByFK" parameterType="int"
+		resultType="int">
+		select
+			count( wms_cre_appro_id)
+		from
+			wms_cre_appro_borrow_protocol
+		where
+			wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</select>
+
+	<insert id="perfectContractSave"  parameterType="com.zx.emanage.loanappro.vo.WmsCreApproBorrowProtocolSearchBeanVO"
+		useGeneratedKeys="true" keyProperty="wms_cre_appro_id">
+		INSERT INTO wms_cre_appro_borrow_protocol
+		(
+		wms_cre_appro_id,
+
+		protocol_id_year,
+
+		protocol_id_num,
+
+		protocol_date,
+
+		creditor_name,
+
+		creditor_identity_id,
+
+		debtor_name,
+
+		debtor_identity_id,
+
+		creditor_address,
+
+		debtor_address,
+
+		creditor_tel,
+
+		debtor_tel,
+
+		principal_caps,
+
+		principal_lower,
+
+		borrow_deadline,
+
+		borrow_begin_date,
+
+		borrow_end_date,
+
+		borrow_purpose,
+
+		borrow_interest,
+
+		refund_bank,
+
+		refund_number,
+
+		refund_name,
+
+		refund_limit_month,
+
+		refund_day,
+
+		liquidated_damages,
+
+		wms_cre_credit_head_id,
+
+		create_user_id,
+
+		create_user_name,
+
+		create_timestamp,
+
+		enable_flag,
+
+		protocol_type,
+
+		com_debtor_name,
+
+		com_debtor_identity_id,
+
+		com_debtor_address,
+
+		com_debtor_tel,
+
+		refund_limit_month_caps,
+
+		yuqi_damages,
+
+		protocol_id_year_num,
+
+		plan_borrow_date,
+
+		loan_amount,
+
+		deduct_money,
+
+		sign_place,
+
+   		it_cost_fee,
+   		
+   		expedited_fee,
+   		
+   		regular_borrow_deadline,
+   		
+   		regular_borrow_end_date,
+   		
+   		payment_contract_type,
+   		
+   		appro_limit,
+   		
+   		first_refund_date,
+
+		second_refund_date,
+		
+		debtor_loan_name,
+		
+		debtor_loan_number,
+		
+		debtor_loan_bank,
+		
+		protocol_refund_interest_month,
+		
+		a_c_relation,
+		
+		second_house_address,
+		
+		c_house_address,
+		
+		principal,
+		
+		interest,
+		
+		org_repay_principal,
+		
+		org_repay_interest,
+		
+		creditor_loan_name,
+		
+		creditor_loan_number,
+		
+		creditor_loan_bank,
+		
+		weiyuejin,
+		
+		cre_loan_type,
+		
+		regular_appro_limit,
+		
+		regular_protocol_refund_interest_month,
+		
+		regular_borrow_interest,
+		
+		regular_appro_limit_caps,
+		
+		justice_type
+		)
+		VALUES
+		(
+		#{wms_cre_appro_id},
+		#{protocol_id_year},
+		#{protocol_id_num},
+		#{protocol_date},
+		#{creditor_name},
+		#{creditor_identity_id},
+		#{debtor_name},
+		#{debtor_identity_id},
+		#{creditor_address},
+		#{debtor_address},
+		#{creditor_tel},
+		#{debtor_tel},
+		#{principal_caps},
+		#{principal_lower},
+		#{borrow_deadline},
+		#{borrow_begin_date},
+		#{borrow_end_date},
+		#{borrow_purpose},
+		#{borrow_interest},
+		#{refund_bank},
+		#{refund_number},
+		#{refund_name},
+		#{refund_limit_month},
+		#{refund_day},
+		#{liquidated_damages},
+		#{wms_cre_credit_head_id},
+		#{create_user_id},
+		#{create_user_name},
+		#{create_timestamp},
+		#{enable_flag},
+		#{protocol_type},
+		#{com_debtor_name},
+		#{com_debtor_identity_id},
+		#{com_debtor_address},
+		#{com_debtor_tel},
+		#{refund_limit_month_caps},
+		#{yuqi_damages},
+		#{protocol_id_year_num},
+		#{plan_borrow_date},
+		#{loan_amount},
+		#{deduct_money},
+		#{sign_place},
+   		#{it_cost_fee},
+   		#{expedited_fee},
+   		#{regular_borrow_deadline},
+   		#{regular_borrow_end_date},
+   		#{payment_contract_type},
+   		#{appro_limit},
+   		#{first_refund_date},
+   		#{second_refund_date},
+   		#{debtor_loan_name},
+   		#{debtor_loan_number},
+   		#{debtor_loan_bank},
+   		#{protocol_refund_interest_month},
+   		#{a_c_relation},
+   		#{second_house_address},
+   		#{c_house_address},
+   		#{principal},
+   		#{interest},
+   		#{org_repay_principal},
+   		#{org_repay_interest},
+   		#{creditor_loan_name},
+   		#{creditor_loan_number},
+   		#{creditor_loan_bank},
+   		#{weiyuejin},
+   		#{cre_loan_type},
+   		#{appro_limit_fcj},
+   		#{protocol_refund_interest_month_fcj},
+   		#{borrow_interest_fcj},
+   		#{regular_appro_limit_caps},
+   		#{justice_type}
+		);
+	</insert>
+	<select id="getPerfectContractCount" parameterType="int" resultType="int">
+	    select 
+	    	count(wms_cre_credit_head_id)
+	    from 
+	    	wms_cre_appro_borrow_protocol
+	    where
+	    	wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	    and
+	    	enable_flag = '1'
+	</select>
+	<select id="getPerfectContract" parameterType="int" resultType="java.util.HashMap">
+	    select 
+	    	*
+	    from 
+	    	wms_cre_appro_borrow_protocol
+	    where
+	    	wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	    and
+	    	enable_flag = '1'
+	</select>
+	<select id="getPerfectContractInfo" parameterType="int" resultType="java.util.HashMap">
+	  SELECT
+	a.wms_cre_appro_id,
+	a.protocol_id_year,
+	a.protocol_id_num,
+	a.protocol_date,
+	a.creditor_name,
+	a.creditor_identity_id,
+	a.debtor_name,
+	a.debtor_identity_id,
+	a.creditor_address,
+	a.debtor_address,
+	a.creditor_tel,
+	a.debtor_tel,
+	a.principal_caps,
+	IFNULL(REPLACE(FORMAT(a.principal_lower, 0), ',', ''), '') AS principal_lower,
+	a.borrow_deadline,
+	a.borrow_begin_date,
+	a.borrow_end_date,
+	a.borrow_purpose,
+	a.borrow_interest,
+	a.refund_bank,
+	a.refund_number,
+	a.refund_name,
+	a.refund_limit_month,
+	a.refund_day,
+	a.liquidated_damages,
+	a.wms_cre_credit_head_id,
+	a.create_user_id,
+	a.create_user_name,
+	a.create_timestamp,
+	a.enable_flag,
+	a.protocol_type,
+	a.com_debtor_name,
+	a.com_debtor_identity_id,
+	a.com_debtor_address,
+	a.com_debtor_tel,
+	a.refund_limit_month_caps,
+	a.yuqi_damages,
+	a.protocol_id_year_num,
+	a.plan_borrow_date,
+	a.loan_amount,
+	a.deduct_money,
+	a.sign_place,
+	a.it_cost_fee,
+	a.expedited_fee,
+	a.regular_borrow_deadline,
+	a.regular_borrow_end_date,
+	a.payment_contract_type,
+	IFNULL(REPLACE(FORMAT(a.appro_limit, 0), ',', ''), '') AS appro_limit,
+	a.first_refund_date,
+	a.second_refund_date,
+	a.debtor_loan_name,
+	a.debtor_loan_number,
+	a.debtor_loan_bank,
+	IFNULL(REPLACE(FORMAT(a.protocol_refund_interest_month, 0), ',', ''), '') AS protocol_refund_interest_month,
+	a.a_c_relation,
+	a.second_house_address,
+	a.c_house_address,
+	a.cre_loan_type,
+	a.weiyuejin,
+	a.regular_appro_limit,
+	a.regular_protocol_refund_interest_month,
+	a.regular_borrow_interest,
+	a.justice_type,
+	function_format_number(b.house_area) as house_area,
+	b.house_roll_number,
+	b.explicit_address,
+	b.confirm_house_value,
+	b.house_certificate_number,
+	c.refund_deadline,
+	c.refund_day,
+	c.consult_service_cost,
+	c.jujian_service_cost,
+	c.service_cost_month,
+	c.protocol_date,
+	d.person_name,
+	d.person_identity_id,
+	c.service_refund_principal_month_lower,
+	e.platform_fee,
+	e.fees,
+	IFNULL(REPLACE(FORMAT(e.check_pay, 0), ',', ''), '0') AS check_pay,
+	IFNULL(REPLACE(FORMAT(f.payment_amount, 0), ',', ''), '0') AS payment_amount
+FROM
+	wms_cre_appro_borrow_protocol a
+INNER JOIN wms_cre_appro_protocol_attach b ON a.wms_cre_appro_id = b.wms_cre_appro_id
+INNER JOIN wms_cre_appro_service_protocol c ON c.wms_cre_credit_head_id = a.wms_cre_credit_head_id
+LEFT JOIN wms_cre_personnel_info d ON a.wms_cre_appro_id = d.wms_cre_appro_borrow_protocol and d.enable_flag="1"
+LEFT JOIN wms_fina_cre_loan_app e on a.wms_cre_credit_head_id = e.wms_cre_credit_head_id
+LEFT JOIN wms_cre_housing_payment f on a.wms_cre_credit_head_id = f.wms_cre_credit_head_id AND f.enable_flag='1'
+WHERE a.wms_cre_credit_head_id = #{wms_cre_credit_head_id} AND a.enable_flag="1" AND b.enable_flag="1" AND c.enable_flag="1" 
+	</select>
+	
+	<update id="updatePerfectContract"  parameterType="com.zx.emanage.loanappro.vo.WmsCreApproBorrowProtocolSearchBeanVO">
+	    update 
+	    	wms_cre_appro_borrow_protocol
+	    <set>
+	    	<if test="protocol_date != null">
+				protocol_date = #{protocol_date},
+			</if>
+	    	<if test="creditor_name != null">
+				creditor_name = #{creditor_name},
+			</if>
+	    	<if test="creditor_identity_id != null">
+				creditor_identity_id = #{creditor_identity_id},
+			</if>
+	    	<if test="debtor_name != null">
+				debtor_name = #{debtor_name},
+			</if>
+	    	<if test="debtor_identity_id != null">
+				debtor_identity_id = #{debtor_identity_id},
+			</if>
+	    	<if test="creditor_address != null">
+				creditor_address = #{creditor_address},
+			</if>
+	    	<if test="debtor_address != null">
+				debtor_address = #{debtor_address},
+			</if>
+	    	<if test="creditor_tel != null">
+				creditor_tel = #{creditor_tel},
+			</if>
+	    	<if test="debtor_tel != null">
+				debtor_tel = #{debtor_tel},
+			</if>
+			<if test="principal_caps != null">
+				principal_caps = #{principal_caps},
+			</if>
+			<if test="principal_lower != null">
+				principal_lower = #{principal_lower},
+			</if>
+			<if test="borrow_deadline != null">
+				borrow_deadline = #{borrow_deadline},
+			</if>
+			<if test="borrow_begin_date != null">
+				borrow_begin_date = #{borrow_begin_date},
+			</if>
+			<if test="borrow_end_date != null">
+				borrow_end_date = #{borrow_end_date},
+			</if>
+			<if test="borrow_purpose != null">
+				borrow_purpose = #{borrow_purpose},
+			</if>
+			<if test="borrow_interest != null">
+				borrow_interest = #{borrow_interest},
+			</if>
+			<if test="refund_bank != null">
+				refund_bank = #{refund_bank},
+			</if>
+			<if test="refund_number != null">
+				refund_number = #{refund_number},
+			</if>
+	    	<if test="refund_name != null">
+				refund_name = #{refund_name},
+			</if>
+			<if test="refund_limit_month != null">
+				refund_limit_month = #{refund_limit_month},
+			</if>
+			<if test="refund_day != null">
+				refund_day = #{refund_day},
+			</if>
+			<if test="liquidated_damages != null">
+				liquidated_damages = #{liquidated_damages},
+			</if>
+			<if test="protocol_type != null">
+				protocol_type = #{protocol_type},
+			</if>
+			<if test="com_debtor_name != null">
+				com_debtor_name = #{com_debtor_name},
+			</if>
+			<if test="com_debtor_identity_id != null">
+				com_debtor_identity_id = #{com_debtor_identity_id},
+			</if>
+			<if test="com_debtor_address != null">
+				com_debtor_address = #{com_debtor_address},
+			</if>
+			<if test="com_debtor_tel != null">
+				com_debtor_tel = #{com_debtor_tel},
+			</if>
+			<if test="refund_limit_month_caps != null">
+				refund_limit_month_caps = #{refund_limit_month_caps},
+			</if>
+			<if test="yuqi_damages != null">
+				yuqi_damages = #{yuqi_damages},
+			</if>
+	    	<if test="plan_borrow_date != null">
+				plan_borrow_date = #{plan_borrow_date},
+			</if>
+			<if test="loan_amount != null">
+				loan_amount = #{loan_amount},
+			</if>
+			<if test="deduct_money != null">
+				deduct_money = #{deduct_money},
+			</if>
+			<if test="sign_place != null">
+				sign_place = #{sign_place},
+			</if>
+			<if test="it_cost_fee != null">
+				it_cost_fee = #{it_cost_fee},
+			</if>
+			<if test="expedited_fee != null">
+				expedited_fee = #{expedited_fee},
+			</if>
+			<if test="regular_borrow_deadline != null">
+				regular_borrow_deadline = #{regular_borrow_deadline},
+			</if>
+			<if test="regular_borrow_end_date != null">
+				regular_borrow_end_date = #{regular_borrow_end_date},
+			</if>
+			<if test="payment_contract_type != null">
+				payment_contract_type = #{payment_contract_type},
+			</if>
+			<if test="appro_limit != null">
+				appro_limit = #{appro_limit},
+			</if>
+			<if test="first_refund_date != null">
+				first_refund_date = #{first_refund_date},
+			</if>
+			<if test="second_refund_date != null">
+				second_refund_date = #{second_refund_date},
+			</if>
+			<if test="debtor_loan_name != null">
+				debtor_loan_name = #{debtor_loan_name},
+			</if>
+	    	<if test="debtor_loan_number != null">
+				debtor_loan_number = #{debtor_loan_number},
+			</if>
+			<if test="debtor_loan_bank != null">
+				debtor_loan_bank = #{debtor_loan_bank},
+			</if>
+			<if test="protocol_refund_interest_month != null">
+				protocol_refund_interest_month = #{protocol_refund_interest_month},
+			</if>
+			<if test="a_c_relation != null">
+				a_c_relation = #{a_c_relation},
+			</if>
+			<if test="second_house_address != null">
+				second_house_address = #{second_house_address},
+			</if>
+			<if test="c_house_address != null">
+				c_house_address = #{c_house_address},
+			</if>
+			<if test="principal != null">
+				principal = #{principal},
+			</if>
+			<if test="interest != null">
+				interest = #{interest},
+			</if>
+			<if test="org_repay_principal != null">
+				org_repay_principal = #{org_repay_principal},
+			</if>
+			<if test="org_repay_interest != null">
+				org_repay_interest = #{org_repay_interest},
+			</if>
+			<if test="cre_loan_type != null">
+				cre_loan_type = #{cre_loan_type},
+			</if>
+			<if test="creditor_loan_name != null">
+				creditor_loan_name = #{creditor_loan_name},
+			</if>
+			<if test="creditor_loan_number != null">
+				creditor_loan_number = #{creditor_loan_number},
+			</if>
+			<if test="creditor_loan_bank != null">
+				creditor_loan_bank = #{creditor_loan_bank},
+			</if>
+			
+			<if test="protocol_id_year != null">
+				protocol_id_year = #{protocol_id_year},
+			</if>
+			<if test="protocol_id_num != null">
+				protocol_id_num  = #{protocol_id_num },
+			</if>
+			<if test="protocol_id_year_num != null">
+				protocol_id_year_num  = #{protocol_id_year_num },
+			</if>
+			<if test="weiyuejin != null">
+				weiyuejin = #{weiyuejin },
+			</if>
+			
+			<if test="appro_limit_fcj != null">
+				regular_appro_limit = #{appro_limit_fcj},
+			</if>
+			<if test="borrow_interest_fcj != null">
+				regular_borrow_interest = #{borrow_interest_fcj},
+			</if>
+			<if test="protocol_refund_interest_month_fcj != null">
+				regular_protocol_refund_interest_month = #{protocol_refund_interest_month_fcj},
+			</if>
+			
+			<if test="regular_appro_limit_caps != null">
+				regular_appro_limit_caps = #{regular_appro_limit_caps},
+			</if>
+			<if test="justice_type != null">
+				justice_type = #{justice_type},
+			</if>
+		</set>
+			where
+				wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+	</update>
+	
+	
+	<!-- 获取保存的数据 以供给ireport导出合同pdf -->
+	<select id="getInfoForHouseIReport" parameterType="int" resultType="java.util.HashMap">
+	select
+		b.wms_cre_appro_id,
+		b.protocol_id_year,
+		b.protocol_id_num,
+		b.protocol_date,
+		b.creditor_name,
+		b.creditor_identity_id,
+		b.debtor_name,
+		b.debtor_identity_id,
+		b.creditor_address,
+		b.debtor_address,
+		b.creditor_tel,
+		b.debtor_tel,
+		b.debtor_fixed_line,
+		b.principal_caps,
+		cast(b.principal_lower as decimal(9,2)) as principal_lower,
+		b.borrow_deadline,
+		b.borrow_begin_date,
+		b.borrow_end_date,
+		b.borrow_purpose,
+		function_format_number(b.borrow_interest) as borrow_interest,
+		b.refund_bank,
+		b.refund_number,
+		b.refund_name,
+		ifnull(cast(b.refund_limit_month as decimal(9,2)), '') as refund_limit_month,
+		b.refund_day,
+		b.liquidated_damages,
+		b.wms_cre_credit_head_id,
+		b.create_user_id,
+		b.create_user_name,
+		b.create_timestamp,
+		b.last_update_user_id,
+		b.last_update_timestamp,
+		b.enable_flag,
+		b.protocol_type,
+		b.payment_contract_type,
+		(case b.payment_contract_type when '1' then '等额本息' when '2' then '先息后本' end) as protocol_type_name,
+		ifnull(b.com_debtor_name, '') as com_debtor_name,
+		ifnull(b.com_debtor_identity_id, '') as com_debtor_identity_id,
+		ifnull(b.com_debtor_address, '') as com_debtor_address,
+		ifnull(b.com_debtor_tel, '') as com_debtor_tel,
+		b.com_debtor_fixed_line,
+		b.refund_principal_month_lower,
+		b.refund_principal_month_caps,
+		b.refund_interest_month_lower,
+		b.refund_interest_month_caps,
+		b.refund_limit_month_caps,
+		b.compensate,
+		cast(b.yuqi_damages as decimal(9,3)) as yuqi_damages,
+		b.compensate_caps,
+		b.yuqi_damages_caps,
+		b.protocol_id_year_num,
+		b.borrow_interest_caps,
+		cast(b.protocol_refund_interest_month as decimal(9,2)) as protocol_refund_interest_month,
+		s.wms_cre_appro_service_protocol_id,
+		s.protocol_id_year,
+		s.protocol_id_num,
+		s.protocol_date,
+		s.borrower_name,
+		s.borrower_identity_id,
+		s.second_borrower_name,
+		s.second_borrower_identity_id,
+		s.borrower_address,
+		s.addressee_name,
+		s.addressee_tel,
+		s.refund_deadline,
+		s.refund_day,
+		s.wms_cre_credit_head_id,
+		s.create_user_id,
+		s.create_user_name,
+		s.create_timestamp,
+		s.last_update_user_id,
+		s.last_update_timestamp,
+		s.enable_flag,
+		function_format_number(s.consult_service_cost) as consult_service_cost,
+		function_format_number(s.jujian_service_cost) as jujian_service_cost,
+		function_format_number(s.service_cost_month) as service_cost_month,
+		s.service_refund_interest_month_caps,
+        cast(s.service_refund_interest_month_lower as decimal(9,2)) as service_refund_interest_month_lower,
+        ifnull(cast(s.service_refund_principal_month_lower as decimal(9,2)), '') as service_refund_principal_month_lower,
+		s.service_cost_type,
+		cast(b.org_repay_interest as decimal(9,2)) as org_repay_interest,
+		cast(b.refund_limit_month_lower as decimal(9,2)) as refund_limit_month_lower,
+		ifnull(b.plan_borrow_date, '') as plan_borrow_date,
+		cast(b.loan_amount as decimal(9,2)) as loan_amount,
+		b.company,
+		b.cheque_number,
+		b.bill_number,
+		cast(b.deduct_money as decimal(9,2)) as deduct_money,
+		s.owner,
+		cast(b.org_repay_principal as decimal(9,2)) as org_repay_principal,
+		b.house_estimate,
+		b.sign_place,
+		b.house_sale,
+		b.dispute_solve,
+		b.court_name,
+		b.arbitrate_name,
+		b.second_house_address,
+		b.a_c_relation,
+		b.c_house_address,
+		b.replace_pay_money_caps,
+		b.replace_pay_money_lower,
+		b.cash_transfer_lower,		
+		b.weiyuejin,	
+		b.first_refund_date,	
+		b.second_refund_date,	
+		b.creditor_loan_name,	
+		b.creditor_loan_number,	
+		b.creditor_loan_bank,	
+		b.debtor_loan_name,	
+		b.debtor_loan_number,	
+		b.debtor_loan_bank,    
+		b.creditor_zip_code,  		
+		b.debtor_zip_code, 		  
+		b.embezzlement_damages,  		
+		b.loan_currency,      	   
+		b.debtor_residence_address,  		
+		b.protocol_d_num,
+		b.cre_loan_type,	
+		b.bill_status,	 
+		b.appro_limit,  
+		b.regular_borrow_deadline, 
+		b.regular_borrow_end_date,
+		b.regular_appro_limit_caps,
+		cast(b.regular_appro_limit as decimal(9,2)) as regular_appro_limit,
+		cast(b.regular_protocol_refund_interest_month as decimal(9,2)) as regular_protocol_refund_interest_month,
+		function_format_number(ifnull(b.regular_borrow_interest,0)) as regular_borrow_interest,
+		function_format_number(b.borrow_interest) as regular_borrow_interest,
+		(SELECT property_value from  wms_sys_property  where cre_loan_type=b.cre_loan_type and region_number=h.salesman_city_code and cre_type=h.cre_type and property_column ="jasper_name") as jasper_name,
+		(SELECT property_value from  wms_sys_property  where cre_loan_type=b.cre_loan_type and region_number=h.salesman_city_code and cre_type=h.cre_type  and property_column ="word_name") as word_name,
+		(SELECT property_value from  wms_sys_property  where cre_loan_type=b.cre_loan_type and region_number=h.salesman_city_code and cre_type=h.cre_type and property_column ="fcj_jasper_name") as fcj_jasper_name,
+		(SELECT property_value from  wms_sys_property  where cre_loan_type=b.cre_loan_type and region_number=h.salesman_city_code and cre_type=h.cre_type  and property_column ="fcj_word_name") as fcj_word_name
+		
+	from
+		wms_cre_appro_borrow_protocol b, wms_cre_appro_service_protocol s,wms_cre_credit_head h
+	where
+		b.enable_flag=1 and s.enable_flag=1
+		and b.wms_cre_credit_head_id = s.wms_cre_credit_head_id
+		and b.wms_cre_credit_head_id = h.wms_cre_credit_head_id
+		and b.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+		and s.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</select>
+	
+	<!-- 查询贷款额度 -->
+	<select id="searchApproLimit" parameterType="java.lang.Integer" resultType="java.math.BigDecimal">
+		select IFNULL(a.appro_limit, b.appro_limit) as appro_limit 
+		  from wms_cre_credit_head a, wms_cre_appro_borrow_protocol b 
+		 where a.wms_cre_credit_head_id = b.wms_cre_credit_head_id 
+		   and a.enable_flag = '1' 
+		   and b.enable_flag = '1'
+		   and a.wms_cre_credit_head_id = #{_wms_cre_credit_head_id}
+	</select>
+	
+	<!-- 	根据headIdList去合同表获取保存过合同的信息 -->
+	<select id="getGroupSaveInfo" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			a.wms_cre_appro_id,
+			a.protocol_id_year,
+			a.protocol_id_num,
+			a.protocol_date,
+			a.creditor_name,
+			a.creditor_identity_id,
+			a.debtor_name,
+			a.debtor_identity_id,
+			a.creditor_address,
+			a.debtor_address,
+			a.creditor_tel,
+			a.debtor_tel,
+			a.principal_caps,
+			IFNULL(REPLACE(FORMAT(a.principal_lower, 0), ',', ''), '') AS principal_lower,
+			a.borrow_deadline,
+			a.borrow_begin_date,
+			a.borrow_end_date,
+			a.borrow_purpose,
+			a.borrow_interest,
+			a.refund_bank,
+			a.refund_number,
+			a.refund_name,
+			a.refund_limit_month,
+			a.refund_day,
+			a.liquidated_damages,
+			a.wms_cre_credit_head_id,
+			a.create_user_id,
+			a.create_user_name,
+			a.create_timestamp,
+			a.enable_flag,
+			a.protocol_type,
+			a.com_debtor_name,
+			a.com_debtor_identity_id,
+			a.com_debtor_address,
+			a.com_debtor_tel,
+			a.refund_limit_month_caps,
+			a.yuqi_damages,
+			a.protocol_id_year_num,
+			a.plan_borrow_date,
+			a.loan_amount,
+			a.deduct_money,
+			a.sign_place,
+			a.it_cost_fee,
+			a.expedited_fee,
+			a.regular_borrow_deadline,
+			a.regular_borrow_end_date,
+			a.payment_contract_type,
+			IFNULL(REPLACE(FORMAT(a.appro_limit, 0), ',', ''), '') AS appro_limit,
+			a.first_refund_date,
+			a.second_refund_date,
+			a.debtor_loan_name,
+			a.debtor_loan_number,
+			a.debtor_loan_bank,
+			IFNULL(REPLACE(FORMAT(a.protocol_refund_interest_month, 0), ',', ''), '') AS protocol_refund_interest_month,
+			a.a_c_relation,
+			a.second_house_address,
+			a.c_house_address,
+			a.cre_loan_type,
+			a.weiyuejin,
+			a.justice_type,
+			function_format_number(b.house_area) as house_area,
+			b.house_roll_number,
+			b.explicit_address,
+			b.confirm_house_value,
+			b.house_certificate_number,
+			c.refund_deadline,
+			c.refund_day,
+			c.consult_service_cost,
+			c.jujian_service_cost,
+			c.service_cost_month,
+			c.protocol_date,
+			d.person_name,
+			d.person_identity_id,
+			c.service_refund_principal_month_lower
+		FROM
+			wms_cre_appro_borrow_protocol a
+			INNER JOIN wms_cre_appro_protocol_attach b ON a.wms_cre_appro_id = b.wms_cre_appro_id
+			INNER JOIN wms_cre_appro_service_protocol c ON c.wms_cre_credit_head_id = a.wms_cre_credit_head_id
+			LEFT JOIN wms_cre_personnel_info d ON a.wms_cre_appro_id = d.wms_cre_appro_borrow_protocol and d.enable_flag="1"
+		WHERE 
+			a.wms_cre_credit_head_id in
+			<foreach collection="headIdList" item="wms_cre_credit_head_id"
+				index="index" open="(" separator="," close=")">
+				#{wms_cre_credit_head_id}
+			</foreach>
+			 AND a.enable_flag="1" AND b.enable_flag="1" AND c.enable_flag="1" 
+			order by
+				create_timestamp
+			LIMIT 1
+	</select>
+	
+	
+	
+			<!-- 根据headidList查询所有的签合同信息 -->
+	<select id="getheadListByProtocolMap" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			*
+		FROM
+			wms_cre_appro_borrow_protocol
+		WHERE
+			wms_cre_credit_head_id in
+				<foreach collection="headIdList" item="wms_cre_credit_head_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_cre_credit_head_id}
+				</foreach>
+		and enable_flag=1	
+	</select>
+	
+	<select id="selectZSJE" parameterType="int" resultType="WmsCreApproBorrowProtocol">
+	    select
+	    	*
+	    from
+	    	wms_cre_appro_borrow_protocol t1
+	    left join
+	    	wms_fina_cre_repay t2
+	    on
+	    	t1.wms_cre_credit_head_id = t2.wms_cre_credit_head_id and t1.enable_flag=1 and t2.enable_flag=1	
+	    	and
+	    	t2.repay_status != 3
+	    where
+	    	t1.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</select>
+	
+	<!-- 查询合同列表 -->
+	<select id="getProtocolList" parameterType="Map" resultType="Map">
+			SELECT 
+				cre.wms_cre_credit_head_id,
+				cre.bill_code,
+				date_format(cre.create_timestamp,'%Y-%m-%d') AS create_timestamp,
+				pro.debtor_name,
+				pro.debtor_identity_id,
+				pro.debtor_tel,
+				pro.com_debtor_name,
+				pro.com_debtor_identity_id,
+				pro.com_debtor_tel,
+				pro.protocol_id_year_num,
+				date_format(pro.borrow_begin_date,'%Y-%m-%d') AS protocol_date,
+				dic.value_meaning,
+				pro.borrow_deadline,
+				CONCAT(cre.salesman_name,"/",cre.salesman_shortcode) as salesman_name_str,
+				(SELECT value_meaning FROM wms_sys_dict_data dic2 
+					WHERE dic2.value_code = cre.bill_type AND dic2.wms_sys_dict_id = 124 ) AS bill_type,
+				date_format(pro.create_timestamp,'%Y-%m-%d') AS protocol_supply_date,
+				(CASE WHEN cre.wms_cre_credit_group_id IS NOT NULL THEN creg.bill_code_group
+					ELSE '' END) AS bill_code_group,
+				cre.mort_flag,
+				(SELECT  value_meaning from wms_sys_dict_data  where wms_sys_dict_id=146 AND value_code=cre.mort_flag) as mort_flag_name
+			FROM wms_cre_credit_head cre 
+			INNER JOIN wms_cre_appro_borrow_protocol pro ON pro.wms_cre_credit_head_id = cre.wms_cre_credit_head_id
+			INNER JOIN wms_sys_dict_data dic ON dic.wms_sys_dict_data_id = pro.cre_loan_type
+			LEFT JOIN wms_cre_credit_group creg ON cre.wms_cre_credit_group_id = creg.wms_cre_credit_group_id
+			<include refid="protocolWhereStat" />
+			<if test="sortname != null and sortorder !=null">
+				ORDER BY ${sortname} ${sortorder}
+			</if>
+			<if test="offset != null and pagesize !=null">
+				LIMIT ${offset} , ${pagesize}
+			</if>
+			
+		</select>
+		<!-- 合同总数 -->
+		<select id="findProtocolCount" parameterType="Map" resultType="int">
+			SELECT COUNT(1) 
+			FROM wms_cre_credit_head cre 
+			INNER JOIN wms_cre_appro_borrow_protocol pro ON pro.wms_cre_credit_head_id = cre.wms_cre_credit_head_id
+			INNER JOIN wms_sys_dict_data dic ON dic.wms_sys_dict_data_id = pro.cre_loan_type
+			LEFT JOIN wms_cre_credit_group creg ON cre.wms_cre_credit_group_id = creg.wms_cre_credit_group_id
+			<include refid="protocolWhereStat" />
+		</select>
+		
+		<!-- 日流水sheet -->
+		<select id="findDailyFlowList" parameterType="Map" resultType="Map">
+			SELECT
+				pro.protocol_id_year_num,
+				date_format(cre.create_timestamp,'%Y-%m-%d') AS create_timestamp,
+				pro.debtor_name,
+				(CASE 
+					WHEN SUBSTR(pro.debtor_identity_id FROM -2 FOR 1) ='' THEN ''
+					WHEN SUBSTR(pro.debtor_identity_id FROM -2 FOR 1) IS NULL THEN ''
+					ELSE CASE 
+					WHEN MOD(SUBSTR(pro.debtor_identity_id FROM -2 FOR 1),2)=0  THEN '女'
+					WHEN MOD(SUBSTR(pro.debtor_identity_id FROM -2 FOR 1),2)=1  THEN '男'
+					END
+				END) as gender,
+				pro.debtor_identity_id,
+				pro.debtor_address,
+				pro.debtor_tel,
+				pro.debtor_fixed_line,
+				date_format(pro.borrow_begin_date,'%Y-%m-%d') AS protocol_date,
+				date_format(pro.borrow_end_date,'%Y-%m-%d') AS borrow_end_date,
+				dic.value_meaning,
+				(pro.borrow_interest / 100 + IFNULL(sp.service_cost_month,0) / 100) AS borrow_interest,
+				pro.borrow_deadline,
+				pro.appro_limit,
+				pro.loan_amount,
+				IFNULL(loan.fees,0) AS fees,
+				CONVERT(IFNULL(pro.it_cost_fee,0) + IFNULL(pro.expedited_fee,0),DECIMAL(10,2)) AS notarial_fee,
+				pro.principal_lower,
+				pro.refund_limit_month,
+				CONCAT(cre.salesman_name,"/",cre.salesman_shortcode) AS salesman_name_str,
+				(SELECT CONCAT(pm.personnel_name,"/",pm.personnel_shortCode)
+				FROM pm_personnel pm
+				WHERE personnel_id =(
+				SELECT per.personnel_id
+				FROM pm_personnel per 
+				INNER JOIN sys_post post ON per.personnel_postId = post.post_id AND post_number like 'PPH%TDJL%'
+				WHERE personnel_deptId = cre.salesman_dept_id 
+				limit 1)) as team_manager,
+				pro.creditor_name AS remark
+			FROM wms_cre_credit_head cre
+			INNER JOIN wms_cre_appro_borrow_protocol pro ON pro.wms_cre_credit_head_id = cre.wms_cre_credit_head_id
+			INNER JOIN wms_sys_dict_data dic ON dic.wms_sys_dict_data_id = pro.cre_loan_type
+			LEFT JOIN wms_cre_credit_group creg ON cre.wms_cre_credit_group_id = creg.wms_cre_credit_group_id
+			INNER JOIN wms_fina_cre_loan_app loan ON loan.wms_cre_credit_head_id = cre.wms_cre_credit_head_id
+			#终审管理_咨询管理居间服务协议 获取手续费率
+			INNER JOIN wms_cre_appro_service_protocol sp ON sp.wms_cre_credit_head_id = cre.wms_cre_credit_head_id AND sp.enable_flag = 1
+			<include refid="protocolWhereStat" />
+			ORDER BY pro.create_timestamp DESC
+		</select>
+		<!-- 日刷卡 -->
+		<select id="findDailyCardList" parameterType="Map" resultType="Map">
+			SELECT 
+				pro.protocol_id_year_num,
+				date_format(pro.borrow_begin_date,'%Y-%m-%d') AS borrow_begin_date,
+				date_format(pro.borrow_end_date,'%Y-%m-%d') AS borrow_end_date,
+				pro.debtor_name,
+				pro.debtor_identity_id,
+				pro.refund_bank,
+				pro.refund_number,
+				dic.value_meaning,
+				pro.borrow_deadline,
+				pro.principal_lower,
+				pro.refund_limit_month,
+				CONCAT(cre.salesman_name,"/",cre.salesman_shortcode) as salesman_name_str,
+				(SELECT CONCAT(pm.personnel_name,"/",pm.personnel_shortCode) 
+				FROM pm_personnel pm
+				WHERE personnel_id =(
+				SELECT per.personnel_id
+				FROM pm_personnel per 
+				INNER JOIN sys_post post ON per.personnel_postId = post.post_id AND post_number like 'PPH%TDJL%'
+				WHERE personnel_deptId = cre.salesman_dept_id 
+				limit 1)) as team_manager,
+				pro.creditor_name AS remark,
+				IFNULL((SELECT REPLACE(GROUP_CONCAT(value_meaning ),",",";") 
+					FROM wms_sys_dict_data 
+					WHERE FIND_IN_SET(value_code,REPLACE(pro.justice_type,";",","))
+						AND wms_sys_dict_id=(SELECT wms_sys_dict_id FROM wms_sys_dict WHERE dict_code='WMS_HOUSE_JUSTICE_TYPE')
+				),'') AS notarization_type
+			FROM wms_cre_credit_head cre 
+			INNER JOIN wms_cre_appro_borrow_protocol pro ON pro.wms_cre_credit_head_id = cre.wms_cre_credit_head_id
+			INNER JOIN wms_sys_dict_data dic ON dic.wms_sys_dict_data_id = pro.cre_loan_type
+			LEFT JOIN wms_cre_credit_group creg ON cre.wms_cre_credit_group_id = creg.wms_cre_credit_group_id
+			<include refid="protocolWhereStat" />
+			ORDER BY pro.create_timestamp DESC
+		</select>
+		
+		<!-- 还款提醒 -->
+		<select id="findRefundRemindList" parameterType="Map" resultType="Map">
+			SELECT 
+				date_format(pro.borrow_begin_date,'%Y-%m-%d') AS protocol_date,
+				pro.protocol_id_year_num,
+				pro.debtor_name,
+				pro.debtor_identity_id,
+				dic.value_meaning,
+				pro.refund_limit_month,
+				pro.refund_bank,
+				pro.refund_number,
+				pro.debtor_tel,
+				date_format(pro.borrow_begin_date,'%Y-%m-%d') AS borrow_begin_date,
+				date_format(pro.first_refund_date,'%Y-%m-%d') AS refund_day,
+				pro.borrow_deadline,
+				date_format(pro.borrow_end_date,'%Y-%m-%d') AS borrow_end_date,
+				pro.principal_lower,
+				'' AS custom_service,
+				CONCAT(cre.salesman_name,"/",cre.salesman_shortcode) AS salesman_name_str,
+				(SELECT d.dept_name FROM sys_dept d WHERE d.dept_id = cre.salesman_dept_id) AS dept,
+				(SELECT de.dept_name FROM sys_dept de
+					WHERE de.dept_id = (SELECT sd.dept_pid FROM sys_dept sd
+					WHERE sd.dept_id = cre.salesman_dept_id)) AS p_dept,
+				pro.creditor_name AS remark
+			FROM wms_cre_credit_head cre 
+			INNER JOIN wms_cre_appro_borrow_protocol pro ON pro.wms_cre_credit_head_id = cre.wms_cre_credit_head_id
+			INNER JOIN wms_sys_dict_data dic ON dic.wms_sys_dict_data_id = pro.cre_loan_type
+			LEFT JOIN wms_cre_credit_group creg ON cre.wms_cre_credit_group_id = creg.wms_cre_credit_group_id
+			<include refid="protocolWhereStat" />
+			ORDER BY pro.create_timestamp DESC
+		</select>
+		
+		<!-- 统一条件语句 -->
+		<sql id="protocolWhereStat">
+			<where>
+				cre.enable_flag=1 AND pro.enable_flag=1
+				AND cre.bill_status in('I','K','W','KZ','KT')
+				<if test="bill_code != null">
+					AND (cre.bill_code like #{bill_code} or creg.bill_code_group like #{bill_code})
+				</if>
+				<if test="salesman_name != null or salesman_shortcode != null">
+					AND (cre.salesman_name like #{salesman_name} or cre.salesman_shortcode
+					like #{salesman_shortcode})
+				</if>
+				AND (cre.create_timestamp BETWEEN #{create_timestamp_begin} AND
+				#{create_timestamp_end})
+				AND (pro.borrow_begin_date BETWEEN #{protocol_date_begin} AND
+				#{protocol_date_end})
+				AND (pro.create_timestamp BETWEEN #{protocol_supply_date_begin} AND
+				#{protocol_supply_date_end})
+				<if test="debtor_name != null">
+					AND (pro.debtor_name like #{debtor_name} or pro.com_debtor_name
+					like #{debtor_name})
+				</if>
+				<if test="debtor_tel != null">
+					AND  (pro.debtor_tel like #{debtor_tel} or pro.com_debtor_tel
+					like #{debtor_tel})
+				</if>
+				<if test="debtor_identity_id != null">
+					AND  (pro.debtor_identity_id like #{debtor_identity_id} or pro.com_debtor_identity_id
+					like #{debtor_identity_id})
+				</if>
+				<if test="protocol_id_year_num != null">
+					AND pro.protocol_id_year_num like #{protocol_id_year_num}
+				</if>
+				<if test="cre_type != null">
+					AND cre.cre_type = #{cre_type}
+				</if>
+				<if test="cre_loan_type != null">
+					AND pro.cre_loan_type = #{cre_loan_type}
+				</if>
+				<if test="bill_type != null">
+					AND cre.bill_type = #{bill_type}
+				</if>
+				<if test="mort_flag != null">
+					AND cre.mort_flag = #{mort_flag}
+				</if>
+				<!-- 权限控制 -->
+				<if test="childrendept != null">
+					AND (FIND_IN_SET(cre.salesman_dept_id, #{childrendept}) > 0)
+				</if>
+			</where>
+		</sql>
+		
+	<select id="getBorrowProtocolDetails" parameterType="int" resultType="map">
+		SELECT 
+			#单据
+			ch.wms_cre_credit_head_id,
+			ch.bill_code,
+			bp.protocol_id_year_num,
+			IFNULL(cg.bill_code_group,'') AS bill_code_group,
+			#债权人
+			bp.creditor_name,
+			#债务人
+			bp.debtor_name,
+			bp.debtor_identity_id,
+			bp.debtor_tel,
+			(CASE 
+					WHEN SUBSTR(bp.debtor_identity_id FROM -2 FOR 1) ='' THEN ''
+					WHEN SUBSTR(bp.debtor_identity_id FROM -2 FOR 1) IS NULL THEN ''
+					ELSE CASE 
+					WHEN MOD(SUBSTR(bp.debtor_identity_id FROM -2 FOR 1),2)=0  THEN '女'
+					WHEN MOD(SUBSTR(bp.debtor_identity_id FROM -2 FOR 1),2)=1  THEN '男'
+					END
+			END) as gender,
+			bp.debtor_address,
+			bp.com_debtor_name,
+			bp.com_debtor_identity_id,
+			bp.com_debtor_tel,
+			(CASE 
+					WHEN SUBSTR(bp.com_debtor_identity_id FROM -2 FOR 1) ='' THEN ''
+					WHEN SUBSTR(bp.com_debtor_identity_id FROM -2 FOR 1) IS NULL THEN ''
+					ELSE CASE 
+					WHEN MOD(SUBSTR(bp.com_debtor_identity_id FROM -2 FOR 1),2)=0  THEN '女'
+					WHEN MOD(SUBSTR(bp.com_debtor_identity_id FROM -2 FOR 1),2)=1  THEN '男'
+					END
+			END) as com_gender,
+			bp.com_debtor_address,
+			#台账
+			dic.value_meaning AS cre_loan_type,
+			bp.borrow_deadline,
+			bp.borrow_interest,
+			IFNULL(sp.service_cost_month,0) AS service_cost_month,#'平台费率'
+			IFNULL(sp.consult_service_cost,0) AS consult_service_cost,#'手续费率'
+			bp.weiyuejin,#'违约金费率'
+			bp.appro_limit,
+			bp.principal_lower,
+			bp.refund_limit_month,
+			IFNULL(loan.platform_fee,0) AS platform_fee,#平台费
+			IFNULL(loan.fees,0) AS fees, #'手续费',
+			(bp.appro_limit * bp.weiyuejin) AS liquidated_damages,#'违约金',
+			bp.it_cost_fee,
+			bp.expedited_fee,
+			IFNULL(loan.check_pay,0) AS check_pay,
+			bp.loan_amount,
+			bp.borrow_begin_date,
+			bp.borrow_end_date,
+			IFNULL(bp.first_refund_date,'') AS first_refund_date,
+			(CASE ch.bill_type 
+				WHEN '01' THEN '新增' 
+				WHEN '02' THEN '展期' 
+				WHEN '03' THEN '续期' 
+				ELSE '' 
+			END) AS bill_type,
+			IFNULL(st.the_number,0) AS the_number,
+			bp.debtor_loan_name,
+			bp.debtor_loan_number,
+			bp.debtor_loan_bank,
+			bp.refund_name,
+			bp.refund_number,
+			bp.refund_bank,
+			CONCAT(ch.salesman_name,'/',ch.salesman_shortcode) as salesman_name_str,
+			(CASE (SELECT dept_level FROM sys_dept WHERE dept_id = ch.salesman_dept_id)
+				WHEN 6 THEN (SELECT dept_person FROM sys_dept WHERE dept_id = ch.salesman_dept_id)
+				ELSE ''
+			END) AS team_manager,
+			(SELECT dept_name FROM sys_dept WHERE dept_id = ch.salesman_dept_id) AS dept_name,
+			(CASE (SELECT dept_level FROM sys_dept WHERE dept_id = (SELECT dept_pid FROM sys_dept WHERE dept_id = ch.salesman_dept_id))
+				WHEN 5 THEN (SELECT dept_name FROM sys_dept WHERE dept_id = (SELECT dept_pid FROM sys_dept WHERE dept_id = ch.salesman_dept_id))
+				ELSE ''
+			END) AS depart,
+			IFNULL(nw.end_time,'') AS justice_end_time,
+			IFNULL((SELECT REPLACE(GROUP_CONCAT(value_meaning ),",",";") 
+				FROM wms_sys_dict_data 
+				WHERE FIND_IN_SET(value_code,REPLACE(bp.justice_type,";",","))
+					AND wms_sys_dict_id=(SELECT wms_sys_dict_id FROM wms_sys_dict WHERE dict_code='WMS_HOUSE_JUSTICE_TYPE')
+			),'') AS justice_type,
+			#房产信息
+			pa.explicit_address,
+			bp.debtor_name AS house_owner,
+			function_format_number(pa.house_area) as house_area,
+			pa.house_certificate_number,
+			pa.house_roll_number
+		FROM wms_cre_appro_borrow_protocol bp
+		#单据主表
+		INNER JOIN wms_cre_credit_head ch ON ch.wms_cre_credit_head_id = bp.wms_cre_credit_head_id AND ch.enable_flag = 1
+		#字典表 
+		INNER JOIN wms_sys_dict_data dic ON dic.wms_sys_dict_data_id = bp.cre_loan_type
+		#放款申请
+		INNER JOIN wms_fina_cre_loan_app loan ON loan.wms_cre_credit_head_id = ch.wms_cre_credit_head_id AND loan.enable_flag = 1
+		#终审管理_咨询管理居间服务协议 获取手续费率
+		INNER JOIN wms_cre_appro_service_protocol sp ON sp.wms_cre_credit_head_id = ch.wms_cre_credit_head_id AND sp.enable_flag = 1
+		#房产信息
+		INNER JOIN wms_cre_appro_protocol_attach pa ON pa.wms_cre_appro_id = bp.wms_cre_appro_id AND pa.enable_flag = 1
+		#还款表 公正到期时间
+		LEFT JOIN wms_cre_credit_notary_warn nw ON nw.wms_cre_credit_head_id= ch.wms_cre_credit_head_id AND nw.enable_flag = 1
+		#组合贷 获取组合贷编号
+		LEFT JOIN wms_cre_credit_group cg ON ch.wms_cre_credit_group_id = cg.wms_cre_credit_group_id AND cg.enable_flag = 1
+		#业务类型表 获取展期或者续期次数
+		LEFT JOIN wms_cre_credit_service_type st ON st.wms_cre_credit_head_id = ch.wms_cre_credit_head_id AND st.enable_flag = 1
+		WHERE 
+			bp.enable_flag = 1
+			AND bp.wms_cre_credit_head_id =#{wms_cre_credit_head_id}
+			<!-- 权限控制 -->
+			<if test="childrendept != null">
+				AND (FIND_IN_SET(ch.salesman_dept_id, #{childrendept}) > 0)
+			</if>
+		LIMIT 1
+	</select>
+	<select id="findPreviousBorrowProtocol" parameterType="map" resultType="map">
+		SELECT 
+			refund_bank,
+			refund_number,
+			refund_name,
+			debtor_loan_name,
+			debtor_loan_number,
+			debtor_loan_bank
+		FROM wms_cre_appro_borrow_protocol
+		WHERE 
+			enable_flag = 1 
+			AND debtor_name = #{refund_name}
+			AND debtor_identity_id = #{debtor_identity_id}
+			<if test="wms_cre_credit_head_id != ''">
+				AND wms_cre_credit_head_id &lt;&gt;(#{wms_cre_credit_head_id})
+			</if>
+		ORDER BY create_timestamp DESC
+		limit 1
+	</select>
+	<select id="validateProtocolIdYearNum" parameterType="Object" resultType="int"> 
+		SELECT COUNT(1) 
+			FROM wms_cre_appro_borrow_protocol 
+			WHERE 
+				enable_flag = 1 
+				AND protocol_id_year_num != ''
+				AND protocol_id_year_num = #{protocol_id_year_num}
+				AND wms_cre_credit_head_id &lt;&gt; #{wms_cre_credit_head_id}
+	</select>
+	
+</mapper> 

@@ -1,0 +1,714 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>提前还款确认</title>
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script language="Javascript" src="../../js/zx-all.js"> </script>
+
+<style type="text/css">
+.textright {
+	text-align: right;
+}
+
+.textleft {
+	text-align: left;
+}
+/*input_tb css*/
+.input_tb_new {
+	/*border:1px solid #dfdfdf;*/
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.input_tb_new a {
+	color: #056aff;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.input_tb_new td {
+	height: 35px;
+	line-height: 25px;
+	/*border-bottom:1px dashed #d5d5d5;*/
+	padding-top: 3px;
+}
+
+.input_tb_new .tr_title td {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	/*border-bottom:1px solid #dfdfdf;*/
+}
+
+.input_tb_new .tr_last td {
+	border-bottom: 0;
+}
+
+.input_tb_new .title {
+	text-align: right;
+}
+
+.input_tb_new .subtitle {
+	text-align: left;
+	background-color: #d2e1fd;
+	border-top: 1px solid #fff;
+	/*border-left:1px solid #fff;*/
+}
+
+.input_tb_new .tr_btn_input td {
+	background-color: #fbfbfb;
+	/*border-top:1px solid #dbdbdb;*/
+	/*height:40px;*/
+}
+
+.title_tb {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	/*border:1px solid #dfdfdf;8/
+border-bottom:0;
+}
+.title_tb .title_txt{
+float:left;
+}
+.title_tb .title_btn{
+float:right;
+margin-top:2px;
+font-weight:normal;
+}
+.input_tb_new td {
+    /*border-bottom: 1px dashed #D5D5D5;*/
+	height: 35px;
+	line-height: 25px;
+	padding-top: 3px;
+}
+
+.data_tb td {
+	height: 30px;
+	line-height: 24px;
+	padding-left: 10px;
+	border-bottom: 1px dashed #e3e4e6;
+	text-align: left;
+}
+
+#huankuan {
+	text-align: left;
+}
+</style>
+
+
+</head>
+<body>
+
+	<div class="tab_titleT">
+		<!--查询条件  begin-->
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr valign="bottom" id='trtab1'>
+				<td class="tabbody1" id="tabbody1"
+					onclick="changeTab('arbdocument');" tabname='mytab'
+					style="width: 33%"><div align="center">提前还款结算清单</div></td>
+				<td class="tabbody2" id="tabbody2"
+					onclick="changeTab('repayhistory');" tabname='mytab'
+					style="width: 33%"><div align="center">还款历史</div></td>
+				<td class="tabbody3" id="tabbody3"
+					onclick="changeTab('flowhistory');" tabname='mytab'
+					style="width: 34%"><div align="center">流程历程</div></td>
+			</tr>
+		</table>
+	</div>
+	<div class="pop-center overflow-au" style="top: 30px;">
+		<!-- -----------------------------------------------------------------提前还款确认 begin------------------------------------------------------------------ -->
+		<div id="arbdocument" class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 5px;">
+			<div>
+				<div class="float-l">
+					<div class="pop-form-title">客户名称：</div>
+					<div class="pop-form-item">
+						<input type="text" id="debtor_name" style="width: 200px;"
+							readonly="readonly" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">合同编号：</div>
+					<div class="pop-form-item">
+						<input type="text" id="protocol_code" style="width: 200px;"
+							readonly="readonly" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">合同日期：</div>
+					<div class="pop-form-item">
+						<input type="text" id="protocol_creat_date" style="width: 200px;"
+							readonly="readonly" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">合同金额：</div>
+					<div class="pop-form-item">
+						<input type="text" id="protocol_amount" style="width: 188px;"
+							readonly="readonly" />元
+					</div>
+				</div>
+
+				<div class="float-l">
+					<div class="pop-form-title">月还款金额：</div>
+					<div class="pop-form-item">
+						<input type="text" id="refund_limit_month" style="width: 188px;"
+							readonly="readonly" />元
+					</div>
+				</div>
+
+				<div class="float-l">
+					<div class="pop-form-title">还款期数：</div>
+					<div class="pop-form-item">
+						<input type="text" id="repay_period" style="width: 200px;"
+							readonly="readonly" />
+					</div>
+				</div>
+
+				<div class="float-l">
+					<div class="pop-form-title">已还本金：</div>
+					<div class="pop-form-item">
+						<input type="text" id="repay_principal" style="width: 188px;"
+							readonly="readonly" />元
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">已还利息：</div>
+					<div class="pop-form-item">
+						<input type="text" id="repay_interest" style="width: 188px;"
+							readonly="readonly" />元
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">申请还款日期：</div>
+					<div class="pop-form-item">
+						<input type="text" id="app_date" style="width: 200px;"
+							readonly="readonly" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">未还期数：</div>
+					<div class="pop-form-item">
+						<input type="text" id="un_pay_period" style="width: 200px;"
+							readonly="readonly" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">剩余本金：</div>
+					<div class="pop-form-item">
+						<input type="text" id="un_pay_principal" style="width: 188px;"
+							readonly="readonly" />元
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">返利期数：</div>
+					<div class="pop-form-item">
+						<input type="text" id="back_interest_period" style="width: 200px;"
+							readonly="readonly" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">返利金额：</div>
+					<div class="pop-form-item">
+						<input type="text" id="back_ammont" style="width: 188px;"
+							readonly="readonly" />元
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">剩余利息：</div>
+					<div class="pop-form-item">
+						<input type="text" id="un_pay_interest" style="width: 188px;"
+							readonly="readonly" />元
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">逾期天数：</div>
+					<div class="pop-form-item">
+						<input type="text" id="cur_overdue_day" style="width: 188px;"
+							readonly="readonly" />天
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">滞纳金额：</div>
+					<div class="pop-form-item">
+						<input type="text" id="cur_late_fee" style="width: 188px;"
+							readonly="readonly" />元
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">减免额：</div>
+					<div class="pop-form-item">
+						<input type="text" id="derate" style="width: 188px;" />元
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">应还款总额：</div>
+					<div class="pop-form-item">
+						<input type="text" id="total_ammont" style="width: 188px;"
+							readonly="readonly" />元
+					</div>
+				</div>
+				<div class="float-l  clearboth">
+					<div class="pop-form-title">备注：</div>
+					<div class="pop-form-item">
+						<textarea name="remark" id="remark" class="h40"
+							style="resize: none; width: 850px;" maxlength="250"
+							onpropertychange="onmyinput(this)"
+							oninput="return onmyinput(this)" readonly="readonly"></textarea>
+					</div>
+				</div>
+				<div class="float-l  clearboth">
+					<div class="pop-form-title"></div>
+					<div class="pop-form-item"></div>
+				</div>
+				<div class="float-l  clearboth">
+					<div class="pop-form-title"></div>
+					<div class="pop-form-item"></div>
+				</div>
+			</div>
+			<!-- 添加的虚线 -->
+			<div class="line clearboth" id="info_l3"></div>
+			<div class="float-l  clearboth">
+				<div class="pop-form-title">返利账户名：</div>
+				<div class="pop-form-item">
+					<input type="text" id="refund_name" style="width: 200px;"
+						readonly="readonly" />
+				</div>
+			</div>
+
+			<div class="float-l">
+				<div class="pop-form-title">账号号码：</div>
+				<div class="pop-form-item">
+					<input type="text" id="refund_number" style="width: 525px;"
+						readonly="readonly" />
+				</div>
+			</div>
+			<!-- 添加的虚线 -->
+			<div class="line clearboth" id="info_l3"></div>
+		</div>
+		<!-- ------------------------------------------------------------------提前还款确认 end------------------------------------------------------------------ -->
+
+		<!-- ------------------------------------------------------------------还款历史 begin------------------------------------------------------------------ -->
+		<div id="repayhistory" class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 5px; display: none;">
+			<div class="float-l">
+				<div class="pop-form-title">贷款类型：</div>
+				<div class="pop-form-item">
+					<input type="text" id="cre_type_name" style="width: 200px;"
+						readonly="readonly" />
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">业务员：</div>
+				<div class="pop-form-item">
+					<input type="text" id="salesman_name" style="width: 200px;"
+						readonly="readonly" />
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">客户专员：</div>
+				<div class="pop-form-item">
+					<input type="text" id="dunning_name" style="width: 200px;"
+						readonly="readonly" />
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">合同签约日期：</div>
+				<div class="pop-form-item">
+					<input id="protocol_creat_date" class="Wdate" type="text"
+						onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+						style="vertical-align: top; width: 200px;" readonly="readonly" />
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">放款日：</div>
+				<div class="pop-form-item">
+					<input id="loan_date" class="Wdate" type="text"
+						style="width: 200px;" readonly="readonly" />
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">还款日：</div>
+				<div class="pop-form-item">
+					<input id="refund_day" type="text" style="width: 200px;"
+						readonly="readonly" />
+				</div>
+			</div>
+			<div class="float-l  clearboth">
+				<div class="pop-form-title">合同金额：</div>
+				<div class="pop-form-item">
+					<input type="text" id="protocol_amount" style="width: 188px;"
+						readonly="readonly" />元
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">贷款利率：</div>
+				<div class="pop-form-item">
+					<input type="text" id="borrow_interest" style="width: 188px;"
+						readonly="readonly" /> %
+				</div>
+			</div>
+			<!-- 合同表 -->
+			<div class="float-l">
+				<div class="pop-form-title">贷款期数：</div>
+				<div class="pop-form-item">
+					<input type="text" id="borrow_deadline" style="width: 200px;"
+						readonly="readonly" />
+				</div>
+			</div>
+			<!-- 合同表 -->
+			<div class="float-l">
+				<div class="pop-form-title">月还款金额：</div>
+				<div class="pop-form-item">
+					<input type="text" id="refund_limit_month" style="width: 188px;"
+						readonly="readonly" />元
+				</div>
+			</div>
+			<!-- 合同表 -->
+			<div class="float-l">
+				<div class="pop-form-title">已还期数：</div>
+				<div class="pop-form-item">
+					<input type="text" id="repay_period" style="width: 200px;"
+						readonly="readonly" />
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">剩余本金：</div>
+				<div class="pop-form-item">
+					<input type="text" id="un_pay_principal" style="width: 188px;"
+						readonly="readonly" />元
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">还款状态：</div>
+				<div class="pop-form-item">
+					<input type="text" id="repay_status_name" style="width: 200px;"
+						readonly="readonly" />
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title">逾期天数：</div>
+				<div class="pop-form-item">
+					<input type="text" id="cur_overdue_day" style="width: 188px;"
+						readonly="readonly" />天
+				</div>
+			</div>
+			<div class="float-l clearboth" style="height: 10px;"></div>
+			<div class="center-content clearboth" style="min-width: 500px;">
+				<div class="center-txt" style="margin-bottom: 10px;">
+					<div id="grid-top"></div>
+				</div>
+			</div>
+		</div>
+		<!-- ------------------------------------------------------------------还款历史 end------------------------------------------------------------------ -->
+
+		<!-- ------------------------------------------------------------------流程历程 begin------------------------------------------------------------------ -->
+		<div id="flowhistory" class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 5px; display: none;">
+
+			<div class="float-l clearboth" style="height: 10px;"></div>
+			<div class="center-content clearboth" style="min-width: 500px;">
+				<div class="center-title">流程历程</div>
+				<div class="center-txt" style="margin-bottom: 10px;">
+					<div id="grid"></div>
+				</div>
+			</div>
+		</div>
+		<!-- ------------------------------------------------------------------流程历程 end------------------------------------------------------------------ -->
+
+	</div>
+	<!-- 提交功能按钮区 -->
+	<div class="pop-footer5 clearboth" style="bottom: 1px;" id="tb_btn">
+		<input id="tjbtn" onclick="save();" class="btn-saveT"
+			onmouseover="this.className='btn-saveT-over'"
+			onmouseout="this.className='btn-saveT'"
+			onmousedown="this.className='btn-saveT-down'" type="button"
+			style="margin-right: 7px;" /> <input id="cancelBtnId"
+			class="btn-cancel" onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" type="button"
+			onclick="closeDialog();" />
+	</div>
+	<script type="text/javascript">
+	// wms_cre_credit_head_id = "101";//问题等待解决
+	var wms_cre_credit_head_id = $.query.get("wms_cre_credit_head_id");//wms_cre_credit_head_id 为选择审批的记录id
+	var credit_purpose = $.query.get("credit_purpose");//credit_purpose 信用贷款用途
+	var taskId = $.query.get("taskId");//credit_purpose 信用贷款用途
+	 var wms_fina_cre_pay_id = $.query.get('wms_fina_cre_pay_id');//贷款还款表
+	 var debtor_name = $.query.get('debtor_name');//贷款还款表客户名称
+
+	var grid_top;
+	var grid_top_data = {};
+	var grid_state_data = {};
+	$(function(){
+		initForm();//初始化表单中的数据
+		init_top_grid();//初始化还款历史表格		
+		initGrid();//初始化流程历程表格
+		search();
+		$('#repayhistory :input').attr("disabled","disabled");//使还款历史中的文本框只读
+	});
+	/**
+	*关闭窗口
+	*/
+    function closeDialog() {
+		window.parent.dialog.hide();
+    }
+	//初始化表单中的数据
+	function initForm(){
+		$.getJSON(globalUtil.getTimestampUrl('/loanpost/wmsfinacrerepayinfobypk.do'),
+				{
+					"wms_fina_cre_pay_id" : wms_fina_cre_pay_id
+				},
+				function(json) {
+					globalUtil.setFormVal("repayhistory", json);//初始化还款历史表单	
+					$.getJSON(globalUtil.getTimestampUrl('/loanpost/wmsfinacreprerepayinfobyentity.do'),
+							{
+								"wms_cre_credit_head_id" : wms_cre_credit_head_id
+							},
+							function(json2) {	
+								for(var item in json2){
+									json[item]=json2[item];
+								}
+								globalUtil.setFormVal("arbdocument", json);//初始化提前还款申请信息之提前还款申请信息表中的数据			
+					});	
+		});
+	}
+
+	
+	//还款历史
+	function init_top_grid(){
+		var columns = [{
+			display: '还款期数',
+	        name: 'repay_no',
+	        resizable: false,
+	        width: 21,
+	        minWidth: 120
+	    }, {
+	        display: '还款日期',
+	        name: 'repay_date',
+	        resizable: false,
+	        width: 21,
+	        minWidth: 120	
+	    }, {
+	        display: '还款总额（元）',
+	        name: 'repay_total',
+	        resizable: false,
+	        width: 21,
+	        minWidth: 120
+	    }, {
+	        display: '其中，本金（元）',
+	        name: 'repay_principal',
+	        resizable: false,
+	        width: 21,
+	        minWidth: 120
+	    },{
+	        display: '利息（元）',
+	        name: 'repay_interest',
+	        resizable: false,
+	        width: 21,
+	        minWidth: 120
+	    },{
+	        display: '滞纳金（元）',
+	        name: 'cur_late_fee',
+	        resizable: false,
+	        width: 21,
+	        minWidth: 120
+	    },{
+        	display: '减免额（元）',
+            name: 'derate',
+            width: 100,
+            minWidth: 120
+	        }];
+		
+	    grid_top = $("#grid-top").ligerGrid({
+	    	columns: columns,
+	    	url: global_param.context_name + '/loanpost/wmsfinacreperiodrepaywithoutpaginglist.do?wms_cre_credit_head_id='+wms_cre_credit_head_id,
+	    	sortName: 'create_timestamp', // 排序列名
+			sortOrder: 'asc', // 排序方式
+    		rownumbers: true,
+    		allowUnSelectRow: true,
+    		usePager: false,
+    		width: '100%',
+    		height: 160,
+    		heightDiff: -4
+	    });
+	}
+//****************************************/法院网案件执行状态******开始//******************************************************///
+		//初始化流程历程
+        function initGrid() {
+        	var columns_top = [{
+                display: '节点名称',
+                name: 'taskName',
+                width: 100,
+                minWidth: 100,
+            }, {
+                display: '审批人',
+                name: 'approvers',
+                width: 120,
+                minWidth: 120
+            },{
+                display: '审批人部门',
+                name: 'personnel_deptName',
+                width: 130,
+                minWidth: 130
+            },{
+                display: '职务',
+                name: 'personnel_postName',
+                width: 100,
+                minWidth: 100	
+            },{
+                display: '操作',
+                name: 'approveResult',
+                width: 100,
+                minWidth: 100
+            },{
+                display: '审批结果',
+                name: 'approveResult',
+                width: 100,
+                minWidth: 100
+            },{
+                display: '审批意见',
+                name: 'approveAdvice',
+                width: 135,
+                minWidth: 135
+            },{
+                display: '审批时间',
+                name: 'approveTime',
+                width: 130,
+                minWidth: 130
+            }];
+        	
+            gridTop = $("#grid").ligerGrid({
+        		columns: columns_top,
+        		url: global_param.context_name + '/loanpost/approvalProcessView.do?wms_cre_credit_head_id='+wms_cre_credit_head_id,
+        		rownumbers: true,
+        		allowUnSelectRow: true,
+        		usePager: false,
+        		width: '100%',
+        		height: '40%',
+        		heightDiff: -4,
+        		parms: {
+        			_filterParms: -1
+        		}
+            });
+            }
+         function search() {
+			global_ligerui_extend.search(gridTop);
+		}
+//****************************************/法院网案件执行状态******结束/******************************************************///
+//************************************保存数据函数开始******************************************/
+	//点击提交后跳转到 审批页面
+	function sp(){
+			var url = globalUtil.getHtml("../loanfina/FinaApprove.html.html?wms_cre_credit_head_id="+wms_cre_credit_head_id);
+			dialog=$.ligerDialog.open({
+				url:url,
+				title: '审批',
+		        width: 800,
+		        height: globalUtil.setDialogHeight(300),
+		        onHiddenOrClose: function(){
+		    	},
+		        isResize: false
+			});  
+		}
+  	//保存
+    function save(){
+    	var paramCtinfo = globalUtil.getFormParam("arbdocument");//获取客户信息
+    	paramCtinfo.taskId=taskId;
+		$.post(globalUtil.getTimestampUrl("/loanfina/wmsfinacrerepayupdateInfoforadv.do?wms_cre_credit_head_id="+wms_cre_credit_head_id), paramCtinfo,
+    
+				function(data) {
+        	if (data === 'success') {
+            	 globalUtil.successMsg(globalErrorMsg['100002'],
+            			 function(){            		 		
+                		refreshAndClosePage();
+            	 });//保存成功
+            	 
+            }else {
+                globalUtil.errorMsg(globalErrorMsg['100012']); //保存失败
+            }
+        });
+    }
+/************************************************保存数据函数结束****************************/
+ 	//关闭本页并刷新查询页面
+    function refreshAndClosePage(){   
+    	window.parent.location.reload();
+    	closePage();
+    }
+ 	//关闭页面
+    function closePage(){
+    	window.parent.dialog.hide();
+    }
+    
+  
+////****************************去掉空数据 并格式化日期****************************
+    /*
+    获取表格数据，去除全部为空的记录
+*/
+function getGrid(grid){
+	grid.endEdit();
+ var data_all = grid.getData();
+ var griddata = [];
+ for(var i=0;i<data_all.length;i++){
+ 	var data = data_all[i];
+ 	var isEmpty = true;
+ 	if(data){
+			for(var key in data){
+				if($.trim(key) == '' || $.trim(key) == '__status'){continue;}
+				if(!globalUtil.isEmpty(data[key])){
+					if(data[key] instanceof Date){
+						data[key]= data[key].format('yyyy-MM-dd');//格式化日期类型数据
+					}
+					isEmpty = false;
+				}
+			}
+		}
+		if(!isEmpty){
+			griddata.push(data);
+		}
+ }
+ return griddata;
+}
+
+ 
+/////////////////****************************时间函数********************************/
+			//页面切换
+	        function changeTab(id) {
+	    		var arbdocument = document.getElementById("arbdocument"); //提前还款结清单tab
+	    		var repayhistory = document.getElementById("repayhistory"); //还款历史tab
+	    		var flowhistory = document.getElementById("flowhistory"); //流程历程tab
+
+	    		if (id == 'arbdocument') {
+	    			document.getElementById("tabbody1").className = "tabbody1";
+	    			document.getElementById("tabbody2").className = "tabbody2";
+	    			document.getElementById("tabbody3").className = "tabbody2";
+	    			arbdocument.style.display = '';
+	    			repayhistory.style.display = 'none';
+	    			flowhistory.style.display = 'none';
+	    		} else if (id == 'repayhistory') {
+	    			document.getElementById("tabbody1").className = "tabbody2";
+	    			document.getElementById("tabbody2").className = "tabbody1";
+	    			document.getElementById("tabbody3").className = "tabbody2";
+	    			arbdocument.style.display = 'none';
+	    			repayhistory.style.display = '';
+	    			flowhistory.style.display = 'none';
+	    		} else if (id == 'flowhistory') {
+	    			document.getElementById("tabbody1").className = "tabbody2";
+	    			document.getElementById("tabbody2").className = "tabbody2";
+	    			document.getElementById("tabbody3").className = "tabbody1";
+	    			arbdocument.style.display = 'none';
+	    			repayhistory.style.display = 'none';
+	    			flowhistory.style.display = '';
+	    		}
+	    	}
+	    
+</script>
+</body>
+</html>

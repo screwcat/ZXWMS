@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.sysmanage.persist.SysOrganizationDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="SysOrganization">
+		select
+		organization_id,
+		organization_code,
+		organization_pid,
+		organization_name,
+		organization_level,
+		organization_legalperson,
+		organization_person,
+		organization_address,
+		organization_contactname,
+		organization_postalcode,
+		organization_fax,
+		organization_phone,
+		organization_companyprofile,
+		organization_remark,
+		create_id,
+		create_user,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		sys_organization
+		where
+		organization_id = #{organization_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(organization_id) as count
+		from sys_organization
+		<where>
+			1=1 and
+			enable_flag = "1"
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		organization_id,
+		organization_code,
+		organization_pid,
+		organization_name,
+		organization_level,
+		organization_legalperson,
+		organization_person,
+		organization_address,
+		organization_contactname,
+		organization_postalcode,
+		organization_fax,
+		organization_phone,
+		organization_companyprofile,
+		organization_remark,
+		create_id,
+		create_user,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		sys_organization
+		<where>
+
+			1=1 and
+			enable_flag = "1"
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="SysOrganization"
+		useGeneratedKeys="true" keyProperty="organization_id">
+		INSERT INTO sys_organization
+		(
+		organization_id,
+
+		organization_code,
+
+		organization_pid,
+
+		organization_name,
+
+		organization_level,
+
+		organization_legalperson,
+
+		organization_person,
+
+		organization_address,
+
+		organization_contactname,
+
+		organization_postalcode,
+
+		organization_fax,
+
+		organization_phone,
+
+		organization_companyprofile,
+
+		organization_remark,
+
+		create_id,
+
+		create_user,
+
+		create_timestamp,
+
+		last_update_user,
+
+		last_update_timestamp,
+
+		enable_flag
+		)
+		VALUES
+		(
+		#{organization_id},
+		#{organization_code},
+		#{organization_pid},
+		#{organization_name},
+		#{organization_level},
+		#{organization_legalperson},
+		#{organization_person},
+		#{organization_address},
+		#{organization_contactname},
+		#{organization_postalcode},
+		#{organization_fax},
+		#{organization_phone},
+		#{organization_companyprofile},
+		#{organization_remark},
+		#{create_id},
+		#{create_user},
+		#{create_timestamp},
+		#{last_update_user},
+		#{last_update_timestamp},
+		#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="SysOrganization">
+		update sys_organization
+		<set>
+			<if test="organization_id != null">
+				organization_id = #{organization_id},
+			</if>
+			<if test="organization_code != null">
+				organization_code = #{organization_code},
+			</if>
+			<if test="organization_pid != null">
+				organization_pid = #{organization_pid},
+			</if>
+			<if test="organization_name != null">
+				organization_name = #{organization_name},
+			</if>
+			<if test="organization_level != null">
+				organization_level = #{organization_level},
+			</if>
+			<if test="organization_legalperson != null">
+				organization_legalperson = #{organization_legalperson},
+			</if>
+			<if test="organization_person != null">
+				organization_person = #{organization_person},
+			</if>
+			<if test="organization_address != null">
+				organization_address = #{organization_address},
+			</if>
+			<if test="organization_contactname != null">
+				organization_contactname = #{organization_contactname},
+			</if>
+			<if test="organization_postalcode != null">
+				organization_postalcode = #{organization_postalcode},
+			</if>
+			<if test="organization_fax != null">
+				organization_fax = #{organization_fax},
+			</if>
+			<if test="organization_phone != null">
+				organization_phone = #{organization_phone},
+			</if>
+			<if test="organization_companyprofile != null">
+				organization_companyprofile = #{organization_companyprofile},
+			</if>
+			<if test="organization_remark != null">
+				organization_remark = #{organization_remark},
+			</if>
+			<if test="create_id != null">
+				create_id = #{create_id},
+			</if>
+			<if test="create_user != null">
+				create_user = #{create_user},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user != null">
+				last_update_user = #{last_update_user},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+		</set>
+		where
+		organization_id = #{organization_id}
+	</update>
+	<select id="getListByEntity" parameterType="SysOrganization"
+		resultType="SysOrganization">
+		select
+		organization_id,
+		organization_code,
+		organization_pid,
+		organization_name,
+		organization_level,
+		organization_legalperson,
+		organization_person,
+		organization_address,
+		organization_contactname,
+		organization_postalcode,
+		organization_fax,
+		organization_phone,
+		organization_companyprofile,
+		organization_remark,
+		create_id,
+		create_user,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		sys_organization
+		<where>
+			<if test="organization_id != null">
+				and organization_id = #{organization_id}
+			</if>
+			<if test="organization_code != null">
+				and organization_code = #{organization_code}
+			</if>
+			<if test="organization_pid != null">
+				and organization_pid = #{organization_pid}
+			</if>
+			<if test="organization_name != null">
+				and organization_name = #{organization_name}
+			</if>
+			<if test="organization_level != null">
+				and organization_level = #{organization_level}
+			</if>
+			<if test="organization_legalperson != null">
+				and organization_legalperson = #{organization_legalperson}
+			</if>
+			<if test="organization_person != null">
+				and organization_person = #{organization_person}
+			</if>
+			<if test="organization_address != null">
+				and organization_address = #{organization_address}
+			</if>
+			<if test="organization_contactname != null">
+				and organization_contactname = #{organization_contactname}
+			</if>
+			<if test="organization_postalcode != null">
+				and organization_postalcode = #{organization_postalcode}
+			</if>
+			<if test="organization_fax != null">
+				and organization_fax = #{organization_fax}
+			</if>
+			<if test="organization_phone != null">
+				and organization_phone = #{organization_phone}
+			</if>
+			<if test="organization_companyprofile != null">
+				and organization_companyprofile = #{organization_companyprofile}
+			</if>
+			<if test="organization_remark != null">
+				and organization_remark = #{organization_remark}
+			</if>
+			<if test="create_id != null">
+				and create_id = #{create_id}
+			</if>
+			<if test="create_user != null">
+				and create_user = #{create_user}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user != null">
+				and last_update_user = #{last_update_user}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+
+		</where>
+	</select>
+</mapper> 

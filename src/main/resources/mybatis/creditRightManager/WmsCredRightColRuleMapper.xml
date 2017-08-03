@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.creditRightManager.persist.WmsCredRightColRuleDao">
+	<select id="getWmsCredRightColRuleList" resultType="java.util.HashMap">
+		select 
+			a.group_name as groupName, 
+			group_concat(concat(a.personnel_name,p.post_name,'团队全员')) as groupMemNames,
+			group_concat(concat(a.personnel_id,'|',a.personnel_deptid)) as groupMemIds
+		from 
+			wms_inve_credit_splitconfig_body a,
+			sys_post p,
+			v_personnel_all b 
+		where a.enable_flag='1'
+		and a.personnel_id=b.personnel_id
+		and a.personnel_deptid=b.personnel_deptid
+		and b.personnel_postId = p.post_id
+		group by group_name
+	</select>
+	
+	<select id="getRuleCoeffMap" resultType="java.util.HashMap">
+		select 
+			DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i') as create_time,
+			(select concat(b.personnel_name,' ',b.personnel_shortcode) from pm_personnel b where b.personnel_id=a.personnel_id) as personnel_name_detail,
+			a.ela_coeff
+		from wms_inve_credit_splitconfig_head a
+		where a.enable_flag='1'
+	</select>
+	<select id="getPersonnelScopeVice"  resultType="java.util.HashMap">
+		(SELECT
+			t.personnel_name,
+			c.dept_name,
+			concat(t.personnel_name,p.post_name,'团队全员') as other_info,
+			t.personnel_id,
+			t.personnel_deptid
+		FROM
+			v_personnel_all t,
+			sys_post p,
+			sys_dept c
+		WHERE
+			t.personnel_postId = p.post_id
+			and t.personnel_deptId=c.dept_id
+		AND (
+			p.post_number LIKE 'PCFZXZJL%'
+			OR p.post_number LIKE 'PCFJXZXFZJL%'
+			OR p.post_number LIKE 'PCFZXFZJL%'
+			OR p.post_number LIKE 'PCFZXFGSZJL%'
+			OR p.post_number LIKE 'PCFJXZXFGSZ%'
+		)
+		<foreach collection="alSel" item="item" index="index" separator=" "  > 
+			and concat(t.personnel_id,'|',t.personnel_deptid) != CONCAT(#{item.personnel_id},'|',#{item.personnel_deptid})
+		</foreach>
+		and t.enable_flag='1'
+		ORDER BY t.personnel_name)
+		UNION ALL
+		(SELECT
+			t3.personnel_name,
+			c.dept_name,
+			concat(t3.personnel_name,p.post_name,'团队全员') as other_info,
+			t3.personnel_id,
+			t3.personnel_deptid
+		 FROM
+			wms_inve_transa_non_busi_leader t1, 
+			pm_personnel t3,
+			sys_post p,
+			sys_dept c
+		WHERE
+			t1.pm_personnel_id = t3.personnel_id
+			and t3.personnel_deptId=c.dept_id
+			and t3.personnel_postId=p.post_id
+			<foreach collection="alSel" item="item" index="index" separator=" "  > 
+			and concat(t3.personnel_id,'|',t3.personnel_deptid) != CONCAT(#{item.personnel_id},'|',#{item.personnel_deptid})
+			</foreach>
+		order by t3.personnel_name)
+	</select>
+	<update id="deleteOtherConfig">
+		update wms_inve_credit_splitconfig_head set enable_flag='0' where enable_flag='1'
+	</update>
+	<insert id="insertCurrConfig" parameterType="map">
+		insert into wms_inve_credit_splitconfig_head set create_time=now(),personnel_id=#{personnel_id},ela_coeff=#{ela_coeff},enable_flag='1'
+	</insert>
+	
+	<update id="deleteOtherConfigDetail">
+		update wms_inve_credit_splitconfig_body set enable_flag='0' where enable_flag='1'
+	</update>
+	<insert id="insertCurrConfigDetail" parameterType="map">
+		insert into wms_inve_credit_splitconfig_body
+		(
+			group_name,
+			group_id,
+			group_type,
+			personnel_id,
+			personnel_deptid,
+			enable_flag
+		)
+		values
+		<foreach collection="al" item="item" index="index" separator=","  > 
+				(
+				#{item.group_name},
+				#{item.group_id},
+				#{item.group_type},
+				#{item.personnel_id},
+				#{item.personnel_deptid},
+				'1'
+				)
+		</foreach>
+	</insert>
+	
+	<update id="updateCurrConfigDetailInfo">
+		update wms_inve_credit_splitconfig_body a 
+			inner join v_personnel_all c 
+		on a.personnel_id=c.personnel_id and a.personnel_deptid=c.personnel_deptid
+		set a.personnel_name = c.personnel_name,a.dept_spe_name=personnel_deptname
+	</update>
+	
+	<select id="getNextGroupId"  resultType="java.util.HashMap">
+		select seq('WMS_INVE_CREDIT_CONFIG_GROUP_CODE') as group_id
+	</select>	
+</mapper>

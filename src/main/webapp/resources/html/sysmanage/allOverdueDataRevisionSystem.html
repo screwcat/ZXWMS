@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>财富管理系统</title>
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+</head>
+<body>
+	<div id="dialog-add" style="margn-top: 10px">
+		<div class="pop-center overflow-au" style="top: 10px;">
+			<div class="float-l clearboth">
+				<div class="pop-form-item">
+					<!--  <input type="button" value="一键修正台账信息" onclick="recovery(1);" />
+					<input type="button" value="一键修正还款信息" onclick="recovery(2);" />
+					-->
+				</div>
+			</div>
+			<div class="float-l clearboth">
+				<div id="fileDiv"></div>
+				<div class="pop-form-title">导入逾期数据:</div>
+				<div class="pop-form-item">
+					<input type="file"
+						style="border: #a3a3a3 1px solid; width: 370px; float: right;"
+						size="50" id="uploadId" name="uploadId"/>
+				</div>
+				<div class="pop-form-item">
+					<input type="submit" value="导入数据" onclick="uploadBtn()" />
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		function uploadBtn(){
+	            if (!$("#uploadId").val()) {
+	            	globalUtil.errorMsg(globalErrorMsg['100022']);
+	            	return;
+	            }else{
+	            	uploadFile();
+	            }
+	        }
+	        function uploadFile(){
+	    		var myfile = document.getElementById("uploadId").value;
+	        	var filenamefix = myfile.substring(myfile.lastIndexOf('.')+1,myfile.length);
+		        filenamefix =filenamefix.toLowerCase();
+		        var imageJson = {bat:'1',exe:'1',cmd:'1',lnk:'1'};
+		        if (imageJson[filenamefix]) {
+		          	globalUtil.errorMsg(globalErrorMsg['100026']);
+		          	return;
+		        }
+	    		$.ajaxFileUpload({
+	    			url:globalUtil.getTimestampUrl('/sysmanage/fileforexcel.do'),
+	    			secureuri: false, //与页面处理代码中file相对应的ID值 
+	    			fileElementId: 'uploadId',
+	    			name: myfile,
+	    			dataType: 'text', //返回数据类型:text，xml，json，html,scritp,jsonp五种
+	    			autoSubmit: true,
+	    			success: function(json,status) {
+	    				if (json=='error'||typeof(json)==undefied) {
+	    	            	globalUtil.errorMsg(globalErrorMsg['100020']);
+	    	            	return;
+	    				} else if(json=='maxsizeerror'){
+	    					globalUtil.errorMsg(globalErrorMsg['100025']);
+	    				}else if(json=='filetypeerror'){
+	    					globalUtil.errorMsg(globalErrorMsg['100026']);
+	    				}
+	    				$("#uploadId").val('');
+	    				globalUtil.delMask();
+	    				globalUtil.closeLoading();
+	    			}
+	    		});
+		  
+	        }
+	</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+package com.zx.emanage.sysmanage.web;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.zx.platform.syscontext.vo.TreeBean;
+import com.zx.emanage.inve.service.IWmsInveJobService;
+import com.zx.emanage.inve.service.IWmsInvePruductCategoryService;
+import com.zx.emanage.sysmanage.service.IWmsCreContractLenderService;
+import com.zx.emanage.sysmanage.service.IWmsSysDictDataService;
+import com.zx.emanage.sysmanage.vo.WmsSysDictDataSearchBeanVO;
+import com.zx.emanage.util.gen.SysConstant;
+import com.zx.emanage.util.gen.domain.WmsSysDictData;
+import com.zx.emanage.util.gen.entity.SysDeptDataBean;
+import com.zx.emanage.util.gen.entity.WmsInveJob;
+import com.zx.emanage.util.gen.entity.WmsInvePruductCategory;
+import com.zx.emanage.util.gen.vo.WmsSysDictDataVO;
+import com.zx.sframe.util.GlobalVal;
+import com.zx.sframe.util.vo.UserBean;
+
+/*
+ * @version 2.0
+ * @author
+ */
+
+@Controller
+public class WmsCreContractLenderController
+{
+    private static Logger log = LoggerFactory.getLogger(WmsCreContractLenderController.class);
+
+    @Autowired
+    private IWmsCreContractLenderService iwmscrecontractlenderservice;
+
+    /**
+     * Description :通过传入字典ID获取字典数据值
+     * 
+     * @param 
+     * @return wmsCreContractLenderList
+     * @author jiaodelong
+     */
+    @RequestMapping(value = "/sysmanage/wmscrecontractlender.do", method = { RequestMethod.GET })
+    @ResponseBody
+    public List<com.zx.emanage.util.gen.entity.WmsCreContractLender> getWmsCreContractLender()
+    {
+        List<com.zx.emanage.util.gen.entity.WmsCreContractLender> wmsCreContractLenderList = iwmscrecontractlenderservice.getWmsCreContractLender();
+        return wmsCreContractLenderList;
+    }
+
+   
+}

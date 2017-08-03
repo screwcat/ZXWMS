@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveApprovalProcessDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveApprovalProcess">
+		select
+        				wms_inve_approval_process_id,
+        				data_type,
+        				data_id,
+        				taskname,
+        				approvers,
+        				personnel_deptname,
+        				personnel_postname,
+        				approveresult,
+        				approveadvice,
+						date_format(approvetime,'%Y-%m-%d %H:%i:%s') as approvetime_str,
+        				approvetime
+        	from
+        		wms_inve_approval_process
+        	where
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count() as count
+		from wms_inve_approval_process
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_inve_approval_process_id,
+				data_type,
+				data_id,
+				taskname,
+				approvers,
+				personnel_deptname,
+				personnel_postname,
+				approveresult,
+				approveadvice,
+				date_format(approvetime,'%Y-%m-%d %H:%i:%s') as approvetime_str,
+				approvetime
+		from wms_inve_approval_process
+		<where>
+			<if test="data_id != null">
+				 and data_id = #{data_id}
+			</if>
+			<if test="data_type != null">
+				 and data_type = #{data_type}
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveApprovalProcess" useGeneratedKeys="true" keyProperty="">
+		INSERT INTO wms_inve_approval_process
+		(
+				wms_inve_approval_process_id,
+
+				data_type,
+
+				data_id,
+
+				taskname,
+
+				approvers,
+
+				personnel_deptname,
+
+				personnel_postname,
+
+				approveresult,
+
+				approveadvice,
+
+				approvetime
+		)
+		VALUES
+		(
+				#{wms_inve_approval_process_id},
+				#{data_type},
+				#{data_id},
+				#{taskname},
+				#{approvers},
+				#{personnel_deptname},
+				#{personnel_postname},
+				#{approveresult},
+				#{approveadvice},
+				#{approvetime}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveApprovalProcess">
+		update wms_inve_approval_process
+		<set>
+					<if test="wms_inve_approval_process_id != null">
+						 wms_inve_approval_process_id = #{wms_inve_approval_process_id},
+					</if>
+					<if test="data_type != null">
+						 data_type = #{data_type},
+					</if>
+					<if test="data_id != null">
+						 data_id = #{data_id},
+					</if>
+					<if test="taskname != null">
+						 taskname = #{taskname},
+					</if>
+					<if test="approvers != null">
+						 approvers = #{approvers},
+					</if>
+					<if test="personnel_deptname != null">
+						 personnel_deptname = #{personnel_deptname},
+					</if>
+					<if test="personnel_postname != null">
+						 personnel_postname = #{personnel_postname},
+					</if>
+					<if test="approveresult != null">
+						 approveresult = #{approveresult},
+					</if>
+					<if test="approveadvice != null">
+						 approveadvice = #{approveadvice},
+					</if>
+					<if test="approvetime != null">
+						 approvetime = #{approvetime},
+					</if>
+	   </set>
+		 where 
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveApprovalProcess" resultType="WmsInveApprovalProcess">
+		select 
+				wms_inve_approval_process_id,
+				data_type,
+				data_id,
+				taskname,
+				approvers,
+				personnel_deptname,
+				personnel_postname,
+				approveresult,
+				approveadvice,
+				date_format(approvetime,'%Y-%m-%d %H:%i:%s') as approvetime_str,
+				approvetime
+		from
+		wms_inve_approval_process
+		<where>
+					<if test="wms_inve_approval_process_id != null">
+						and wms_inve_approval_process_id = #{wms_inve_approval_process_id}
+					</if>
+					<if test="data_type != null">
+						and data_type = #{data_type}
+					</if>
+					<if test="data_id != null">
+						and data_id = #{data_id}
+					</if>
+					<if test="taskname != null">
+						and taskname = #{taskname}
+					</if>
+					<if test="approvers != null">
+						and approvers = #{approvers}
+					</if>
+					<if test="personnel_deptname != null">
+						and personnel_deptname = #{personnel_deptname}
+					</if>
+					<if test="personnel_postname != null">
+						and personnel_postname = #{personnel_postname}
+					</if>
+					<if test="approveresult != null">
+						and approveresult = #{approveresult}
+					</if>
+					<if test="approveadvice != null">
+						and approveadvice = #{approveadvice}
+					</if>
+					<if test="approvetime != null">
+						and approvetime = #{approvetime}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+					</if>
+		</where>
+	</select>
+</mapper> 

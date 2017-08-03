@@ -1,0 +1,129 @@
+@import url("ligerui-all.css");
+
+.l-main-page-layout {
+	width:99.9%;
+	margin:0;
+	padding:0;
+}
+.l-page-top {
+	height:60px;
+	margin-bottom:3px;
+	text-align:center;
+}
+.l-page-bottom {
+	height:30px;
+	line-height:26px;
+	text-align:center;
+	background:url(../images/layout/page-bottom-back.gif) 0 0 repeat-x;
+	margin-top:4px;
+	color:#bbe0fa;
+}
+.tabbody1 {
+	FONT-SIZE: 12px;
+	CURSOR: pointer;
+	COLOR: #c92904;
+	LINE-HEIGHT: 25px;
+	font-weight:bold;
+	HEIGHT: 27px;
+	TEXT-DECORATION: none;
+	background:url(../images/win/tabbody_bg.gif) repeat-x;
+	border-top:none;
+	border-bottom:none;
+	border-right-width: 1px;
+	border-left-width: 1px;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-right-color: #FFFFFF;
+	border-left-color: #FFFFFF;
+}
+
+.tabbody2 {
+	FONT-SIZE: 12px;
+	CURSOR: pointer;
+	COLOR: #fff;
+	LINE-HEIGHT: 25px;
+	HEIGHT: 27px;
+	TEXT-DECORATION: none;
+	background-color: #aeaeae;
+	border-top:none;
+	border-bottom:none;
+	border-right-width: 1px;
+	border-left-width: 1px;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-right-color: #FFFFFF;
+	border-left-color: #FFFFFF;
+	vertical-align: bottom;
+}
+
+.tabbody3 {
+	FONT-SIZE: 12px;
+	CURSOR: pointer;
+	COLOR: #fff;
+	LINE-HEIGHT: 25px;
+	HEIGHT: 27px;
+	TEXT-DECORATION: none;
+	background-color: #aeaeae;
+	border-top:none;
+	border-bottom:none;
+	border-right-width: 1px;
+	border-left-width: 1px;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-right-color: #FFFFFF;	
+	border-left-color: #FFFFFF;
+	vertical-align: bottom;
+}
+
+.tab_step {background-image:url(../images/icon/tab_step.gif); background-repeat:no-repeat; background-color:transparent; height:27px;}
+.tab_step101 {background-position:0 0;}
+.tab_step102 {background-position:0 -27px;}
+.tab_step201 {background-position:0 -54px;}
+.tab_step202 {background-position:0 -81px;}
+.tab_step301 {background-position:0 -108px;}
+.tab_step302 {background-position:0 -135px;}
+.tab_step401 {background-position:0 -162px;}
+.tab_step402 {background-position:0 -189px;}
+.tab_step501 {background-position:0 -216px;}
+.tab_step502 {background-position:0 -243px;}
+.tab_step601 {background-position:0 -270px;}
+.tab_step602 {background-position:0 -297px;}
+.tab_step701 {background-position:0 -324px;}
+.tab_step702 {background-position:0 -351px;}
+.tab_step801 {background-position:0 -378px;}
+.tab_step802 {background-position:0 -405px;}
+.tab_step901 {background-position:0 -432px;}
+.tab_step902 {background-position:0 -459px;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

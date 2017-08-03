@@ -1,0 +1,446 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script type="text/javascript" charset="utf-8"
+	src="../../js/media/js/ZeroClipboard.js"></script>
+<title>贷前管理>信贷审核>征信组审批列表</title>
+</head>
+<body style="overflow-y: hidden;">
+	<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<!--查询条件-->
+			<div class="l-panel-search-cond clearfix">
+				<div class="float-l">
+					<div class="l-panel-search-title">单据编号：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="bill_code" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">客户姓名：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="customer_name" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">身份证号：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="id_card" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">手机号码：</div>
+					<div class="l-panel-search-item">
+						<input id="mobile_telephone" type="text" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="centertoolbar" class="minwidth400"></div>
+	<div id="grid"></div>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+        var grid;
+		var toolbar;
+		var params;
+		var dialog;
+		var columns;
+        $(function() {
+        	initGrid();
+        	var toolbarItemData = [];
+        	 toolbarItemData.push({
+                 text: '审批',
+                 click:approve,
+                 icon: 'approve'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             toolbarItemData.push({
+                 text: '退件',
+                 click:toBack,
+                 icon: 'return'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             toolbarItemData.push({
+                 text: '查询',
+                 click:search,
+                 icon: 'search'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+            
+             toolbarItemData.push({
+                 text: '清空',
+                 click:clear,
+                 icon: 'empty'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             toolbarItemData.push({
+                 text: '导出Excel',
+                 icon: 'export',
+                 id:'ToolTables_XLS_2'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             $("#centertoolbar").ligerToolBar({
+                  items: toolbarItemData
+        	 });
+             search();
+             registerCvs();
+        });
+        
+        function registerCvs(){
+        	var moviePath = "../../js/media/swf/copy_csv_xls_pdf.swf";
+        	var fileName = '征信审批信息.xls';
+        	var titleJson = '';
+        	var dataJson = '';
+        	var obj = $("div[toolbarid='ToolTables_XLS_2']")[0];//获取菜单对象
+        	var getDataFun = function(){
+        		var text = {};
+        		initParams();
+        		//实现导出的时候，规定导出的具体内容
+        		text.title={'bill_code':'单据编号','create_timestamp':'申请时间','customer_name':'客户姓名','mobile_telephone1':'手机号码1','mobile_telephone2':'手机号码2','id_card':'身份证号','salesman_name_str':'业务员/编号','create_user_name':'录入员','bill_status_name':'单据状态'};//定义需要导出的列名以及列名与数据的对应关系
+        		var json = globalUtil.syncGetJson("/loancheck/teamwithoutpaginglist.do?sortname=bill_code&flag_byk=4",params);//同步获取需要导出的数据内容
+        		text.data = json.Rows;
+        		return text;
+        	};
+        	registerXlsFlashBtn(moviePath,fileName,titleJson,dataJson,obj,getDataFun);
+        }
+        //清空所填写内容
+        function clear(){
+           document.getElementById('bill_code').value="";
+		   document.getElementById('customer_name').value="";
+		   document.getElementById('mobile_telephone').value="";
+		   document.getElementById('id_card').value="";
+        }
+        //表格初始化
+        function initGrid() {
+        	columns = [{
+                display: '单据编号',
+                name: 'bill_code',
+                width: 130,
+                minWidth: 130,
+                //添加超链接的东西
+                render: function (rowdata, rowindex, value) { 
+        			return '<a href="javascript:creditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+value+'</a>';
+        		},
+
+            },{
+                display: '申请时间',
+                name: 'create_timestamp',
+                width: 130,
+                minWidth: 130
+            },{
+            	display:'客户姓名',
+            	name:'customer_name',
+            	width:120,
+            	minWidth:120
+            },{
+            	display:'手机号码',
+            	width:180,
+            	minWidth:180,
+            	render: function (rowdata, rowindex, value) { 
+        			return rowdata.mobile_telephone1+(rowdata.mobile_telephone2=='无'||rowdata.mobile_telephone2=='没有'? '':' / '+rowdata.mobile_telephone2);
+        		}
+            },{
+            	display:'身份证号',
+            	name:'id_card',
+            	width:150,
+            	minWidth:150
+            },{
+                display: '业务员/编号',
+                name: 'salesman_name_str',
+                width: 100,
+                minWidth: 100	
+            },{
+                display: '录入员',
+                name: 'create_user_name',
+                width: 100,
+                minWidth:100
+            },{
+            	display:'流水审批',
+            	name:'water_appro_result_page',
+            	width:70,
+            	minWidth:70,
+            	render: function (rowdata, rowindex, value) { 
+            		if(value == '0'){
+            			return '<a href="javascript:lsspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+            		}else if(value == '1'){
+            			return '<a href="javascript:lsspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+            		}else{
+            			return '<a href="javascript:lsspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+            		}
+               }
+            },{
+            	display:'信息调查',
+            	name:'info_appro_result_page',
+            	width:70,
+            	minWidth:70,
+            	render: function (rowdata, rowindex, value) { 
+            		if(value == '0'){
+            			return '<a href="javascript:xxspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+            		}else if(value == '1'){
+            			return '<a href="javascript:xxspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+            		}else{
+            			return '<a href="javascript:xxspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+            		}
+               }
+            },{
+            	display:'电审审批',
+            	name:'phone_appro_result_page',
+            	width:70,
+            	minWidth:70,
+            	render: function (rowdata, rowindex, value) { 
+            		if(value == '0'){
+            			return '<a href="javascript:dsspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+            		}else if(value == '1'){
+            			return '<a href="javascript:dsspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+            		}else{
+            			return '<a href="javascript:dsspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+            		}
+               }
+            },{
+            	display:'征信审批',
+            	name:'certificate_appro_result_page',
+            	width:70,
+            	minWidth:70,
+            	render: function (rowdata, rowindex, value) { 
+            		if(value == '0'){
+            			return '<a href="javascript:zxspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+            		}else if(value == '1'){
+            			return '<a href="javascript:zxspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+            		}else{
+            			return '<a href="javascript:zxspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+            		}
+               }
+            },{
+            	display:'验点审批',
+            	name:'inspection_appro_result_page',
+            	width:70,
+            	minWidth:70,
+            	render: function (rowdata, rowindex, value) {
+            		if(rowdata.trial_interview_result==1){
+            			if(rowdata.cre_loan_type ==113){
+                			if(value == '0'){
+                    			return '<a href="javascript:ydspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+                    		}else if(value == '1'){
+                    			return '<a href="javascript:ydspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+                    		}else{
+                    			return '<a href="javascript:ydspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+                    		}
+                		}else if(rowdata.cre_loan_type ==283){
+                			if(value == '0'){
+                    			return '<a href="javascript:ydspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'未通过'+'</a>';
+                    		}else if(value == '1'){
+                    			return '<a href="javascript:ydspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+'通过'+'</a>';
+                    		}else{
+                    			return '<a href="javascript:ydspcreditInfo('+rowdata.wms_cre_credit_head_id+');" style="color:black;text-decoration: none;">'+'待审核'+'</a>';
+                    		}
+                		}else{
+                			return '<span style="color:black;">----</span>';
+                		}
+            		}else{
+            			return '<span style="color:black;">----</span>';
+            		}
+               }
+            },{
+                display: '单据状态',
+                name: 'bill_status_name',
+                width: 100,
+                minWidth: 100
+            },{
+        	   display: '流程历程',
+               width: 100,
+               minWidth: 100,
+               //添加超链接
+               render: function (rowdata, rowindex, value) { 
+       			return '<a href="javascript:approvalProcess('+rowdata.wms_cre_credit_head_id+');" style="color:#056AFF;text-decoration: none;">'+"查看"+'</a>';
+               }
+               }];
+        	
+            grid = $("#grid").ligerGrid({
+        		columns: columns,
+        		url: global_param.context_name + '/loancheck/certificatewithpaginglist.do?flag_certificate=4&flag_byk=4',
+        		sortName: 'bill_code', // 排序列名
+				sortOrder: 'asc', // 排序方式
+        		rownumbers: true,
+        		allowUnSelectRow: true,
+        		usePager: true,
+        		width: '100%',
+        		height: '95%',
+        		heightDiff: -4,
+        		rowAttrRender: function(rowdata, rowindex) {
+        			if(rowdata.is_review_back=='1' && rowdata.certificate_appro_user_id!=null){
+        				return "style='color:green'";
+        			}else if(rowdata.is_link_repeat=='1'){
+        				return "style='color:red'";
+        			}
+        		},
+        		parms: {
+        			_filterParms: -1
+        		}
+            });
+        }
+        function lsspcreditInfo(wms_cre_credit_head_id){
+        	var url = globalUtil.getHtml("loanreview/runTeamApproval.html?wms_cre_credit_head_id="+wms_cre_credit_head_id+"&cktype=ck");
+        	globalUtil.openTab(10005, "流水审批详细信息", url, false);
+        }
+		function zxspcreditInfo(wms_cre_credit_head_id){
+        	var url = globalUtil.getHtml("loanreview/certificateTeamApproval.html?wms_cre_credit_head_id="+wms_cre_credit_head_id+"&cktype=ck");
+        	globalUtil.openTab(10002, "征信审批详细信息", url, false);
+        }
+
+        function dsspcreditInfo(wms_cre_credit_head_id){
+        	var url = globalUtil.getHtml("loanreview/telTeamCheckApproval.html?wms_cre_credit_head_id="+wms_cre_credit_head_id+"&jobFlag=show");
+        	globalUtil.openTab(10003, "电审审批详细信息", url, false);
+        }
+        function xxspcreditInfo(wms_cre_credit_head_id){
+        	var url = globalUtil.getHtml("loanreview/infoTeamApprovel.html?wms_cre_credit_head_id="+wms_cre_credit_head_id+"&cktype=ck");
+        	globalUtil.openTab(10004, "信息调查详细信息", url, false);
+        }
+        function ydspcreditInfo(wms_cre_credit_head_id){
+      	   var url = globalUtil.getHtml("loanreview/creYdTeamApprovel.html?wms_cre_credit_head_id="+wms_cre_credit_head_id+"&cktype=ck");
+            	globalUtil.openTab(10006, "验点审批详细信息", url, false);
+         }
+        //-------------------------------------------------------------实现审批的方法----------------------------------------------------------
+         var rowsled;
+        function approve(){
+        	//判断如果没有选择任何审批人，不允许跳出审批页面。
+        	var row=grid.getSelectedRow();
+        	if(row==null){
+        		globalUtil.warnMsg(globalErrorMsg['300103']);//请选择一行记录进行审批
+                return;
+        	}else{        	    
+        		rowsled=row;
+        		var url = globalUtil.getHtml("checkBefApproval.html?wms_cre_credit_head_id="+row.wms_cre_credit_head_id+"&taskId="+row.taskId);
+           		dialog=$.ligerDialog.open({
+           			url:url,
+           			title: '各审核组审核情况',
+    		        width: 1110,
+    		        height: globalUtil.setDialogHeight(500),
+    		        onHiddenOrClose: function(){
+    		    	},
+    		        isResize: false
+           		}); 
+        	}
+        }
+        function toBack(){
+        	//判断如果没有选择任何审批人，不允许跳出审批页面。
+        	var row=grid.getSelectedRow();
+        	if(row==null ){
+        		globalUtil.warnMsg(globalErrorMsg['400105']);//请选择一行记录进行退件
+                return;
+        	}else{
+        		//流程发布实现作为校验 验证是否是老流程还是新流程
+       		    var value=row.create_timestamp;
+       		    var year = value.substring(0, 4);
+            	var month = value.substring(5, 7);
+            	var day = value.substring(8, 10);
+            	var temp_date = new Date(year, parseFloat(month) - 1, parseFloat(day));
+	        	var date2_str =global_param.judge_return;
+	        	var year2 = date2_str.substring(0, 4);
+            	var month2 = date2_str.substring(5, 7);
+            	var day2 = date2_str.substring(8, 10);
+            	var temp_date_2 = new Date(year2, parseFloat(month2) - 1, parseFloat(day2));
+       			if(temp_date<temp_date_2){
+       				globalUtil.warnMsg(globalErrorMsg['400108']);//该条单据为旧数据,无退件功能
+                  	 return;
+       			}else{
+        			rowsled=row;
+        			var url = globalUtil.getHtml("toBackPage.html?wms_cre_credit_head_id="+row.wms_cre_credit_head_id+"&taskId="+row.taskId);
+           			dialog=$.ligerDialog.open({
+           				url:url,
+           				title: '退件',
+    		       	 	width: 800,
+    		       		height: globalUtil.setDialogHeight(250),
+    		       	 	onHiddenOrClose: function(){
+    		    		},
+    		        	isResize: false
+           			});
+       			}
+           	}
+        }
+        //------------------------------------退件--------------------------------------------
+        function save(advice,taskId,wms_cre_credit_head_id){
+        	var paramJson = {};
+        	paramJson.advice = advice;
+        	paramJson.taskId = taskId;
+        	paramJson.wms_cre_credit_head_id = wms_cre_credit_head_id;
+        	$.post(globalUtil.getTimestampUrl("/loanreview/creditcertificatetoback.do"), paramJson,
+			        function(data) {
+			        	if (data === 'success') {
+			        			globalUtil.successMsg(globalErrorMsg['100037'],
+					            		function(){            		 		
+			        						dialog.hide();
+			                				search();
+					        });//退件成功		               	 		            	 
+			            }else {
+			                globalUtil.errorMsg(globalErrorMsg['100038']); //退件失败
+			            }
+			});	
+        }
+        function goOnAppr(){
+        	 var url = globalUtil.getHtml("certificateTeamApproval.html?wms_cre_credit_head_id="+rowsled.wms_cre_credit_head_id+"&taskId="+rowsled.taskId);
+        		dialog=$.ligerDialog.open({
+        			url:url,
+        			title: '审核',
+ 		        width:1000,
+ 		        height: globalUtil.setDialogHeight(630),
+ 		        onHiddenOrClose: function(){
+ 		    	},
+ 		        isResize: false
+        		});        
+        }
+        //------------------------------------贷款详细信息------------------------------
+          function approvalProcess(wms_cre_credit_head_id){
+        	var url = globalUtil.getHtml("../creditManage/approvalProcess.html?wms_cre_credit_head_id="+wms_cre_credit_head_id);
+       		dialog=$.ligerDialog.open({
+       			url:url,
+       			title: '查看',
+		        width: 1000,
+		        height: globalUtil.setDialogHeight(500),
+		        onHiddenOrClose: function(){
+		    	},
+		        isResize: false
+       		});
+        }
+        function creditInfo(wms_cre_credit_head_id){
+        	var url = globalUtil.getHtml("creditManage/addCredit.html?wms_cre_credit_head_id="+wms_cre_credit_head_id+"&cktype=ck");
+        	globalUtil.openTab(10001, "客户贷款详细信息", url, false);
+	        	/* dialog = $.ligerDialog.open({
+			        url: url,
+			        title: '客户贷款详细信息',
+			        width: 1020,
+			        height: globalUtil.setDialogHeight(700),
+			        onHiddenOrClose: function(){
+			    	},
+			        isResize: false
+		    	}); */
+        }
+        //------------------------------------贷款详细信息结束------------------------------
+
+        function initParams() {
+        	params = globalUtil.getFormParam("searchbar");
+        }
+        //查询
+        var search= function() {
+            initParams();
+            global_ligerui_extend.search(grid, params);
+        }
+        </script>
+</body>
+</html>

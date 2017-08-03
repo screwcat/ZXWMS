@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>还款确认</title>
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<style type="text/css">
+ .zhihui { 
+     background-color: rgb(235, 235, 228); 
+ } 
+ .data_tb td {
+    height: 30px;
+    line-height: 24px;
+    padding-left: 10px;
+    border-bottom: 1px dashed #e3e4e6;
+    text-align: center;
+}
+
+.data_tb .tr_title td {
+	height: 21px;
+	line-height: 21px;
+	text-align: center;
+	color: #fff;
+	background-color: #5e5e5e;
+	border-top: 1px solid #959697;
+	border-bottom: 1px solid #d1d1d1;
+	border-left: 1px solid #d1d1d1;
+	text-align: center;
+}
+
+</style>
+</head>
+<body>
+
+<!-- 	TAB页 -->
+	<div class="l-tab" style="margin: 5px; margin-top: 5px;">
+		<div class="l-tab-links-sub">
+			<ul>
+				<li class="l-selected-sub">
+					<a>还款确认</a>
+					<div class="l-tab-links-item-left-sub"></div>
+					<div class="l-tab-links-item-right-sub"></div>
+				</li>
+				<li class="l-unselected-sub">
+					<a>还款历史</a>
+					<div class="l-tab-links-item-left-sub"></div>
+					<div class="l-tab-links-item-right-sub"></div>
+				</li>
+			</ul>
+		</div>
+	
+<!-- ------------------------------------------------------------------还款确认TAB页------------------------------------------------------------------ -->
+		<div class="center-content clearboth" style="min-width: 500px; margin-top: 0px; height: 350px; ">
+			<div class="center-txt" style="border-top: #bfbfbf 1px solid;">
+				<div style="height: 345px; overflow: auto;">
+		  			<div class="float-l" style="margin-left: 38px;margin-top: 20px" >
+			            <div class="l-panel-search-title">应还款金额：</div>
+			            <div class="l-panel-search-item">
+			            	<input type="text" id="repay_principal" maxlength="50" disabled="disabled"/>
+			            </div>
+		          	</div>
+				    
+				    <div class="float-l" style="margin-left: 38px;margin-top: 20px">
+			            <div class="l-panel-search-title">本次还款金额：</div>
+			            <div class="l-panel-search-item">
+			            	<input type="text" id="actual_repay_principal" maxlength="50" />
+			            </div>
+		          	</div>
+		          	
+		          	<div class="float-l clearboth" style="margin-left: 38px;margin-top: 30px" >
+			            <div class="l-panel-search-title"> 单据状态</div>
+		          	</div>
+		<!-- 		   	分割线 -->
+				    <div class="line clearboth sqrqkdiv" id="info_l3"></div>
+				    
+				    <div class="float-l clearboth" style="margin-top: 20px;margin-bottom: 20px;">
+						<div class="pop-form-item" >
+							<input type="radio" name="repay_status" value="2" class="radio3" style="margin-left: 60px" onchange="changeRadio()"/>逾期
+						    <input type="radio" name="repay_status" value="6" class="radio3" style="margin-left: 50px" onchange="changeRadio()"/>移交公司
+						    <input type="radio" name="repay_status" value="3" class="radio3" style="margin-left: 50px" onchange="changeRadio()"/>结清
+						    <input type="radio" name="repay_status" value="7" class="radio3" style="margin-left: 50px" onchange="changeRadio()"/>超期
+						</div>
+					</div>
+				   
+				    
+				     <div class="float-l" id="useless" style="margin-left: 50px;margin-top: 20px;display:none">
+			            <div class="l-panel-search-title">还款日期：</div>
+			            <div class="l-panel-search-item">
+			            	<input id="current_repay_date" class="Wdate zhihui" type="text" 
+										onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+										style="width: 133px; vertical-align: top;" disabled="disabled"/>
+							<input id="current_repay_date_copy"type="hidden"/>
+			            </div>
+		          	</div>
+		          	
+		          	
+		          	 <div class="float-l"  id="useless" style="margin-left: 38px;margin-top: 20px;margin-bottom: 20px;display:none">
+			            <div class="l-panel-search-title">终止还款日期：</div>
+			            <div class="l-panel-search-item">
+			            	<input id="borrow_end_date" class="Wdate zhihui" type="text"
+										onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+										style="width: 133px; vertical-align: top;" disabled="disabled"/>
+							<input id="borrow_end_date_copy"type="hidden"/>
+			            </div>
+		          	</div>
+				    
+				    <!-- 		   	分割线 -->
+				    <div class="line clearboth sqrqkdiv" id="info_l3"></div>
+				    
+				    <div class="float-l" style="height: 73px;margin-top: 30px;margin-left: 20px">
+						<div class="pop-form-title">跟踪处理结果：</div>
+						<div class="pop-form-item">
+							<textarea id="track_handle_result" style="width:422px; height: 60px"  maxLength="200"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+<!-- ------------------------------------------------------------------还款历史TAB页------------------------------------------------------------------ -->
+		<div class="center-content clearboth" style="min-width: 500px; margin-top: 0px; height: 350px;display: none;">
+			<div class="center-txt" style="border-top: #bfbfbf 1px solid;">
+				<div style="height: 345px; overflow: auto;">
+					<table id="link_man_tb" cellspacing="0" cellpadding="0" class="data_tb" style="width: 100%; margin-left: 0px; margin-right: 15px;">
+						<tbody id="data1">
+							<tr class="tr_title">
+								<td width="5%"></td>
+								<td width="15%">还款序号</td>
+								<td width="15%">还款时间</td>
+								<td width="10%">还款期数</td>
+								<td width="15%">还款金额</td>
+								<td width="40%">跟踪处理结果</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	 <!-- 提交功能按钮区 -->
+    <div class="pop-footer6 clearboth" style="bottom: 1px; height: 35px">
+        <!-- 提交 -->
+       	<a  class="btnType1 btnSize1" onclick="save()">提交</a>   
+		<!-- 清空  -->
+        <a  class="btnType1 btnSize1" onclick="clearRadio()">清空</a>  
+        <!-- 取消-->  
+        <a id="cancel" class="btnType1 btnSize1" >取消</a>  
+    </div>
+	<script type="text/javascript">
+	var wms_cre_credit_notary_warn_id = $.query.get('wms_cre_credit_notary_warn_id');
+	 $(function() {
+		 
+		 //页面样式加载
+		 $(document).on('click', '.l-unselected-sub', function() {
+		    	$(this).removeClass('l-unselected-sub').addClass('l-selected-sub').
+		    	    siblings().removeClass('l-selected-sub').addClass('l-unselected-sub');
+		    	$("div[class='center-content clearboth']:eq(" + $(this).index() + ")").show();
+		    	$("div[class='center-content clearboth']:gt(" + $(this).index() + ")").hide();
+		    	$("div[class='center-content clearboth']:lt(" + $(this).index() + ")").hide();
+		    });
+		//初始化数据
+		init_data();		 
+		//取消
+		$('#cancel').click(function() {
+	        window.parent.dialog.hide();
+		});
+		
+	 }); 
+	 
+	 //初始化表格数据
+	 function init_data(){
+		 $.ajax({ 
+		        type: "POST", 
+		        url: global_param.context_name + "/remind/getwmscrecreditrepayhistoryinfo.do",
+		        async: false,
+		        dataType: "json",
+		        data: { 
+		        	wms_cre_credit_notary_warn_id : wms_cre_credit_notary_warn_id 
+		        }, 
+		        success: function(json) {
+		        	//还款确认tab页赋值
+// 		        	$("#repay_principal").val(globalUtil.changeDecimalRoundHalfEven(json.wmscrecreditnotarywarn.refund_limit_month, 2, true));
+// 		        	$("#actual_repay_principal").val(globalUtil.changeDecimalRoundHalfEven(json.wmscrecreditnotarywarn.refund_limit_month, 2, true));
+		        	
+		        	$("#repay_principal").val(json.wmscrecreditnotarywarn.refund_limit_month);
+		        	$("#actual_repay_principal").val(json.wmscrecreditnotarywarn.refund_limit_month);
+		        	$("#current_repay_date").val(json.wmscrecreditnotarywarn.current_repay_date);
+		        	$("#borrow_end_date").val(json.wmscrecreditnotarywarn.borrow_end_date);
+		        	$("#current_repay_date_copy").val(json.wmscrecreditnotarywarn.current_repay_date);
+		        	$("#borrow_end_date_copy").val(json.wmscrecreditnotarywarn.borrow_end_date);
+		        	//还款历史tab页赋值
+		        	for(var i = 0; i < json.historyList.length; i++) {
+		        		if(json.historyList[i].track_handle_result == null){
+		        			json.historyList[i].track_handle_result = "";
+		        		}
+		        		$("#data1").append(
+		        				'<tr>'
+		        				 	+'<td>' + (i + 1) + '</td>'
+		        					+'<td>'+json.historyList[i].repay_history_code+'</td>'
+		        					+'<td>'+json.historyList[i].create_timestamp+'</td>'
+					        		+'<td>'+json.historyList[i].repay_no+'</td>'
+					        		+'<td>'+json.historyList[i].actual_repay_principal+'</td>'
+					        		+'<td>'+json.historyList[i].track_handle_result+'</td>'
+		        				+'</tr>');
+		        	}
+		        }
+		    });
+		 
+	 }
+		//清空按钮事件
+		function clearRadio(){
+			$("input[name='repay_status']").each(function() {
+				$(this).attr('checked', false);
+			});
+			$('#current_repay_date').attr('disabled','disabled').addClass("zhihui");
+			$('#borrow_end_date').attr('disabled','disabled').addClass("zhihui");
+			//重置日期
+			$('#current_repay_date').val($('#current_repay_date_copy').val());
+			$('#borrow_end_date').val($('#borrow_end_date_copy').val());
+		}
+		
+		function save(){
+			var resMap = {};
+			resMap.wms_cre_credit_notary_warn_id = wms_cre_credit_notary_warn_id;
+			resMap.repay_principal = $("#repay_principal").val();
+			resMap.actual_repay_principal = $("#actual_repay_principal").val();
+			resMap.current_repay_date = $("#current_repay_date").val();
+			resMap.borrow_end_date = $("#borrow_end_date").val();
+			resMap.track_handle_result = $("#track_handle_result").val();
+			
+			$("input[name='repay_status']").each(function() {
+				if ($(this).is(':checked')) {
+					resMap.repay_status = $(this).val();
+					return false;//退出each循环
+				}
+			});	
+			if(resMap.repay_status == null){
+				if((resMap.repay_principal - resMap.actual_repay_principal) < 100){
+					//正常
+					resMap.repay_status=1;
+				}else{
+					//逾期
+					resMap.repay_status=2;
+				}
+			}
+			
+			 $.ajax({ 
+			        type: "POST", 
+			        url: global_param.context_name + "/remind/wmscrecreditrepayhistoryInfoSave.do",
+			        async: false,
+			        dataType: "json",
+			        data : resMap,
+			        success: function(json) {
+			        	if (json === 'success') {
+			        		globalUtil.successMsg(globalErrorMsg['100002'],
+			        			function(){
+			        			refreshAndClosePage();
+			        		});//保存成功 
+			        	}else{
+			        		globalUtil.errorMsg(globalErrorMsg['100012']);
+			        	}
+			        }
+			    });
+		}
+		function closePage() {
+		    try {
+		        window.parent.dialog.hide();
+		    } catch(e) {
+		        globalUtil.closeCurrentTab();
+		    }
+		 }
+
+		//关闭本页并刷新查询页面
+		function refreshAndClosePage() {     
+		    window.parent.research();
+		    closePage();    
+		}
+		
+		function changeRadio(){
+			var repay_status="";
+			$("input[name='repay_status']").each(function() {
+				if ($(this).is(':checked')) {
+					repay_status = $(this).val();
+					return false;//退出each循环
+				}
+			});	
+			//如果为未结清续贷，把时间变为可以编写
+			if(repay_status == 4){
+				$('#current_repay_date').removeAttr("disabled").removeClass("zhihui");
+				$('#borrow_end_date').removeAttr("disabled").removeClass("zhihui");
+			}else{
+				$('#current_repay_date').attr('disabled','disabled').addClass("zhihui");
+				$('#borrow_end_date').attr('disabled','disabled').addClass("zhihui");
+				//重置日期
+				$('#current_repay_date').val($('#current_repay_date_copy').val());
+				$('#borrow_end_date').val($('#borrow_end_date_copy').val());
+			}
+		}
+	</script>
+</body>
+</html>

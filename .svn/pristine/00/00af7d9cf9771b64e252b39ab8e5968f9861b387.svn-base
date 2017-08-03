@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveChangManagementDao">
+	<!-- 生成变更单单据号 -->
+	<select id="getBillNumber" parameterType="map" resultType="java.lang.String">
+		SELECT
+		CONCAT(
+		'BG',
+		DATE_FORMAT(now(), '%Y%m%d'),
+		LPAD(
+		seqrepeat
+		('WMS_INVE_BG_CODE', 0),
+		6,
+		0
+		)
+		) AS col_code
+	</select>
+	<!-- 查询理财单据信息 -->
+	<select id="selectBillInfo" parameterType="com.zx.emanage.inve.vo.WmsInveChangManagementBeanVO"
+		resultType="map">
+
+		SELECT
+		wt.wms_inve_transa_id,
+		wt.bill_code,
+		wt.financial_bill_code,
+		wt.cus_name,
+		wt.id_card,
+		wt.date_of_payment,
+		wt.salesman_id,
+		wt.salesman_name,
+		wp.wms_inve_transa_prod_id,
+		wp.category_name,
+		wp.product_account,
+		wp.product_account/10000 as product_account1,
+		p.personnel_shortCode,
+		CONCAT(wc.bank_of_deposit,'(尾号',right(wc.card_no, 4),')') as bank_name
+		FROM
+		wms_inve_transa wt
+		LEFT JOIN
+		wms_inve_transa_prod wp
+		on
+		wp.wms_inve_transa_id = wt.wms_inve_transa_id
+		LEFT JOIN
+		wms_inve_customer_card wc on wp.wms_inve_customer_card_id
+		=wc.wms_inve_customer_card_id
+		left JOIN pm_personnel p
+		on
+		p.personnel_id=wt.bel_salesman_id_id
+		WHERE
+		wt.enable_flag = 1
+		and
+		wp.enable_flag =1
+		and wt.data_status = 4
+		and p.personnel_regionNumber =
+		(
+		SELECT
+		personnel_regionNumber
+		FROM
+		pm_personnel
+		WHERE
+		personnel_id =
+		#{personnel_id}
+		)
+		<if test="cus_name != null ">
+			and wt.cus_name = #{cus_name}
+		</if>
+		<if test="id != null and id!=''">
+			and wt.id_card = (SELECT id_card from wms_inve_transa where wms_inve_transa_id = #{id})
+		</if>
+		
+		<if test="id_card != null and id_card!=''">
+			and wt.id_card = #{id_card}
+		</if>
+		
+		<if test="ids !=null">
+			and wt.wms_inve_transa_id not in (
+			<foreach collection="ids" item="id" index="index" separator=",">
+
+				#{id}
+
+			</foreach>
+			)
+		</if>
+
+	</select>
+	<!-- 保存收益卡信息 -->
+	<insert id="saveCustomerCardInfo" parameterType="com.zx.emanage.inve.vo.WmsInveChangManagementBeanVO"
+		useGeneratedKeys="true" keyProperty="wms_inve_customer_card_id">
+		insert into
+		wms_inve_customer_card
+		(
+		card_owner_name,
+		id_card,
+		bank_of_deposit,
+		card_no,
+		bank_of_deposit_pro,
+
+		bank_of_deposit_city,
+		bank_branch,
+		enable_flag,
+		create_user_id,
+		create_timestamp,
+
+		last_update_user_id,
+		last_update_timestamp
+		)
+		values(
+		#{card_owner_name},
+		#{id_card},
+		#{bank_of_deposit},
+		#{card_no},
+		#{bank_of_deposit_pro},
+
+		#{bank_of_deposit_city},
+		#{bank_branch},
+		1,
+		#{create_user_id},
+		#{create_timestamp},
+
+		#{last_update_user_id},
+		#{last_update_timestamp}
+		)
+
+	</insert>
+	<!-- 变更申请单 -->
+	<insert id="saveChangeAppInfo" parameterType="com.zx.emanage.inve.vo.WmsInveChangManagementBeanVO"
+		useGeneratedKeys="true" keyProperty="wms_inve_change_app_id">
+		insert
+		into
+		wms_inve_change_app
+
+		(
+		change_type,
+		wms_inve_customer_card_id,
+		data_status,
+		cus_name,
+		bill_code,
+
+		id_card,
+		mobile_phone,
+		remark,
+
+		enable_flag,
+		create_user_id,
+		create_timestamp,
+
+		last_update_user_id,
+		last_update_timestamp
+		)
+		values(
+		#{change_type},
+		#{wms_inve_customer_card_id},
+		#{data_status},
+		#{cus_name},
+		#{bill_code},
+
+		#{id_card},
+		#{mobile_phone},
+		#{remark},
+
+		1,
+		#{create_user_id},
+		#{create_timestamp},
+
+		#{last_update_user_id},
+		#{last_update_timestamp}
+		)
+	</insert>
+
+	<!-- 变更申请单附件 -->
+	<insert id="saveChangeAppAttInfo" parameterType="com.zx.emanage.inve.vo.WmsInveChangManagementBeanVO">
+		insert into wms_inve_change_app_att
+
+		(
+		wms_inve_change_app_id,
+		attachment_old_name,
+		attachment_new_name,
+		attachment_address,
+		attachment_type
+
+		)
+		values
+		<foreach collection="attrinfo" item="item" index="index"
+			separator=",">
+			(
+			#{wms_inve_change_app_id},
+			#{item.attachment_old_name},
+			#{item.attachment_new_name},
+			#{item.attachment_address},
+			#{item.attachment_type}
+			)
+		</foreach>
+
+
+	</insert>
+
+	<!-- 保存变更申请单单据 -->
+	<insert id="saveChangeAppTransaInfo" parameterType="com.zx.emanage.inve.vo.WmsInveChangManagementBeanVO">
+		insert into
+		wms_inve_change_app_transa
+		(
+		wms_inve_change_app_id,
+		wms_inve_transa_id,
+		wms_inve_customer_card_id,
+		bill_code,
+
+		enable_flag,
+		create_user_id,
+		create_timestamp,
+
+		last_update_user_id,
+		last_update_timestamp
+		)
+		values
+		<foreach collection="datagrid" item="item" index="index"
+			separator=",">
+			(
+			#{wms_inve_change_app_id},
+			#{item.wms_inve_transa_id},
+			#{wms_inve_customer_card_id},
+			#{item.bill_code},
+			1,
+			#{create_user_id},
+			#{create_timestamp},
+
+			#{last_update_user_id},
+			#{last_update_timestamp}
+			)
+		</foreach>
+
+	</insert>
+	<!-- 更新上单产品表的收益卡id -->
+	<update id="updateTransaProdInfo" parameterType="com.zx.emanage.inve.vo.WmsInveChangManagementBeanVO">
+
+
+		update wms_inve_transa_prod t
+		set
+		t.bank_branch=#{bank_branch},
+		t.bank_of_deposit=#{bank_of_deposit},
+		t.bank_of_deposit_city=#{bank_of_deposit_city},
+		t.bank_of_deposit_pro=#{bank_of_deposit_pro},
+		t.card_no=#{card_no},
+		t.card_owner_name=#{card_owner_name},
+		t.wms_inve_customer_card_id=#{wms_inve_customer_card_id},
+		t.last_update_user_id=#{last_update_user_id},
+		t.last_update_timestamp=#{last_update_timestamp}
+
+		where
+		wms_inve_transa_id in
+		(
+		<foreach collection="datagrid" item="item" index="index"
+			separator=",">
+
+			#{item.wms_inve_transa_id}
+
+		</foreach>
+		)
+	</update>
+	<!-- 更新客户收益表的收益卡id -->
+	<update id="updateTransaIncomeInfo" parameterType="com.zx.emanage.inve.vo.WmsInveChangManagementBeanVO">
+		update wms_inve_transa_income
+		set
+		wms_inve_customer_card_id
+		=#{wms_inve_customer_card_id},
+		last_update_user_id=#{last_update_user_id},
+		last_update_timestamp=#{last_update_timestamp}
+		where
+		pay_status != '1'
+		and
+		wms_inve_transa_id in(
+		<foreach collection="datagrid" item="item" index="index"
+			separator=",">
+
+			#{item.wms_inve_transa_id}
+
+		</foreach>
+		)
+	</update>
+
+
+	<select id="selectDictInfo" parameterType="java.lang.String"
+		resultType="map">
+
+		SELECT
+		*
+		FROM wms_sys_dict_data WHERE wms_sys_dict_id =72
+
+	</select>
+
+	<select id="selectDictInfoByCity" parameterType="java.lang.String"
+		resultType="map">
+
+		SELECT
+		*
+		FROM wms_sys_dict_data
+		WHERE
+		wms_sys_dict_id =73
+		and
+		p_wms_sys_dict_data_id = #{dict_id}
+
+	</select>
+	<!-- 变更申请查询列表 -->
+	<select id="selectChangeAppList" resultType="map"
+		parameterType="com.zx.emanage.inve.vo.WmsInveChangManagementBeanVO">
+		select * from (
+		SELECT
+		w.wms_inve_change_app_id,
+		w.wms_inve_transa_id,
+		w.wms_inve_change_app_transa_id,
+		w.wms_inve_customer_card_id,
+		ica.bill_code,
+		ica.change_type,
+		DATE_FORMAT(ica.create_timestamp,"%Y-%m-%d ") as create_timestamp,
+		ica.create_user_id,
+		ica.cus_name,
+		ica.data_status,
+		ica.id_card,
+		ica.mobile_phone,
+		pm.personnel_shortCode,
+		pm.personnel_name,
+		GROUP_CONCAT(w.bill_code) AS transa_bill_code
+		FROM
+		wms_inve_change_app_transa w
+		LEFT JOIN wms_inve_change_app AS ica ON
+		ica.wms_inve_change_app_id =w.wms_inve_change_app_id
+		LEFT JOIN
+		pm_personnel pm ON pm.personnel_id =ica.create_user_id
+		WHERE
+		w.enable_flag = 1
+		AND pm.personnel_regionNumber = (
+		SELECT
+		personnel_regionNumber
+		FROM
+		pm_personnel
+		WHERE
+		pm_personnel.personnel_id
+		=#{personnel_id}
+		)
+
+		<if test="create_user_name != null and create_user_name != ''">
+			and (pm.personnel_name like "%"#{create_user_name}"%" or
+			pm.personnel_shortCode = #{create_user_name})
+		</if>
+
+		<if test="change_type != null and change_type!=-1 and change_type !=''">
+			and change_type = #{change_type}
+		</if>
+		<if test="data_status != null and data_status !=-1 and data_status != ''">
+			and data_status = #{data_status}
+		</if>
+		<if test="cus_name != null and cus_name != ''">
+			and cus_name like "%"#{cus_name}"%"
+		</if>
+		<if test="create_timestamp_begin != null and create_timestamp_begin != ''">
+			and date_format(ica.create_timestamp, '%Y-%m-%d')
+			&gt;=#{create_timestamp_begin}
+		</if>
+		<if test="create_timestamp_end != null and create_timestamp_end != ''">
+			and date_format(ica.create_timestamp, '%Y-%m-%d')
+			&lt;=#{create_timestamp_end}
+		</if>
+		<if test="id_card != null and id_card != ''">
+			and id_card = #{id_card}
+		</if>
+		
+		GROUP BY
+		w.wms_inve_change_app_id
+		ORDER BY
+		ica.bill_code DESC
+		)as a
+		where 
+		1=1
+		<if test="bill_code != null and bill_code != ''">
+			and concat(",",a.transa_bill_code,",") like "%"#{bill_code}"%"
+		</if>
+		<if test="page != null and pagesize != null">
+			limit ${page}, ${pagesize}
+		</if>
+	</select>
+	<!-- 变更申请查询列表 -->
+	<select id="countChangeAppList" resultType="int"
+		parameterType="com.zx.emanage.inve.vo.WmsInveChangManagementBeanVO">
+		SELECT
+		count(a.wms_inve_change_app_transa_id)
+		from
+		(
+		select
+		wms_inve_change_app_transa_id,
+		GROUP_CONCAT(w.bill_code) AS transa_bill_code
+		FROM
+		wms_inve_change_app_transa w
+		LEFT JOIN
+		wms_inve_change_app AS ica
+		ON ica.wms_inve_change_app_id
+		=w.wms_inve_change_app_id
+		LEFT JOIN
+		pm_personnel pm ON pm.personnel_id
+		=ica.create_user_id
+		WHERE
+		w.enable_flag = 1
+		AND pm.personnel_regionNumber
+		= (
+		SELECT
+		personnel_regionNumber
+		FROM
+		pm_personnel
+		WHERE
+		pm_personnel.personnel_id
+		=#{personnel_id}
+		)
+
+		<if test="create_user_name != null and create_user_name != ''">
+			and (pm.personnel_name like "%"#{create_user_name}"%" or
+			pm.personnel_shortCode = #{create_user_name})
+		</if>
+
+		<if test="change_type != null and change_type!=-1 and change_type !=''">
+			and change_type = #{change_type}
+		</if>
+		<if test="data_status != null and data_status !=-1 and data_status != ''">
+			and data_status = #{data_status}
+		</if>
+		<if test="cus_name != null and cus_name != ''">
+			and cus_name like "%"#{cus_name}"%"
+		</if>
+		<if test="create_timestamp_begin != null and create_timestamp_begin != ''">
+			and date_format(ica.create_timestamp, '%Y-%m-%d')
+			&gt;=#{create_timestamp_begin}
+		</if>
+		<if test="create_timestamp_end != null and create_timestamp_end != ''">
+			and date_format(ica.create_timestamp, '%Y-%m-%d')
+			&lt;=#{create_timestamp_end}
+		</if>
+		<if test="id_card != null and id_card != ''">
+			and id_card = #{id_card}
+		</if>
+		
+
+		GROUP BY
+		w.wms_inve_change_app_id
+		ORDER BY
+		ica.bill_code DESC
+		) as a
+		where 
+		1=1
+		<if test="bill_code != null and bill_code != ''">
+			and a.transa_bill_code like "%"#{bill_code}"%"
+		</if>
+	</select>
+
+	<select id="selectCustomerInfoBybillID" parameterType="java.lang.String"
+		resultType="com.zx.emanage.inve.vo.WmsInveChangManagementBeanVO">
+
+		SELECT t.id_card,mobile_phone from wms_inve_transa t where
+		t.wms_inve_transa_id = #{id}
+
+	</select>
+
+	<select id="selectCarNoInfo" parameterType="com.zx.emanage.inve.vo.WmsInveChangManagementBeanVO"
+		resultType="com.zx.emanage.inve.vo.WmsInveChangManagementBeanVO">
+		SELECT c.card_no,c.wms_inve_customer_card_id from
+		wms_inve_customer_card c
+		where c.card_owner_name =#{cus_name} and
+		c.id_card=#{id_card} and
+		enable_flag =1;
+
+	</select>
+
+	<select id="selectChangeAppInfoById" parameterType="com.zx.emanage.inve.vo.WmsInveChangManagementBeanVO"
+		resultType="map">
+		SELECT
+		
+		w.wms_inve_change_app_id,
+		w.wms_inve_transa_id,
+		w.wms_inve_change_app_transa_id,
+		w.wms_inve_customer_card_id,
+		ica.bill_code,
+		ica.change_type,
+		DATE_FORMAT(ica.create_timestamp,"%Y-%m-%d ") as create_timestamp,
+		ica.create_user_id,
+		ica.cus_name,
+		ica.remark,
+		ica.id_card,
+		card.card_no,
+		pm.personnel_shortCode,
+		pm.personnel_name,
+		card.bank_branch,
+		card.bank_of_deposit_pro,
+		card.bank_of_deposit_city,
+		card.bank_of_deposit,
+		(
+		SELECT
+		value_meaning
+		FROM
+		wms_sys_dict_data d
+		WHERE
+		d.wms_sys_dict_data_id = card.bank_of_deposit_pro
+		) AS pro,
+		(
+		SELECT
+		value_meaning
+		FROM
+		wms_sys_dict_data d
+		WHERE
+		d.wms_sys_dict_data_id = card.bank_of_deposit_city
+		) AS city,
+		GROUP_CONCAT(w.wms_inve_transa_id) AS wms_inve_transa_ids
+		FROM
+		wms_inve_change_app_transa w
+		LEFT JOIN wms_inve_change_app AS ica
+		ON
+		ica.wms_inve_change_app_id =w.wms_inve_change_app_id
+		LEFT JOIN
+		pm_personnel pm ON pm.personnel_id =ica.create_user_id
+		left JOIN wms_inve_customer_card card
+		on card.wms_inve_customer_card_id =w.wms_inve_customer_card_id
+		WHERE
+		w.enable_flag = 1
+		and
+		ica.wms_inve_change_app_id = #{wms_inve_change_app_id}
+		GROUP BY
+		w.wms_inve_change_app_id
+
+	</select>
+
+	<select id="selectBankInfoByid" parameterType="com.zx.emanage.inve.vo.WmsInveChangManagementBeanVO" resultType="map">
+	SELECT
+		w.financial_bill_code,
+		p.category_name,
+		w.pay_account / 10000 as pay_account,
+		date_format(w.date_of_payment,'%Y-%m-%d') as date_of_payment,
+		CONCAT(c.bank_of_deposit,'(尾号',RIGHT (c.card_no, 4),')') as bank,
+		(
+		SELECT
+		value_meaning
+		FROM
+		wms_sys_dict_data d
+		WHERE
+		d.wms_sys_dict_data_id = c.bank_of_deposit_pro
+		) AS pro,
+		(
+		SELECT
+		value_meaning
+		FROM
+		wms_sys_dict_data d
+		WHERE
+		d.wms_sys_dict_data_id = c.bank_of_deposit_city
+		) AS city,
+		c.bank_branch
+		FROM
+		wms_inve_transa w
+		LEFT JOIN wms_inve_transa_prod p ON p.wms_inve_transa_id = w.wms_inve_transa_id
+		left join wms_inve_change_app_transa a on p.wms_inve_customer_card_id = a.wms_inve_customer_card_id
+		LEFT JOIN wms_inve_customer_card c ON c.wms_inve_customer_card_id = a.wms_inve_customer_card_id
+		WHERE
+		1=1
+		<if test="ids !=null">
+			and w.wms_inve_transa_id  in (
+			<foreach collection="ids" item="id" index="index" separator=",">
+				#{id}
+			</foreach>
+			)
+		</if>
+	</select>
+
+	<select id="selectChangeAppAttInfo"  parameterType="com.zx.emanage.inve.vo.WmsInveChangManagementBeanVO" resultType="map">
+	SELECT * from wms_inve_change_app_att att where att.wms_inve_change_app_id = #{wms_inve_change_app_id}
+	</select>
+
+</mapper>

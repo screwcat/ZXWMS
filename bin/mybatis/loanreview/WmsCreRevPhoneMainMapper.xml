@@ -1,0 +1,800 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.loanreview.persist.WmsCreRevPhoneMainDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsCreRevPhoneMain">
+		select
+		wms_cre_rev_phone_main_id,
+		wms_cre_credit_head_id,
+		wms_cre_credit_line_customer_change_head_id,
+		credit_purpose,
+		credit_purpose_remark,
+		max_repayment_limit_per_month,
+		borrower_quality,
+		is_supp_house_card,
+		where_house_card,
+		unit_comm,
+		couple_compensation,
+		parents_compensation,
+		children_compensation,
+		other_loan_num,
+		other_loan_account,
+		other_payment_month,
+		other_loan_remark,
+		comp_eval,
+		review_comments,
+		yixin_loan,
+		yalianc_loan,
+		guqun_loan,
+		pingan_loan,
+		yangguan_loan,
+		bomin_loan,
+		other_loan,
+		phone_comments,
+		personal_advice,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		relatives_quality,
+		rec_approval_amount
+		from
+		wms_cre_rev_phone_main
+		where
+		wms_cre_rev_phone_main_id = #{wms_cre_rev_phone_main_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cre_rev_phone_main_id) as count
+		from
+		wms_cre_rev_phone_main
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		wms_cre_rev_phone_main_id,
+		wms_cre_credit_head_id,
+		wms_cre_credit_line_customer_change_head_id,
+		credit_purpose,
+		credit_purpose_remark,
+		max_repayment_limit_per_month,
+		borrower_quality,
+		is_supp_house_card,
+		where_house_card,
+		unit_comm,
+		couple_compensation,
+		parents_compensation,
+		children_compensation,
+		other_loan_num,
+		other_loan_account,
+		other_payment_month,
+		other_loan_remark,
+		comp_eval,
+		review_comments,
+		yixin_loan,
+		yalianc_loan,
+		guqun_loan,
+		pingan_loan,
+		yangguan_loan,
+		bomin_loan,
+		other_loan,
+		phone_comments,
+		personal_advice,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		relatives_quality,
+		rec_approval_amount
+		from wms_cre_rev_phone_main
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreRevPhoneMain"
+		useGeneratedKeys="true" keyProperty="wms_cre_rev_phone_main_id">
+		INSERT INTO wms_cre_rev_phone_main
+		(
+		wms_cre_rev_phone_main_id,
+
+		wms_cre_credit_head_id,
+
+		wms_cre_credit_line_customer_change_head_id,
+
+		credit_purpose,
+
+		credit_purpose_remark,
+
+		max_repayment_limit_per_month,
+
+		borrower_quality,
+
+		is_supp_house_card,
+
+		where_house_card,
+
+		unit_comm,
+
+		couple_compensation,
+
+		parents_compensation,
+
+		children_compensation,
+
+		other_loan_num,
+
+		other_loan_account,
+
+		other_payment_month,
+
+		other_loan_remark,
+
+		comp_eval,
+
+		review_comments,
+
+		yixin_loan,
+
+		yalianc_loan,
+
+		guqun_loan,
+
+		pingan_loan,
+
+		yangguan_loan,
+
+		bomin_loan,
+
+		other_loan,
+
+		phone_comments,
+
+		personal_advice,
+
+		create_user_id,
+
+		create_user_name,
+
+		create_timestamp,
+
+		last_update_user_id,
+
+		last_update_timestamp,
+
+		enable_flag,
+
+		relatives_quality,
+		
+		rec_approval_amount
+		)
+		VALUES
+		(
+		#{wms_cre_rev_phone_main_id},
+		#{wms_cre_credit_head_id},
+		#{wms_cre_credit_line_customer_change_head_id},
+		#{credit_purpose},
+		#{credit_purpose_remark},
+		#{max_repayment_limit_per_month},
+		#{borrower_quality},
+		#{is_supp_house_card},
+		#{where_house_card},
+		#{unit_comm},
+		#{couple_compensation},
+		#{parents_compensation},
+		#{children_compensation},
+		#{other_loan_num},
+		#{other_loan_account},
+		#{other_payment_month},
+		#{other_loan_remark},
+		#{comp_eval},
+		#{review_comments},
+		#{yixin_loan},
+		#{yalianc_loan},
+		#{guqun_loan},
+		#{pingan_loan},
+		#{yangguan_loan},
+		#{bomin_loan},
+		#{other_loan},
+		#{phone_comments},
+		#{personal_advice},
+		#{create_user_id},
+		#{create_user_name},
+		#{create_timestamp},
+		#{last_update_user_id},
+		#{last_update_timestamp},
+		#{enable_flag},
+		#{relatives_quality},
+		#{rec_approval_amount}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreRevPhoneMain">
+		update wms_cre_rev_phone_main
+		<set>
+			<if test="wms_cre_rev_phone_main_id != null">
+				wms_cre_rev_phone_main_id = #{wms_cre_rev_phone_main_id},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="wms_cre_credit_line_customer_change_head_id != null">
+				wms_cre_credit_line_customer_change_head_id = #{wms_cre_credit_line_customer_change_head_id},
+			</if>
+			<if test="credit_purpose != null">
+				credit_purpose = #{credit_purpose},
+			</if>
+			<if test="credit_purpose_remark != null">
+				credit_purpose_remark = #{credit_purpose_remark},
+			</if>
+			<if test="max_repayment_limit_per_month != null">
+				max_repayment_limit_per_month = #{max_repayment_limit_per_month},
+			</if>
+			<if test="borrower_quality != null">
+				borrower_quality = #{borrower_quality},
+			</if>
+			<if test="is_supp_house_card != null">
+				is_supp_house_card = #{is_supp_house_card},
+			</if>
+			<if test="where_house_card != null">
+				where_house_card = #{where_house_card},
+			</if>
+			<if test="unit_comm != null">
+				unit_comm = #{unit_comm},
+			</if>
+			<if test="couple_compensation != null">
+				couple_compensation = #{couple_compensation},
+			</if>
+			<if test="parents_compensation != null">
+				parents_compensation = #{parents_compensation},
+			</if>
+			<if test="children_compensation != null">
+				children_compensation = #{children_compensation},
+			</if>
+			<if test="other_loan_num != null">
+				other_loan_num = #{other_loan_num},
+			</if>
+			<if test="other_loan_account != null">
+				other_loan_account = #{other_loan_account},
+			</if>
+			<if test="other_payment_month != null">
+				other_payment_month = #{other_payment_month},
+			</if>
+			<if test="other_loan_remark != null">
+				other_loan_remark = #{other_loan_remark},
+			</if>
+			<if test="comp_eval != null">
+				comp_eval = #{comp_eval},
+			</if>
+			<if test="review_comments != null">
+				review_comments = #{review_comments},
+			</if>
+			<if test="yixin_loan != null">
+				yixin_loan = #{yixin_loan},
+			</if>
+			<if test="yalianc_loan != null">
+				yalianc_loan = #{yalianc_loan},
+			</if>
+			<if test="guqun_loan != null">
+				guqun_loan = #{guqun_loan},
+			</if>
+			<if test="pingan_loan != null">
+				pingan_loan = #{pingan_loan},
+			</if>
+			<if test="yangguan_loan != null">
+				yangguan_loan = #{yangguan_loan},
+			</if>
+			<if test="bomin_loan != null">
+				bomin_loan = #{bomin_loan},
+			</if>
+			<if test="other_loan != null">
+				other_loan = #{other_loan},
+			</if>
+			<if test="phone_comments != null">
+				phone_comments = #{phone_comments},
+			</if>
+			<if test="personal_advice != null">
+				personal_advice = #{personal_advice},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+			<if test="relatives_quality != null">
+				relatives_quality = #{relatives_quality},
+			</if>
+			<if test="rec_approval_amount != null">
+				rec_approval_amount = #{rec_approval_amount},
+			</if>
+
+		</set>
+		where
+		wms_cre_rev_phone_main_id = #{wms_cre_rev_phone_main_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreRevPhoneMain"
+		resultType="WmsCreRevPhoneMain">
+		select
+		wms_cre_rev_phone_main_id,
+		wms_cre_credit_head_id,
+		wms_cre_credit_line_customer_change_head_id,
+		credit_purpose,
+		credit_purpose_remark,
+		max_repayment_limit_per_month,
+		borrower_quality,
+		is_supp_house_card,
+		where_house_card,
+		unit_comm,
+		couple_compensation,
+		parents_compensation,
+		children_compensation,
+		other_loan_num,
+		other_loan_account,
+		other_payment_month,
+		other_loan_remark,
+		comp_eval,
+		review_comments,
+		yixin_loan,
+		yalianc_loan,
+		guqun_loan,
+		pingan_loan,
+		yangguan_loan,
+		bomin_loan,
+		other_loan,
+		phone_comments,
+		personal_advice,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		relatives_quality,
+		rec_approval_amount
+		from
+		wms_cre_rev_phone_main
+		<where>
+			<if test="wms_cre_rev_phone_main_id != null">
+				and wms_cre_rev_phone_main_id = #{wms_cre_rev_phone_main_id}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="wms_cre_credit_line_customer_change_head_id != null">
+				and wms_cre_credit_line_customer_change_head_id =
+				#{wms_cre_credit_line_customer_change_head_id}
+			</if>
+			<if test="credit_purpose != null">
+				and credit_purpose = #{credit_purpose}
+			</if>
+			<if test="credit_purpose_remark != null">
+				and credit_purpose_remark = #{credit_purpose_remark}
+			</if>
+			<if test="max_repayment_limit_per_month != null">
+				and max_repayment_limit_per_month = #{max_repayment_limit_per_month}
+			</if>
+			<if test="borrower_quality != null">
+				and borrower_quality = #{borrower_quality}
+			</if>
+			<if test="is_supp_house_card != null">
+				and is_supp_house_card = #{is_supp_house_card}
+			</if>
+			<if test="where_house_card != null">
+				and where_house_card = #{where_house_card}
+			</if>
+			<if test="unit_comm != null">
+				and unit_comm = #{unit_comm}
+			</if>
+			<if test="couple_compensation != null">
+				and couple_compensation = #{couple_compensation}
+			</if>
+			<if test="parents_compensation != null">
+				and parents_compensation = #{parents_compensation}
+			</if>
+			<if test="children_compensation != null">
+				and children_compensation = #{children_compensation}
+			</if>
+			<if test="other_loan_num != null">
+				and other_loan_num = #{other_loan_num}
+			</if>
+			<if test="other_loan_account != null">
+				and other_loan_account = #{other_loan_account}
+			</if>
+			<if test="other_payment_month != null">
+				and other_payment_month = #{other_payment_month}
+			</if>
+			<if test="other_loan_remark != null">
+				and other_loan_remark = #{other_loan_remark}
+			</if>
+			<if test="comp_eval != null">
+				and comp_eval = #{comp_eval}
+			</if>
+			<if test="review_comments != null">
+				and review_comments = #{review_comments}
+			</if>
+			<if test="yixin_loan != null">
+				and yixin_loan = #{yixin_loan}
+			</if>
+			<if test="yalianc_loan != null">
+				and yalianc_loan = #{yalianc_loan}
+			</if>
+			<if test="guqun_loan != null">
+				and guqun_loan = #{guqun_loan}
+			</if>
+			<if test="pingan_loan != null">
+				and pingan_loan = #{pingan_loan}
+			</if>
+			<if test="yangguan_loan != null">
+				and yangguan_loan = #{yangguan_loan}
+			</if>
+			<if test="bomin_loan != null">
+				and bomin_loan = #{bomin_loan}
+			</if>
+			<if test="other_loan != null">
+				and other_loan = #{other_loan}
+			</if>
+			<if test="phone_comments != null">
+				and phone_comments = #{phone_comments}
+			</if>
+			<if test="personal_advice != null">
+				and personal_advice = #{personal_advice}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name = #{create_user_name}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id = #{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+			<if test="relatives_quality != null">
+				relatives_quality = #{relatives_quality},
+			</if>
+			<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+				and wms_cre_rev_phone_main_id != #{wms_cre_rev_phone_main_id}
+			</if>
+		</where>
+	</select>
+
+	<delete id="delete" parameterType="WmsCreRevPhoneMain">
+		delete from wms_cre_rev_phone_main
+		<where>
+			<if test="wms_cre_rev_phone_main_id != null">
+				and wms_cre_rev_phone_main_id = #{wms_cre_rev_phone_main_id}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="wms_cre_credit_line_customer_change_head_id != null">
+				and wms_cre_credit_line_customer_change_head_id =
+				#{wms_cre_credit_line_customer_change_head_id}
+			</if>
+			<if test="credit_purpose != null">
+				and credit_purpose = #{credit_purpose}
+			</if>
+			<if test="credit_purpose_remark != null">
+				and credit_purpose_remark = #{credit_purpose_remark}
+			</if>
+			<if test="max_repayment_limit_per_month != null">
+				and max_repayment_limit_per_month = #{max_repayment_limit_per_month}
+			</if>
+			<if test="borrower_quality != null">
+				and borrower_quality = #{borrower_quality}
+			</if>
+			<if test="is_supp_house_card != null">
+				and is_supp_house_card = #{is_supp_house_card}
+			</if>
+			<if test="where_house_card != null">
+				and where_house_card = #{where_house_card}
+			</if>
+			<if test="unit_comm != null">
+				and unit_comm = #{unit_comm}
+			</if>
+			<if test="couple_compensation != null">
+				and couple_compensation = #{couple_compensation}
+			</if>
+			<if test="parents_compensation != null">
+				and parents_compensation = #{parents_compensation}
+			</if>
+			<if test="children_compensation != null">
+				and children_compensation = #{children_compensation}
+			</if>
+			<if test="other_loan_num != null">
+				and other_loan_num = #{other_loan_num}
+			</if>
+			<if test="other_loan_account != null">
+				and other_loan_account = #{other_loan_account}
+			</if>
+			<if test="other_payment_month != null">
+				and other_payment_month = #{other_payment_month}
+			</if>
+			<if test="other_loan_remark != null">
+				and other_loan_remark = #{other_loan_remark}
+			</if>
+			<if test="comp_eval != null">
+				and comp_eval = #{comp_eval}
+			</if>
+			<if test="review_comments != null">
+				and review_comments = #{review_comments}
+			</if>
+			<if test="yixin_loan != null">
+				and yixin_loan = #{yixin_loan}
+			</if>
+			<if test="yalianc_loan != null">
+				and yalianc_loan = #{yalianc_loan}
+			</if>
+			<if test="guqun_loan != null">
+				and guqun_loan = #{guqun_loan}
+			</if>
+			<if test="pingan_loan != null">
+				and pingan_loan = #{pingan_loan}
+			</if>
+			<if test="yangguan_loan != null">
+				and yangguan_loan = #{yangguan_loan}
+			</if>
+			<if test="bomin_loan != null">
+				and bomin_loan = #{bomin_loan}
+			</if>
+			<if test="other_loan != null">
+				and other_loan = #{other_loan}
+			</if>
+			<if test="phone_comments != null">
+				and phone_comments = #{phone_comments}
+			</if>
+			<if test="personal_advice != null">
+				and personal_advice = #{personal_advice}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name = #{create_user_name}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id = #{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+			<if test="relatives_quality != null">
+				relatives_quality = #{relatives_quality},
+			</if>
+			<if test="rec_approval_amount != null">
+				rec_approval_amount = #{rec_approval_amount},
+			</if>
+		</where>
+
+	</delete>
+	<!--根据单据ID 查询电审意见信息-->
+	<select id="getListByPhone" parameterType="int" resultType="WmsCreRevPhoneMain">
+		select
+		wms_cre_rev_phone_main_id,
+		wms_cre_credit_head_id,
+		wms_cre_credit_line_customer_change_head_id,
+		credit_purpose,
+		credit_purpose_remark,
+		max_repayment_limit_per_month,
+		borrower_quality,
+		is_supp_house_card,
+		where_house_card,
+		unit_comm,
+		couple_compensation,
+		parents_compensation,
+		children_compensation,
+		other_loan_num,
+		other_loan_account,
+		other_payment_month,
+		other_loan_remark,
+		comp_eval,
+		review_comments,
+		yixin_loan,
+		yalianc_loan,
+		guqun_loan,
+		pingan_loan,
+		yangguan_loan,
+		bomin_loan,
+		other_loan,
+		phone_comments,
+		personal_advice,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as
+		create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as
+		last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		relatives_quality,
+		rec_approval_amount
+		from
+		wms_cre_rev_phone_main
+		where
+		wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</select>
+    <!-- 获取表信息 -->
+	<select id="getCopyInfo" parameterType="Integer" resultType="WmsCreRevPhoneMain">
+		select *
+		from wms_cre_rev_phone_main
+		where
+		wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+	</select>
+	 <!-- save -->
+	<insert id="saveBatch" parameterType="java.util.List">
+		INSERT INTO wms_cre_rev_phone_main
+		(
+			wms_cre_rev_phone_main_id,
+
+		wms_cre_credit_head_id,
+
+		wms_cre_credit_line_customer_change_head_id,
+
+		credit_purpose,
+
+		credit_purpose_remark,
+
+		max_repayment_limit_per_month,
+
+		borrower_quality,
+
+		is_supp_house_card,
+
+		where_house_card,
+
+		unit_comm,
+
+		couple_compensation,
+
+		parents_compensation,
+
+		children_compensation,
+
+		other_loan_num,
+
+		other_loan_account,
+
+		other_payment_month,
+
+		other_loan_remark,
+
+		comp_eval,
+
+		review_comments,
+
+		yixin_loan,
+
+		yalianc_loan,
+
+		guqun_loan,
+
+		pingan_loan,
+
+		yangguan_loan,
+
+		bomin_loan,
+
+		other_loan,
+
+		phone_comments,
+
+		personal_advice,
+
+		create_user_id,
+
+		create_user_name,
+
+		create_timestamp,
+
+		last_update_user_id,
+
+		last_update_timestamp,
+
+		enable_flag,
+
+		relatives_quality,
+		
+		rec_approval_amount
+		)
+		VALUES
+		 <foreach collection="list" item="item" index="index" separator="," >  
+		 (	
+				
+		#{item.wms_cre_rev_phone_main_id},
+		#{item.wms_cre_credit_head_id},
+		#{item.wms_cre_credit_line_customer_change_head_id},
+		#{item.credit_purpose},
+		#{item.credit_purpose_remark},
+		#{item.max_repayment_limit_per_month},
+		#{item.borrower_quality},
+		#{item.is_supp_house_card},
+		#{item.where_house_card},
+		#{item.unit_comm},
+		#{item.couple_compensation},
+		#{item.parents_compensation},
+		#{item.children_compensation},
+		#{item.other_loan_num},
+		#{item.other_loan_account},
+		#{item.other_payment_month},
+		#{item.other_loan_remark},
+		#{item.comp_eval},
+		#{item.review_comments},
+		#{item.yixin_loan},
+		#{item.yalianc_loan},
+		#{item.guqun_loan},
+		#{item.pingan_loan},
+		#{item.yangguan_loan},
+		#{item.bomin_loan},
+		#{item.other_loan},
+		#{item.phone_comments},
+		#{item.personal_advice},
+		#{item.create_user_id},
+		#{item.create_user_name},
+		#{item.create_timestamp},
+		#{item.last_update_user_id},
+		#{item.last_update_timestamp},
+		#{item.enable_flag},
+		#{item.relatives_quality},
+		#{item.rec_approval_amount}
+		)  
+    	</foreach>
+	</insert>
+</mapper> 

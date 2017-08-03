@@ -1,0 +1,18 @@
+
+.loading-cover {
+	position: absolute;
+	opacity: .1;
+    filter:alpha(opacity=10);
+    background-color: black;
+    z-index: 3000;
+}
+
+.loading-panel {
+	position: absolute;
+    line-height: 24px;
+    padding: 5px 39px 5px 39px;
+    border-radius: 3px;
+    background-color: white;
+    z-index: 3001;
+}
+

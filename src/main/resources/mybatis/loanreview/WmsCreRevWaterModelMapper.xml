@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.loanreview.persist.WmsCreRevWaterModelDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="Integer" resultType="WmsCreRevWaterModel">
+		select
+		wms_cre_rev_water_model_id,
+		wms_cre_credit_head_id,
+		aver_balance,
+		aver_income,
+		aver_payment,
+		month_payment,
+		max_income,
+		max_payment,
+		borr_loan_balance_ratio,
+		assets_liabilities_ratio
+		from
+		wms_cre_rev_water_model
+		where
+		wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cre_rev_water_model_id) as count
+		from
+		wms_cre_rev_water_model
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		wms_cre_rev_water_model_id,
+		wms_cre_credit_head_id,
+		aver_balance,
+		aver_income,
+		aver_payment,
+		month_payment,
+		max_income,
+		max_payment,
+		borr_loan_balance_ratio,
+		assets_liabilities_ratio
+		wms_cre_rev_water_model
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreRevWaterModel"
+		useGeneratedKeys="true" keyProperty="wms_cre_rev_water_model_id">
+		INSERT INTO
+		wms_cre_rev_water_model
+		(
+		wms_cre_credit_head_id,
+
+		aver_balance,
+
+		aver_income,
+
+		aver_payment,
+
+		month_payment,
+
+		max_income,
+
+		max_payment,
+
+		borr_loan_balance_ratio,
+
+		assets_liabilities_ratio
+		)
+		VALUES
+		(
+		#{wms_cre_credit_head_id},
+		#{aver_balance},
+		#{aver_income},
+		#{aver_payment},
+		#{month_payment},
+		#{max_income},
+		#{max_payment},
+		#{borr_loan_balance_ratio},
+		#{assets_liabilities_ratio}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreRevWaterModel">
+		update wms_cre_rev_water_model
+		<set>
+			<if test="wms_cre_rev_water_model_id != null">
+				wms_cre_rev_water_model_id = #{wms_cre_rev_water_model_id},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="aver_balance != null">
+				aver_balance = #{aver_balance},
+			</if>
+			<if test="aver_income != null">
+				aver_income = #{aver_income},
+			</if>
+			<if test="aver_payment != null">
+				aver_payment = #{aver_payment},
+			</if>
+			<if test="month_payment != null">
+				month_payment = #{month_payment},
+			</if>
+			<if test="max_income != null">
+				max_income = #{max_income},
+			</if>
+			<if test="max_payment != null">
+				max_payment = #{max_payment},
+			</if>
+			<if test="borr_loan_balance_ratio != null">
+				borr_loan_balance_ratio = #{borr_loan_balance_ratio},
+			</if>
+			<if test="assets_liabilities_ratio != null">
+				assets_liabilities_ratio = #{assets_liabilities_ratio},
+			</if>
+		</set>
+		where
+		wms_cre_rev_water_model_id = #{wms_cre_rev_water_model_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreRevWaterModel"
+		resultType="WmsCreRevWaterModel">
+		select
+		wms_cre_rev_water_model_id,
+		wms_cre_credit_head_id,
+		aver_balance,
+		aver_income,
+		aver_payment,
+		month_payment,
+		max_income,
+		max_payment,
+		borr_loan_balance_ratio,
+		assets_liabilities_ratio
+		from
+		wms_cre_rev_water_model
+		<where>
+			<if test="wms_cre_rev_water_model_id != null">
+				and wms_cre_rev_water_model_id = #{wms_cre_rev_water_model_id}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="aver_balance != null">
+				and aver_balance = #{aver_balance}
+			</if>
+			<if test="aver_income != null">
+				and aver_income = #{aver_income}
+			</if>
+			<if test="aver_payment != null">
+				and aver_payment = #{aver_payment}
+			</if>
+			<if test="month_payment != null">
+				and month_payment = #{month_payment}
+			</if>
+			<if test="max_income != null">
+				and max_income = #{max_income}
+			</if>
+			<if test="max_payment != null">
+				and max_payment = #{max_payment}
+			</if>
+			<if test="borr_loan_balance_ratio != null">
+				and borr_loan_balance_ratio = #{borr_loan_balance_ratio}
+			</if>
+			<if test="assets_liabilities_ratio != null">
+				and assets_liabilities_ratio = #{assets_liabilities_ratio}
+			</if>
+
+		</where>
+	</select>
+	<!-- 删除 -->
+	<delete id="deleteRecordByFk" parameterType="Integer">
+		delete from
+		wms_cre_rev_water_model where
+		wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+	</delete>
+</mapper> 

@@ -1,0 +1,719 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsPersonnelAchievementHisDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsPersonnelAchievementHis">
+		select
+        				wms_personnel_achievement_his_id,
+        				company_id,
+        				company_name,
+        				dept_id,
+        				dept_name,
+        				personnel_id,
+        				personnel_name_detail,
+        				post_number,
+        				post_name,
+        				statics_month,
+        				per_add_base,
+        				per_add_deal,
+        				per_redeem_base,
+        				per_redeem_deal,
+        				per_back_base,
+        				per_back_deal,
+        				per_back_base_newpro,
+        				per_back_deal_newpro,
+        				per_special_add,
+        				per_clear_add,
+        				per_clear_add_deal,
+        				per_stock_all,
+        				per_stock_all_deal,
+        				per_stock_new,
+        				per_stock_new_deal,
+        				per_stock_lev,
+        				team_add_base,
+        				team_add_deal,
+        				team_exc_add_base,
+        				team_exc_add_deal,
+        				team_exc_add_base_op,
+        				team_exc_add_deal_op,
+        				team_redeem_all_base,
+        				team_redeem_all_deal,
+        				team_exc_redeem_all_base,
+        				team_exc_redeem_all_deal,
+        				team_exc_redeem_all_base_op,
+        				team_exc_redeem_all_deal_op,
+        				team_clear_add,
+        				team_clear_add_op,
+        				team_clear_add_deal,
+        				team_clear_add_op_deal,
+        				team_stock_all,
+        				team_stock_new,
+        				team_stock_all_deal,
+        				team_stock_new_deal,
+        				team_staff_num,
+        				team_per_increase,
+        				team_staff_num_regular,
+        				reinve_mon
+        	from
+        		wms_personnel_achievement_his
+        	where
+        				wms_personnel_achievement_his_id = #{wms_personnel_achievement_his_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_personnel_achievement_his_id) as count
+		from wms_personnel_achievement_his
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_personnel_achievement_his_id,
+				company_id,
+				company_name,
+				dept_id,
+				dept_name,
+				personnel_id,
+				personnel_name_detail,
+				post_number,
+				post_name,
+				statics_month,
+				per_add_base,
+				per_add_deal,
+				per_redeem_base,
+				per_redeem_deal,
+				per_back_base,
+				per_back_deal,
+				per_back_base_newpro,
+				per_back_deal_newpro,
+				per_special_add,
+				per_clear_add,
+				per_clear_add_deal,
+				per_stock_all,
+				per_stock_all_deal,
+				per_stock_new,
+				per_stock_new_deal,
+				per_stock_lev,
+				team_add_base,
+				team_add_deal,
+				team_exc_add_base,
+				team_exc_add_deal,
+				team_exc_add_base_op,
+				team_exc_add_deal_op,
+				team_redeem_all_base,
+				team_redeem_all_deal,
+				team_exc_redeem_all_base,
+				team_exc_redeem_all_deal,
+				team_exc_redeem_all_base_op,
+				team_exc_redeem_all_deal_op,
+				team_clear_add,
+				team_clear_add_op,
+				team_clear_add_deal,
+				team_clear_add_op_deal,
+				team_stock_all,
+				team_stock_new,
+				team_stock_all_deal,
+				team_stock_new_deal,
+				team_staff_num,
+				team_per_increase,
+				team_staff_num_regular,
+				reinve_mon
+		from wms_personnel_achievement_his
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsPersonnelAchievementHis" useGeneratedKeys="true" keyProperty="wms_personnel_achievement_his_id">
+		INSERT INTO wms_personnel_achievement_his
+		(
+				wms_personnel_achievement_his_id,
+
+				company_id,
+
+				company_name,
+
+				dept_id,
+
+				dept_name,
+
+				personnel_id,
+
+				personnel_name_detail,
+
+				post_number,
+
+				post_name,
+
+				statics_month,
+
+				per_add_base,
+
+				per_add_deal,
+
+				per_redeem_base,
+
+				per_redeem_deal,
+
+				per_back_base,
+
+				per_back_deal,
+
+				per_back_base_newpro,
+
+				per_back_deal_newpro,
+
+				per_special_add,
+
+				per_clear_add,
+
+				per_clear_add_deal,
+
+				per_stock_all,
+
+				per_stock_all_deal,
+
+				per_stock_new,
+
+				per_stock_new_deal,
+
+				per_stock_lev,
+
+				team_add_base,
+
+				team_add_deal,
+
+				team_exc_add_base,
+
+				team_exc_add_deal,
+
+				team_exc_add_base_op,
+
+				team_exc_add_deal_op,
+
+				team_redeem_all_base,
+
+				team_redeem_all_deal,
+
+				team_exc_redeem_all_base,
+
+				team_exc_redeem_all_deal,
+
+				team_exc_redeem_all_base_op,
+
+				team_exc_redeem_all_deal_op,
+
+				team_clear_add,
+
+				team_clear_add_op,
+
+				team_clear_add_deal,
+
+				team_clear_add_op_deal,
+
+				team_stock_all,
+
+				team_stock_new,
+
+				team_stock_all_deal,
+
+				team_stock_new_deal,
+
+				team_staff_num,
+
+				team_per_increase,
+
+				team_staff_num_regular,
+
+				reinve_mon
+		)
+		VALUES
+		(
+				#{wms_personnel_achievement_his_id},
+				#{company_id},
+				#{company_name},
+				#{dept_id},
+				#{dept_name},
+				#{personnel_id},
+				#{personnel_name_detail},
+				#{post_number},
+				#{post_name},
+				#{statics_month},
+				#{per_add_base},
+				#{per_add_deal},
+				#{per_redeem_base},
+				#{per_redeem_deal},
+				#{per_back_base},
+				#{per_back_deal},
+				#{per_back_base_newpro},
+				#{per_back_deal_newpro},
+				#{per_special_add},
+				#{per_clear_add},
+				#{per_clear_add_deal},
+				#{per_stock_all},
+				#{per_stock_all_deal},
+				#{per_stock_new},
+				#{per_stock_new_deal},
+				#{per_stock_lev},
+				#{team_add_base},
+				#{team_add_deal},
+				#{team_exc_add_base},
+				#{team_exc_add_deal},
+				#{team_exc_add_base_op},
+				#{team_exc_add_deal_op},
+				#{team_redeem_all_base},
+				#{team_redeem_all_deal},
+				#{team_exc_redeem_all_base},
+				#{team_exc_redeem_all_deal},
+				#{team_exc_redeem_all_base_op},
+				#{team_exc_redeem_all_deal_op},
+				#{team_clear_add},
+				#{team_clear_add_op},
+				#{team_clear_add_deal},
+				#{team_clear_add_op_deal},
+				#{team_stock_all},
+				#{team_stock_new},
+				#{team_stock_all_deal},
+				#{team_stock_new_deal},
+				#{team_staff_num},
+				#{team_per_increase},
+				#{team_staff_num_regular},
+				#{reinve_mon}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsPersonnelAchievementHis">
+		update wms_personnel_achievement_his
+		<set>
+					<if test="wms_personnel_achievement_his_id != null">
+						 wms_personnel_achievement_his_id = #{wms_personnel_achievement_his_id},
+					</if>
+					<if test="company_id != null">
+						 company_id = #{company_id},
+					</if>
+					<if test="company_name != null">
+						 company_name = #{company_name},
+					</if>
+					<if test="dept_id != null">
+						 dept_id = #{dept_id},
+					</if>
+					<if test="dept_name != null">
+						 dept_name = #{dept_name},
+					</if>
+					<if test="personnel_id != null">
+						 personnel_id = #{personnel_id},
+					</if>
+					<if test="personnel_name_detail != null">
+						 personnel_name_detail = #{personnel_name_detail},
+					</if>
+					<if test="post_number != null">
+						 post_number = #{post_number},
+					</if>
+					<if test="post_name != null">
+						 post_name = #{post_name},
+					</if>
+					<if test="statics_month != null">
+						 statics_month = #{statics_month},
+					</if>
+					<if test="per_add_base != null">
+						 per_add_base = #{per_add_base},
+					</if>
+					<if test="per_add_deal != null">
+						 per_add_deal = #{per_add_deal},
+					</if>
+					<if test="per_redeem_base != null">
+						 per_redeem_base = #{per_redeem_base},
+					</if>
+					<if test="per_redeem_deal != null">
+						 per_redeem_deal = #{per_redeem_deal},
+					</if>
+					<if test="per_back_base != null">
+						 per_back_base = #{per_back_base},
+					</if>
+					<if test="per_back_deal != null">
+						 per_back_deal = #{per_back_deal},
+					</if>
+					<if test="per_back_base_newpro != null">
+						 per_back_base_newpro = #{per_back_base_newpro},
+					</if>
+					<if test="per_back_deal_newpro != null">
+						 per_back_deal_newpro = #{per_back_deal_newpro},
+					</if>
+					<if test="per_special_add != null">
+						 per_special_add = #{per_special_add},
+					</if>
+					<if test="per_clear_add != null">
+						 per_clear_add = #{per_clear_add},
+					</if>
+					<if test="per_clear_add_deal != null">
+						 per_clear_add_deal = #{per_clear_add_deal},
+					</if>
+					<if test="per_stock_all != null">
+						 per_stock_all = #{per_stock_all},
+					</if>
+					<if test="per_stock_all_deal != null">
+						 per_stock_all_deal = #{per_stock_all_deal},
+					</if>
+					<if test="per_stock_new != null">
+						 per_stock_new = #{per_stock_new},
+					</if>
+					<if test="per_stock_new_deal != null">
+						 per_stock_new_deal = #{per_stock_new_deal},
+					</if>
+					<if test="per_stock_lev != null">
+						 per_stock_lev = #{per_stock_lev},
+					</if>
+					<if test="team_add_base != null">
+						 team_add_base = #{team_add_base},
+					</if>
+					<if test="team_add_deal != null">
+						 team_add_deal = #{team_add_deal},
+					</if>
+					<if test="team_exc_add_base != null">
+						 team_exc_add_base = #{team_exc_add_base},
+					</if>
+					<if test="team_exc_add_deal != null">
+						 team_exc_add_deal = #{team_exc_add_deal},
+					</if>
+					<if test="team_exc_add_base_op != null">
+						 team_exc_add_base_op = #{team_exc_add_base_op},
+					</if>
+					<if test="team_exc_add_deal_op != null">
+						 team_exc_add_deal_op = #{team_exc_add_deal_op},
+					</if>
+					<if test="team_redeem_all_base != null">
+						 team_redeem_all_base = #{team_redeem_all_base},
+					</if>
+					<if test="team_redeem_all_deal != null">
+						 team_redeem_all_deal = #{team_redeem_all_deal},
+					</if>
+					<if test="team_exc_redeem_all_base != null">
+						 team_exc_redeem_all_base = #{team_exc_redeem_all_base},
+					</if>
+					<if test="team_exc_redeem_all_deal != null">
+						 team_exc_redeem_all_deal = #{team_exc_redeem_all_deal},
+					</if>
+					<if test="team_exc_redeem_all_base_op != null">
+						 team_exc_redeem_all_base_op = #{team_exc_redeem_all_base_op},
+					</if>
+					<if test="team_exc_redeem_all_deal_op != null">
+						 team_exc_redeem_all_deal_op = #{team_exc_redeem_all_deal_op},
+					</if>
+					<if test="team_clear_add != null">
+						 team_clear_add = #{team_clear_add},
+					</if>
+					<if test="team_clear_add_op != null">
+						 team_clear_add_op = #{team_clear_add_op},
+					</if>
+					<if test="team_clear_add_deal != null">
+						 team_clear_add_deal = #{team_clear_add_deal},
+					</if>
+					<if test="team_clear_add_op_deal != null">
+						 team_clear_add_op_deal = #{team_clear_add_op_deal},
+					</if>
+					<if test="team_stock_all != null">
+						 team_stock_all = #{team_stock_all},
+					</if>
+					<if test="team_stock_new != null">
+						 team_stock_new = #{team_stock_new},
+					</if>
+					<if test="team_stock_all_deal != null">
+						 team_stock_all_deal = #{team_stock_all_deal},
+					</if>
+					<if test="team_stock_new_deal != null">
+						 team_stock_new_deal = #{team_stock_new_deal},
+					</if>
+					<if test="team_staff_num != null">
+						 team_staff_num = #{team_staff_num},
+					</if>
+					<if test="team_per_increase != null">
+						 team_per_increase = #{team_per_increase},
+					</if>
+					<if test="team_staff_num_regular != null">
+						 team_staff_num_regular = #{team_staff_num_regular},
+					</if>
+					<if test="reinve_mon != null">
+						 reinve_mon = #{reinve_mon},
+					</if>
+	   </set>
+		 where 
+    				wms_personnel_achievement_his_id = #{wms_personnel_achievement_his_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsPersonnelAchievementHis" resultType="WmsPersonnelAchievementHis">
+		select 
+				wms_personnel_achievement_his_id,
+				company_id,
+				company_name,
+				dept_id,
+				dept_name,
+				personnel_id,
+				personnel_name_detail,
+				post_number,
+				post_name,
+				statics_month,
+				per_add_base,
+				per_add_deal,
+				per_redeem_base,
+				per_redeem_deal,
+				per_back_base,
+				per_back_deal,
+				per_back_base_newpro,
+				per_back_deal_newpro,
+				per_special_add,
+				per_clear_add,
+				per_clear_add_deal,
+				per_stock_all,
+				per_stock_all_deal,
+				per_stock_new,
+				per_stock_new_deal,
+				per_stock_lev,
+				team_add_base,
+				team_add_deal,
+				team_exc_add_base,
+				team_exc_add_deal,
+				team_exc_add_base_op,
+				team_exc_add_deal_op,
+				team_redeem_all_base,
+				team_redeem_all_deal,
+				team_exc_redeem_all_base,
+				team_exc_redeem_all_deal,
+				team_exc_redeem_all_base_op,
+				team_exc_redeem_all_deal_op,
+				team_clear_add,
+				team_clear_add_op,
+				team_clear_add_deal,
+				team_clear_add_op_deal,
+				team_stock_all,
+				team_stock_new,
+				team_stock_all_deal,
+				team_stock_new_deal,
+				team_staff_num,
+				team_per_increase,
+				team_staff_num_regular,
+				reinve_mon
+		from
+		wms_personnel_achievement_his
+		<where>
+					<if test="wms_personnel_achievement_his_id != null">
+						and wms_personnel_achievement_his_id = #{wms_personnel_achievement_his_id}
+					</if>
+					<if test="company_id != null">
+						and company_id = #{company_id}
+					</if>
+					<if test="company_name != null">
+						and company_name = #{company_name}
+					</if>
+					<if test="dept_id != null">
+						and dept_id = #{dept_id}
+					</if>
+					<if test="dept_name != null">
+						and dept_name = #{dept_name}
+					</if>
+					<if test="personnel_id != null">
+						and personnel_id = #{personnel_id}
+					</if>
+					<if test="personnel_name_detail != null">
+						and personnel_name_detail = #{personnel_name_detail}
+					</if>
+					<if test="post_number != null">
+						and post_number = #{post_number}
+					</if>
+					<if test="post_name != null">
+						and post_name = #{post_name}
+					</if>
+					<if test="statics_month != null">
+						and statics_month = #{statics_month}
+					</if>
+					<if test="per_add_base != null">
+						and per_add_base = #{per_add_base}
+					</if>
+					<if test="per_add_deal != null">
+						and per_add_deal = #{per_add_deal}
+					</if>
+					<if test="per_redeem_base != null">
+						and per_redeem_base = #{per_redeem_base}
+					</if>
+					<if test="per_redeem_deal != null">
+						and per_redeem_deal = #{per_redeem_deal}
+					</if>
+					<if test="per_back_base != null">
+						and per_back_base = #{per_back_base}
+					</if>
+					<if test="per_back_deal != null">
+						and per_back_deal = #{per_back_deal}
+					</if>
+					<if test="per_back_base_newpro != null">
+						and per_back_base_newpro = #{per_back_base_newpro}
+					</if>
+					<if test="per_back_deal_newpro != null">
+						and per_back_deal_newpro = #{per_back_deal_newpro}
+					</if>
+					<if test="per_special_add != null">
+						and per_special_add = #{per_special_add}
+					</if>
+					<if test="per_clear_add != null">
+						and per_clear_add = #{per_clear_add}
+					</if>
+					<if test="per_clear_add_deal != null">
+						and per_clear_add_deal = #{per_clear_add_deal}
+					</if>
+					<if test="per_stock_all != null">
+						and per_stock_all = #{per_stock_all}
+					</if>
+					<if test="per_stock_all_deal != null">
+						and per_stock_all_deal = #{per_stock_all_deal}
+					</if>
+					<if test="per_stock_new != null">
+						and per_stock_new = #{per_stock_new}
+					</if>
+					<if test="per_stock_new_deal != null">
+						and per_stock_new_deal = #{per_stock_new_deal}
+					</if>
+					<if test="per_stock_lev != null">
+						and per_stock_lev = #{per_stock_lev}
+					</if>
+					<if test="team_add_base != null">
+						and team_add_base = #{team_add_base}
+					</if>
+					<if test="team_add_deal != null">
+						and team_add_deal = #{team_add_deal}
+					</if>
+					<if test="team_exc_add_base != null">
+						and team_exc_add_base = #{team_exc_add_base}
+					</if>
+					<if test="team_exc_add_deal != null">
+						and team_exc_add_deal = #{team_exc_add_deal}
+					</if>
+					<if test="team_exc_add_base_op != null">
+						and team_exc_add_base_op = #{team_exc_add_base_op}
+					</if>
+					<if test="team_exc_add_deal_op != null">
+						and team_exc_add_deal_op = #{team_exc_add_deal_op}
+					</if>
+					<if test="team_redeem_all_base != null">
+						and team_redeem_all_base = #{team_redeem_all_base}
+					</if>
+					<if test="team_redeem_all_deal != null">
+						and team_redeem_all_deal = #{team_redeem_all_deal}
+					</if>
+					<if test="team_exc_redeem_all_base != null">
+						and team_exc_redeem_all_base = #{team_exc_redeem_all_base}
+					</if>
+					<if test="team_exc_redeem_all_deal != null">
+						and team_exc_redeem_all_deal = #{team_exc_redeem_all_deal}
+					</if>
+					<if test="team_exc_redeem_all_base_op != null">
+						and team_exc_redeem_all_base_op = #{team_exc_redeem_all_base_op}
+					</if>
+					<if test="team_exc_redeem_all_deal_op != null">
+						and team_exc_redeem_all_deal_op = #{team_exc_redeem_all_deal_op}
+					</if>
+					<if test="team_clear_add != null">
+						and team_clear_add = #{team_clear_add}
+					</if>
+					<if test="team_clear_add_op != null">
+						and team_clear_add_op = #{team_clear_add_op}
+					</if>
+					<if test="team_clear_add_deal != null">
+						and team_clear_add_deal = #{team_clear_add_deal}
+					</if>
+					<if test="team_clear_add_op_deal != null">
+						and team_clear_add_op_deal = #{team_clear_add_op_deal}
+					</if>
+					<if test="team_stock_all != null">
+						and team_stock_all = #{team_stock_all}
+					</if>
+					<if test="team_stock_new != null">
+						and team_stock_new = #{team_stock_new}
+					</if>
+					<if test="team_stock_all_deal != null">
+						and team_stock_all_deal = #{team_stock_all_deal}
+					</if>
+					<if test="team_stock_new_deal != null">
+						and team_stock_new_deal = #{team_stock_new_deal}
+					</if>
+					<if test="team_staff_num != null">
+						and team_staff_num = #{team_staff_num}
+					</if>
+					<if test="team_per_increase != null">
+						and team_per_increase = #{team_per_increase}
+					</if>
+					<if test="team_staff_num_regular != null">
+						and team_staff_num_regular = #{team_staff_num_regular}
+					</if>
+					<if test="reinve_mon != null">
+						and reinve_mon = #{reinve_mon}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_personnel_achievement_his_id != #{wms_personnel_achievement_his_id}
+					</if>
+		</where>
+	</select>
+	
+	<select id="getPersonnelAchievementByPid" parameterType="map" resultType="map">
+		SELECT
+			h.per_add_deal,
+			ifnull(h.per_add_base,0) as per_add_base,
+			ifnull(h.per_redeem_base,0) as per_redeem_base,
+			ifnull(h.per_add_deal,0)-ifnull(h.per_back_deal,0)+ifnull(h.per_special_add,0) as per_add_deal_sum,
+			h.per_back_deal,
+			ifnull(h.per_back_base,0) as per_back_base,						
+			h.per_clear_add_deal,
+			ifnull(h.per_clear_add,0) as per_clear_add,					
+			h.per_stock_all,
+			h.per_stock_all_deal,
+			h.per_stock_new,
+			h.per_stock_new_deal,
+			(select CONCAT(
+							case when QUARTER(CONCAT(#{statics_month},'-','01')) = 1 then 
+								 YEAR(date_sub(CONCAT(#{statics_month},'-','01'), INTERVAL 1 YEAR)) 
+								 ELSE YEAR(CONCAT(#{statics_month},'-','01'))	end 
+							,'年第',QUARTER(DATE_SUB(CONCAT(#{statics_month},'-','01'),INTERVAL 1 QUARTER))
+							)
+			) as lseason_title,
+			(select getLastSeasonMonth(CONCAT(#{statics_month},'-','01'),'1')) as lseason_fmonth,
+			(select getLastSeasonMonth(CONCAT(#{statics_month},'-','01'),'2')) as lseason_smonth,
+			(select getLastSeasonMonth(CONCAT(#{statics_month},'-','01'),'3')) as lseason_tmonth,
+			
+			
+			(select CONCAT(YEAR(CONCAT(#{statics_month},'-','01')),'年第',QUARTER(CONCAT(#{statics_month},'-','01')))) as cseason_title,
+				
+			(select getLastSeasonMonth(DATE_ADD(CONCAT(#{statics_month},'-','01'),INTERVAL 1 QUARTER),'1')) as cseason_fmonth,
+			(select getLastSeasonMonth(DATE_ADD(CONCAT(#{statics_month},'-','01'),INTERVAL 1 QUARTER),'2')) as cseason_smonth,
+			(select getLastSeasonMonth(DATE_ADD(CONCAT(#{statics_month},'-','01'),INTERVAL 1 QUARTER),'3')) as cseason_tmonth,
+			
+						
+			(select ifnull(t.per_add_deal,0)-ifnull(t.per_back_deal,0)+ifnull(t.per_special_add,0) from wms_personnel_achievement_his t where t.personnel_id = h.personnel_id and t.statics_month = getLastSeasonMonth(CONCAT(#{statics_month},'-','01'),'1')) as lseason_fmonth_add_deal,
+		 	(select ifnull(t.per_add_deal,0)-ifnull(t.per_back_deal,0)+ifnull(t.per_special_add,0) from wms_personnel_achievement_his t where t.personnel_id = h.personnel_id and t.statics_month = getLastSeasonMonth(CONCAT(#{statics_month},'-','01'),'2')) as lseason_smonth_add_deal,
+			(select ifnull(t.per_add_deal,0)-ifnull(t.per_back_deal,0)+ifnull(t.per_special_add,0) from wms_personnel_achievement_his t where t.personnel_id = h.personnel_id and t.statics_month = getLastSeasonMonth(CONCAT(#{statics_month},'-','01'),'3')) as lseason_tmonth_add_deal,
+			(SELECT sum(ifnull(t.per_add_deal, 0) - ifnull(t.per_back_deal, 0) + ifnull(t.per_special_add, 0)) FROM wms_personnel_achievement_his t WHERE	t.personnel_id = h.personnel_id	AND QUARTER (CONCAT(t.statics_month, '-', '01')) = QUARTER (DATE_SUB(CONCAT(#{statics_month}, '-', '01'),INTERVAL 1 QUARTER))) as lseason_sum_add_deal,
+			(select ifnull(t.per_add_deal,0)-ifnull(t.per_back_deal,0)+ifnull(t.per_special_add,0) from wms_personnel_achievement_his t where t.personnel_id = h.personnel_id and t.statics_month = getLastSeasonMonth(DATE_ADD(CONCAT(#{statics_month},'-','01'),INTERVAL 1 QUARTER),'1')) as cseason_fmonth_add_deal,
+		 	(select ifnull(t.per_add_deal,0)-ifnull(t.per_back_deal,0)+ifnull(t.per_special_add,0) from wms_personnel_achievement_his t where t.personnel_id = h.personnel_id and t.statics_month = getLastSeasonMonth(DATE_ADD(CONCAT(#{statics_month},'-','01'),INTERVAL 1 QUARTER),'2')) as cseason_smonth_add_deal,
+			(select ifnull(t.per_add_deal,0)-ifnull(t.per_back_deal,0)+ifnull(t.per_special_add,0) from wms_personnel_achievement_his t where t.personnel_id = h.personnel_id and t.statics_month = getLastSeasonMonth(DATE_ADD(CONCAT(#{statics_month},'-','01'),INTERVAL 1 QUARTER),'3')) as cseason_tmonth_add_deal,
+			(SELECT sum(ifnull(t.per_add_deal, 0) - ifnull(t.per_back_deal, 0) + ifnull(t.per_special_add, 0)) FROM wms_personnel_achievement_his t WHERE	t.personnel_id = h.personnel_id	AND QUARTER (CONCAT(t.statics_month, '-', '01')) = QUARTER (CONCAT(#{statics_month}, '-', '01'))) as cseason_sum_add_deal,
+			(select date_format(now(),'%Y-%m')) as curTime_str
+		FROM
+			wms_personnel_achievement_his h
+		WHERE
+			h.personnel_id = #{personnel_id}
+			AND statics_month = #{statics_month};
+	</select>
+</mapper> 

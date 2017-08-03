@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveSalaryPreItemHisDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveSalaryPreItemHis">
+		select
+        				wms_inve_salary_pre_item_his_id,
+        				statics_month,
+        				personnel_id,
+        				is_pay,
+        				performance_salary,
+        				create_user_id,
+        				create_user_name,
+						date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+        				create_timestamp,
+        				last_update_user_id,
+						date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+        				last_update_timestamp,
+        				enable_flag
+        	from
+        		wms_inve_salary_pre_item_his
+        	where
+        				wms_inve_salary_pre_item_his_id = #{wms_inve_salary_pre_item_his_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_salary_pre_item_his_id) as count
+		from wms_inve_salary_pre_item_his
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_inve_salary_pre_item_his_id,
+				statics_month,
+				personnel_id,
+				is_pay,
+				performance_salary,
+				create_user_id,
+				create_user_name,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from wms_inve_salary_pre_item_his
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveSalaryPreItemHis" useGeneratedKeys="true" keyProperty="wms_inve_salary_pre_item_his_id">
+		INSERT INTO wms_inve_salary_pre_item_his
+		(
+				wms_inve_salary_pre_item_his_id,
+
+				statics_month,
+
+				personnel_id,
+
+				is_pay,
+
+				performance_salary,
+
+				create_user_id,
+
+				create_user_name,
+
+				create_timestamp,
+
+				last_update_user_id,
+
+				last_update_timestamp,
+
+				enable_flag
+		)
+		VALUES
+		(
+				#{wms_inve_salary_pre_item_his_id},
+				#{statics_month},
+				#{personnel_id},
+				#{is_pay},
+				#{performance_salary},
+				#{create_user_id},
+				#{create_user_name},
+				#{create_timestamp},
+				#{last_update_user_id},
+				#{last_update_timestamp},
+				#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveSalaryPreItemHis">
+		update wms_inve_salary_pre_item_his
+		<set>
+					<if test="wms_inve_salary_pre_item_his_id != null">
+						 wms_inve_salary_pre_item_his_id = #{wms_inve_salary_pre_item_his_id},
+					</if>
+					<if test="statics_month != null">
+						 statics_month = #{statics_month},
+					</if>
+					<if test="personnel_id != null">
+						 personnel_id = #{personnel_id},
+					</if>
+					<if test="is_pay != null">
+						 is_pay = #{is_pay},
+					</if>
+					<if test="performance_salary != null">
+						 performance_salary = #{performance_salary},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="create_user_name != null">
+						 create_user_name = #{create_user_name},
+					</if>
+					<if test="create_timestamp != null">
+						 create_timestamp = #{create_timestamp},
+					</if>
+					<if test="last_update_user_id != null">
+						 last_update_user_id = #{last_update_user_id},
+					</if>
+					<if test="last_update_timestamp != null">
+						 last_update_timestamp = #{last_update_timestamp},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+	   </set>
+		 where 
+    				wms_inve_salary_pre_item_his_id = #{wms_inve_salary_pre_item_his_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveSalaryPreItemHis" resultType="WmsInveSalaryPreItemHis">
+		select 
+				wms_inve_salary_pre_item_his_id,
+				statics_month,
+				personnel_id,
+				is_pay,
+				performance_salary,
+				create_user_id,
+				create_user_name,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from
+		wms_inve_salary_pre_item_his
+		<where>
+					<if test="wms_inve_salary_pre_item_his_id != null">
+						and wms_inve_salary_pre_item_his_id = #{wms_inve_salary_pre_item_his_id}
+					</if>
+					<if test="statics_month != null">
+						and statics_month = #{statics_month}
+					</if>
+					<if test="personnel_id != null">
+						and personnel_id = #{personnel_id}
+					</if>
+					<if test="is_pay != null">
+						and is_pay = #{is_pay}
+					</if>
+					<if test="performance_salary != null">
+						and performance_salary = #{performance_salary}
+					</if>
+					<if test="create_user_id != null">
+						and create_user_id = #{create_user_id}
+					</if>
+					<if test="create_user_name != null">
+						and create_user_name = #{create_user_name}
+					</if>
+					<if test="create_timestamp != null">
+						and create_timestamp = #{create_timestamp}
+					</if>
+					<if test="last_update_user_id != null">
+						and last_update_user_id = #{last_update_user_id}
+					</if>
+					<if test="last_update_timestamp != null">
+						and last_update_timestamp = #{last_update_timestamp}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_inve_salary_pre_item_his_id != #{wms_inve_salary_pre_item_his_id}
+					</if>
+		</where>
+	</select>
+	
+	<!-- save -->
+	<insert id="savePerformanceSalaryPreItemHis" parameterType="java.util.List">
+		INSERT INTO wms_inve_salary_pre_item_his
+		(
+			statics_month,
+			personnel_id,
+			is_pay,
+			performance_salary,
+			create_user_id,
+			create_timestamp,
+			enable_flag
+		)
+		<foreach collection="list" item="item" index="index" separator="union all" >  
+			 select 
+				#{item.statics_month},
+				#{item.personnel_id},
+				#{item.is_pay},
+				#{item.performance_salary},
+				#{item.create_user_id},
+				NOW(),
+				1
+			 from dual
+	    </foreach>
+	</insert>
+</mapper> 

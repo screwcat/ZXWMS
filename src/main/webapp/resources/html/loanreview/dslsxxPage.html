@@ -1,0 +1,1009 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+</head>
+<body>
+	<div class="pop-center overflow-au">
+		<div class="center-content">
+			<div>
+				<div class="center-title3 position-re" style="margin-bottom: 10px">
+					总体情况
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				<div class="center-txt"
+					style="margin-bottom: 5px; padding: 5px; border: 1px solid #BFBFBF; height: 58px;"
+					id="ztqkdiv">
+					<div class="float-l commonstyle">
+						<div class="pop-form-title2">是否符合进件标准</div>
+						<div class="pop-form-item">
+							<select name="is_standard" style="width: 120px;">
+								<option selected="selected" value="">请选择</option>
+								<option value="1">符合</option>
+								<option value="0">不符合</option>
+							</select>
+						</div>
+					</div>
+					<div class="float-l commonstyle">
+						<div class="pop-form-title2">评价</div>
+						<div class="pop-form-item">
+							<select name="evaluation" style="width: 120px;">
+								<option selected="selected" value="">请选择</option>
+								<option value="1">好</option>
+								<option value="2">中</option>
+								<option value="3">差</option>
+							</select>
+						</div>
+					</div>
+					<div class="float-l commonstyle">
+						<div class="pop-form-title2">负债</div>
+						<div class="pop-form-item">
+							<select name="liabilities" style="width: 120px;">
+								<option selected="selected" value="">请选择</option>
+								<option value="1">高</option>
+								<option value="2">中</option>
+								<option value="3">低</option>
+							</select>
+						</div>
+					</div>
+					<div class="float-l commonstyle clearboth">
+						<div class="pop-form-title2">流水</div>
+						<div class="pop-form-item">
+							<input type="text" name="warter_copies" style="width: 102px"
+								maxlength="25" /> 份
+						</div>
+					</div>
+					<div class="float-l commonstyle">
+						<div class="pop-form-title2">对私</div>
+						<div class="pop-form-item">
+							<input type="text" name="pri_warter_copies" style="width: 102px"
+								maxlength="25" /> 份
+						</div>
+					</div>
+					<div class="float-l commonstyle">
+						<div class="pop-form-title2">还贷</div>
+						<div class="pop-form-item">
+							<input type="text" name="repay_copies" style="width: 102px"
+								maxlength="25" /> 份
+						</div>
+					</div>
+				</div>
+			</div>
+			<div>
+				<div class="center-title3 position-re">
+					对私流水
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				<div id="toolbar-dsls" class="minwidth400"
+					style="border: none; background-color: #e6f4ff; margin-bottom: 10px;"></div>
+				<div class="center-txt class_dsls clearfix"
+					style="margin-bottom: 5px; padding: 5px; border: 1px solid #BFBFBF; height: auto;">
+					<div class="float-l commonstyle">
+						<div class="pop-form-item">
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 姓名 <input type="text" name="name"
+								style="width: 100px" maxlength="50" />， <input type="text"
+								name="bank_name" style="width: 122px" maxlength="50" /> 银行 （尾号 <input
+								type="text" name="beak_card_no_tail" style="width: 50px"
+								maxlength="25" />）， <input name="water_begin_month" type="text"
+								style="width: 70px" maxlength="50" /> - <input
+								name="water_end_month" type="text" style="width: 70px"
+								maxlength="50" /> 流水， 余额 <input type="text"
+								name="account_balance" style="width: 100px" maxlength="25" /> 元
+						</div>
+					</div>
+					<div class="float-l commonstyle clearboth">
+						<div class="pop-form-title2">有无贷款还款体现</div>
+						<div class="pop-form-item" style="margin-right: 80px">
+							<input type="radio" name="is_repay0" value="1" class="radio3"
+								onclick="toggleYwdkhktx(this)" />有 <input type="radio"
+								name="is_repay0" value="0" class="radio3" checked="checked"
+								onclick="toggleYwdkhktx(this)" />无
+						</div>
+					</div>
+					<div class="float-l commonstyle clearboth class_group_xz dsls_xz">
+						<div class="pop-form-item">
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label class="grouplabel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><a
+								href="#" style="display: none" class="createa groupnew"
+								onclick="createRecord(this,'copy_dsls_xz','dsls_xz')">新增</a> <input
+								type="text" name="repay_name" style="width: 100px"
+								disabled="disabled" maxlength="25" /> 还款， 日期 <input
+								name="repay_date" disabled="disabled" type="text"
+								style="width: 142px" maxlength="50" /> 金额 <input type="text"
+								name="repay_account" disabled="disabled" style="width: 80px"
+								maxlength="25" /> 元， 有无逾期 <input type="radio" name="is_overdue0"
+								value="1" disabled="disabled" class="radio3" />有 <input
+								type="radio" name="is_overdue0" value="0" class="radio3"
+								checked="checked" disabled="disabled" />无 <input type="text"
+								name="remark" style="width: 130px" disabled="disabled"
+								maxlength="50" />
+						</div>
+					</div>
+					<div class="float-l commonstyle clearboth"
+						style="margin-left: -76px">
+						<div class="pop-form-title2">其他</div>
+						<div class="pop-form-item" style="height: 52px;">
+							<textarea name="remark" style="resize: none; width: 738px;"
+								maxlength="200"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="display: none" id="copy_dsls_xz">
+				<div class="pop-form-item">
+					<input type="text" name="repay_name" style="width: 100px"
+						maxlength="25" /> 还款， 日期 <input name="repay_date" type="text"
+						style="width: 142px" maxlength="50" /> 金额 <input type="text"
+						name="repay_account" style="width: 80px" maxlength="25" /> 元， 有无逾期
+					<input type="radio" name="is_overdue" value="1" class="radio3" />有
+					<input type="radio" name="is_overdue" value="0" class="radio3"
+						checked="checked" />无 <input type="text" name="remark"
+						style="width: 130px" maxlength="50" /> <a href="#"
+						class="groupdel" onclick="delRecord(this)"> 删除</a>
+				</div>
+			</div>
+			<div style="display: none" id="copy_dsls">
+				<div class="float-l commonstyle">
+					<div class="pop-form-item">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 姓名 <input type="text" name="name"
+							style="width: 100px" maxlength="50" />， <input type="text"
+							name="bank_name" style="width: 122px" maxlength="50" /> 银行 （尾号 <input
+							type="text" name="beak_card_no_tail" style="width: 50px"
+							maxlength="25" />）， <input name="water_begin_month" type="text"
+							style="width: 70px" maxlength="50" /> - <input
+							name="water_end_month" type="text" style="width: 70px"
+							maxlength="50" /> 流水， 余额 <input type="text"
+							name="account_balance" style="width: 100px" maxlength="25" /> 元
+					</div>
+				</div>
+				<div class="float-l commonstyle clearboth">
+					<div class="pop-form-title2">有无贷款还款体现</div>
+					<div class="pop-form-item" style="margin-right: 80px">
+						<input type="radio" name="is_repay" value="1" class="radio3"
+							onclick="toggleYwdkhktx(this)" />有 <input type="radio"
+							name="is_repay" value="0" class="radio3" checked="checked"
+							onclick="toggleYwdkhktx(this)" />无
+					</div>
+				</div>
+				<div class="float-l commonstyle clearboth class_group_xz dsls_xz">
+					<div class="pop-form-item">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label class="grouplabel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><a
+							href="#" style="display: none" class="createa groupnew"
+							onclick="createRecord(this,'copy_dsls_xz','dsls_xz')">新增</a> <input
+							type="text" name="repay_name" style="width: 100px"
+							disabled="disabled" maxlength="25" /> 还款， 日期 <input
+							name="repay_date" disabled="disabled" type="text"
+							style="width: 142px" maxlength="50" /> 金额 <input type="text"
+							name="repay_account" style="width: 80px" disabled="disabled"
+							maxlength="25" /> 元， 有无逾期 <input type="radio" name="is_overdue"
+							value="1" class="radio3" disabled="disabled" />有 <input
+							type="radio" name="is_overdue" value="0" class="radio3"
+							checked="checked" disabled="disabled" />无 <input type="text"
+							name="remark" style="width: 130px" disabled="disabled"
+							maxlength="50" />
+					</div>
+				</div>
+				<div class="float-l commonstyle clearboth"
+					style="margin-left: -76px; height: 60px">
+					<div class="pop-form-title2">其他</div>
+					<div class="pop-form-item">
+						<textarea name="remark" style="resize: none; width: 738px;"
+							maxlength="200"></textarea>
+					</div>
+				</div>
+				<div class="float-l clearboth delthisgroup"
+					style="margin-left: 723px">
+					<div class="pop-form-item">
+						<a href="#" onclick="delThisInfo(this);">删除本组信息</a>
+					</div>
+				</div>
+			</div>
+			<div>
+				<div class="center-title3 position-re">
+					存折信息（<input type="radio" name="has_passbook" value="1"
+						class="radio3" onclick="toggleCzxx(this)" />有 <input type="radio"
+						name="has_passbook" value="0" class="radio3" checked="checked"
+						onclick="toggleCzxx(this)" />无）
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				<div id="toolbar-czxx" class="minwidth400"
+					style="border: none; display: none; background-color: #e6f4ff;"></div>
+				<div class="center-txt class_czxx"
+					style="margin-bottom: 10px; margin-top: 10px; padding: 5px; border: 1px solid #BFBFBF; height: 29px;">
+					<div class="float-l commonstyle">
+						<div class="pop-form-item">
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 姓名 <input type="text"
+								name="psbook_name" style="width: 100px" disabled="disabled"
+								maxlength="50" />， <input type="text" name="bank_name"
+								style="width: 132px" disabled="disabled" maxlength="50" /> 银行， <input
+								type="radio" name="is_check0" value="1" class="radio3"
+								checked="checked" disabled="disabled" /> 是 <input type="radio"
+								name="is_check0" value="0" class="radio3" disabled="disabled" />
+							否 核实近七天交易明细， 余额 <input type="text" name="account_balance"
+								style="width: 100px" disabled="disabled" maxlength="25" /> 元
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="copy_czxx" style="display: none">
+				<div class="float-l commonstyle">
+					<div class="pop-form-item">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 姓名 <input type="text"
+							name="psbook_name" style="width: 100px" maxlength="50" />， <input
+							type="text" name="bank_name" style="width: 132px" maxlength="50" />
+						银行， <input type="radio" name="is_check" value="1" class="radio3"
+							checked="checked" /> 是 <input type="radio" name="is_check"
+							value="0" class="radio3" />否 核实近七天交易明细， 余额 <input type="text"
+							name="account_balance" style="width: 100px" maxlength="25" /> 元
+					</div>
+				</div>
+				<div class="float-l clearboth delthisgroup"
+					style="margin-left: 723px">
+					<div class="pop-form-item">
+						<a href="#" onclick="delThisInfo(this);">删除本组信息</a>
+					</div>
+				</div>
+			</div>
+			<div>
+				<div class="center-title3 position-re">
+					工资信息（<input type="radio" name="has_salary" value="1" class="radio3"
+						onclick="toggleGzxx(this)" />有 <input type="radio"
+						name="has_salary" value="0" class="radio3" checked="checked"
+						onclick="toggleGzxx(this)" />无）
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				<div id="toolbar-gzxx" class="minwidth400"
+					style="border: none; display: none; background-color: #e6f4ff"></div>
+				<div class="center-txt class_gzxx"
+					style="margin-bottom: 5px; margin-top: 10px; padding: 5px; border: 1px solid #BFBFBF; height: 140px;">
+					<div class="float-l commonstyle">
+						<div class="pop-form-item">
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 姓名 <input type="text" name="name"
+								style="width: 100px" disabled="disabled" maxlength="50" />， <input
+								type="text" name="bank_name" style="width: 122px"
+								disabled="disabled" maxlength="50" /> 银行， <input
+								name="water_begin_month" maxlength="50" type="text"
+								style="width: 70px" disabled="disabled" /> - <input
+								name="water_end_month" maxlength="50" type="text"
+								style="width: 70px" disabled="disabled" /> 流水， 以 <input
+								type="text" name="pay_type" style="width: 60px"
+								disabled="disabled" maxlength="25" /> 形式发放， 余额 <input
+								type="text" name="account_balance" style="width: 80px"
+								disabled="disabled" maxlength="25" /> 元
+						</div>
+					</div>
+					<div class="float-l commonstyle clearboth">
+						<div class="pop-form-item">
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 固定：每月 <input type="text"
+								maxlength="25" name="fixed_pay_day" style="width: 132px"
+								disabled="disabled" maxlength="2" /> 日发放工资 <input type="text"
+								name="fixed_payment" style="width: 132px" disabled="disabled"
+								maxlength="25" /> 元
+						</div>
+					</div>
+					<div class="float-l commonstyle clearboth">
+						<div class="pop-form-item">
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 不固定：每月 <input type="text"
+								name="un_fixed_pay_day" style="width: 132px" disabled="disabled"
+								maxlength="25" /> 日发放工资 <input type="text"
+								name="un_fixed_payment" style="width: 132px" disabled="disabled"
+								maxlength="25" /> 元之间浮动
+						</div>
+					</div>
+					<div class="float-l commonstyle clearboth"
+						style="margin-left: -76px">
+						<div class="pop-form-title2">其他</div>
+						<div class="pop-form-item">
+							<textarea name="remark" style="resize: none; width: 755px;"
+								maxlength="200"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="copy_gzxx" style="display: none">
+				<div class="float-l commonstyle">
+					<div class="pop-form-item">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 姓名 <input type="text" name="name"
+							style="width: 100px" maxlength="50" />， <input type="text"
+							name="bank_name" style="width: 122px" maxlength="50" /> 银行， <input
+							name="water_begin_month" maxlength="50" type="text"
+							style="width: 70px" /> - <input name="water_end_month"
+							maxlength="50" type="text" style="width: 70px" /> 流水， 以 <input
+							type="text" name="pay_type" style="width: 60px" maxlength="25" />
+						形式发放， 余额 <input type="text" name="account_balance"
+							style="width: 80px" maxlength="25" /> 元
+					</div>
+				</div>
+				<div class="float-l commonstyle clearboth">
+					<div class="pop-form-item">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 固定：每月 <input type="text"
+							name="fixed_pay_day" style="width: 132px" maxlength="2"
+							maxlength="25" /> 日发放工资 <input type="text" name="fixed_payment"
+							style="width: 132px" maxlength="25" /> 元
+					</div>
+				</div>
+				<div class="float-l commonstyle clearboth">
+					<div class="pop-form-item">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 不固定：每月 <input type="text"
+							name="un_fixed_pay_day" style="width: 132px" maxlength="25" />
+						日发放工资 <input type="text" name="un_fixed_payment"
+							style="width: 132px" maxlength="25" /> 元之间浮动
+					</div>
+				</div>
+				<div class="float-l commonstyle clearboth"
+					style="margin-left: -76px; height: 50px">
+					<div class="pop-form-title2">其他</div>
+					<div class="pop-form-item">
+						<textarea name="remark" style="resize: none; width: 755px;"
+							maxlength="200"></textarea>
+					</div>
+				</div>
+				<div class="float-l clearboth delthisgroup"
+					style="margin-left: 723px">
+					<div class="pop-form-item">
+						<a href="#" onclick="delThisInfo(this);">删除本组信息</a>
+					</div>
+				</div>
+			</div>
+			<div>
+				<div class="center-title3 position-re">
+					还贷信息
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				<div id="toolbar-hdxx" class="minwidth400"
+					style="border: none; background-color: #e6f4ff; margin-bottom: 10px;"></div>
+				<div class="center-txt class_hdxx clearfix"
+					style="margin-bottom: 5px; padding: 5px; border: 1px solid #BFBFBF; height: auto;">
+					<div class="float-l commonstyle">
+						<div class="pop-form-item">
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 姓名 <input type="text" name="name"
+								style="width: 100px" maxlength="50" />， <input type="text"
+								name="bank_name" style="width: 132px" maxlength="50" /> 银行 （尾号 <input
+								type="text" name="beak_card_no_tail" style="width: 50px"
+								maxlength="25" />）， <input name="water_begin_month" type="text"
+								style="width: 70px" maxlength="50" /> - <input
+								name="water_end_month" type="text" style="width: 70px"
+								maxlength="50" /> 流水， 余额 <input type="text"
+								name="account_balance" style="width: 106px" maxlength="25" /> 元
+						</div>
+					</div>
+					<div class="float-l commonstyle clearboth class_group_xz hdxx_xz">
+						<div class="pop-form-item">
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label style="display: none"
+								class="grouplabel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><a
+								href="#" class="groupnew"
+								onclick="createRecord(this,'copy_hdxx_xz','hdxx_xz')">新增</a> <input
+								type="text" name="repay_name" style="width: 122px"
+								maxlength="25" /> 还款，每月 <input type="text"
+								name="loan_repay_date" style="width: 100px" maxlength="25" />
+							日还款 <input type="text" name="repay_account" style="width: 100px"
+								maxlength="25" /> 元 有无逾期 <input type="radio" name="is_overdue1"
+								value="1" class="radio3" />有 <input type="radio"
+								name="is_overdue1" value="0" class="radio3" checked="checked" />无
+							<input type="text" name="remark" style="width: 150px"
+								maxlength="50" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="copy_hdxx" style="display: none">
+				<div class="float-l commonstyle">
+					<div class="pop-form-item">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 姓名 <input type="text" name="name"
+							style="width: 100px" maxlength="50" />， <input type="text"
+							name="bank_name" style="width: 132px" maxlength="50" /> 银行 （尾号 <input
+							type="text" name="beak_card_no_tail" style="width: 50px"
+							maxlength="25" />）， <input name="water_begin_month" type="text"
+							style="width: 70px" maxlength="50" /> - <input
+							name="water_end_month" type="text" style="width: 70px"
+							maxlength="50" /> 流水， 余额 <input type="text"
+							name="account_balance" style="width: 106px" maxlength="25" /> 元
+					</div>
+				</div>
+				<div class="float-l commonstyle clearboth class_group_xz hdxx_xz">
+					<div class="pop-form-item">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label style="display: none"
+							class="grouplabel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><a
+							href="#" class="groupnew"
+							onclick="createRecord(this,'copy_hdxx_xz','hdxx_xz')">新增</a> <input
+							type="text" name="repay_name" style="width: 122px" maxlength="25" />
+						还款，每月 <input type="text" name="loan_repay_date"
+							style="width: 100px" maxlength="25" /> 日还款 <input type="text"
+							name="repay_account" style="width: 100px" maxlength="25" /> 元
+						有无逾期 <input type="radio" name="is_overdue" value="1"
+							class="radio3" />有 <input type="radio" name="is_overdue"
+							value="0" class="radio3" checked="checked" />无 <input type="text"
+							name="remark" style="width: 150px" maxlength="50" />
+					</div>
+				</div>
+				<div class="float-l clearboth delthisgroup"
+					style="margin-left: 723px">
+					<div class="pop-form-item">
+						<a href="#" onclick="delThisInfo(this);">删除本组信息</a>
+					</div>
+				</div>
+			</div>
+			<div style="display: none" id="copy_hdxx_xz">
+				<div class="pop-form-item">
+					<input type="text" name="repay_name" style="width: 122px"
+						maxlength="25" /> 还款，每月 <input type="text" name="loan_repay_date"
+						style="width: 100px" maxlength="25" /> 日还款 <input type="text"
+						name="repay_account" style="width: 100px" maxlength="25" /> 元 有无逾期
+					<input type="radio" name="is_overdue" value="1" class="radio3" />有
+					<input type="radio" name="is_overdue" value="0" class="radio3"
+						checked="checked" />无 <input type="text" name="remark"
+						style="width: 150px" maxlength="50" /> <a href="#"
+						class="groupdel" onclick="delRecord(this)"> 删除</a>
+				</div>
+			</div>
+			<div>
+				<div class="center-title3 position-re">
+					备注
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				<div class="center-txt clearfix"
+					style="margin-bottom: 5px; padding: 5px; border: 1px solid #BFBFBF; height: auto; margin-top: 10px"
+					id="bzdiv">
+					<div class="float-l commonstyle clearfix"
+						style="margin-left: -73px; height: 50px; height: auto">
+						<div class="pop-form-title2">附件</div>
+						<div class="pop-form-item">
+							<a class="btn" href="#" onclick="openAddAttDialog()"
+								id="uploadButton">上传附件</a>
+						</div>
+						<div class="pop-form-item clearfix" id="fileinfo"
+							style="height: auto"></div>
+					</div>
+					<div class="float-l commonstyle clearboth"
+						style="margin-left: -76px">
+						<div class="pop-form-title2">备注</div>
+						<div class="pop-form-item">
+							<textarea name="remark" class="bz_remark"
+								style="resize: none; width: 755px;" maxlength="500"></textarea>
+						</div>
+					</div>
+					<div class="float-l commonstyle clearboth"
+						style="margin-left: 20px; margin-top: 20px">
+						<div class="pop-form-item">
+							征信上 <input type="radio" name="is_credit_rating_overdue" value="1"
+								class="radio3" /> 是 <input type="radio"
+								name="is_credit_rating_overdue" value="0" class="radio3"
+								checked="checked" /> 否 逾期， <input type="radio"
+								name="is_need_supple" value="1" class="radio3" /> 是 <input
+								type="radio" name="is_need_supple" value="0" class="radio3"
+								checked="checked" /> 否 需要补件，补件时间 <input name="supple_date"
+								type="text" maxlength="50" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+var fileArr = [];//上传附件列表	
+var index = 2;
+var wms_cre_credit_head_id = $.query.get('wms_cre_credit_head_id');
+var wms_cre_credit_line_customer_change_head_id = $.query.get('wms_cre_credit_line_customer_change_head_id');
+var cktype = $.query.get('cktype');
+var fileArr =[];
+$(function() {
+	initForm();
+	if(cktype=='ck'){		
+		
+	}else{
+		//对私流水新增工具条
+		$("#toolbar-dsls").ligerToolBar({
+			 items: [{
+			        text: '新增',
+			        click: add_dslsDiv,
+			        icon: 'add'
+			    },{
+			            line: true
+			    }]
+		});
+		//存折信息新增工具条
+		$("#toolbar-czxx").ligerToolBar({
+			 items: [{
+			        text: '新增',
+			        click: add_czxxDiv,
+			        icon: 'add'
+			    },{
+			            line: true
+			    }]
+		});
+		//工资信息新增工具条
+		$("#toolbar-gzxx").ligerToolBar({
+			 items: [{
+			        text: '新增',
+			        click: add_gzxxDiv,
+			        icon: 'add'
+			    },{
+			            line: true
+			    }]
+		});
+		//还贷信息新增工具条
+		$("#toolbar-hdxx").ligerToolBar({
+			 items: [{
+			        text: '新增',
+			        click: add_hdxxDiv,
+			        icon: 'add'
+			    },{
+			            line: true
+			    }]
+		});		
+	}	
+});
+//设置表单控件的状态
+function setFormStatus(){
+	$('.class_dsls').each(function(i){
+		if($(this).find('[name^=is_repay]:checked').val()==1){
+			$(this).find('.dsls_xz:first').find('input').removeAttr('disabled');
+			$(this).find('.dsls_xz:first').find('label').css('display','none');
+			$(this).find('.dsls_xz:first').find('.groupnew').css('display','inline');
+		}		
+	});
+	if($('[name=has_passbook]:checked').val()==1){
+		$('#toolbar-czxx').css('display','block');
+		$('.class_czxx:first').find('input').removeAttr('disabled');		
+	}
+	if($('[name=has_salary]:checked').val()==1){
+		$('#toolbar-gzxx').css('display','block');
+		$('.class_gzxx:first').find('input,textarea').removeAttr('disabled');		
+	}
+}
+//初始化表单
+function initForm(){
+	$.getJSON(globalUtil.getTimestampUrl('/loanreview/wmscrerevwatermaininfobyfk.do'),
+			{
+				"wms_cre_credit_head_id" : wms_cre_credit_head_id,
+				"wms_cre_credit_line_customer_change_head_id" : wms_cre_credit_line_customer_change_head_id
+			},
+			function(json) {	
+				if(json.ztqk != null){
+					globalUtil.setFormVal("ztqkdiv", json.ztqk);
+					$("select[name='is_standard']").val(json.ztqk.is_standard);//是否符合进件标准
+					$("select[name='evaluation']").val(json.ztqk.evaluation);//评价
+					$("select[name='liabilities']").val(json.ztqk.liabilities);//负债
+					$("textarea[class='bz_remark']").val(json.ztqk.remark);//备注
+					$("input[name='supple_date']").val(json.ztqk.supple_date);//补件时间
+					setRadioVal("is_need_supple",json.ztqk.is_need_supple);//是否需要补件
+					setRadioVal("is_credit_rating_overdue",json.ztqk.is_credit_rating_overdue);//是否逾期
+					setRadioVal("has_salary",json.ztqk.has_salary);//是否有工资
+					setRadioVal("has_passbook",json.ztqk.has_passbook);//是否存折
+					for(i=0;i<json.dsls.length-1;i++){
+						add_dslsDiv();
+					}
+					$('.class_dsls').each(function(i){					
+						$(this).find('[name=name]').val(json.dsls[i].name);//姓名
+						$(this).find('[name=bank_name]').val(json.dsls[i].bank_name);//银行
+						$(this).find('[name=beak_card_no_tail]').val(json.dsls[i].beak_card_no_tail);//尾号
+						$(this).find('[name=water_begin_month]').val(json.dsls[i].water_begin_month);//流水开始月份
+						$(this).find('[name=water_end_month]').val(json.dsls[i].water_end_month);//流水结束月份
+						$(this).find('[name=account_balance]').val(json.dsls[i].account_balance);//余额
+						setRadioVal('is_repay',json.dsls[i].is_repay,this,true);//有无贷款还款体现					
+						$(this).find('[name=remark]:last').val(json.dsls[i].remark);//其他
+						for(k=0;k<json.dsls[i].dslsGroup.length-1;k++){
+							createRecordForRead(this,'copy_dsls_xz','dsls_xz')
+						}
+						if(json.dsls[i].is_repay=='1'){
+							$(this).find('.dsls_xz').each(function(j){	
+								$(this).find('[name=repay_name]').val(json.dsls[i].dslsGroup[j].repay_name);//还款名
+								$(this).find('[name=repay_date]').val(json.dsls[i].dslsGroup[j].repay_date);//还款日期
+								$(this).find('[name=repay_account]').val(json.dsls[i].dslsGroup[j].repay_account);//还款金额
+								setRadioVal('is_overdue',json.dsls[i].dslsGroup[j].is_overdue,this,true);//有无逾期
+								$(this).find('[name=remark]').val(json.dsls[i].dslsGroup[j].remark);//其他						
+							});
+						}
+					});
+					for(i=0;i<json.czxx.length-1;i++){
+						add_czxxDiv();
+					}
+					if(json.ztqk.has_passbook=='1'){
+						$('.class_czxx').each(function(i){	
+							$(this).find('[name=psbook_name]').val(json.czxx[i].psbook_name);//姓名
+							$(this).find('[name=bank_name]').val(json.czxx[i].bank_name);//银行名称
+							setRadioVal('is_check',json.czxx[i].is_check,this,true);//是否核实近七天交易明细
+							$(this).find('[name=account_balance]').val(json.czxx[i].account_balance);//余额
+						});
+					}
+					for(i=0;i<json.gzxx.length-1;i++){
+						add_gzxxDiv();
+					}
+					$('.class_gzxx').each(function(i){	
+						if(json.gzxx[i]!=undefined){
+							$(this).find('[name=name]').val(json.gzxx[i].name);//姓名
+							$(this).find('[name=bank_name]').val(json.gzxx[i].bank_name);//银行名称
+							$(this).find('[name=water_begin_month]').val(json.gzxx[i].water_begin_month);//流水开始月份
+							$(this).find('[name=water_end_month]').val(json.gzxx[i].water_end_month);//流水结束月份
+							$(this).find('[name=pay_type]').val(json.gzxx[i].pay_type);//发放形式
+							$(this).find('[name=account_balance]').val(json.gzxx[i].account_balance);//余额
+							$(this).find('[name=fixed_pay_day]').val(json.gzxx[i].fixed_pay_day);//固定发放工资日
+							$(this).find('[name=fixed_payment]').val(json.gzxx[i].fixed_payment);//固定发放工资额
+							$(this).find('[name=un_fixed_pay_day]').val(json.gzxx[i].un_fixed_pay_day);//不固定发放工资日
+							$(this).find('[name=un_fixed_payment]').val(json.gzxx[i].un_fixed_payment);//不固定发放工资额
+							$(this).find('[name=remark]').val(json.gzxx[i].remark);//其他
+						}						
+						if(json.ztqk.has_salary == 1){
+							$(this).find('input').removeAttr('disabled');
+						}else if(json.ztqk.has_salary == 0){
+							$(this).find('input').attr('disabled','disabled');
+						}
+					});						
+					for(i=0;i<json.hdxx.length-1;i++){
+						add_hdxxDiv();
+					}
+					$('.class_hdxx').each(function(i){
+						$(this).find('[name=name]').val(json.hdxx[i].name);//姓名				
+						$(this).find('[name=bank_name]').val(json.hdxx[i].bank_name);//银行
+						$(this).find('[name=beak_card_no_tail]').val(json.hdxx[i].beak_card_no_tail);//尾号
+						$(this).find('[name=water_begin_month]').val(json.hdxx[i].water_begin_month);//流水开始月份
+						$(this).find('[name=water_end_month]').val(json.hdxx[i].water_end_month);//流水结束月份
+						$(this).find('[name=account_balance]').val(json.hdxx[i].account_balance);//余额
+						
+						for(k=0;k<json.hdxx[i].hdxxGroup.length-1;k++){
+							createRecordForRead(this,'copy_hdxx_xz','hdxx_xz')
+						}
+						$(this).find('.hdxx_xz').each(function(j){	
+							$(this).find('[name=repay_name]').val(json.hdxx[i].hdxxGroup[j].repay_name);//还款名
+							$(this).find('[name=loan_repay_date]').val(json.hdxx[i].hdxxGroup[j].loan_repay_date);//还款日期
+							$(this).find('[name=repay_account]').val(json.hdxx[i].hdxxGroup[j].repay_account);//还款金额
+							setRadioVal('is_overdue',json.hdxx[i].hdxxGroup[j].is_overdue,this,true);//有无逾期
+							$(this).find('[name=remark]').val(json.hdxx[i].hdxxGroup[j].remark);//其他					
+						});
+					});
+					fileArr = json.fjxx;
+					if(cktype == 'ck'){
+						init_attr(0);
+					}else{
+						init_attr(1);
+					}										
+				}
+				if(cktype!='ck'){
+					setFormStatus();						
+				}else{
+					setReadOnly();//设置只读
+				}
+	});
+}
+//添加对私流水信息
+function add_dslsDiv(){
+	var outDiv = $('<div class="center-txt class_dsls clearfix" style="margin-bottom: 5px;border:1px solid #BFBFBF;height:auto;"></div>');
+	outDiv.html($('#copy_dsls').html());
+	$(outDiv).find('[name=is_repay]').attr('name','is_repay'+index);
+	$(outDiv).find('[name=is_overdue]').attr('name','is_overdue'+index);
+	$('.class_dsls:last').after(outDiv);	
+	index++;
+}
+//添加存折信息
+function add_czxxDiv(){
+	var outDiv = $('<div class="center-txt class_czxx clearfix" style="margin-bottom: 5px;padding:5px;border:1px solid #BFBFBF;height:auto;"></div>');
+	outDiv.html($('#copy_czxx').html());
+	$(outDiv).find('[name=is_check]').attr('name','is_check'+index);
+	$('.class_czxx:last').after(outDiv);		
+	index++;	
+}
+//添加存折信息
+function add_gzxxDiv(){
+	var outDiv = $('<div class="center-txt class_gzxx clearfix" style="margin-bottom: 5px;padding:5px;border:1px solid #BFBFBF;height:auto;"></div>');
+	outDiv.html($('#copy_gzxx').html());
+	$('.class_gzxx:last').after(outDiv);	
+}
+//添加还贷信息
+function add_hdxxDiv(){
+	var outDiv = $('<div class="center-txt class_hdxx clearfix" style="margin-bottom: 5px;padding:5px;border:1px solid #BFBFBF;height:auto"></div>');
+	outDiv.html($('#copy_hdxx').html());
+	$(outDiv).find('[name=is_overdue]').attr('name','is_overdue'+index);
+	$('.class_hdxx:last').after(outDiv);		
+	index++;
+}
+//删除本组信息
+function delThisInfo(ele){
+	globalUtil.confirmMsg(globalErrorMsg['100035'],
+		    function(yes) { //确认删除
+		    	if(yes){
+		    		$(ele).parent().parent().parent().remove();
+		    	}
+		    });	
+}
+//组内新增
+function createRecord(ele,id,className){
+	var outDiv = $('<div class="float-l commonstyle clearboth class_group_xz '+className+'" style="margin-left:52px"></div>');
+	outDiv.html($('#'+id).html());
+	$(ele).parent().parent().parent().find('.class_group_xz:last').after(outDiv);	
+	$(ele).parent().parent().parent().find('.class_group_xz:last').find('[name=is_overdue]').attr('name','is_overdue'+index);
+	index++;
+}
+//组内新增(只读)
+function createRecordForRead(ele,id,className){
+	var outDiv = $('<div class="float-l commonstyle clearboth class_group_xz '+className+'" style="margin-left:52px"></div>');
+	outDiv.html($('#'+id).html());
+	$(ele).find('.class_group_xz:last').after(outDiv);	
+	$(ele).find('.class_group_xz:last').find('[name=is_overdue]').attr('name','is_overdue'+index);
+	index++;
+}
+//组内删除
+function delRecord(ele){
+	globalUtil.confirmMsg(globalErrorMsg['100036'],
+		    function(yes) { //确认删除
+		    	if(yes){
+		    		$(ele).parent().parent().remove();
+		    	}
+		    });	
+}
+//根据name属性或class值获取控件的值（适用于没有新增功能的组）
+function getValue(nameValue,classValue){
+	if(classValue==null){
+		return document.getElementsByName(nameValue)[0].value;
+	}else{
+		return $('.'+classValue).val();
+	}
+}
+//获取单选按钮被选中的项的值
+function getRadioValue(nameValue,classValue){
+	var result;
+	if(classValue==null){
+		var eleArr = document.getElementsByName(nameValue);
+		$.each(eleArr,function(i,ele){
+			if($(ele).attr('checked')){
+				result = $(ele).val();
+				return false;
+			}
+		});
+	}else{
+		var eleArr = $('.'+classValue);
+		$.each(eleArr.get(),function(i,ele){
+			if($(ele).attr('checked')){
+				result = $(ele).val();
+				return false;
+			}
+		});
+	}
+	return result;
+}
+//设置Radio控件的值
+function setRadioVal(nameVal,valFromDb,ele,flag){
+	if(flag){
+		$(ele).find("input[name^='"+nameVal+"']").each(function() {
+			if ($(this).val() == valFromDb) {
+				$(this).attr('checked', 'checked');
+				return false;
+			}
+		});
+		
+	}else{
+		$("input[name='"+nameVal+"']").each(function() {
+			if ($(this).val() == valFromDb) {
+				$(this).attr('checked', 'checked');
+				return false;
+			}
+		});
+	}	
+}
+//获取表单中控件的值，返回一个json对象
+function getFormValues(){
+	var resultJson = {};//最终返回结果的Json对象
+	var ztqk = {};//总体情况json对象，也包括备注（除了附件以外）
+	ztqk.is_standard = getValue('is_standard');//是否符合进件标准
+	ztqk.evaluation = getValue('evaluation');//评价
+	ztqk.liabilities = getValue('liabilities');//负债
+	ztqk.warter_copies = getValue('warter_copies');//流水份数
+	ztqk.pri_warter_copies = getValue('pri_warter_copies');//对私份数
+	ztqk.repay_copies = getValue('repay_copies');//还贷份数
+	ztqk.remark = getValue(null,'bz_remark');//备注
+	ztqk.is_credit_rating_overdue = getRadioValue('is_credit_rating_overdue');//征信上是否逾期
+	ztqk.is_need_supple = getRadioValue('is_need_supple');//是否需要补件
+	ztqk.supple_date = getValue('supple_date');//补件时间
+	ztqk.has_passbook = getRadioValue('has_passbook');//有无存折信息
+	ztqk.has_salary = getRadioValue('has_salary');//有无工资信息
+	resultJson.ztqk = ztqk;
+	var dslsArr = [];//对私流水
+	$('.class_dsls').each(function(i){
+		var dslsRecord = {};
+		dslsRecord.name = $(this).find('[name=name]').get(0).value;//姓名
+		dslsRecord.bank_name = $(this).find('[name=bank_name]').get(0).value;//银行名称
+		dslsRecord.beak_card_no_tail = $(this).find('[name=beak_card_no_tail]').get(0).value;//尾号
+		dslsRecord.water_begin_month = $(this).find('[name=water_begin_month]').get(0).value;//流水开始月份
+		dslsRecord.water_end_month = $(this).find('[name=water_end_month]').get(0).value;//流水结束月份
+		dslsRecord.account_balance = $(this).find('[name=account_balance]').get(0).value;//余额
+		dslsRecord.is_repay = $(this).find('[name^=is_repay]:checked').get(0).value;//有无贷款还款体现
+		dslsRecord.remark = $(this).find('[name=remark]:last').get(0).value;//其他		
+		var dslsGroupArr = [];
+		if(dslsRecord.is_repay=='1'){
+			$(this).find('.dsls_xz').each(function(j){	
+				var dslsGroupRecord = {};
+				dslsGroupRecord.repay_name = $(this).find('[name=repay_name]').get(0).value;//还款名
+				dslsGroupRecord.repay_date = $(this).find('[name=repay_date]').get(0).value;//还款日期
+				dslsGroupRecord.repay_account = $(this).find('[name=repay_account]').get(0).value;//还款金额
+				dslsGroupRecord.is_overdue = $(this).find('[name^=is_overdue]:checked').get(0).value;//有无逾期
+				dslsGroupRecord.remark = $(this).find('[name=remark]').get(0).value;//其他
+				dslsGroupArr.push(dslsGroupRecord);										
+			});
+		}
+		dslsRecord.dslsGroup = dslsGroupArr;
+		dslsArr.push(dslsRecord);
+	});	
+	resultJson.dsls = dslsArr;
+	var hdxxArr = [];//还贷信息
+	$('.class_hdxx').each(function(i){
+		var hdxxRecord = {};
+		hdxxRecord.name = $(this).find('[name=name]').get(0).value;//姓名
+		hdxxRecord.bank_name = $(this).find('[name=bank_name]').get(0).value;//银行名称
+		hdxxRecord.beak_card_no_tail = $(this).find('[name=beak_card_no_tail]').get(0).value;//尾号
+		hdxxRecord.water_begin_month = $(this).find('[name=water_begin_month]').get(0).value;//流水开始月份
+		hdxxRecord.water_end_month = $(this).find('[name=water_end_month]').get(0).value;//流水结束月份
+		hdxxRecord.account_balance = $(this).find('[name=account_balance]').get(0).value;//余额
+		var hdxxGroupArr = [];
+		$(this).find('.hdxx_xz').each(function(j){
+			var hdxxGroupRecord = {};
+			hdxxGroupRecord.repay_name = $(this).find('[name=repay_name]').get(0).value;//还款名
+			hdxxGroupRecord.loan_repay_date = $(this).find('[name=loan_repay_date]').get(0).value;//每月还款日
+			hdxxGroupRecord.repay_account = $(this).find('[name=repay_account]').get(0).value;//还款金额
+			hdxxGroupRecord.is_overdue = $(this).find('[name^=is_overdue]:checked').get(0).value;//有无逾期
+			hdxxGroupRecord.remark = $(this).find('[name=remark]').get(0).value;//其他
+			hdxxGroupArr.push(hdxxGroupRecord);		
+		});
+		hdxxRecord.hdxxGroup = hdxxGroupArr;
+		hdxxArr.push(hdxxRecord);
+	});	
+	resultJson.hdxx = hdxxArr;
+	var czxxArr=[];//存折信息数组
+	if(ztqk.has_passbook=='1'){
+		$('.class_czxx').each(function(i){		
+			var czxxRecord = {};
+			czxxRecord.psbook_name = $(this).find('[name=psbook_name]').get(0).value;//姓名
+			czxxRecord.bank_name = $(this).find('[name=bank_name]').get(0).value;//银行名称
+			czxxRecord.is_check = $(this).find('[name^=is_check]:checked').get(0).value;//是否核实近七天交易明细
+			czxxRecord.account_balance = $(this).find('[name=account_balance]').get(0).value;//余额
+			czxxArr.push(czxxRecord);				
+		});
+	}
+	resultJson.czxx = czxxArr;
+	var gzxxArr=[];//工资信息数组	
+	$('.class_gzxx').each(function(i){		
+		var gzxxRecord = {};
+		if(ztqk.has_salary == 1){
+			gzxxRecord.name = $(this).find('[name=name]').get(0).value;//姓名
+			gzxxRecord.bank_name = $(this).find('[name=bank_name]').get(0).value;//银行名称
+			gzxxRecord.water_begin_month = $(this).find('[name=water_begin_month]').get(0).value;//流水开始月份
+			gzxxRecord.water_end_month = $(this).find('[name=water_end_month]').get(0).value;//流水结束月份
+			gzxxRecord.pay_type = $(this).find('[name=pay_type]').get(0).value;//发放形式
+			gzxxRecord.account_balance = $(this).find('[name=account_balance]').get(0).value;//余额
+			gzxxRecord.fixed_pay_day = $(this).find('[name=fixed_pay_day]').get(0).value;//固定发放工资日
+			gzxxRecord.fixed_payment = $(this).find('[name=fixed_payment]').get(0).value;//固定发放工资额
+			gzxxRecord.un_fixed_pay_day = $(this).find('[name=un_fixed_pay_day]').get(0).value;//不固定发放工资日
+			gzxxRecord.un_fixed_payment = $(this).find('[name=un_fixed_payment]').get(0).value;//不固定发放工资额
+		}		
+		gzxxRecord.remark = $(this).find('[name=remark]').get(0).value;//其他
+		gzxxArr.push(gzxxRecord);				
+	});	
+	resultJson.gzxx = gzxxArr;
+	resultJson.fileArr = fileArr;//附件
+	return resultJson;
+}
+//获取上传附件内容，并且只能查看功能
+function init_attr(flag){
+	var filehtml = '';
+	for(var i=0;i<fileArr.length;i++){
+		var nnme=fileArr[i].attachment_new_name.replace('/','thxg1');
+		nnme=nnme.replace('/','thxg2');
+		filehtml += '<div id="delUploadDivId'+nnme+'">';
+		filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+fileArr[i].attachment_address+'">'+fileArr[i].attachment_old_name+'</a>';
+		if(flag==1){
+			filehtml += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\''+nnme+'\')"/>';
+		}
+		filehtml += '</div>'
+	}
+	$("#fileinfo").html(filehtml);   
+}
+//打开附件上传页面
+function openAddAttDialog(){
+	var url = globalUtil.getHtml("../creditManage/addFileForCre.html");
+	dialog_att = $.ligerDialog.open({
+        url: url,
+        title: '上传附件',
+        width: 650,
+        height: globalUtil.setDialogHeight(250),
+        onHiddenOrClose: function(){
+        	//alert('关闭或隐藏都调用的事件!');
+    	},
+        isResize: false
+	});
+}
+//添加上传文件的信息链接
+function addAttFile(newfileArr,objid){
+	fileArr = fileArr.concat(newfileArr);
+	var filehtml = $("#fileinfo").html();
+	for(var i=0;i<newfileArr.length;i++){
+		var nnme=newfileArr[i].attachment_new_name.replace('/','thxg1');
+		nnme=nnme.replace('/','thxg2');
+		filehtml += '<div id="delUploadDivId'+nnme+'">';
+		filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+newfileArr[i].attachment_address+'">'+newfileArr[i].attachment_old_name+'</a>';
+		filehtml += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\''+nnme+'\')"/>';
+		filehtml += '</div>'
+	}		
+	$("#fileinfo").html(filehtml);
+}
+//删除上传文件的信息链接
+function deleteFile(filename){
+   	$.ligerDialog.confirm(globalErrorMsg['100016'],
+    function(yes) {
+    	if (yes) {
+    		$("#delUploadDivId"+filename).remove();
+    		filename=filename.replace('thxg1','/');
+    		filename=filename.replace('thxg2','/');
+    		for(var i=0;i<fileArr.length;i++){
+    			if(filename == fileArr[i].attachment_new_name){
+    				fileArr.splice(i,1);
+    				break;
+    			}
+    		}
+    	}                                            
+	});
+}
+//toggle有无贷款还款体现
+function toggleYwdkhktx(ele){
+	if($(ele).val()==1 && $(ele).attr('checked')){
+		$.each($(ele).parent().parent().parent().find('.dsls_xz').get(),function(i,innerEle){
+			$(innerEle).find('input').removeAttr('disabled');
+			$(innerEle).find('a[class^=createa]').css('display','inline');
+			$(innerEle).find('label').css('display','none');
+		});
+	}else if($(ele).val()==0 && $(ele).attr('checked')){		
+		$.each($(ele).parent().parent().parent().find('.dsls_xz').get(),function(i,innerEle){
+			$(innerEle).find('input').attr('disabled','disabled');
+			$(innerEle).find('a[class^=createa]').css('display','none');
+			$(innerEle).find('label').css('display','inline');
+		});
+	}
+}
+//toggle有无存折信息
+function toggleCzxx(ele){
+	if($(ele).val()==1 && $(ele).attr('checked')){
+		if($(ele).parent().parent().find('.class_czxx').get(0).style.display!='none'){
+			$('#toolbar-czxx').css('display','block');
+		}		
+		$(ele).parent().parent().find('.class_czxx').find('input').removeAttr('disabled');
+	}else if($(ele).val()==0 && $(ele).attr('checked')){		
+		$('#toolbar-czxx').css('display','none');
+		$(ele).parent().parent().find('.class_czxx').find('input').attr('disabled','disabled');
+	}
+}
+//toggle有无工资信息
+function toggleGzxx(ele){
+	if($(ele).val()==1 && $(ele).attr('checked')){
+		if($(ele).parent().parent().find('.class_gzxx').get(0).style.display!='none'){
+			$('#toolbar-gzxx').css('display','block');
+		}		
+		$(ele).parent().parent().find('.class_gzxx').find('input').removeAttr('disabled');		
+	}else if($(ele).val()==0 && $(ele).attr('checked')){		
+		$('#toolbar-gzxx').css('display','none');
+		$(ele).parent().parent().find('.class_gzxx').find('input').attr('disabled','disabled');		
+	}
+}
+//设置为只读模式
+function setReadOnly(){
+	$("input[type=text]").attr({
+		"disabled" : "disabled"
+	});
+	$("input[type=radio]").attr({
+		"disabled" : "disabled"
+	});	
+	$("select").attr({
+		"disabled" : "disabled"
+	});
+	$("textarea").attr({
+		"disabled" : "disabled"
+	});
+	$("#uploadButton").css({
+		"display" : "none"
+	});
+	$('.groupnew').css('display','none');
+	$('.groupdel').css('display','none');
+	$('.grouplabel').css('display','inline');
+	$('.delthisgroup').css('display','none');
+}
+</script>
+</body>
+</html>

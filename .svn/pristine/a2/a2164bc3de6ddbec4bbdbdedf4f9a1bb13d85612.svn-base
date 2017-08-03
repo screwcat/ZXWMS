@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.cremanage.persist.WmsCreCreditHeadLogDao">
+    <!-- get entity by pk -->
+    <select id="get" parameterType="int" resultType="WmsCreCreditHeadLog">
+        select
+            wms_cre_credit_head_log_id,
+            create_user_id,
+            create_user_name,
+            create_timestamp,
+            enable_flag,
+            wms_cre_credit_head_id,
+            wms_cre_credit_head_json,
+            wms_cre_credit_line_customer_change_head_json,
+            wms_cre_customer_change_line_houseinfo_json,
+            wms_cre_customer_change_line_workinfo_json,
+            wms_cre_customer_change_line_company_json,
+            wms_cre_customer_change_line_contact_json,
+            wms_cus_customer_change_child_json,
+            wms_cre_housing_apply_att_json,
+            wms_cre_appro_borrow_protocol_json,
+            log_type,
+            remark
+        from wms_cre_credit_head_log
+        where
+            wms_cre_credit_head_log_id = #{wms_cre_credit_head_log_id}
+    </select>
+
+    <!-- count num -->
+    <select id="findCount" parameterType="map" resultType="int">
+        select count(wms_cre_credit_head_log_id) as count
+        from wms_cre_credit_head_log
+        <where>
+            <if test="paramname != null">
+                <!-- and columnName = #{columnName} -->
+            </if>
+        </where>
+    </select>
+
+    <!-- list -->
+    <select id="search" parameterType="map" resultType="java.util.HashMap">
+        select
+            wms_cre_credit_head_log_id,
+            create_user_id,
+            create_user_name,
+            create_timestamp,
+            enable_flag,
+            wms_cre_credit_head_id,
+            wms_cre_credit_head_json,
+            wms_cre_credit_line_customer_change_head_json,
+            wms_cre_customer_change_line_houseinfo_json,
+            wms_cre_customer_change_line_workinfo_json,
+            wms_cre_customer_change_line_company_json,
+            wms_cre_customer_change_line_contact_json,
+            wms_cus_customer_change_child_json,
+            wms_cre_housing_apply_att_json,
+            wms_cre_appro_borrow_protocol_json,
+            log_type,
+            remark
+        from wms_cre_credit_head_log
+        <where>
+            <if test="paramname != null">
+                <!-- and columnName = #{columnName} -->
+            </if>
+        </where>
+        <if test="sortname != null and sortorder != null">
+            ORDER BY ${sortname} ${sortorder}
+        </if>
+        <if test="offset != null and pagesize != null">
+            LIMIT ${offset} , ${pagesize}
+        </if>
+    </select>
+
+    <!-- save -->
+    <insert id="save" parameterType="WmsCreCreditHeadLog" useGeneratedKeys="true" keyProperty="wms_cre_credit_head_log_id">
+        INSERT INTO wms_cre_credit_head_log (
+            wms_cre_credit_head_log_id,
+            create_user_id,
+            create_user_name,
+            create_timestamp,
+            enable_flag,
+            wms_cre_credit_head_id,
+            wms_cre_credit_head_json,
+            wms_cre_credit_line_customer_change_head_json,
+            wms_cre_customer_change_line_houseinfo_json,
+            wms_cre_customer_change_line_workinfo_json,
+            wms_cre_customer_change_line_company_json,
+            wms_cre_customer_change_line_contact_json,
+            wms_cus_customer_change_child_json,
+            wms_cre_housing_apply_att_json,
+            wms_cre_appro_borrow_protocol_json,
+            log_type,
+            remark
+        )
+        VALUES(
+            #{wms_cre_credit_head_log_id},
+            #{create_user_id},
+            #{create_user_name},
+            #{create_timestamp},
+            #{enable_flag},
+            #{wms_cre_credit_head_id},
+            #{wms_cre_credit_head_json},
+            #{wms_cre_credit_line_customer_change_head_json},
+            #{wms_cre_customer_change_line_houseinfo_json},
+            #{wms_cre_customer_change_line_workinfo_json},
+            #{wms_cre_customer_change_line_company_json},
+            #{wms_cre_customer_change_line_contact_json},
+            #{wms_cus_customer_change_child_json},
+            #{wms_cre_housing_apply_att_json},
+            #{wms_cre_appro_borrow_protocol_json},
+            #{log_type},
+            #{remark}
+        )
+    </insert>
+
+    <!-- update -->
+    <update id="update" parameterType="WmsCreCreditHeadLog">
+        update wms_cre_credit_head_log
+        <set>
+            <if test="wms_cre_credit_head_log_id != null">
+                wms_cre_credit_head_log_id = #{wms_cre_credit_head_log_id},
+            </if>
+            <if test="create_user_id != null">
+                create_user_id = #{create_user_id},
+            </if>
+            <if test="create_user_name != null">
+                create_user_name = #{create_user_name},
+            </if>
+            <if test="create_timestamp != null">
+                create_timestamp = #{create_timestamp},
+            </if>
+            <if test="enable_flag != null">
+                enable_flag = #{enable_flag},
+            </if>
+            <if test="wms_cre_credit_head_id != null">
+                wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+            </if>
+            <if test="wms_cre_credit_head_json != null">
+                wms_cre_credit_head_json = #{wms_cre_credit_head_json},
+            </if>
+            <if test="wms_cre_credit_line_customer_change_head_json != null">
+                wms_cre_credit_line_customer_change_head_json = #{wms_cre_credit_line_customer_change_head_json},
+            </if>
+            <if test="wms_cre_customer_change_line_houseinfo_json != null">
+                wms_cre_customer_change_line_houseinfo_json = #{wms_cre_customer_change_line_houseinfo_json},
+            </if>
+            <if test="wms_cre_customer_change_line_workinfo_json != null">
+                wms_cre_customer_change_line_workinfo_json = #{wms_cre_customer_change_line_workinfo_json},
+            </if>
+            <if test="wms_cre_customer_change_line_company_json != null">
+                wms_cre_customer_change_line_company_json = #{wms_cre_customer_change_line_company_json},
+            </if>
+            <if test="wms_cre_customer_change_line_contact_json != null">
+                wms_cre_customer_change_line_contact_json = #{wms_cre_customer_change_line_contact_json},
+            </if>
+            <if test="wms_cus_customer_change_child_json != null">
+                wms_cus_customer_change_child_json = #{wms_cus_customer_change_child_json},
+            </if>
+            <if test="wms_cre_housing_apply_att_json != null">
+                wms_cre_housing_apply_att_json = #{wms_cre_housing_apply_att_json},
+            </if>
+            <if test="wms_cre_appro_borrow_protocol_json != null">
+                wms_cre_appro_borrow_protocol_json = #{wms_cre_appro_borrow_protocol_json},
+            </if>
+            <if test="log_type != null">
+                log_type = #{log_type},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </set>
+        <where>
+            wms_cre_credit_head_log_id = #{wms_cre_credit_head_log_id}
+        </where>
+    </update>
+
+    <!-- getListByEntity -->
+    <select id="getListByEntity" parameterType="WmsCreCreditHeadLog" resultType="WmsCreCreditHeadLog">
+        select
+            wms_cre_credit_head_log_id,
+            create_user_id,
+            create_user_name,
+            create_timestamp,
+            enable_flag,
+            wms_cre_credit_head_id,
+            wms_cre_credit_head_json,
+            wms_cre_credit_line_customer_change_head_json,
+            wms_cre_customer_change_line_houseinfo_json,
+            wms_cre_customer_change_line_workinfo_json,
+            wms_cre_customer_change_line_company_json,
+            wms_cre_customer_change_line_contact_json,
+            wms_cus_customer_change_child_json,
+            wms_cre_housing_apply_att_json,
+            wms_cre_appro_borrow_protocol_json,
+            log_type,
+            remark
+        from wms_cre_credit_head_log
+        <where>
+            <if test="wms_cre_credit_head_log_id != null">
+                and wms_cre_credit_head_log_id = #{wms_cre_credit_head_log_id}
+            </if>
+            <if test="create_user_id != null">
+                and create_user_id = #{create_user_id}
+            </if>
+            <if test="create_user_name != null">
+                and create_user_name = #{create_user_name}
+            </if>
+            <if test="create_timestamp != null">
+                and create_timestamp = #{create_timestamp}
+            </if>
+            <if test="enable_flag != null">
+                and enable_flag = #{enable_flag}
+            </if>
+            <if test="wms_cre_credit_head_id != null">
+                and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+            </if>
+            <if test="wms_cre_credit_head_json != null">
+                and wms_cre_credit_head_json = #{wms_cre_credit_head_json}
+            </if>
+            <if test="wms_cre_credit_line_customer_change_head_json != null">
+                and wms_cre_credit_line_customer_change_head_json = #{wms_cre_credit_line_customer_change_head_json}
+            </if>
+            <if test="wms_cre_customer_change_line_houseinfo_json != null">
+                and wms_cre_customer_change_line_houseinfo_json = #{wms_cre_customer_change_line_houseinfo_json}
+            </if>
+            <if test="wms_cre_customer_change_line_workinfo_json != null">
+                and wms_cre_customer_change_line_workinfo_json = #{wms_cre_customer_change_line_workinfo_json}
+            </if>
+            <if test="wms_cre_customer_change_line_company_json != null">
+                and wms_cre_customer_change_line_company_json = #{wms_cre_customer_change_line_company_json}
+            </if>
+            <if test="wms_cre_customer_change_line_contact_json != null">
+                and wms_cre_customer_change_line_contact_json = #{wms_cre_customer_change_line_contact_json}
+            </if>
+            <if test="wms_cus_customer_change_child_json != null">
+                and wms_cus_customer_change_child_json = #{wms_cus_customer_change_child_json}
+            </if>
+            <if test="wms_cre_housing_apply_att_json != null">
+                and wms_cre_housing_apply_att_json = #{wms_cre_housing_apply_att_json}
+            </if>
+            <if test="wms_cre_appro_borrow_protocol_json != null">
+                and wms_cre_appro_borrow_protocol_json = #{wms_cre_appro_borrow_protocol_json}
+            </if>
+            <if test="log_type != null">
+                and log_type = #{log_type}
+            </if>
+            <if test="remark != null">
+                and remark = #{remark}
+            </if>
+        </where>
+    </select>
+
+</mapper>

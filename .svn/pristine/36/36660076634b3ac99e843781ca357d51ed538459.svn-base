@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.loanreview.persist.WmsCreRevWaterMainDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsCreRevWaterMain">
+		select
+		wms_cre_rev_water_main_id,
+		wms_cre_credit_head_id,
+		wms_cre_credit_line_customer_change_head_id,
+		warter_type,
+		comp_type,
+		is_standard,
+		warter_copies,
+		pri_warter_copies,
+		has_salary,
+		has_passbook,
+		repay_copies,
+		evaluation,
+		liabilities,
+		remark,
+		is_credit_rating_overdue,
+		is_need_supple,
+		supple_date,
+		create_user_id,
+		create_user_name,
+		create_timestamp,
+		last_update_user_id,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_cre_rev_water_main
+		where
+		wms_cre_rev_water_main_id = #{wms_cre_rev_water_main_id}
+	</select>
+	<!-- 根据贷款主表ID和贷款人ID获取贷款流水审核总体情况的记录 -->
+	<select id="getByFK" parameterType="map" resultType="WmsCreRevWaterMain">
+		select
+		wms_cre_rev_water_main_id,
+		wms_cre_credit_head_id,
+		wms_cre_credit_line_customer_change_head_id,
+		warter_type,
+		comp_type,
+		is_standard,
+		warter_copies,
+		pri_warter_copies,
+		has_salary,
+		has_passbook,
+		repay_copies,
+		evaluation,
+		liabilities,
+		remark,
+		is_credit_rating_overdue,
+		is_need_supple,
+		supple_date,
+		create_user_id,
+		create_user_name,
+		create_timestamp,
+		last_update_user_id,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_cre_rev_water_main
+		where enable_flag='1' and wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+		and
+		wms_cre_credit_line_customer_change_head_id=#{wms_cre_credit_line_customer_change_head_id}
+		and warter_type=#{warter_type}
+	</select>
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cre_rev_water_main_id) as count
+		from
+		wms_cre_rev_water_main
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		wms_cre_rev_water_main_id,
+		wms_cre_credit_head_id,
+		wms_cre_credit_line_customer_change_head_id,
+		warter_type,
+		comp_type,
+		is_standard,
+		warter_copies,
+		pri_warter_copies,
+		has_salary,
+		has_passbook,
+		repay_copies,
+		evaluation,
+		liabilities,
+		remark,
+		is_credit_rating_overdue,
+		is_need_supple,
+		supple_date,
+		create_user_id,
+		create_user_name,
+		create_timestamp,
+		last_update_user_id,
+		last_update_timestamp,
+		enable_flag
+		from wms_cre_rev_water_main
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreRevWaterMain"
+		useGeneratedKeys="true" keyProperty="wms_cre_rev_water_main_id">
+		INSERT INTO wms_cre_rev_water_main
+		(
+		wms_cre_credit_head_id,
+
+		wms_cre_credit_line_customer_change_head_id,
+
+		warter_type,
+
+		comp_type,
+
+		is_standard,
+
+		warter_copies,
+
+		pri_warter_copies,
+
+		has_salary,
+
+		has_passbook,
+
+		repay_copies,
+
+		evaluation,
+
+		liabilities,
+
+		remark,
+
+		is_credit_rating_overdue,
+
+		is_need_supple,
+
+		supple_date,
+
+		create_user_id,
+
+		create_user_name,
+
+		create_timestamp,
+
+		last_update_user_id,
+
+		last_update_timestamp,
+
+		enable_flag
+		)
+		VALUES
+		(
+		#{wms_cre_credit_head_id},
+		#{wms_cre_credit_line_customer_change_head_id},
+		#{warter_type},
+		#{comp_type},
+		#{is_standard},
+		#{warter_copies},
+		#{pri_warter_copies},
+		#{has_salary},
+		#{has_passbook},
+		#{repay_copies},
+		#{evaluation},
+		#{liabilities},
+		#{remark},
+		#{is_credit_rating_overdue},
+		#{is_need_supple},
+		#{supple_date},
+		#{create_user_id},
+		#{create_user_name},
+		#{create_timestamp},
+		#{last_update_user_id},
+		#{last_update_timestamp},
+		#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreRevWaterMain">
+		update wms_cre_rev_water_main
+		<set>
+			<if test="wms_cre_rev_water_main_id != null">
+				wms_cre_rev_water_main_id = #{wms_cre_rev_water_main_id},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="wms_cre_credit_line_customer_change_head_id != null">
+				wms_cre_credit_line_customer_change_head_id = #{wms_cre_credit_line_customer_change_head_id},
+			</if>
+			<if test="warter_type != null">
+				warter_type = #{warter_type},
+			</if>
+			<if test="comp_type != null">
+				comp_type = #{comp_type},
+			</if>
+			<if test="is_standard != null">
+				is_standard = #{is_standard},
+			</if>
+			<if test="warter_copies != null">
+				warter_copies = #{warter_copies},
+			</if>
+			<if test="pri_warter_copies != null">
+				pri_warter_copies = #{pri_warter_copies},
+			</if>
+			<if test="has_salary != null">
+				has_salary = #{has_salary},
+			</if>
+			<if test="has_passbook != null">
+				has_passbook = #{has_passbook},
+			</if>
+			<if test="repay_copies != null">
+				repay_copies = #{repay_copies},
+			</if>
+			<if test="evaluation != null">
+				evaluation = #{evaluation},
+			</if>
+			<if test="liabilities != null">
+				liabilities = #{liabilities},
+			</if>
+			<if test="remark != null">
+				remark = #{remark},
+			</if>
+			<if test="is_credit_rating_overdue != null">
+				is_credit_rating_overdue = #{is_credit_rating_overdue},
+			</if>
+			<if test="is_need_supple != null">
+				is_need_supple = #{is_need_supple},
+			</if>
+			<if test="supple_date != null">
+				supple_date = #{supple_date},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+		</set>
+		where
+		wms_cre_rev_water_main_id = #{wms_cre_rev_water_main_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreRevWaterMain"
+		resultType="WmsCreRevWaterMain">
+		select
+		wms_cre_rev_water_main_id,
+		wms_cre_credit_head_id,
+		wms_cre_credit_line_customer_change_head_id,
+		warter_type,
+		comp_type,
+		is_standard,
+		warter_copies,
+		pri_warter_copies,
+		has_salary,
+		has_passbook,
+		repay_copies,
+		evaluation,
+		liabilities,
+		remark,
+		is_credit_rating_overdue,
+		is_need_supple,
+		supple_date,
+		create_user_id,
+		create_user_name,
+		create_timestamp,
+		last_update_user_id,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_cre_rev_water_main
+		<where>
+			<if test="wms_cre_rev_water_main_id != null">
+				and wms_cre_rev_water_main_id = #{wms_cre_rev_water_main_id}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="wms_cre_credit_line_customer_change_head_id != null">
+				and wms_cre_credit_line_customer_change_head_id =
+				#{wms_cre_credit_line_customer_change_head_id}
+			</if>
+			<if test="warter_type != null">
+				and warter_type = #{warter_type}
+			</if>
+			<if test="comp_type != null">
+				and comp_type = #{comp_type}
+			</if>
+			<if test="is_standard != null">
+				and is_standard = #{is_standard}
+			</if>
+			<if test="warter_copies != null">
+				and warter_copies = #{warter_copies}
+			</if>
+			<if test="pri_warter_copies != null">
+				and pri_warter_copies = #{pri_warter_copies}
+			</if>
+			<if test="has_salary != null">
+				and has_salary = #{has_salary}
+			</if>
+			<if test="has_passbook != null">
+				and has_passbook = #{has_passbook}
+			</if>
+			<if test="repay_copies != null">
+				and repay_copies = #{repay_copies}
+			</if>
+			<if test="evaluation != null">
+				and evaluation = #{evaluation}
+			</if>
+			<if test="liabilities != null">
+				and liabilities = #{liabilities}
+			</if>
+			<if test="remark != null">
+				and remark = #{remark}
+			</if>
+			<if test="is_credit_rating_overdue != null">
+				and is_credit_rating_overdue = #{is_credit_rating_overdue}
+			</if>
+			<if test="is_need_supple != null">
+				and is_need_supple = #{is_need_supple}
+			</if>
+			<if test="supple_date != null">
+				and supple_date = #{supple_date}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name = #{create_user_name}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id = #{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+			<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+				and wms_cre_rev_water_main_id != #{wms_cre_rev_water_main_id}
+			</if>
+		</where>
+	</select>
+	<delete id="deleteRecords" parameterType="map">
+		delete from wms_cre_rev_water_main
+		<where>
+			1=1
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="wms_cre_credit_line_customer_change_head_id != null">
+				and wms_cre_credit_line_customer_change_head_id =
+				#{wms_cre_credit_line_customer_change_head_id}
+			</if>
+			<if test="warter_type != null">
+				and warter_type = #{warter_type}
+			</if>
+		</where>
+	</delete>
+</mapper> 

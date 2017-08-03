@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInvePruductYearPaySpecialDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInvePruductYearPaySpecial">
+		select
+        				wms_inve_pruduct_year_pay_special_id,
+        				wms_inve_pruduct_category_id,
+        				first_year_interest_rate,
+        				second_year_interest_rate,
+        				create_user_id,
+						date_format(create_datetime,'%Y-%m-%d %H:%i:%s') as create_datetime_str,
+        				create_datetime,
+        				last_update_user_id,
+						date_format(last_update_datetime,'%Y-%m-%d %H:%i:%s') as last_update_datetime_str,
+        				last_update_datetime,
+        				enable_flag
+        	from
+        		wms_inve_pruduct_year_pay_special
+        	where
+        				wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_pruduct_year_pay_special_id) as count
+		from wms_inve_pruduct_year_pay_special
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_inve_pruduct_year_pay_special_id,
+				wms_inve_pruduct_category_id,
+				first_year_interest_rate,
+				second_year_interest_rate,
+				create_user_id,
+				date_format(create_datetime,'%Y-%m-%d %H:%i:%s') as create_datetime_str,
+				create_datetime,
+				last_update_user_id,
+				date_format(last_update_datetime,'%Y-%m-%d %H:%i:%s') as last_update_datetime_str,
+				last_update_datetime,
+				enable_flag
+		from wms_inve_pruduct_year_pay_special
+		<where>
+			enable_flag = '1'
+			<if test="wms_inve_pruduct_category_id != null">
+				and wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id}
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInvePruductYearPaySpecial" useGeneratedKeys="true" keyProperty="wms_inve_pruduct_year_pay_special_id">
+		INSERT INTO wms_inve_pruduct_year_pay_special
+		(
+				wms_inve_pruduct_year_pay_special_id,
+
+				wms_inve_pruduct_category_id,
+
+				first_year_interest_rate,
+
+				second_year_interest_rate,
+
+				create_user_id,
+
+				create_datetime,
+
+				last_update_user_id,
+
+				last_update_datetime,
+
+				enable_flag
+		)
+		VALUES
+		(
+				#{wms_inve_pruduct_year_pay_special_id},
+				#{wms_inve_pruduct_category_id},
+				#{first_year_interest_rate},
+				#{second_year_interest_rate},
+				#{create_user_id},
+				#{create_datetime},
+				#{last_update_user_id},
+				#{last_update_datetime},
+				#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInvePruductYearPaySpecial">
+		update wms_inve_pruduct_year_pay_special
+		<set>
+					<if test="wms_inve_pruduct_year_pay_special_id != null">
+						 wms_inve_pruduct_year_pay_special_id = #{wms_inve_pruduct_year_pay_special_id},
+					</if>
+					<if test="wms_inve_pruduct_category_id != null">
+						 wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id},
+					</if>
+					<if test="first_year_interest_rate != null">
+						 first_year_interest_rate = #{first_year_interest_rate},
+					</if>
+					<if test="second_year_interest_rate != null">
+						 second_year_interest_rate = #{second_year_interest_rate},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="create_datetime != null">
+						 create_datetime = #{create_datetime},
+					</if>
+					<if test="last_update_user_id != null">
+						 last_update_user_id = #{last_update_user_id},
+					</if>
+					<if test="last_update_datetime != null">
+						 last_update_datetime = #{last_update_datetime},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+	   </set>
+		 where 
+    				wms_inve_pruduct_year_pay_special_id = #{wms_inve_pruduct_year_pay_special_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInvePruductYearPaySpecial" resultType="WmsInvePruductYearPaySpecial">
+		select 
+				wms_inve_pruduct_year_pay_special_id,
+				wms_inve_pruduct_category_id,
+				first_year_interest_rate,
+				second_year_interest_rate,
+				create_user_id,
+				date_format(create_datetime,'%Y-%m-%d %H:%i:%s') as create_datetime_str,
+				create_datetime,
+				last_update_user_id,
+				date_format(last_update_datetime,'%Y-%m-%d %H:%i:%s') as last_update_datetime_str,
+				last_update_datetime,
+				enable_flag
+		from
+		wms_inve_pruduct_year_pay_special
+		<where>
+					<if test="wms_inve_pruduct_year_pay_special_id != null">
+						and wms_inve_pruduct_year_pay_special_id = #{wms_inve_pruduct_year_pay_special_id}
+					</if>
+					<if test="wms_inve_pruduct_category_id != null">
+						and wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id}
+					</if>
+					<if test="first_year_interest_rate != null">
+						and first_year_interest_rate = #{first_year_interest_rate}
+					</if>
+					<if test="second_year_interest_rate != null">
+						and second_year_interest_rate = #{second_year_interest_rate}
+					</if>
+					<if test="create_user_id != null">
+						and create_user_id = #{create_user_id}
+					</if>
+					<if test="create_datetime != null">
+						and create_datetime = #{create_datetime}
+					</if>
+					<if test="last_update_user_id != null">
+						and last_update_user_id = #{last_update_user_id}
+					</if>
+					<if test="last_update_datetime != null">
+						and last_update_datetime = #{last_update_datetime}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_inve_pruduct_year_pay_special_id != #{wms_inve_pruduct_year_pay_special_id}
+					</if>
+		</where>
+	</select>
+	<delete id="delete" parameterType="int">
+		delete from
+		wms_inve_pruduct_year_pay_special
+		where
+		wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id}
+	</delete>
+</mapper> 

@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.cusmanage.persist.WmsCusCustomerChildDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="long" resultType="WmsCusCustomerChild">
+		select
+		wms_cus_customer_child_id,
+		wms_cus_customer_id,
+		child_name,
+		child_telephone,
+		school_work_name,
+		house_address_province,
+		house_address_city,
+		house_address_district,
+		house_address_more,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_cus_customer_child
+		where
+		wms_cus_customer_child_id = #{wms_cus_customer_child_id}
+	</select>
+	<select id="getSingleTableListByAndMethod" parameterType="WmsCusCustomerChild"
+		resultType="WmsCusCustomerChild">
+		select
+		wms_cus_customer_child_id,
+		wms_cus_customer_id,
+		child_name,
+		child_telephone,
+		school_work_name,
+		house_address_province,
+		house_address_city,
+		house_address_district,
+		house_address_more,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_cus_customer_child
+		<where>
+			<if test="wms_cus_customer_child_id != null">
+				and wms_cus_customer_child_id=#{wms_cus_customer_child_id}
+			</if>
+			<if test="wms_cus_customer_id != null">
+				and wms_cus_customer_id=#{wms_cus_customer_id}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id=#{create_user_id}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp=#{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id=#{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp=#{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag=#{enable_flag}
+			</if>
+		</where>
+	</select>
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cus_customer_child_id) as count
+		from
+		wms_cus_customer_child
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		wms_cus_customer_child_id,
+		wms_cus_customer_id,
+		child_name,
+		child_telephone,
+		school_work_name,
+		house_address_province,
+		house_address_city,
+		house_address_district,
+		house_address_more,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_cus_customer_child
+		<where>
+			enable_flag=1
+			<if test="wms_cus_customer_id != null">
+				and wms_cus_customer_id=#{wms_cus_customer_id}
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCusCustomerChild"
+		useGeneratedKeys="true" keyProperty="wms_cus_customer_child_id">
+		INSERT INTO wms_cus_customer_child
+		(
+		wms_cus_customer_child_id,
+
+		wms_cus_customer_id,
+
+		child_name,
+
+		child_telephone,
+
+		school_work_name,
+
+		house_address_province,
+
+		house_address_city,
+
+		house_address_district,
+
+		house_address_more,
+
+		create_user_id,
+
+		create_user_name,
+
+		create_timestamp,
+
+		last_update_user_id,
+
+		last_update_timestamp,
+
+		enable_flag
+		)
+		VALUES
+		(
+		#{wms_cus_customer_child_id},
+		#{wms_cus_customer_id},
+		#{child_name},
+		#{child_telephone},
+		#{school_work_name},
+		#{house_address_province},
+		#{house_address_city},
+		#{house_address_district},
+		#{house_address_more},
+		#{create_user_id},
+		#{create_user_name},
+		#{create_timestamp},
+		#{last_update_user_id},
+		#{last_update_timestamp},
+		#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCusCustomerChild">
+		update wms_cus_customer_child
+		<set>
+			<if test="wms_cus_customer_child_id != null">
+				wms_cus_customer_child_id = #{wms_cus_customer_child_id},
+			</if>
+			<if test="wms_cus_customer_id != null">
+				wms_cus_customer_id = #{wms_cus_customer_id},
+			</if>
+			<if test="child_name != null">
+				child_name = #{child_name},
+			</if>
+			<if test="child_telephone != null">
+				child_telephone = #{child_telephone},
+			</if>
+			<if test="school_work_name != null">
+				school_work_name = #{school_work_name},
+			</if>
+			<if test="house_address_province != null">
+				house_address_province = #{house_address_province},
+			</if>
+			<if test="house_address_city != null">
+				house_address_city = #{house_address_city},
+			</if>
+			<if test="house_address_district != null">
+				house_address_district = #{house_address_district},
+			</if>
+			<if test="house_address_more != null">
+				house_address_more = #{house_address_more},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+		</set>
+		where
+		wms_cus_customer_child_id = #{wms_cus_customer_child_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsCusCustomerChild"
+		resultType="WmsCusCustomerChild">
+		select
+		wms_cus_customer_child_id,
+		wms_cus_customer_id,
+		child_name,
+		child_telephone,
+		school_work_name,
+		house_address_province,
+		house_address_city,
+		house_address_district,
+		house_address_more,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_cus_customer_child
+		<where>
+			<if test="wms_cus_customer_child_id != null">
+				and wms_cus_customer_child_id = #{wms_cus_customer_child_id}
+			</if>
+			<if test="wms_cus_customer_id != null">
+				and wms_cus_customer_id = #{wms_cus_customer_id}
+			</if>
+			<if test="child_name != null">
+				and child_name = #{child_name}
+			</if>
+			<if test="child_telephone != null">
+				and child_telephone = #{child_telephone}
+			</if>
+			<if test="school_work_name != null">
+				and school_work_name = #{school_work_name}
+			</if>
+			<if test="house_address_province != null">
+				and house_address_province = #{house_address_province}
+			</if>
+			<if test="house_address_city != null">
+				and house_address_city = #{house_address_city}
+			</if>
+			<if test="house_address_district != null">
+				and house_address_district = #{house_address_district}
+			</if>
+			<if test="house_address_more != null">
+				and house_address_more = #{house_address_more}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name = #{create_user_name}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id = #{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+
+		</where>
+	</select>
+	<!-- 实现客户子女信息管理中对暂存数据进行删除操作deleteByPK wms_cus_customer_id -->
+	<update id="deleteByPK" parameterType="Integer">
+		update wms_cus_customer_child child set child.enable_flag=0 where
+		child.wms_cus_customer_id=#{wms_cus_customer_id};
+	</update>
+</mapper> 

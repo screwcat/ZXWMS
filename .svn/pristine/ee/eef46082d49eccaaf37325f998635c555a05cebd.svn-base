@@ -1,0 +1,122 @@
+@charset "utf-8";
+/* CSS Document */
+.btn-blue, .btn-gray, .btn-green, .btn-orange, .btn-gray2, .btn-nobg1, .btn-blueL, .btn-pink {margin:0; padding:0; border-radius:3px; text-align:center; font-size:13px;overflow:hidden;}
+
+/*--button96x24--*/
+.btn96 {width:96px; height:24px; line-height:24px;}
+/*--button80x24--*/
+.btn24 {width:80px; height:24px; line-height:24px;}
+/*--button60x24--*/
+.btn60 {width:60px; height:24px; line-height:24px;}
+/*--button182x24--*/
+.btn182 {width:182px; height:24px; line-height:24px;}
+/*--button126x24--*/
+.btn126 {width:126px; height:24px; line-height:24px;}
+/*--button150x30--*/
+.btn150 {width:150px; height:30px; line-height:30px;}
+/*--button112x31特殊背景--*/
+.btn-nobg1 {width:112px; height:31px; background-image:url(../images/layout/layoutpic.png); background-repeat:no-repeat;} 
+/*--button100x30--*/
+.btn30 {width:100px; height:30px; line-height:30px;}
+/*--button150x40--*/
+
+.btn40 {width:150px; height:40px; line-height:40px;}
+/*--button150x40--*/
+.btn254 {width:254px; height:40px; line-height:40px;}
+/*--button238x30--*/
+.btn238 {width:238px; height:30px; line-height:30px;}
+/*--buttonAutox30--*/
+.btnAutoW {width:auto; height:30px; line-height:30px;}
+
+
+/*-blue-*/
+a.btn-blue {display:block; background:#48b5f5; color:#fff; text-decoration:none; text-shadow:0px -1px 0px #0e9aeb; }
+a.btn-blue:hover {background:#0e9aeb; color:#fff; text-decoration:none; text-shadow:0px 1px 0px #1396e1; box-shadow:0px 1px 1px #abaeb3;}
+.blue-index {float:right; position:relative; top:30px; right:10px;}
+.bluebtn-top {float:right; position:relative; top:50px; right:0;}
+
+/*-gray不可用（禁用）的按钮-*/
+a.btn-gray {display:block; background:#d7d8db; color:#fff; text-decoration:none; text-shadow:0px -1px 0px #c2c5cc; cursor:not-allowed;}
+
+/*-green-*/
+a.btn-green {display:block; background:#00c460; color:#fff; text-decoration:none; text-shadow:0px -1px 0px #35a133;}
+a.btn-green:hover {background:#10b460; color:#fff; text-decoration:none; text-shadow:0px 1px 0px #35a133; box-shadow:0px 1px 1px #abaeb3;}
+.topupB, .withdrawB {margin-left:5px; float:left;}
+.topupB {margin-top:10px;}
+.withdrawB {margin-top:10px;}
+.mabtn{margin-top:12px; margin-left:15px;}
+
+/*-orange-*/
+a.btn-orange {display:block; background:#ffbb01; color:#fff; text-decoration:none; text-shadow:0px -1px 0px #f1aa2e;}
+a.btn-orange:hover {background:#ff8d01; color:#fff; text-decoration:none; text-shadow:0px 1px 0px #eb8f17; box-shadow:0px 1px 1px #abaeb3;}
+.relRM-file {float:left; margin-top:5px; margin-left:11px;}
+
+/*-blueL浅蓝色背景-*/
+a.btn-blueL {display:block; background:#48b5f5; color:#fff; text-decoration:none; text-shadow:0px -1px 0px #0e9aeb;}
+a.btn-blueL:hover {background:#0e9aeb; color:#fff; text-decoration:none; text-shadow:0px 1px 0px #1396e1; box-shadow:0px 1px 1px #abaeb3;}
+
+/*--特殊背景按钮--*/
+a.btn-nobg1 {display:block; color:#fff; text-decoration:none; text-shadow:0px -1px 0px #cf7d12; background-position:0 0;}
+a.btn-nobg1:hover {background-position:0 -31px; color:#fff; text-decoration:none; text-shadow:0px -1px 0px #cf7d12;}
+
+/*--gray2可用的按钮--*/
+a.btn-gray2 {display:block; background:#98a4b5; color:#fff; text-decoration:none; text-shadow:0px -1px 0px #8c99ab;}
+a.btn-gray2:hover {background:#808d9f; color:#fff; text-decoration:none; text-shadow:0px 1px 0px #758294; box-shadow:0px 1px 1px #abaeb3;}
+
+/*-pink-*/
+a.btn-pink {display:block; background:#e985a8; color:#fff; text-decoration:none; text-shadow:0px -1px 0px #d2648a; }
+a.btn-pink:hover {background:#dd7398; color:#fff; text-decoration:none; text-shadow:0px 1px 0px #c04a73; box-shadow:0px 1px 1px #abaeb3;}
+
+/*--分页按钮--*/
+.pageDiv {width:auto; height:22px; margin:0; clear:both;}
+.right {float: right;}
+.btnPage {margin:0 0 0 8px; padding:0; border-radius:3px; text-align:center; font-size:13px; width:60px; height:20px; line-height:20px; float:left;}
+a.btnPage {display:block; background:#fff; border:1px solid #dadfeb; text-decoration:none; color:#282f41;}
+a.btnPage:hover { border:1px solid #ffa83e; color:#ff8d01; background:#fbf3e9;}
+.pageDiv span {margin:0 10px 0 5px; float:left;}
+.pageDiv .arrowL-ico3 {margin-top:5px; margin-left:1px; margin-right:0;}
+.pageDiv .arrowR-ico3 {margin-top:5px; margin-left:0; margin-right:-1px; float:none;}
+
+/*--页面右侧回到顶部栏按钮--*/
+.btn-TOP, .btn-opin, .btn-cust, .btn-rechar {margin:0; padding:0; overflow:hidden; background-image:url(../images/icons/icon-main.png); background-repeat:no-repeat; cursor:pointer;}
+
+a.btn-TOP {background-position:-142px 0; display:block; width:40px; height:40px; text-decoration:none;}/*--回到顶部--*/
+a.btn-TOP:hover {background-position:-142px -40px; text-decoration:none; box-shadow:1px 1px 2px #abaeb3;}
+a.btn-opin {background-position:-142px -90px; display:block; width:40px; height:40px; text-decoration:none;} /*--意见反馈--*/
+a.btn-opin:hover {background-position:-142px -130px; text-decoration:none; box-shadow:1px 1px 2px #abaeb3;}
+a.btn-cust {background-position:-142px -180px; display:block; width:40px; height:40px; text-decoration:none;} /*--在线客服--*/
+a.btn-cust:hover {background-position:-142px -220px; text-decoration:none; box-shadow:1px 1px 2px #abaeb3;}
+a.btn-rechar {background-position:-142px -270px; display:block; width:40px; height:40px; text-decoration:none;} /*--我要充值--*/
+a.btn-rechar:hover {background-position:-142px -310px; text-decoration:none; box-shadow:1px 1px 2px #abaeb3;}
+
+/*--图片预览左右箭头--*/
+.operImg .ImgL-ico, .operImg .ImgR-ico {margin:0; padding:0; overflow:hidden; background-image:url(../images/icons/icon-main.png); background-repeat:no-repeat; cursor:pointer;}
+.operImg a.ImgL-ico {background-position:-192px -544px; display:block; width:32px; height:32px; text-decoration:none;}
+.operImg a.ImgL-ico:hover {background-position:-192px -608px; text-decoration:none;}
+.operImg a.ImgR-ico {background-position:-192px -576px; display:block; width:32px; height:32px; text-decoration:none;}
+.operImg a.ImgR-ico:hover {background-position:-192px -640px; text-decoration:none;}
+
+/*--用于弹窗式轮播大箭头--*/
+.lastArrowD, .nextArrowD {margin:0; padding:0; overflow:hidden; background-image:url(../images/icons/icon-main.png); background-repeat:no-repeat; cursor:pointer;}
+a.lastArrowD {background-position:-73px -420px; display:block; width:21px; height:36px; text-decoration:none;}
+a.lastArrowD:hover {background-position:-73px -466px; text-decoration:none;}
+a.nextArrowD {background-position:-104px -420px; display:block; width:21px; height:36px; text-decoration:none;}
+a.nextArrowD:hover {background-position:-104px -466px; text-decoration:none;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

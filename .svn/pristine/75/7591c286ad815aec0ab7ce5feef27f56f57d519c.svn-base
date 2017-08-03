@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveExpiredCustomerDao">
+	
+	<select id="findExpiredCustomer" parameterType="map" resultType="map">
+		
+		SELECT
+		    w1.wms_inve_transa_id,
+		    w2.wms_inve_transa_prod_id,
+			w1.bill_code,
+			w1.cus_name,
+			w1.id_card,
+			w1.mobile_phone,
+			w2.category_name,
+			w2.product_deadline,
+			w3.product_account / 10000 as product_account,
+			CONCAT(pm.personnel_name, '/', pm.personnel_shortCode ) AS account_manager,
+			w3.end_of_date
+		FROM
+			wms_inve_transa w1,
+			wms_inve_transa_prod w2,
+			wms_inve_transa_protocol w3,
+			pm_personnel pm
+		WHERE
+			w1.wms_inve_transa_id = w2.wms_inve_transa_id
+		AND 
+			w1.wms_inve_transa_id = w3.wms_inve_transa_id
+		AND 
+			w1.bel_salesman_id_id = pm.personnel_id
+		AND 
+			w1.data_status = 4
+		AND
+			w3.wms_inve_redeem_id = 0
+		<if test="expiredStartDate!=null">
+			AND 
+				w3.end_of_date &gt;= #{expiredStartDate}
+		</if>
+		<if test="expiredEndDate!=null">
+			AND 
+				w3.end_of_date &lt;= #{expiredEndDate}
+		</if>
+		<if test="cusName!=null">
+			AND 
+				w1.cus_name = #{cusName}
+		</if>
+		<if test="accountManager!=null and accountManager!=''">
+			AND
+				pm.personnel_name like '%${accountManager}%'
+		</if>
+		<if test="personnelShortCode!=null and personnelShortCode!=''">
+			AND
+			   pm.personnel_shortCode = #{personnelShortCode}
+		</if>
+		AND (1=2
+			<if test="deptIds!=null">
+			or
+				w1.bel_salesman_dept_id in 
+				<foreach collection="deptIds" item="dept_id" index="index" open="(" separator="," close=")">
+					#{dept_id}
+				</foreach>
+			</if>
+			<if test="bel_salesman_id_id!=null">
+			or
+				w1.bel_salesman_id_id = #{bel_salesman_id_id}
+			</if>
+			<if test="deptIds_user_id !=null">
+			OR 
+				FIND_IN_SET(w1.bel_salesman_dept_id,getMenuData(#{deptIds_user_id},#{deptIds_menu}))
+			</if>
+			<if test="super_user !=null">
+				OR 
+					1 = #{super_user}
+			</if>
+			<if test="financial_services !=null">
+				OR 
+					1= #{financial_services}
+			</if>
+			<if test="financial_services !=null">
+				OR 
+					1= #{financial_services}
+			</if> 
+		)
+			ORDER BY w3.end_of_date ASC
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+		
+	</select>
+	
+	<select id="findExpiredCustomerCount" parameterType="map" resultType="int">
+		SELECT
+		    count(1)
+		FROM
+			wms_inve_transa w1,
+			wms_inve_transa_prod w2,
+			wms_inve_transa_protocol w3,
+			pm_personnel pm
+		WHERE
+			w1.wms_inve_transa_id = w2.wms_inve_transa_id
+		AND 
+			w1.wms_inve_transa_id = w3.wms_inve_transa_id
+		AND 
+			w1.bel_salesman_id_id = pm.personnel_id
+		AND 
+			w1.data_status = 4
+		AND
+			w3.wms_inve_redeem_id = 0
+		<if test="expiredStartDate!=null">
+			AND 
+				w3.end_of_date &gt;= #{expiredStartDate}
+		</if>
+		<if test="expiredEndDate!=null">
+			AND 
+				w3.end_of_date &lt;= #{expiredEndDate}
+		</if>
+		<if test="cusName!=null">
+			AND 
+				w1.cus_name = #{cusName}
+		</if>
+		<if test="accountManager!=null and accountManager!=''">
+			AND
+				pm.personnel_name like '%${accountManager}%'
+		</if>
+		<if test="personnelShortCode!=null and personnelShortCode!=''">
+			AND
+			   pm.personnel_shortCode = #{personnelShortCode}
+		</if>
+		AND (1=2
+			<if test="deptIds!=null">
+			or
+				w1.bel_salesman_dept_id in 
+				<foreach collection="deptIds" item="dept_id" index="index" open="(" separator="," close=")">
+					#{dept_id}
+				</foreach>
+			</if>
+			<if test="bel_salesman_id_id!=null">
+			or
+				w1.bel_salesman_id_id = #{bel_salesman_id_id}
+			</if>
+			<if test="deptIds_user_id !=null">
+			OR 
+				FIND_IN_SET(w1.bel_salesman_dept_id,getMenuData(#{deptIds_user_id},#{deptIds_menu}))
+			</if>
+			<if test="super_user !=null">
+				OR 
+					1 = #{super_user}
+			</if>
+			<if test="financial_services !=null">
+				OR 
+					1= #{financial_services}
+			</if>
+			<if test="financial_services !=null">
+				OR 
+					1= #{financial_services}
+			</if> 
+		)
+
+			
+	</select>
+	
+</mapper> 

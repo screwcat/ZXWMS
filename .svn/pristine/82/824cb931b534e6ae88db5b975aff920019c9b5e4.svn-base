@@ -1,0 +1,5279 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveTransaDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveTransa">
+		select
+		wms_inve_transa_id,
+		wms_inve_customer_id,
+		bill_code,
+		id_card,
+		cus_name,
+		date_format(cus_birthday,'%Y-%m-%d') as cus_birthday_str,
+		cus_birthday,
+		cus_gender,
+		cus_address,
+		post_code,
+		address_phone,
+		work_phone,
+		cus_fax,
+		contact_address,
+		customer_email,
+		bill_send_mode,
+		inve_transa_type,
+		product_total_count_lower,
+		product_total_count_upper,
+		data_status,
+		account_status,
+		pay_type,
+		pay_usr_id,
+		date_format(date_of_payment,'%Y-%m-%d') as date_of_payment_str,
+		date_of_payment,
+		pay_account,
+		cash_pay_name,
+		act_account_usr_id,
+		date_format(date_of_act,'%Y-%m-%d') as date_of_act_str,
+		date_of_act,
+		act_account,
+		fee_account,
+		salesman_name,
+		salesman_id,
+		salesman_city_code,
+		salesman_city,
+		salesman_dept_id,
+		salesman_shortcode,
+		create_user_id,
+		create_user_name,
+		create_user_dept_id,
+		date_format(create_timestamp,'%Y-%m-%d') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		mobile_phone,
+		department_manager_id,
+		department_manager_city_code,
+		department_manager_dept_id,
+		vice_general_manager_id,
+		vice_general_manager_city_code,
+		vice_general_manager_dept_id,
+		general_manager_id,
+		general_manager_city_code,
+		general_manager_dept_id,
+		costomer_id,
+		customer_source,
+		bel_salesman_id_id,
+		trans_salesman_status,
+		convert_account,
+		relpace_type_detail,
+		customer_num,
+		bill_source,
+		old_wms_inve_transa_id,
+		old_last_wms_inve_transa_id,
+		date_format(old_date_of_payment,'%Y-%m-%d') as old_date_of_payment_str,
+		center_manager_id,
+  		center_manager_dept_id,
+  		bel_salesman_dept_id,
+		bel_department_manager_id,
+		bel_department_manager_dept_id,
+		bel_vice_general_manager_id,
+		bel_vice_general_manager_dept_id,
+		bel_general_manager_id,
+		bel_general_manager_dept_id,
+		bel_center_manager_id,
+		bel_center_manager_dept_id,
+		old_date_of_payment,
+		financial_bill_code,
+		is_order_extend,
+		is_order_redeem,
+		income_account,
+		expiration_reminder,
+		debt_expires,
+		crm_name_query_type,
+		crm_mobile_query_type,
+		crm_id_card_query_type,
+		contract_signing_type,
+		is_extend_amount
+		from
+		wms_inve_transa
+		where
+		wms_inve_transa_id = #{wms_inve_transa_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_transa_id) as count
+		from wms_inve_transa
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+	<select id="findCountForMatch" parameterType="map" resultType="int">
+		select count(t1.wms_inve_transa_id) as count
+		from wms_inve_transa
+		t1,wms_inve_transa_prod t2
+		<where>
+			1=1
+			and
+			t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			and data_status = 3
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+			<if test="cus_name != null">
+				and t1.cus_name like #{cus_name}
+			</if>
+			<if test="category_name != null">
+				and t2.category_name like #{category_name}
+			</if>
+			<if test="id_card != null">
+				and t1.id_card = #{id_card}
+			</if>
+			<if test="create_timestamp != null and create_timestamp1!=null">
+				and t1.create_timestamp between #{create_timestamp} and
+				#{create_timestamp1}
+			</if>
+		</where>
+	</select>
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		wms_inve_transa_id,
+		wms_inve_customer_id,
+		bill_code,
+		id_card,
+		cus_name,
+		date_format(cus_birthday,'%Y-%m-%d') as cus_birthday_str,
+		cus_birthday,
+		cus_gender,
+		cus_address,
+		post_code,
+		address_phone,
+		work_phone,
+		cus_fax,
+		contact_address,
+		customer_email,
+		bill_send_mode,
+		inve_transa_type,
+		product_total_count_lower,
+		product_total_count_upper,
+		data_status,
+		account_status,
+		pay_type,
+		pay_usr_id,
+		date_format(date_of_payment,'%Y-%m-%d') as date_of_payment_str,
+		date_of_payment,
+		pay_account,
+		cash_pay_name,
+		act_account_usr_id,
+		date_format(date_of_act,'%Y-%m-%d') as date_of_act_str,
+		date_of_act,
+		act_account,
+		fee_account,
+		salesman_name,
+		salesman_id,
+		salesman_city_code,
+		salesman_city,
+		salesman_dept_id,
+		create_user_id,
+		create_user_name,
+		create_user_dept_id,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		department_manager_id,
+		department_manager_city_code,
+		department_manager_dept_id,
+		vice_general_manager_id,
+		vice_general_manager_city_code,
+		vice_general_manager_dept_id,
+		general_manager_id,
+		general_manager_city_code,
+		bel_salesman_id_id,
+		trans_salesman_status,
+		general_manager_dept_id
+		from wms_inve_transa
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<select id="searchForMatch" parameterType="map" resultType="java.util.HashMap">
+		select
+		t1.wms_inve_transa_id,
+		t1.wms_inve_customer_id,
+		t1.bill_code,
+		t1.id_card,
+		t1.cus_name,
+		date_format(t1.cus_birthday,'%Y-%m-%d') as cus_birthday_str,
+		t1.cus_birthday,
+		t1.cus_gender,
+		t1.cus_address,
+		t1.post_code,
+		t1.address_phone,
+		t1.work_phone,
+		t1.cus_fax,
+		t1.contact_address,
+		t1.customer_email,
+		t1.bill_send_mode,
+		t1.inve_transa_type,
+		t1.product_total_count_lower,
+		t1.product_total_count_upper,
+		(select value_meaning from wms_sys_dict_data where value_code = data_status
+		and wms_sys_dict_id = 55)as data_status,
+		t1.account_status,
+		t1.pay_type,
+		t1.pay_usr_id,
+		date_format(t1.date_of_payment,'%Y-%m-%d') as date_of_payment_str,
+		t1.date_of_payment,
+		t1.pay_account,
+		t1.cash_pay_name,
+		t1.act_account_usr_id,
+		date_format(t1.date_of_act,'%Y-%m-%d') as date_of_act_str,
+		t1.date_of_act,
+		t1.act_account,
+		t1.fee_account,
+		t1.salesman_name,
+		t1.salesman_id,
+		t1.salesman_city_code,
+		t1.salesman_city,
+		t1.salesman_dept_id,
+		t1.create_user_id,
+		t1.create_user_name,
+		t1.create_user_dept_id,
+		date_format(t1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		t1.create_timestamp,
+		t1.last_update_user_id,
+		date_format(t1.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		t1.last_update_timestamp,
+		t1.enable_flag,
+		t2.wms_inve_pruduct_category_id,
+		t2.wms_inve_transa_prod_id,
+		t2.product_deadline,
+		t2.is_finish,
+		(case t2.is_finish when '1' then '是' when '0' then '否' end) as is_finish_name,
+		t2.category_name,
+		t2.product_interest,
+		(select category_type from wms_inve_pruduct_category where wms_inve_pruduct_category_id=t2.wms_inve_pruduct_category_id) as category_type,
+		(select category_interest_pay_method from wms_inve_pruduct_category where wms_inve_pruduct_category_id=t2.wms_inve_pruduct_category_id) as category_interest_pay_method
+		from wms_inve_transa t1,wms_inve_transa_prod t2
+		<where>
+			1=1
+			and
+			t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			and data_status = 3
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+			<if test="cus_name != null">
+				and t1.cus_name like #{cus_name}
+			</if>
+			<if test="category_name != null">
+				and t2.category_name = #{category_name}
+			</if>
+			<if test="id_card != null">
+				and t1.id_card = #{id_card}
+			</if>
+			<if test="create_timestamp != null and create_timestamp1!=null">
+				and t1.create_timestamp between #{create_timestamp} and
+				#{create_timestamp1}
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- 实现当理财进行债权匹配的时候,根据对应筛选条件选择房产和车产信息 -->
+	<select id="searchForChoose" parameterType="map" resultType="java.util.HashMap">
+		select
+		t1.wms_cre_credit_head_id,
+		t1.protocol_code,
+		t1.wms_fina_cre_pay_id,
+		t1.cre_type,
+		(select value_meaning from wms_sys_dict_data where wms_sys_dict_id=15 and value_code=t1.cre_type) as cre_type_name,
+		t1.matching_creditor,
+		(FLOOR(t1.matching_creditor/10000)) as matching_creditor_name,
+		t1.repay_begin_date,
+		date_format(t1.repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		t1.repay_end_date,
+		date_format(t1.repay_end_date,'%Y-%m-%d') as repay_end_date_str,
+		t2.debtor_name as credit_name,
+		t2.debtor_identity_id as credit_id_card
+		from wms_fina_cre_repay t1,wms_cre_appro_borrow_protocol t2
+		<where>
+			t1.matching_creditor &gt;=10000
+			and t1.wms_cre_appro_borrow_protocol_id = t2.wms_cre_appro_id
+			and t1.matching_creditor BETWEEN #{zrjeBefore} and #{zrjeAfter}
+			and t1.repay_end_date BETWEEN #{zzsjBefore} and #{zzsjAfter}
+			<if test="category_type != null">
+				and t1.cre_type = #{category_type}
+			</if>
+			<if test="not_occupy != null">
+                and (t1.is_occupy = 0 or t1.is_occupy is null)
+            </if>
+			<![CDATA[and t1.matching_creditor > 0  and t1.repay_status in(1,2) and (t1.act_creditor="" or t1.act_creditor='0')]]>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+
+	</select>
+	<!--实现当理财进行债权匹配的时候,根据对应筛选条件选择房产和车产信息符合条件的数据数-->
+	<select id="findCountForChoose" parameterType="map" resultType="int">
+		select count(t1.wms_fina_cre_pay_id) as count
+		from wms_fina_cre_repay
+		t1,wms_cre_appro_borrow_protocol t2
+		<where>
+			t1.matching_creditor &gt;=10000
+			and t1.wms_cre_appro_borrow_protocol_id = t2.wms_cre_appro_id
+			and t1.matching_creditor BETWEEN #{zrjeBefore} and #{zrjeAfter}
+			and t1.repay_end_date BETWEEN #{zzsjBefore} and #{zzsjAfter}
+			<if test="category_type != null">
+				and t1.cre_type = #{category_type}
+			</if>
+			<if test="not_occupy != null">
+                and (t1.is_occupy = 0 or t1.is_occupy is null)
+            </if>
+			<![CDATA[and t1.matching_creditor > 0  and t1.repay_status !='3' and t1.repay_status !='5' and (t1.act_creditor="" or t1.act_creditor='0')]]>
+		</where>
+	</select>
+	<!-- 【理财上单】 金额管理 列表显示以及导出 -->
+	<select id="searchForJEGL" parameterType="map" resultType="java.util.HashMap">
+		select
+		w1.wms_inve_transa_id,
+		w1.wms_inve_customer_id,
+		w1.bill_code,
+		w1.id_card,
+		w1.cus_name,
+		w2.wms_inve_transa_prod_id,
+		w2.category_name,
+		w2.wms_inve_pruduct_category_id,
+		w2.product_deadline,
+		(w2.product_account/10000) as product_account,
+		date_format(w1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		w1.create_timestamp,
+		date_format(w1.date_of_payment,'%Y-%m-%d') as date_of_payment_str,
+		w1.data_status,
+		(select value_meaning from wms_sys_dict_data where wms_sys_dict_id=55 and value_code=data_status) as data_status_str
+		from wms_inve_transa w1,wms_inve_transa_prod w2
+		<where>
+			w1.enable_flag=1 and w2.enable_flag=1 and w1.wms_inve_transa_id=w2.wms_inve_transa_id and w1.data_status =2
+			and (2>(SELECT COUNT(DISTINCT(p.group_info)) from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id in(w1.create_user_id,#{userid}) and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id) 
+			or 1=(SELECT p.group_info from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id =#{userid} and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id))
+			<if test="idList !=null">
+                and w1.wms_inve_transa_id in
+                <foreach collection="idList" item="wms_inve_transa_id"
+                    index="index" open="(" separator="," close=")">
+                    #{wms_inve_transa_id}
+                </foreach>
+            </if>
+			<if test="cus_name != null">
+				and w1.cus_name like #{cus_name}
+			</if>
+			<if test="category_name != null">
+				and w2.wms_inve_pruduct_category_id = #{category_name}
+			</if>
+			<if test="id_card != null">
+				and w1.id_card like #{id_card}
+			</if>
+			<if test="create_timestamp_begin != null">
+				and date_format(w1.create_timestamp,'%Y-%m-%d') &gt;= #{create_timestamp_begin}
+			</if>
+			<if test="create_timestamp_end != null">
+				and date_format(w1.create_timestamp,'%Y-%m-%d') &lt;= #{create_timestamp_end}
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+    <!--【理财上单】 金额管理 列表数据数 -->
+    <select id="findCountForJEGL" parameterType="map" resultType="int">
+        select count(w1.wms_inve_transa_id) as count
+        from 
+        wms_inve_transa w1,wms_inve_transa_prod w2
+        <where>
+           w1.enable_flag=1 and w2.enable_flag=1 and w1.wms_inve_transa_id=w2.wms_inve_transa_id and w1.data_status =2
+           	and (2>(SELECT COUNT(DISTINCT(p.group_info)) from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id in(w1.create_user_id,#{userid}) and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id) 
+			or 1=(SELECT p.group_info from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id =#{userid} and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id))
+            <if test="idList !=null">
+                and w1.wms_inve_transa_id in
+                <foreach collection="idList" item="wms_inve_transa_id"
+                    index="index" open="(" separator="," close=")">
+                    #{wms_inve_transa_id}
+                </foreach>
+            </if>
+            <if test="cus_name != null">
+                and w1.cus_name like #{cus_name}
+            </if>
+            <if test="category_name != null">
+                and w2.wms_inve_pruduct_category_id = #{category_name}
+            </if>
+            <if test="id_card != null">
+                and w1.id_card like #{id_card}
+            </if>
+            <if test="create_timestamp_begin != null">
+                and date_format(w1.create_timestamp,'%Y-%m-%d') &gt;= #{create_timestamp_begin}
+            </if>
+            <if test="create_timestamp_end != null">
+                and date_format(w1.create_timestamp,'%Y-%m-%d') &lt;= #{create_timestamp_end}
+            </if>
+        </where>
+    </select>
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveTransa"
+		useGeneratedKeys="true" keyProperty="wms_inve_transa_id">
+		INSERT INTO wms_inve_transa
+		(
+		wms_inve_customer_id,
+
+		bill_code,
+
+		id_card,
+
+		cus_name,
+
+		cus_birthday,
+
+		cus_gender,
+
+		cus_address,
+
+		post_code,
+
+		address_phone,
+
+		work_phone,
+
+		cus_fax,
+
+		contact_address,
+
+		customer_email,
+
+		bill_send_mode,
+
+		inve_transa_type,
+
+		product_total_count_lower,
+
+		product_total_count_upper,
+
+		data_status,
+
+		account_status,
+
+		pay_type,
+
+		pay_usr_id,
+
+		date_of_payment,
+
+		pay_account,
+
+		cash_pay_name,
+
+		act_account_usr_id,
+
+		date_of_act,
+
+		act_account,
+
+		fee_account,
+
+		salesman_name,
+
+		salesman_id,
+
+		salesman_city_code,
+
+		salesman_city,
+
+		salesman_dept_id,
+
+		salesman_shortcode,
+
+		create_user_id,
+
+		create_user_name,
+
+		create_user_dept_id,
+
+		create_timestamp,
+
+		last_update_user_id,
+
+		last_update_timestamp,
+
+		enable_flag,
+
+		mobile_phone,
+		department_manager_id,
+		department_manager_city_code,
+		department_manager_dept_id,
+		vice_general_manager_id,
+		vice_general_manager_city_code,
+		vice_general_manager_dept_id,
+		general_manager_id,
+		general_manager_city_code,
+		general_manager_dept_id,
+		costomer_id,
+		customer_source,
+		customer_num,
+		trans_salesman_status,
+		convert_account,
+		relpace_type_detail,
+		bel_salesman_id_id,
+		bill_source,
+		old_wms_inve_transa_id,
+		old_date_of_payment ,
+		center_manager_id,
+		center_manager_dept_id,
+		bel_salesman_dept_id,
+		bel_department_manager_id,
+		bel_department_manager_dept_id,
+		bel_vice_general_manager_id,
+		bel_vice_general_manager_dept_id,
+		bel_general_manager_id,
+		bel_general_manager_dept_id,
+		bel_center_manager_id,
+		bel_center_manager_dept_id,
+		financial_bill_code,
+		old_last_wms_inve_transa_id,
+		income_account,
+		expiration_reminder,
+		debt_expires,
+		crm_name_query_type,
+		crm_mobile_query_type,
+		crm_id_card_query_type,
+		contract_signing_type,
+		crm_create_timestamp,
+		is_extend_amount
+		)
+		VALUES
+		(
+		#{wms_inve_customer_id},
+		#{bill_code},
+		#{id_card},
+		#{cus_name},
+		#{cus_birthday},
+		#{cus_gender},
+		#{cus_address},
+		#{post_code},
+		#{address_phone},
+		#{work_phone},
+		#{cus_fax},
+		#{contact_address},
+		#{customer_email},
+		#{bill_send_mode},
+		#{inve_transa_type},
+		#{product_total_count_lower},
+		#{product_total_count_upper},
+		#{data_status},
+		#{account_status},
+		#{pay_type},
+		#{pay_usr_id},
+		#{date_of_payment},
+		#{pay_account},
+		#{cash_pay_name},
+		#{act_account_usr_id},
+		#{date_of_act},
+		#{act_account},
+		#{fee_account},
+		#{salesman_name},
+		#{salesman_id},
+		#{salesman_city_code},
+		#{salesman_city},
+		#{salesman_dept_id},
+		#{salesman_shortcode},
+		#{create_user_id},
+		#{create_user_name},
+		#{create_user_dept_id},
+		#{create_timestamp},
+		#{last_update_user_id},
+		#{last_update_timestamp},
+		#{enable_flag},
+		#{mobile_phone},
+		#{department_manager_id},
+		#{department_manager_city_code},
+		#{department_manager_dept_id},
+		#{vice_general_manager_id},
+		#{vice_general_manager_city_code},
+		#{vice_general_manager_dept_id},
+		#{general_manager_id},
+		#{general_manager_city_code},
+		#{general_manager_dept_id},
+		#{costomer_id},
+		#{customer_source},
+		#{customer_num},
+		#{trans_salesman_status},
+		#{convert_account},
+		#{relpace_type_detail},
+		#{bel_salesman_id_id},
+		#{bill_source},
+		#{old_wms_inve_transa_id},
+		#{old_date_of_payment},
+		#{center_manager_id},
+		#{center_manager_dept_id},
+		#{bel_salesman_dept_id},
+		#{bel_department_manager_id},
+		#{bel_department_manager_dept_id},
+		#{bel_vice_general_manager_id},
+		#{bel_vice_general_manager_dept_id},
+		#{bel_general_manager_id},
+		#{bel_general_manager_dept_id},
+		#{bel_center_manager_id},
+		#{bel_center_manager_dept_id},
+		#{financial_bill_code},
+		#{old_last_wms_inve_transa_id},
+		#{income_account},
+		#{expiration_reminder},
+		#{debt_expires},
+		#{crm_name_query_type},
+		#{crm_mobile_query_type},
+		#{crm_id_card_query_type},
+		#{contract_signing_type},
+		#{crm_create_timestamp},
+		#{is_extend_amount}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveTransa">
+		update wms_inve_transa
+		<set>
+			<if test="wms_inve_customer_id != null">
+				wms_inve_customer_id = #{wms_inve_customer_id},
+			</if>
+
+			<if test="bill_code != null">
+				bill_code = #{bill_code},
+			</if>
+
+			<if test="id_card != null">
+				id_card = #{id_card},
+			</if>
+
+			<if test="cus_name != null">
+				cus_name = #{cus_name},
+			</if>
+
+			<if test="cus_birthday != null">
+				cus_birthday = #{cus_birthday},
+			</if>
+
+			<if test="cus_gender !=null">
+				cus_gender = #{cus_gender},
+			</if>
+
+			<if test="cus_address !=null">
+				cus_address = #{cus_address},
+			</if>
+
+			<if test="post_code !=null">
+				post_code = #{post_code},
+			</if>
+
+			<if test="address_phone !=null">
+				address_phone = #{address_phone},
+			</if>
+
+			<if test="work_phone !=null">
+				work_phone = #{work_phone},
+			</if>
+
+			<if test="cus_fax !=null">
+				cus_fax = #{cus_fax},
+			</if>
+
+			<if test="contact_address !=null">
+				contact_address = #{contact_address},
+			</if>
+
+			<if test="customer_email !=null">
+				customer_email = #{customer_email},
+			</if>
+
+			<if test="bill_send_mode !=null">
+				bill_send_mode = #{bill_send_mode},
+			</if>
+
+			<if test="inve_transa_type != null">
+				inve_transa_type = #{inve_transa_type},
+			</if>
+
+			<if test="product_total_count_lower !=null">
+				product_total_count_lower = #{product_total_count_lower},
+			</if>
+
+			<if test="product_total_count_upper !=null">
+				product_total_count_upper = #{product_total_count_upper},
+			</if>
+
+			<if test="data_status != null">
+				data_status = #{data_status},
+			</if>
+
+			<if test="account_status != null">
+				account_status = #{account_status},
+			</if>
+
+			<if test="pay_type != null">
+				pay_type = #{pay_type},
+			</if>
+
+			<if test="pay_usr_id != null">
+				pay_usr_id = #{pay_usr_id},
+			</if>
+
+			<if test="date_of_payment != null">
+				date_of_payment = #{date_of_payment},
+			</if>
+
+			<if test="pay_account != null">
+				pay_account = #{pay_account},
+			</if>
+
+			<if test="cash_pay_name != null">
+				cash_pay_name = #{cash_pay_name},
+			</if>
+
+			<if test="act_account_usr_id != null">
+				act_account_usr_id = #{act_account_usr_id},
+			</if>
+
+			<if test="date_of_act != null">
+				date_of_act = #{date_of_act},
+			</if>
+
+			<if test="act_account != null">
+				act_account = #{act_account},
+			</if>
+
+			<if test="fee_account != null">
+				fee_account = #{fee_account},
+			</if>
+
+			<if test="salesman_name !=null">
+				salesman_name = #{salesman_name},
+			</if>
+
+			<if test="salesman_shortcode !=null">
+				salesman_shortcode= #{salesman_shortcode},
+			</if>
+
+			<if test="salesman_id !=null">
+				salesman_id = #{salesman_id},
+			</if>
+
+			<if test="salesman_city_code !=null">
+				salesman_city_code = #{salesman_city_code},
+			</if>
+
+			<if test="salesman_city !=null">
+				salesman_city = #{salesman_city},
+			</if>
+
+			<if test="salesman_dept_id !=null">
+				salesman_dept_id = #{salesman_dept_id},
+			</if>
+
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+
+			<if test="create_user_dept_id != null">
+				create_user_dept_id = #{create_user_dept_id},
+			</if>
+
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+
+			<if test="mobile_phone !=null">
+				mobile_phone = #{mobile_phone},
+			</if>
+			
+			<if test="department_manager_id !=null">
+				department_manager_id = #{department_manager_id},
+			</if>
+			<if test="department_manager_city_code !=null">
+				department_manager_city_code = #{department_manager_city_code},
+			</if>
+			<if test="department_manager_dept_id !=null">
+				department_manager_dept_id = #{department_manager_dept_id},
+			</if>
+			<if test="vice_general_manager_id !=null">
+				vice_general_manager_id = #{vice_general_manager_id},
+			</if>
+			<if test="vice_general_manager_city_code !=null">
+				vice_general_manager_city_code = #{vice_general_manager_city_code},
+			</if>
+			<if test="vice_general_manager_dept_id !=null">
+				vice_general_manager_dept_id = #{vice_general_manager_dept_id},
+			</if>
+			<if test="general_manager_id !=null">
+				general_manager_id = #{general_manager_id},
+			</if>
+			<if test="general_manager_city_code !=null">
+				general_manager_city_code = #{general_manager_city_code},
+			</if>
+			<if test="general_manager_dept_id !=null">
+				general_manager_dept_id = #{general_manager_dept_id},
+			</if>
+			<if test="costomer_id !=null">
+				costomer_id = #{costomer_id},
+			</if>
+			<if test="customer_source !=null">
+				customer_source = #{customer_source},
+			</if>
+			<if test="customer_num !=null">
+				customer_num = #{customer_num},
+			</if>
+			<if test="bel_salesman_id_id !=null">
+				bel_salesman_id_id = #{bel_salesman_id_id},
+			</if>
+			<if test="trans_salesman_status !=null">
+				trans_salesman_status = #{trans_salesman_status},
+			</if>
+			<if test="center_manager_id != null">
+				center_manager_id = #{center_manager_id},
+			</if>
+			<if test="center_manager_dept_id != null">
+				center_manager_dept_id = #{center_manager_dept_id},
+			</if>
+			<if test="bel_salesman_dept_id != null">
+				bel_salesman_dept_id = #{bel_salesman_dept_id},
+			</if>
+			<if test="bel_department_manager_id != null">
+				bel_department_manager_id=#{bel_department_manager_id},	
+			</if>
+			<if test="bel_department_manager_dept_id!=null">
+				bel_department_manager_dept_id = #{bel_department_manager_dept_id},
+			</if>
+			<if test="bel_vice_general_manager_id != null">
+				bel_vice_general_manager_id=#{bel_vice_general_manager_id},
+			</if>
+			<if test="bel_vice_general_manager_dept_id!=null">
+				bel_vice_general_manager_dept_id=#{bel_vice_general_manager_dept_id},
+			</if>
+			<if test="bel_general_manager_id!=null">
+				bel_general_manager_id=#{bel_general_manager_id},
+			</if>
+			<if test="bel_general_manager_dept_id != null">
+				bel_general_manager_dept_id=#{bel_general_manager_dept_id},
+			</if>
+			<if test="bel_center_manager_id!=null">
+				bel_center_manager_id=#{bel_center_manager_id},
+			</if>
+			<if test="bel_center_manager_dept_id!=null">
+				bel_center_manager_dept_id=#{bel_center_manager_dept_id},
+			</if>
+			<if test="is_order_redeem != null">
+				is_order_redeem = #{is_order_redeem},
+			</if>
+			<if test="financial_bill_code!=null">
+				financial_bill_code = #{financial_bill_code},
+			</if>
+			<if test="is_order_extend!=null">
+				is_order_extend=#{is_order_extend},
+			</if>
+			<if test="income_account != null">
+				income_account = #{income_account},
+			</if>
+			<if test="expiration_reminder != null">
+				expiration_reminder = #{expiration_reminder},
+			</if>
+			<if test="debt_expires != null">
+				debt_expires = #{debt_expires},
+			</if>
+			<if test="crm_name_query_type != null">
+				crm_name_query_type = #{crm_name_query_type},
+			</if>
+			<if test="crm_mobile_query_type != null">
+				crm_mobile_query_type = #{crm_mobile_query_type},
+			</if>
+			<if test="crm_id_card_query_type != null">
+				crm_id_card_query_type = #{crm_id_card_query_type},
+			</if>
+			<if test="contract_signing_type != null">
+				contract_signing_type = #{contract_signing_type},
+			</if>
+			<if test="crm_create_timestamp != null">
+				crm_create_timestamp = #{crm_create_timestamp}
+			</if>
+		</set>
+		where
+		wms_inve_transa_id = #{wms_inve_transa_id}
+	</update>
+
+	<update id="updateInve_transaForJEZF" parameterType="WmsInveTransa">
+		update wms_inve_transa
+		<set>
+			<if test="data_status != null">
+				data_status = #{data_status},
+			</if>
+			<if test="account_status != null">
+				account_status = #{account_status},
+			</if>
+			<if test="pay_type != null">
+				pay_type = #{pay_type},
+			</if>
+			<if test="pay_usr_id != null">
+				pay_usr_id = #{pay_usr_id},
+			</if>
+			<if test="date_of_payment != null">
+				date_of_payment = #{date_of_payment},
+			</if>
+			<if test="pay_account != null">
+				pay_account = #{pay_account},
+			</if>
+			<if test="cash_pay_name != null">
+				cash_pay_name = #{cash_pay_name},
+			</if>
+			<if test="act_account_usr_id != null">
+				act_account_usr_id = #{act_account_usr_id},
+			</if>
+			<if test="date_of_act != null">
+				date_of_act = #{date_of_act},
+			</if>
+			<if test="act_account != null">
+				act_account = #{act_account},
+			</if>
+			<if test="fee_account != null">
+				fee_account = #{fee_account},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			 <if test="product_total_count_lower !=null">
+                product_total_count_lower = #{product_total_count_lower},
+            </if>
+            <if test="product_total_count_upper !=null">
+                product_total_count_upper = #{product_total_count_upper},
+            </if>
+		</set>
+		where
+		wms_inve_transa_id = #{wms_inve_transa_id}
+	</update>
+
+	<select id="getListByEntity" parameterType="WmsInveTransa"
+		resultType="WmsInveTransa">
+		select
+		wms_inve_transa_id,
+		wms_inve_customer_id,
+		bill_code,
+		id_card,
+		cus_name,
+		date_format(cus_birthday,'%Y-%m-%d') as cus_birthday_str,
+		cus_birthday,
+		cus_gender,
+		cus_address,
+		post_code,
+		address_phone,
+		work_phone,
+		cus_fax,
+		contact_address,
+		customer_email,
+		bill_send_mode,
+		inve_transa_type,
+		product_total_count_lower,
+		product_total_count_upper,
+		data_status,
+		account_status,
+		pay_type,
+		pay_usr_id,
+		date_format(date_of_payment,'%Y-%m-%d') as date_of_payment_str,
+		date_of_payment,
+		pay_account,
+		cash_pay_name,
+		act_account_usr_id,
+		date_format(date_of_act,'%Y-%m-%d') as date_of_act_str,
+		date_of_act,
+		act_account,
+		fee_account,
+		salesman_name,
+		salesman_id,
+		salesman_city_code,
+		salesman_city,
+		salesman_dept_id,
+		create_user_id,
+		create_user_name,
+		create_user_dept_id,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		bel_salesman_id_id,
+		trans_salesman_status,
+		enable_flag,
+		costomer_id
+		from
+		wms_inve_transa
+		<where>
+			<if test="wms_inve_transa_id != null">
+				and wms_inve_transa_id = #{wms_inve_transa_id}
+			</if>
+			<if test="wms_inve_customer_id != null">
+				and wms_inve_customer_id = #{wms_inve_customer_id}
+			</if>
+			<if test="bill_code != null">
+				and bill_code = #{bill_code}
+			</if>
+			<if test="id_card != null">
+				and id_card = #{id_card}
+			</if>
+			<if test="cus_name != null">
+				and cus_name = #{cus_name}
+			</if>
+			<if test="cus_birthday != null">
+				and cus_birthday = #{cus_birthday}
+			</if>
+			<if test="cus_gender != null">
+				and cus_gender = #{cus_gender}
+			</if>
+			<if test="cus_address != null">
+				and cus_address = #{cus_address}
+			</if>
+			<if test="post_code != null">
+				and post_code = #{post_code}
+			</if>
+			<if test="address_phone != null">
+				and address_phone = #{address_phone}
+			</if>
+			<if test="work_phone != null">
+				and work_phone = #{work_phone}
+			</if>
+			<if test="cus_fax != null">
+				and cus_fax = #{cus_fax}
+			</if>
+			<if test="contact_address != null">
+				and contact_address = #{contact_address}
+			</if>
+			<if test="customer_email != null">
+				and customer_email = #{customer_email}
+			</if>
+			<if test="bill_send_mode != null">
+				and bill_send_mode = #{bill_send_mode}
+			</if>
+			<if test="inve_transa_type != null">
+				and inve_transa_type = #{inve_transa_type}
+			</if>
+			<if test="product_total_count_lower != null">
+				and product_total_count_lower = #{product_total_count_lower}
+			</if>
+			<if test="product_total_count_upper != null">
+				and product_total_count_upper = #{product_total_count_upper}
+			</if>
+			<if test="data_status != null">
+				and data_status = #{data_status}
+			</if>
+			<if test="account_status != null">
+				and account_status = #{account_status}
+			</if>
+			<if test="pay_type != null">
+				and pay_type = #{pay_type}
+			</if>
+			<if test="pay_usr_id != null">
+				and pay_usr_id = #{pay_usr_id}
+			</if>
+			<if test="date_of_payment != null">
+				and date_of_payment = #{date_of_payment}
+			</if>
+			<if test="pay_account != null">
+				and pay_account = #{pay_account}
+			</if>
+			<if test="cash_pay_name != null">
+				and cash_pay_name = #{cash_pay_name}
+			</if>
+			<if test="act_account_usr_id != null">
+				and act_account_usr_id = #{act_account_usr_id}
+			</if>
+			<if test="date_of_act != null">
+				and date_of_act = #{date_of_act}
+			</if>
+			<if test="act_account != null">
+				and act_account = #{act_account}
+			</if>
+			<if test="fee_account != null">
+				and fee_account = #{fee_account}
+			</if>
+			<if test="salesman_name != null">
+				and salesman_name = #{salesman_name}
+			</if>
+			<if test="salesman_id != null">
+				and salesman_id = #{salesman_id}
+			</if>
+			<if test="salesman_city_code != null">
+				and salesman_city_code = #{salesman_city_code}
+			</if>
+			<if test="salesman_city != null">
+				and salesman_city = #{salesman_city}
+			</if>
+			<if test="salesman_dept_id != null">
+				and salesman_dept_id = #{salesman_dept_id}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name = #{create_user_name}
+			</if>
+			<if test="create_user_dept_id != null">
+				and create_user_dept_id = #{create_user_dept_id}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id = #{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+			<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+				and wms_inve_transa_id != #{wms_inve_transa_id}
+			</if>
+			<if test="costomer_id != null">
+				and costomer_id = #{costomer_id}
+			</if>
+			<if test="financial_bill_code != null">
+				and financial_bill_code = #{financial_bill_code }
+			</if>
+		</where>
+	</select>
+	<!-- list -->
+	<select id="getMapForLc" parameterType="int" resultType="java.util.HashMap">
+		select
+		t.wms_inve_transa_id,
+		t.wms_inve_customer_id,
+		t.bill_code,
+		t.id_card,
+		t.cus_name,
+		date_format(t.cus_birthday,'%Y-%m-%d') as cus_birthday_str,
+		t.cus_birthday,
+		t.cus_gender,
+		t.cus_address,
+		t.post_code,
+		t.address_phone,
+		t.work_phone,
+		t.cus_fax,
+		t.contact_address,
+		t.customer_email,
+		t.bill_send_mode,
+		t.inve_transa_type,
+		t.product_total_count_lower,
+		t.product_total_count_upper,
+		t.data_status,
+		t.account_status,
+		t.pay_type,
+		t.pay_usr_id,
+		date_format(t.date_of_payment,'%Y-%m-%d') as date_of_payment_str,
+		t.date_of_payment,
+		t.pay_account,
+		t.cash_pay_name,
+		t.act_account_usr_id,
+		date_format(t.date_of_act,'%Y-%m-%d') as date_of_act_str,
+		t.date_of_act,
+		t.act_account,
+		t.fee_account,
+		t.salesman_name,
+		t.salesman_id,
+		t.salesman_city_code,
+		t.salesman_city,
+		t.salesman_dept_id,
+		t.create_user_id,
+		t.create_user_name,
+		t.create_user_dept_id,
+		date_format(t.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		t.create_timestamp,
+		t.last_update_user_id,
+		date_format(t.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		t.last_update_timestamp,
+		t.enable_flag,
+		p.product_deadline,
+		p.category_name,
+		p.wms_inve_pruduct_category_id,
+		p.product_account
+		from wms_inve_transa t,wms_inve_transa_prod p
+		<where>
+			t.enable_flag=1 and p.enable_flag=1
+			and t.wms_inve_transa_id
+			=p.wms_inve_transa_id and t.wms_inve_transa_id=#{wms_inve_transa_id}
+		</where>
+	</select>
+	<!-- 理财查询分页查询页面 -->
+	<select id="searchFinancial" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+		t1.bill_code,
+		t1.id_card,
+		t1.cus_name,
+		t1.cus_birthday,
+		t1.cus_gender,
+		t1.cus_address,
+		t1.post_code,
+		t1.address_phone,
+		t1.mobile_phone,
+		t1.work_phone,
+		t1.cus_fax,
+		t1.wms_inve_transa_id,
+		t1.wms_inve_customer_id,
+		t1.contact_address,
+		t1.customer_email,
+		t1.bill_send_mode,
+		t1.inve_transa_type,
+		t1.product_total_count_lower,
+		t1.product_total_count_upper,
+		t1.data_status,
+		case when t1.is_order_redeem='1' then '预约赎回'
+			 when t1.is_order_extend='1' then '预约续期'
+			else
+				(select value_meaning from wms_sys_dict_data where value_code = data_status
+		and wms_sys_dict_id = 55) end as data_status_name,
+		t1.account_status,
+		t1.pay_type,
+		t1.pay_usr_id,
+		t1.date_of_payment,
+		t1.date_of_act,
+		t1.pay_account,
+		t1.cash_pay_name,
+		t1.act_account_usr_id,
+		t1.date_of_act,
+		t1.act_account,
+		t1.fee_account,
+		CONCAT(t1.salesman_name,"/",(select personnel_shortCode from pm_personnel where personnel_id=t1.salesman_id)) as salesman_name,
+		t1.salesman_id,
+		t1.salesman_city_code,
+		t1.salesman_city,
+		t1.salesman_dept_id,
+		t1.create_user_id,
+		CONCAT(t1.create_user_name,'/',(select personnel_shortCode from pm_personnel where personnel_id=t1.create_user_id)) as create_user_name,
+		t1.create_user_dept_id,
+		date_format(t1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp,
+		t1.last_update_user_id,
+		t1.last_update_timestamp,
+		t1.enable_flag,
+		t1.old_last_wms_inve_transa_id,
+		t2.wms_inve_pruduct_category_id,
+		t2.wms_inve_transa_id,
+		t2.wms_inve_transa_prod_id,
+		t2.category_name,
+		t2.product_deadline,
+		t2.product_interest,
+		t2.product_account,
+		(t2.product_account/10000) as product_account_million,
+		t2.is_finish,
+		t1.bill_source,
+		(select value_meaning from wms_sys_dict_data where value_code = bill_source
+		and wms_sys_dict_id = 97) as bill_source_name
+		FROM wms_inve_transa t1 , wms_inve_transa_prod t2 ,pm_personnel p
+		<where>
+			t1.wms_inve_transa_id = t2.wms_inve_transa_id 
+			and t1.bel_salesman_id_id = p.personnel_id
+			and (2>(SELECT COUNT(DISTINCT(p.group_info)) from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id in(t1.create_user_id,#{userid}) and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id) 
+			or 1=(SELECT p.group_info from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id =#{userid} and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id))
+			and (1=2
+			<if test="create_user_id !=null">
+				or t1.create_user_id = #{create_user_id}
+			</if>
+
+			<if test="create_user_dept_id !=null">
+				or t1.create_user_dept_id = #{create_user_dept_id}
+			</if>
+
+			<if test="salesman_id !=null">
+				or t1.bel_salesman_id_id = #{salesman_id}
+			</if>
+
+			<if test="salesman_dept_id !=null">
+				or t1.bel_salesman_dept_id = #{salesman_dept_id}
+			</if>
+
+			<if test="deptIds !=null">
+				or t1.bel_salesman_dept_id in
+				<foreach collection="deptIds" item="dept_id" index="index"
+					open="(" separator="," close=")">
+					#{dept_id}
+				</foreach>
+			</if>
+			<if test="deptIds_user_id !=null">
+				or FIND_IN_SET(t1.bel_salesman_dept_id,getMenuData(${deptIds_user_id},${deptIds_menu}))
+			</if>
+
+			<if test="financial_services !=null">
+				or 1= #{financial_services}
+			</if>
+
+			<if test="super_user !=null">
+				or 1 = #{super_user}
+			</if>
+			)
+
+			<if test="category_name != null">
+				and t2.wms_inve_pruduct_category_id = #{category_name}
+			</if>
+
+			<if test="data_status!= null">
+				and t1.data_status=#{data_status}
+			</if>
+			
+			<if test="bill_source != null">
+				and t1.bill_source=#{bill_source}
+			</if>
+
+			<if test="cus_name != null">
+				and t1.cus_name like #{cus_name}
+			</if>
+
+			<if test="create_timestamp_begin != null">
+				and date_format(t1.create_timestamp,'%Y-%m-%d')  &gt;= #{create_timestamp_begin}
+			
+			</if>
+			<if test="create_timestamp_end !=null">
+				and date_format(t1.create_timestamp,'%Y-%m-%d')  &lt;=#{create_timestamp_end}
+			</if>
+			<if test="id_card !=null">
+				and t1.id_card like #{id_card}
+			</if>
+            <if test="create_user_name != null">
+                and (t1.create_user_name=#{create_user_name} or t1.create_user_name =(select personnel_name from pm_personnel where personnel_shortCode=#{create_user_name}))
+            </if>
+            <if test="salesman_name != null">
+            	and (t1.salesman_name =#{salesman_name} or t1.salesman_shortcode=#{salesman_name})
+            </if>
+            <if test="bel_salesman_id_id != null">
+            	and (p.personnel_name =#{bel_salesman_id_id} or p.personnel_shortCode=#{bel_salesman_id_id})
+            </if>
+         	<if test="contract_begin != null and contract_begin !=''">
+				and date_format(t1.date_of_payment,'%Y-%m-%d')  &gt;= #{contract_begin}
+			</if>
+			<if test="contract_end !=null and contract_end !='' " >
+				and date_format(t1.date_of_payment,'%Y-%m-%d')  &lt;=#{contract_end}
+			</if>
+            
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<!-- 理财查询记录条数 -->
+	<select id="findCountFinancial" parameterType="map" resultType="int">
+		select count(t1.wms_inve_transa_id) as count
+		from wms_inve_transa t1 ,
+		wms_inve_transa_prod t2 ,
+		pm_personnel p
+		<where>
+			t1.wms_inve_transa_id = t2.wms_inve_transa_id 
+			and t1.bel_salesman_id_id = p.personnel_id
+			and ((2>(SELECT COUNT(DISTINCT(p.group_info)) from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id in(t1.create_user_id,#{userid}) and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id)) 
+			or (1=(SELECT p.group_info from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id =#{userid} and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id)))
+			and (1=2
+			<if test="create_user_id !=null">
+				or t1.create_user_id = #{create_user_id}
+			</if>
+
+			<if test="create_user_dept_id !=null">
+				or t1.create_user_dept_id = #{create_user_dept_id}
+			</if>
+
+			<if test="salesman_id !=null">
+				or t1.salesman_id = #{salesman_id}
+			</if>
+
+			<if test="salesman_dept_id !=null">
+				or t1.salesman_dept_id = #{salesman_dept_id}
+			</if>
+
+			<if test="deptIds !=null">
+				or t1.salesman_dept_id in
+				<foreach collection="deptIds" item="dept_id" index="index"
+					open="(" separator="," close=")">
+					#{dept_id}
+				</foreach>
+			</if>
+			<if test="deptIds_user_id !=null">
+				or FIND_IN_SET(t1.salesman_dept_id,getMenuData(${deptIds_user_id},${deptIds_menu}))
+			</if>
+
+			<if test="financial_services !=null">
+				or 1= #{financial_services}
+			</if>
+
+			<if test="super_user !=null">
+				or 1 = #{super_user}
+			</if>
+			)
+			<if test="category_name != null">
+				and t2.wms_inve_pruduct_category_id = #{category_name}
+			</if>
+
+			<if test="data_status!= null">
+				and t1.data_status=#{data_status}
+			</if>
+			<if test=" bill_source != null">
+				and t1.bill_source = #{bill_source}
+			</if>
+			<if test="cus_name != null">
+				and t1.cus_name like #{cus_name}
+			</if>
+
+			<if test="create_timestamp_begin != null">
+				and date_format(t1.create_timestamp,'%Y-%m-%d') &gt;=#{create_timestamp_begin}
+			</if>
+			<if test="create_timestamp_end !=null">
+				and date_format(t1.create_timestamp,'%Y-%m-%d') &lt;=#{create_timestamp_end}
+			</if>
+			<if test="id_card !=null">
+				and t1.id_card like #{id_card}
+			</if>
+			<if test="create_user_name != null">
+                and (t1.create_user_name=#{create_user_name} or t1.create_user_name =(select personnel_name from pm_personnel where personnel_shortCode=#{create_user_name}))
+            </if>
+            <if test="salesman_name != null">
+            	and (t1.salesman_name =#{salesman_name} or t1.salesman_shortcode=#{salesman_name})
+            </if>
+            <if test="bel_salesman_id_id != null">
+            	and (p.personnel_name =#{bel_salesman_id_id} or p.personnel_shortCode=#{bel_salesman_id_id})
+            </if>
+            
+          	<if test="contract_begin != null and contract_begin !=''">
+				and date_format(t1.date_of_payment,'%Y-%m-%d')  &gt;= #{contract_begin}
+			</if>
+			<if test="contract_end !=null and contract_end !='' " >
+				and date_format(t1.date_of_payment,'%Y-%m-%d')  &lt;=#{contract_end}
+			</if>
+			
+		</where>
+	</select>
+	
+	<!-- 赎回申请分页查询页面 -->
+	<select id="redeemApplyList" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+		t1.bill_code,
+		t1.id_card,
+		t1.cus_name,
+		t1.cus_birthday,
+		t1.cus_gender,
+		t1.cus_address,
+		t1.post_code,
+		t1.address_phone,
+		t1.mobile_phone,
+		t1.work_phone,
+		t1.cus_fax,
+		t1.wms_inve_transa_id,
+		t1.wms_inve_customer_id,
+		t1.contact_address,
+		t1.customer_email,
+		t1.bill_send_mode,
+		t1.inve_transa_type,
+		t1.product_total_count_lower,
+		t1.product_total_count_upper,
+		t1.data_status,
+		(select value_meaning from wms_sys_dict_data where value_code = data_status
+		and wms_sys_dict_id = 55)as data_status_name,
+		t1.account_status,
+		t1.pay_type,
+		t1.pay_usr_id,
+		t1.pay_account,
+		t1.cash_pay_name,
+		t1.act_account_usr_id,
+		t1.date_of_act,
+		t1.act_account,
+		t1.fee_account,
+		t1.salesman_name,
+		t1.salesman_id,
+		t1.salesman_city_code,
+		t1.salesman_city,
+		t1.salesman_dept_id,
+		t1.create_user_id,
+		t1.create_user_name,
+		t1.create_user_dept_id,
+		date_format(t1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp,
+		t1.last_update_user_id,
+		t1.last_update_timestamp,
+		t1.enable_flag,
+		t1.old_wms_inve_transa_id,
+		<!-- 20160810修改赎回申请  通过支付日期计算收益 -->
+		IFNULL(t1.old_date_of_payment,t1.date_of_payment) as old_date_of_payment,
+		t1.is_order_extend,
+		t2.wms_inve_transa_protocol_id,
+		t2.wms_inve_transa_id,
+		t2.wms_inve_transa_prod_id,
+		t2.prot_code,
+		t2.a_name,
+		t2.a_id_card,
+		t2.date_of_payment,
+		t2.a_bank,
+		t2.a_number,
+		t2.b_name,
+		t2.b_id_card,
+		t2.category_name,
+		t2.product_deadline,
+		t2.sign_place,
+		t2.b_data,
+		t2.end_of_date,
+		t2.create_user_id,
+		t2.create_user_name,
+		t2.create_timestamp,
+		date_format(t2.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		t2.last_update_user_id,
+		t2.last_update_timestamp,
+		t2.enable_flag,
+		t2.contact_address,
+		t2.post_code,
+		t2.wms_inve_redeem_id,
+		t3.wms_inve_transa_prod_id,
+		t3.wms_inve_transa_id,
+		t3.wms_inve_pruduct_category_id,
+		t3.product_interest,
+		t3.expect_interest_account,
+		t3.product_account,
+		t3.product_deadline_name,
+		t1.bill_source,
+		t2.end_of_date,
+		(select pm.personnel_shortCode from pm_personnel pm where pm.personnel_id=t1.salesman_id) as personnel_shortCode,
+		(select value_meaning from wms_sys_dict_data where value_code = bill_source
+		and wms_sys_dict_id = 97) as bill_source_name
+		FROM wms_inve_transa t1,wms_inve_transa_protocol t2,wms_inve_transa_prod
+		t3
+		<where>
+			1=#{super_user}
+			and t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			and t1.wms_inve_transa_id = t3.wms_inve_transa_id
+			and t1.data_status = 4
+			and IFNULL(t1.is_order_redeem,'0') != '1'
+			and t2.wms_inve_redeem_id = 0
+			and (2>(SELECT COUNT(DISTINCT(p.group_info)) from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id in(t1.create_user_id,#{userid}) and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id) 
+			or 1=(SELECT p.group_info from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id =#{userid} and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id))
+			<if test="extend_date != null">
+				and t2.end_of_date &lt;= curdate()
+			</if>
+			<if test="category_name != null">
+				and t3.wms_inve_pruduct_category_id = #{category_name}
+			</if>
+
+			<if test="cus_name != null">
+				and t1.cus_name like #{cus_name}
+			</if>
+
+			<if test="id_card !=null">
+				and t1.id_card  like #{id_card}
+			</if>
+			<if test="bill_source != null">
+				and t1.bill_source=#{bill_source}
+			</if>
+			<if test="extend_date == null and create_timestamp_begin != null and create_timestamp_end !='' ">
+				and date_format(t2.date_of_payment,'%Y-%m-%d') &gt;=#{create_timestamp_begin}
+			</if>
+            <if test="extend_date == null and create_timestamp_end !=null and create_timestamp_end !='' ">
+                and date_format(t2.date_of_payment,'%Y-%m-%d') &lt;=#{create_timestamp_end}
+            </if>
+            <if test="extend_date != null and create_timestamp_begin != null and create_timestamp_end !='' ">
+				and  t2.end_of_date &gt;=#{create_timestamp_begin}
+			</if>
+            <if test="extend_date != null and create_timestamp_end !=null and create_timestamp_end !='' ">
+                and  t2.end_of_date &lt;=#{create_timestamp_end}
+            </if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="sortname1 != '' and sortorder1 !=''">
+			,${sortname1} ${sortorder1}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<!-- 赎回申请记录条数 -->
+	<select id="findCountRedeem" parameterType="map" resultType="int">
+		select count(t1.wms_inve_transa_id) as count
+		from wms_inve_transa
+		t1,wms_inve_transa_protocol t2,wms_inve_transa_prod t3
+		<where>
+			1=#{super_user}
+			and t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			and t1.wms_inve_transa_id = t3.wms_inve_transa_id
+			and t1.data_status = 4
+			and t2.wms_inve_redeem_id = 0
+			and (2>(SELECT COUNT(DISTINCT(p.group_info)) from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id in(t1.create_user_id,#{userid}) and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id) 
+			or 1=(SELECT p.group_info from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id =#{userid} and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id))
+			<if test="extend_date != null">
+				and t2.end_of_date &lt;= curdate()
+			</if>
+			<if test="category_name != null">
+				and t3.wms_inve_pruduct_category_id = #{category_name}
+			</if>
+			<if test="cus_name != null">
+				and t1.cus_name like #{cus_name}
+			</if>
+			<if test="id_card !=null">
+                and t1.id_card  like #{id_card}
+            </if>
+            <if test="bill_source != null">
+				and t1.bill_source=#{bill_source}
+			</if>
+			<if test="extend_date == null and create_timestamp_begin != null and create_timestamp_end !='' ">
+				and date_format(t2.date_of_payment,'%Y-%m-%d') &gt;=#{create_timestamp_begin}
+			</if>
+            <if test="extend_date == null and create_timestamp_end !=null and create_timestamp_end !='' ">
+                and date_format(t2.date_of_payment,'%Y-%m-%d') &lt;=#{create_timestamp_end}
+            </if>
+		</where>
+	</select>
+	
+	<update id="updateForRedeem" parameterType="WmsInveTransa">
+		update wms_inve_transa
+		<set>
+
+			<if test="data_status != null">
+				data_status = #{data_status},
+			</if>
+
+			<if test="account_status != null">
+				account_status = #{account_status},
+			</if>
+
+			<if test="pay_type != null">
+				pay_type = #{pay_type},
+			</if>
+
+			<if test="pay_usr_id != null">
+				pay_usr_id = #{pay_usr_id},
+			</if>
+
+			<if test="date_of_payment != null">
+				date_of_payment = #{date_of_payment},
+			</if>
+
+			<if test="pay_account != null">
+				pay_account = #{pay_account},
+			</if>
+
+			<if test="cash_pay_name != null">
+				cash_pay_name = #{cash_pay_name},
+			</if>
+
+			<if test="act_account_usr_id != null">
+				act_account_usr_id = #{act_account_usr_id},
+			</if>
+
+			<if test="date_of_act != null">
+				date_of_act = #{date_of_act},
+			</if>
+
+			<if test="act_account != null">
+				act_account = #{act_account},
+			</if>
+
+			<if test="fee_account != null">
+				fee_account = #{fee_account},
+			</if>
+
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="is_order_redeem != null">
+				is_order_redeem = #{is_order_redeem},
+			</if>
+			<if test="is_order_extend != null">
+				is_order_extend = #{is_order_extend}
+			</if>
+		</set>
+		where
+		wms_inve_transa_id = #{wms_inve_transa_id}
+	</update>
+	<select id="searchForRenewal" parameterType="map" resultType="java.util.HashMap">
+		select
+		t1.wms_inve_transa_id,
+		t1.wms_inve_customer_id,
+		t1.bill_code,
+		t1.id_card,
+		t1.cus_name,
+		date_format(t1.cus_birthday,'%Y-%m-%d') as cus_birthday_str,
+		t1.cus_birthday,
+		t1.cus_gender,
+		t1.cus_address,
+		t1.post_code,
+		t1.address_phone,
+		t1.work_phone,
+		t1.cus_fax,
+		t1.contact_address,
+		t1.customer_email,
+		t1.bill_send_mode,
+		t1.inve_transa_type,
+		t1.product_total_count_lower,
+		t1.product_total_count_upper,
+		(select value_meaning from wms_sys_dict_data where value_code = data_status
+		and wms_sys_dict_id = 55)as data_status,
+		t1.account_status,
+		t1.pay_type,
+		t1.pay_usr_id,
+		date_format(t1.date_of_payment,'%Y-%m-%d') as date_of_payment_str,
+		t1.date_of_payment,
+		t1.pay_account,
+		t1.cash_pay_name,
+		t1.act_account_usr_id,
+		date_format(t1.date_of_act,'%Y-%m-%d') as date_of_act_str,
+		t1.date_of_act,
+		t1.act_account,
+		t1.fee_account,
+		t1.salesman_name,
+		t1.salesman_id,
+		t1.salesman_city_code,
+		t1.salesman_city,
+		t1.salesman_dept_id,
+		t1.create_user_id,
+		t1.create_user_name,
+		t1.create_user_dept_id,
+		date_format(t1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		t1.create_timestamp,
+		t1.last_update_user_id,
+		date_format(t1.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		t1.last_update_timestamp,
+		t1.enable_flag,
+		t2.wms_inve_pruduct_category_id,
+		t2.wms_inve_transa_prod_id,
+		t2.product_deadline,
+		t2.is_finish,
+		t2.category_name,
+		t2.product_interest,
+		(select category_type from wms_inve_pruduct_category where wms_inve_pruduct_category_id=t2.wms_inve_pruduct_category_id) as category_type,
+		(select category_interest_pay_method from wms_inve_pruduct_category where wms_inve_pruduct_category_id=t2.wms_inve_pruduct_category_id) as category_interest_pay_method
+		from wms_inve_transa t1,wms_inve_transa_prod t2
+		<where>
+			1=1
+			and
+			t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			and data_status = 3
+			<if test="cus_name != null">
+				and t1.cus_name like #{cus_name}
+			</if>
+			<if test="category_name != null">
+				and t2.category_name = #{category_name}
+			</if>
+			<if test="id_card != null">
+				and t1.id_card = #{id_card}
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<select id="findCountForRenewal" parameterType="map" resultType="int">
+		select count(t1.wms_inve_transa_id) as count
+		from wms_inve_transa
+		t1,wms_inve_transa_prod t2
+		<where>
+			1=1
+			and
+			t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			and data_status = 3
+			<if test="cus_name != null">
+				and t1.cus_name like #{cus_name}
+			</if>
+			<if test="category_name != null">
+				and t2.category_name like #{category_name}
+			</if>
+			<if test="id_card != null">
+				and t1.id_card = #{id_card}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 理财特批分页查询页面 -->
+	<select id="approvalFinancial" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+		t1.bill_code,
+		t1.id_card,
+		t1.cus_name,
+		t1.cus_birthday,
+		t1.cus_gender,
+		t1.cus_address,
+		t1.post_code,
+		t1.address_phone,
+		t1.mobile_phone,
+		t1.work_phone,
+		t1.cus_fax,
+		t1.wms_inve_transa_id,
+		t1.wms_inve_customer_id,
+		t1.contact_address,
+		t1.customer_email,
+		t1.bill_send_mode,
+		t1.inve_transa_type,
+		t1.product_total_count_lower,
+		t1.product_total_count_upper,
+		t1.data_status,
+		(select value_meaning from wms_sys_dict_data where value_code = data_status
+		and wms_sys_dict_id = 55)as data_status_name,
+		t1.account_status,
+		t1.pay_type,
+		t1.pay_usr_id,
+		t1.date_of_payment,
+		t1.pay_account,
+		t1.cash_pay_name,
+		t1.act_account_usr_id,
+		t1.date_of_act,
+		t1.act_account,
+		t1.fee_account,
+		t1.salesman_name,
+		t1.salesman_id,
+		t1.salesman_city_code,
+		t1.salesman_city,
+		t1.salesman_dept_id,
+		t1.create_user_id,
+		t1.create_user_name,
+		t1.create_user_dept_id,
+		date_format(t1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp,
+		t1.last_update_user_id,
+		t1.last_update_timestamp,
+		t1.enable_flag,
+		t2.wms_inve_pruduct_category_id,
+		t2.wms_inve_transa_id,
+		t2.wms_inve_transa_prod_id,
+		t2.category_name,
+		t2.product_deadline,
+		t2.product_interest,
+		t2.product_account,
+		t2.reward_interest,
+		t2.expect_interest_account,
+		(t2.product_account/10000) as product_account_million,
+		t3.prot_code,
+		t3.wms_inve_transa_protocol_id,
+		t2.is_finish
+		FROM wms_inve_transa t1 , wms_inve_transa_prod t2, wms_inve_transa_protocol t3
+		<where>
+			t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			and t1.wms_inve_transa_id = t3.wms_inve_transa_id
+			and t3.wms_inve_redeem_id = 0
+
+			<if test="category_name != null">
+				and t2.category_name = #{category_name}
+			</if>
+
+			<if test="data_status!= null">
+				and t1.data_status=#{data_status}
+			</if>
+
+			<if test="cus_name != null">
+				and t1.cus_name like '${cus_name}'
+			</if>
+			
+			<if test="mobile_phone != null">
+				and t1.mobile_phone like '${mobile_phone}'
+			</if>
+			
+			<if test="salesman_name != null">
+				and (t1.salesman_name like '${salesman_name}' or t1.salesman_shortcode like '${salesman_name}')
+			</if>
+
+			<if test="create_timestamp_begin != null">
+				and t1.create_timestamp &gt;= #{create_timestamp_begin}
+			</if>
+			
+			<if test="create_timestamp_end !=null">
+				and t1.create_timestamp &lt; date_add(#{create_timestamp_end}, interval 1 day)
+			</if>
+
+			<if test="id_card !=null">
+				and t1.id_card = #{id_card}
+			</if>
+			
+			<if test="wms_inve_transa_id !=null">
+				and t1.wms_inve_transa_id = #{wms_inve_transa_id}
+			</if>
+
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	
+	<select id="findCountApprovalFinancial" parameterType="map" resultType="int">
+		select count(t1.wms_inve_transa_id) as count
+		from wms_inve_transa t1 ,
+		wms_inve_transa_prod t2, wms_inve_transa_protocol t3
+		<where>
+			t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			and t1.wms_inve_transa_id = t3.wms_inve_transa_id
+			and t3.wms_inve_redeem_id = 0
+
+			<if test="category_name != null">
+				and t2.category_name = #{category_name}
+			</if>
+
+			<if test="data_status!= null">
+				and t1.data_status=#{data_status}
+			</if>
+
+			<if test="cus_name != null">
+				and t1.cus_name like '${cus_name}'
+			</if>
+			
+			<if test="mobile_phone != null">
+				and t1.mobile_phone like '${mobile_phone}'
+			</if>
+			
+			<if test="salesman_name != null">
+				and (t1.salesman_name like '${salesman_name}' or t1.salesman_shortcode like '${salesman_name}')
+			</if>
+
+			<if test="create_timestamp_begin != null">
+				and t1.create_timestamp &gt;= #{create_timestamp_begin}
+			</if>
+			
+			<if test="create_timestamp_end !=null">
+				and t1.create_timestamp &lt; date_add(#{create_timestamp_end}, interval 1 day)
+			</if>
+
+			<if test="id_card !=null">
+				and t1.id_card = #{id_card}
+			</if>
+			
+			<if test="wms_inve_transa_id !=null">
+				and t1.wms_inve_transa_id = #{wms_inve_transa_id}
+			</if>
+
+		</where>
+	</select>
+	
+	<!-- 理财特批业务查询 -->
+	<select id="approvalFinancialyw" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+		t1.bill_code,
+		t1.id_card,
+		t1.cus_name,
+		t1.cus_birthday,
+		t1.cus_gender,
+		t1.cus_address,
+		t1.post_code,
+		t1.address_phone,
+		t1.mobile_phone,
+		t1.work_phone,
+		t1.cus_fax,
+		t1.wms_inve_transa_id,
+		t1.wms_inve_customer_id,
+		t1.contact_address,
+		t1.customer_email,
+		t1.bill_send_mode,
+		t1.inve_transa_type,
+		t1.product_total_count_lower,
+		t1.product_total_count_upper,
+		t1.data_status,
+		(select value_meaning from wms_sys_dict_data where value_code = data_status
+		and wms_sys_dict_id = 55)as data_status_name,
+		t1.account_status,
+		t1.pay_type,
+		t1.pay_usr_id,
+		t1.date_of_payment,
+		t1.pay_account,
+		t1.cash_pay_name,
+		t1.act_account_usr_id,
+		t1.date_of_act,
+		t1.act_account,
+		t1.fee_account,
+		t1.salesman_name,
+		t1.salesman_id,
+		t1.salesman_city_code,
+		t1.salesman_city,
+		t1.salesman_dept_id,
+		t1.create_user_id,
+		t1.create_user_name,
+		t1.create_user_dept_id,
+		date_format(t1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp,
+		t1.last_update_user_id,
+		t1.last_update_timestamp,
+		t1.enable_flag,
+		t2.wms_inve_pruduct_category_id,
+		t2.wms_inve_transa_id,
+		t2.wms_inve_transa_prod_id,
+		t2.category_name,
+		t2.product_deadline as category_deadline,
+		t2.product_interest,
+		t2.product_account,
+		t2.reward_interest,
+		t2.expect_interest_account,
+		(t2.product_account/10000) as product_account_million,
+		t2.is_finish,
+		t3.prot_code,
+		t3.wms_inve_transa_protocol_id,
+		t4.personnel_postId as post_id,
+		t4.personnel_postName,
+		t4.personnel_state,
+		(case t4.personnel_state when 0 then '试用' when 1 then '在职' when 2 then '实习' when 3 then '离职' when 4 then '离退休' when 5 then '异动' when 7 then '兼职' END) as personnel_state_name
+		FROM wms_inve_transa t1 , wms_inve_transa_prod t2, wms_inve_transa_protocol t3, pm_personnel t4
+		<where>
+			t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			and t1.wms_inve_transa_id = t3.wms_inve_transa_id
+			and t1.salesman_id = t4.personnel_id
+			and t3.wms_inve_redeem_id = 0 
+
+			<if test="category_name != null">
+				and t2.category_name = #{category_name}
+			</if>
+
+			<if test="data_status!= null">
+				and t1.data_status=#{data_status}
+			</if>
+
+			<if test="cus_name != null">
+				and t1.cus_name like '${cus_name}'
+			</if>
+
+			<if test="create_timestamp_begin != null and create_timestamp_end !=null">
+				and t1.create_timestamp between #{create_timestamp_begin}
+				and #{create_timestamp_end}
+			</if>
+
+			<if test="id_card !=null">
+				and t1.id_card = #{id_card}
+			</if>
+			
+			<if test="wms_inve_transa_id !=null">
+				and t1.wms_inve_transa_id = #{wms_inve_transa_id}
+			</if>
+		</where>
+	</select>
+	<!-- get entity by pk  根据上单信息表主键获取相关信息-->
+	<select id="getObjectInfo" parameterType="int" resultType="java.util.HashMap">
+		SELECT
+		t1.bill_code,
+		t1.id_card,
+		t1.cus_name,
+		t1.cus_birthday,
+		t1.cus_gender,
+		t1.cus_address,
+		t1.post_code,
+		t1.address_phone,
+		t1.mobile_phone,
+		t1.work_phone,
+		t1.cus_fax,
+		t1.wms_inve_transa_id,
+		t1.wms_inve_customer_id,
+		t1.contact_address,
+		t1.customer_email,
+		t1.bill_send_mode,
+		t1.inve_transa_type,
+		t1.product_total_count_lower,
+		t1.product_total_count_upper,
+		t1.data_status,
+		(select value_meaning from wms_sys_dict_data where value_code = data_status
+		and wms_sys_dict_id = 55)as data_status_name,
+		t1.account_status,
+		t1.pay_type,
+		t1.pay_usr_id,
+		t1.pay_account,
+		t1.cash_pay_name,
+		t1.act_account_usr_id,
+		t1.date_of_act,
+		t1.act_account,
+		t1.fee_account,
+		t1.salesman_name,
+		t1.salesman_id,
+		t1.salesman_city_code,
+		t1.salesman_city,
+		t1.salesman_dept_id,
+		t1.create_user_id,
+		t1.create_user_name,
+		t1.create_user_dept_id,
+		date_format(t1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp,
+		t1.last_update_user_id,
+		t1.last_update_timestamp,
+		t1.enable_flag,
+		t3.wms_inve_transa_prod_id,
+		t3.wms_inve_transa_id,
+		t3.wms_inve_pruduct_category_id,
+		t3.product_interest,
+		t3.expect_interest_account,
+		(t3.product_account/10000) as product_account,
+		t1.bel_salesman_dept_id,
+		t1.bel_department_manager_id,
+		t1.bel_department_manager_dept_id,
+		t1.bel_vice_general_manager_id,
+		t1.bel_vice_general_manager_dept_id,
+		t1.bel_general_manager_id,
+		t1.bel_general_manager_dept_id,
+		t1.bel_center_manager_id,
+		t1.bel_center_manager_dept_id,
+		t1.bel_salesman_id_id,
+		t3.product_deadline_name
+		FROM wms_inve_transa t1,wms_inve_transa_prod t3
+		where
+			t1.wms_inve_transa_id = #{wms_inve_transa_id}
+		and	t1.enable_flag=1
+		and t1.wms_inve_transa_id = t3.wms_inve_transa_id
+	</select>
+	<update id="doUpdateCancel" parameterType="int">
+	    update 
+	    	wms_inve_transa
+	    set
+	    	data_status = #{status}
+	    where
+	     	wms_inve_transa_id = #{transa_id}
+	</update>
+	<!-- 财务管理>理财上单>上单审核>列表数据显示 -->
+	<select id="getListForSDSHList" parameterType="map" resultType="java.util.HashMap">
+	   select 
+	    t1.bill_code,
+        t1.id_card,
+        t1.cus_name,
+        t1.post_code,
+        t1.wms_inve_transa_id,
+        t1.wms_inve_customer_id,
+        t1.data_status,
+        (select value_meaning from wms_sys_dict_data where value_code = data_status and wms_sys_dict_id = 55) as data_status_name,
+        t1.account_status,
+        t1.pay_type,
+        t1.pay_usr_id,
+        t1.pay_account,
+        t1.cash_pay_name,
+        t1.act_account_usr_id,
+        t1.date_of_act,
+        t1.act_account,
+        t1.fee_account,
+        t1.salesman_name,
+        t1.salesman_id,
+        t1.salesman_city_code,
+        t1.salesman_city,
+        t1.salesman_dept_id,
+        t1.create_user_id,
+        t1.create_user_name,
+        t1.create_user_dept_id,
+        date_format(t1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp,
+        t1.last_update_user_id,
+        t1.last_update_timestamp,
+        t1.enable_flag,
+        t2.wms_inve_transa_prod_id,
+        t2.wms_inve_pruduct_category_id,
+        (t2.product_account/10000) as product_account,
+        t2.product_deadline_name,
+        t1.date_of_payment,
+        t2.product_deadline,
+        t2.category_name
+	   from 
+	   wms_inve_transa t1 ,wms_inve_transa_prod t2
+	   <where>
+	       t1.wms_inve_transa_id=t2.wms_inve_transa_id
+           and t1.enable_flag=1 and t2.enable_flag=1
+           and t1.data_status=11
+	     <if test="idList != null">
+	       and t1.wms_inve_transa_id in
+                <foreach collection="idList" item="wms_inve_transa_id"
+                    index="index" open="(" separator="," close=")">
+                    #{wms_inve_transa_id}
+                </foreach>
+	     </if>
+	     <if test="cus_name != null">
+	       and t1.cus_name like #{cus_name}
+	     </if>
+	     <if test="id_card != null">
+	       and t1.id_card  like #{id_card}
+	     </if>
+	     <if test="category_name != null">
+	       and t2.wms_inve_pruduct_category_id=#{category_name}
+	     </if>
+	     <if test="create_timestamp_begin != null">
+	       and date_format(t1.create_timestamp,'%Y-%m-%d') &gt;=#{create_timestamp_begin}
+	     </if>
+	     <if test="create_timestamp_end != null">
+	       and date_format(t1.create_timestamp,'%Y-%m-%d') &lt;=#{create_timestamp_end}
+	     </if>
+	   </where>
+	   <if test="sortname != null and sortorder !=null">
+            ORDER BY ${sortname} ${sortorder}
+        </if>
+        <if test="offset != null and pagesize !=null">
+            LIMIT ${offset} , ${pagesize}
+        </if>
+	</select>
+	<!-- 财务管理>理财上单>上单审核>列表数据总数 -->
+	<select id="findCountForSDSHList" parameterType="map" resultType="int">
+	   select 
+         count(t1.wms_inve_transa_id) as findCount
+       from 
+       wms_inve_transa t1 ,wms_inve_transa_prod t2
+       <where>
+           t1.wms_inve_transa_id=t2.wms_inve_transa_id
+            and t1.enable_flag=1 and t2.enable_flag=1
+            and t1.data_status=11
+        <if test="idList != null">
+           and t1.wms_inve_transa_id in
+                <foreach collection="idList" item="wms_inve_transa_id"
+                    index="index" open="(" separator="," close=")">
+                    #{wms_inve_transa_id}
+                </foreach>
+         </if>
+         <if test="cus_name != null">
+           and t1.cus_name like #{cus_name}
+         </if>
+         <if test="id_card != null">
+           and t1.id_card  like #{id_card}
+         </if>
+         <if test="category_name != null">
+           and t2.wms_inve_pruduct_category_id=#{category_name}
+         </if>
+         <if test="create_timestamp_begin != null">
+           and date_format(t1.create_timestamp,'%Y-%m-%d') &gt;=#{create_timestamp_begin}
+         </if>
+         <if test="create_timestamp_end != null">
+           and date_format(t1.create_timestamp,'%Y-%m-%d') &lt;=#{create_timestamp_end}
+         </if>
+       </where>
+	</select>
+	
+<!-- 	理财复核列表显示 -->
+<select id="searchList" parameterType="map" resultType="java.util.HashMap">
+		select 
+				t2.wms_inve_transa_id,
+				t2.bill_code,
+				t2.cus_name,
+				t2.id_card,
+				date_format(t2.create_timestamp,'%Y-%m-%d %H:%i:%s') as date_of_create,
+				t2.data_status as transa_data_status,
+				(select value_meaning from wms_sys_dict_data where value_code = t2.data_status and wms_sys_dict_id = 55) as transa_data_status_name,
+				t3.wms_inve_transa_prod_id,
+				t3.wms_inve_pruduct_category_id,
+				t3.category_name,
+				t3.category_type,
+				t3.product_deadline,
+				(t3.product_account/10000) as product_account
+				
+		from wms_inve_transa t2, wms_inve_transa_prod t3
+		<where>
+			t2.wms_inve_transa_id = t3.wms_inve_transa_id
+			and t2.data_status = '9'
+			and t2.enable_flag = '1'
+			and t3.enable_flag = '1' 
+			and (2>(SELECT COUNT(DISTINCT(p.group_info)) from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id in(t2.create_user_id,#{userid}) and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id) 
+			or 1=(SELECT p.group_info from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id =#{userid} and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id))
+			<if test="idList != null">
+				and t2.wms_inve_transa_id in
+				<foreach collection="idList" item="wms_inve_transa_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_inve_transa_id}
+				</foreach>
+			</if>
+			<if test="cus_name != null">
+				and t2.cus_name like #{cus_name}
+			</if>
+			<if test="id_card != null">
+				and t2.id_card like #{id_card}
+			</if>
+			<if test="wms_inve_pruduct_category_id != null">
+				and t3.wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id}
+			</if>
+			<if test="create_timestamp_begin != null and create_timestamp_begin !=''">
+				and date_format(t2.create_timestamp,'%Y-%m-%d') &gt;= #{create_timestamp_begin}
+			</if>
+			<if test="create_timestamp_end != null  and create_timestamp_end !=''">
+				and date_format(t2.create_timestamp,'%Y-%m-%d') &lt;= #{create_timestamp_end}
+			</if>
+		</where>
+		<if test="sortname != null and sortorder != null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<!-- 复核列表数据数 -->
+	<select id="findListCount" parameterType="map" resultType="int">
+		select 
+			count(t2.wms_inve_transa_id)
+		from wms_inve_transa t2, wms_inve_transa_prod t3
+		<where>
+			t2.wms_inve_transa_id = t3.wms_inve_transa_id
+			and t2.data_status = '9'
+			and t2.enable_flag = '1'
+			and t3.enable_flag = '1'
+			and (2>(SELECT COUNT(DISTINCT(p.group_info)) from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id in(t2.create_user_id,#{userid}) and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id) 
+			or 1=(SELECT p.group_info from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id =#{userid} and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id))
+			<if test="idList != null">
+				and t2.wms_inve_transa_id in
+				<foreach collection="idList" item="wms_inve_transa_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_inve_transa_id}
+				</foreach>
+			</if>
+			<if test="cus_name != null">
+				and t2.cus_name like #{cus_name}
+			</if>
+			<if test="id_card != null">
+				and t2.id_card like #{id_card}
+			</if>
+			<if test="category_name != null">
+				and t3.category_name = #{category_name}
+			</if>
+			<if test="create_timestamp_begin != null and create_timestamp_begin !=''">
+				and date_format(t2.create_timestamp,'%Y-%m-%d') &gt;= #{create_timestamp_begin}
+			</if>
+			<if test="create_timestamp_end != null  and create_timestamp_end !=''">
+				and date_format(t2.create_timestamp,'%Y-%m-%d') &lt;= #{create_timestamp_end}
+			</if>
+		</where>
+	</select>
+	<!-- 【财务管理】-【理财上单】-【理财签约】(打印协议/客户确认) 查询数据 -->
+	<select id="getProtocolToConfirmList" parameterType="map" resultType="java.util.HashMap">
+	   select 
+        t1.bill_code,
+        t1.id_card,
+        t1.cus_name,
+        t1.post_code,
+        t1.wms_inve_transa_id,
+        t1.wms_inve_customer_id,
+        t1.data_status,
+        (select value_meaning from wms_sys_dict_data where value_code = data_status and wms_sys_dict_id = 55) as data_status_name,
+        t1.account_status,
+        t1.pay_type,
+        t1.pay_usr_id,
+        t1.pay_account,
+        t1.cash_pay_name,
+        t1.act_account_usr_id,
+        t1.date_of_act,
+        t1.act_account,
+        t1.fee_account,
+        t1.salesman_name,
+        t1.salesman_id,
+        t1.salesman_city_code,
+        t1.salesman_city,
+        t1.salesman_dept_id,
+        t1.create_user_id,
+        t1.create_user_name,
+        t1.create_user_dept_id,
+        date_format(t1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp,
+        t1.last_update_user_id,
+        t1.last_update_timestamp,
+        t1.enable_flag,
+        t2.wms_inve_transa_prod_id,
+        t2.wms_inve_pruduct_category_id,
+        (t2.product_account/10000) as product_account,
+        t2.product_deadline_name,
+        t1.date_of_payment,
+        t2.product_deadline,
+        t2.category_name,
+        (case t2.is_protocol_finish when "0" then "否" when "1" then "是"  else "----"end) as is_protocol_finish,
+        (case t2.is_customer_confirmation when "0" then "否" when "1" then "是" else "----"end) as is_customer_confirmation
+       from 
+       wms_inve_transa t1 ,wms_inve_transa_prod t2
+       <where>
+           t1.wms_inve_transa_id=t2.wms_inve_transa_id
+           and t1.enable_flag=1 and t2.enable_flag=1
+           and t1.data_status in(13,14)
+         <if test="idList != null">
+           and t1.wms_inve_transa_id in
+                <foreach collection="idList" item="wms_inve_transa_id"
+                    index="index" open="(" separator="," close=")">
+                    #{wms_inve_transa_id}
+                </foreach>
+         </if>
+         <if test="cus_name != null">
+           and t1.cus_name like #{cus_name}
+         </if>
+         <if test="id_card != null">
+           and t1.id_card  like #{id_card}
+         </if>
+         <if test="category_name != null">
+           and t2.wms_inve_pruduct_category_id=#{category_name}
+         </if>
+         <if test="create_timestamp_begin != null">
+           and date_format(t1.create_timestamp,'%Y-%m-%d') &gt;=#{create_timestamp_begin}
+         </if>
+         <if test="create_timestamp_end != null">
+           and date_format(t1.create_timestamp,'%Y-%m-%d') &lt;=#{create_timestamp_end}
+         </if>
+       </where>
+       <if test="sortname != null and sortorder !=null">
+            ORDER BY ${sortname} ${sortorder}
+        </if>
+        <if test="offset != null and pagesize !=null">
+            LIMIT ${offset} , ${pagesize}
+        </if>
+	</select>
+	<!-- 【财务管理】-【理财上单】-【理财签约】(打印协议/客户确认) 查询数据数 -->
+	<select id="findCountProtocolToConfirmList" parameterType="map" resultType="int">
+	   select 
+         count(t1.wms_inve_transa_id) as findCount
+       from 
+       wms_inve_transa t1 ,wms_inve_transa_prod t2
+       <where>
+            t1.wms_inve_transa_id=t2.wms_inve_transa_id
+            and t1.enable_flag=1 and t2.enable_flag=1
+            and t1.data_status in(13,14)
+        <if test="idList != null">
+           and t1.wms_inve_transa_id in
+                <foreach collection="idList" item="wms_inve_transa_id"
+                    index="index" open="(" separator="," close=")">
+                    #{wms_inve_transa_id}
+                </foreach>
+         </if>
+         <if test="cus_name != null">
+           and t1.cus_name like #{cus_name}
+         </if>
+         <if test="id_card != null">
+           and t1.id_card  like #{id_card}
+         </if>
+         <if test="category_name != null">
+           and t2.wms_inve_pruduct_category_id=#{category_name}
+         </if>
+         <if test="create_timestamp_begin != null">
+           and date_format(t1.create_timestamp,'%Y-%m-%d') &gt;=#{create_timestamp_begin}
+         </if>
+         <if test="create_timestamp_end != null">
+           and date_format(t1.create_timestamp,'%Y-%m-%d') &lt;=#{create_timestamp_end}
+         </if>
+       </where>
+	</select>
+	<!--上单 支付退回列表数据数-->
+	<select id="findListCountForPaidReturn" parameterType="map" resultType="int">
+		select 
+				count(t1.wms_inve_transa_id) as count
+		
+		from  wms_inve_transa t1, wms_inve_transa_prod t2
+		<where>
+			t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			and t1.enable_flag = '1'
+			and t2.enable_flag = '1'
+		    and t1.data_status in (17)
+			<if test="idList != null">
+				and t1.wms_inve_transa_id in
+				<foreach collection="idList" item="wms_inve_transa_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_inve_transa_id}
+				</foreach>
+			</if>
+			<if test="cus_name != null">
+				and t1.cus_name like #{cus_name}
+			</if>
+			<if test="id_card != null">
+				and t1.id_card like #{id_card}
+			</if>
+			<if test="category_name != null">
+				and t2.category_name = #{category_name}
+			</if>
+			<if test="create_timestamp_begin != null and create_timestamp_begin !=''">
+				and date_format(t1.create_timestamp,'%Y-%m-%d') &gt;= #{create_timestamp_begin}
+			</if>
+			<if test="create_timestamp_end != null  and create_timestamp_end !=''">
+				and date_format(t1.create_timestamp,'%Y-%m-%d') &lt;= #{create_timestamp_end}
+			</if>
+		</where>
+		<if test="sortname != null and sortorder != null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+	</select>
+	<!-- 上单 支付退回列表-->
+	<select id="searchListForPaidReturn" parameterType="map" resultType="java.util.HashMap">
+		select 
+			t1.wms_inve_transa_id,
+			t1.wms_inve_customer_id,
+			t1.bill_code,
+			t1.id_card,
+			t1.cus_name,
+			date_format(t1.cus_birthday,'%Y-%m-%d') as cus_birthday_str,
+			t1.cus_birthday,
+			t1.cus_gender,
+			t1.cus_address,
+			t1.post_code,
+			t1.address_phone,
+			t1.work_phone,
+			t1.cus_fax,
+			t1.contact_address,
+			t1.customer_email,
+			t1.bill_send_mode,
+			t1.inve_transa_type,
+			t1.product_total_count_lower,
+			t1.product_total_count_upper,
+			(select value_meaning from wms_sys_dict_data where value_code = data_status
+			and wms_sys_dict_id = 55)as data_status,
+			t1.account_status,
+			t1.pay_type,
+			t1.pay_usr_id,
+			date_format(t1.date_of_payment,'%Y-%m-%d') as date_of_payment_str,
+			t1.date_of_payment,
+			t1.pay_account,
+			t1.cash_pay_name,
+			t1.act_account_usr_id,
+			date_format(t1.date_of_act,'%Y-%m-%d') as date_of_act_str,
+			t1.date_of_act,
+			t1.act_account,
+			t1.fee_account,
+			t1.salesman_name,
+			t1.salesman_id,
+			t1.salesman_city_code,
+			t1.salesman_city,
+			t1.salesman_dept_id,
+			t1.create_user_id,
+			t1.create_user_name,
+			t1.create_user_dept_id,
+			date_format(t1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+			t1.create_timestamp,
+			t1.last_update_user_id,
+			date_format(t1.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+			t1.last_update_timestamp,
+			t1.enable_flag,
+			t2.wms_inve_pruduct_category_id,
+			t2.wms_inve_transa_prod_id,
+			t2.product_deadline,
+			(t2.product_account/10000) as product_account,
+			t2.category_name,
+			t2.product_interest,
+			(select amount_paid_advice from wms_inve_transa_approval_info where wms_inve_transa_id=t1.wms_inve_transa_id) as amount_paid_advice
+		
+		from wms_inve_transa t1,wms_inve_transa_prod t2
+		<where>
+			t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			and t1.enable_flag = '1'
+			and t2.enable_flag = '1'
+			and t1.data_status in (17)
+			<if test="idList != null">
+				and t1.wms_inve_transa_id in
+				<foreach collection="idList" item="wms_inve_transa_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_inve_transa_id}
+				</foreach>
+			</if>
+			<if test="cus_name != null">
+				and t1.cus_name like #{cus_name}
+			</if>
+			<if test="id_card != null">
+				and t1.id_card like #{id_card}
+			</if>
+			<if test="category_name != null">
+				and t2.category_name = #{category_name}
+			</if>
+			<if test="create_timestamp_begin != null and create_timestamp_begin !=''">
+				and date_format(t1.create_timestamp,'%Y-%m-%d') &gt;= #{create_timestamp_begin}
+			</if>
+			<if test="create_timestamp_end != null  and create_timestamp_end !=''">
+				and date_format(t1.create_timestamp,'%Y-%m-%d') &lt;= #{create_timestamp_end}
+			</if>
+		</where>
+		<if test="sortname != null and sortorder != null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	
+	
+	<!-- 	复核退回列表显示 -->
+<select id="searChreturnCheckList" parameterType="map" resultType="java.util.HashMap">
+		select 	
+				t4.wms_inve_transa_approval_info_id,
+				t4.review_result,
+				t4.review_advice,
+				t2.wms_inve_transa_id,
+				t2.bill_code,
+				t2.cus_name,
+				t2.id_card,
+				date_format(t2.create_timestamp,'%Y-%m-%d %H:%i:%s') as date_of_create,
+				t2.data_status as transa_data_status,
+				(select value_meaning from wms_sys_dict_data where value_code = t2.data_status and wms_sys_dict_id = 55) as transa_data_status_name,
+				t2.create_user_id,
+				t3.wms_inve_transa_prod_id,
+				t3.wms_inve_pruduct_category_id,
+				t3.category_name,
+				t3.category_type,
+				t3.product_deadline,
+				(t3.product_account/10000) as product_account
+		from wms_inve_transa t2 LEFT JOIN wms_inve_transa_prod t3 ON t2.wms_inve_transa_id = t3.wms_inve_transa_id
+		LEFT JOIN wms_inve_transa_approval_info t4 ON t2.wms_inve_transa_id = t4.wms_inve_transa_id
+		<where>
+			and t2.data_status = #{data_status}
+			and t2.enable_flag = '1'
+			and t3.enable_flag = '1'
+			<if test="idList != null">
+				and t2.wms_inve_transa_id in
+				<foreach collection="idList" item="wms_inve_transa_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_inve_transa_id}
+				</foreach>
+			</if>
+			<if test="cus_name != null">
+				and t2.cus_name like #{cus_name}
+			</if>
+			<if test="id_card != null">
+				and t2.id_card like #{id_card}
+			</if>
+			<if test="wms_inve_pruduct_category_id != null">
+				and t3.wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id}
+			</if>
+			<if test="create_timestamp_begin != null and create_timestamp_begin !=''">
+				and date_format(t2.create_timestamp,'%Y-%m-%d') &gt;= #{create_timestamp_begin}
+			</if>
+			<if test="create_timestamp_end != null  and create_timestamp_end !=''">
+				and date_format(t2.create_timestamp,'%Y-%m-%d') &lt;= #{create_timestamp_end}
+			</if>
+		</where>
+		<if test="sortname != null and sortorder != null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+<!-- 	复核退回数量显示 -->
+	<select id="findChreturnCheckListCount" parameterType="map" resultType="int">
+		select 
+			count(t2.wms_inve_transa_id)
+		from wms_inve_transa t2 LEFT JOIN wms_inve_transa_prod t3 ON t2.wms_inve_transa_id = t3.wms_inve_transa_id
+		LEFT JOIN wms_inve_transa_approval_info t4 ON t2.wms_inve_transa_id = t4.wms_inve_transa_id
+		<where>
+			and t2.data_status = #{data_status}
+			and t2.enable_flag = '1'
+			and t3.enable_flag = '1'
+			<if test="idList != null">
+				and t2.wms_inve_transa_id in
+				<foreach collection="idList" item="wms_inve_transa_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_inve_transa_id}
+				</foreach>
+			</if>
+			<if test="cus_name != null">
+				and t2.cus_name like #{cus_name}
+			</if>
+			<if test="id_card != null">
+				and t2.id_card like #{id_card}
+			</if>
+			<if test="category_name != null">
+				and t3.category_name = #{category_name}
+			</if>
+			<if test="create_timestamp_begin != null and create_timestamp_begin !=''">
+				and date_format(t2.create_timestamp,'%Y-%m-%d') &gt;= #{create_timestamp_begin}
+			</if>
+			<if test="create_timestamp_end != null  and create_timestamp_end !=''">
+				and date_format(t2.create_timestamp,'%Y-%m-%d') &lt;= #{create_timestamp_end}
+			</if>
+		</where>
+	</select>
+		
+	<!--上单 审核退回列表 数据数-->
+	<select id="findListCountBackDirectorApproval" parameterType="map" resultType="int">
+		select 
+				count(t1.wms_inve_transa_id) as count
+		
+		from  wms_inve_transa t1, wms_inve_transa_prod t2
+		<where>
+			t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			and t1.enable_flag = '1'
+			and t2.enable_flag = '1'
+  			 and t1.data_status in (12)
+			<if test="idList != null">
+				and t1.wms_inve_transa_id in
+				<foreach collection="idList" item="wms_inve_transa_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_inve_transa_id}
+				</foreach>
+			</if>
+			<if test="cus_name != null">
+				and t1.cus_name like #{cus_name}
+			</if>
+			<if test="id_card != null">
+				and t1.id_card like #{id_card}
+			</if>
+			<if test="category_name != null">
+				and t2.category_name = #{category_name}
+			</if>
+			<if test="create_timestamp_begin != null and create_timestamp_begin !=''">
+				and date_format(t1.create_timestamp,'%Y-%m-%d') &gt;= #{create_timestamp_begin}
+			</if>
+			<if test="create_timestamp_end != null  and create_timestamp_end !=''">
+				and date_format(t1.create_timestamp,'%Y-%m-%d') &lt;= #{create_timestamp_end}
+			</if>
+		</where>
+		<if test="sortname != null and sortorder != null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+	</select>
+	<!-- 上单 审核退回列表 -->
+	<select id="searchListBackDirectorApproval" parameterType="map" resultType="java.util.HashMap">
+		select 
+			t1.wms_inve_transa_id,
+			t1.wms_inve_customer_id,
+			t1.bill_code,
+			t1.id_card,
+			t1.cus_name,
+			date_format(t1.cus_birthday,'%Y-%m-%d') as cus_birthday_str,
+			t1.cus_birthday,
+			t1.cus_gender,
+			t1.cus_address,
+			t1.post_code,
+			t1.address_phone,
+			t1.work_phone,
+			t1.cus_fax,
+			t1.contact_address,
+			t1.customer_email,
+			t1.bill_send_mode,
+			t1.inve_transa_type,
+			t1.product_total_count_lower,
+			t1.product_total_count_upper,
+			(select value_meaning from wms_sys_dict_data where value_code = data_status
+			and wms_sys_dict_id = 55)as data_status,
+			t1.account_status,
+			t1.pay_type,
+			t1.pay_usr_id,
+			date_format(t1.date_of_payment,'%Y-%m-%d') as date_of_payment_str,
+			t1.date_of_payment,
+			t1.pay_account,
+			t1.cash_pay_name,
+			t1.act_account_usr_id,
+			date_format(t1.date_of_act,'%Y-%m-%d') as date_of_act_str,
+			t1.date_of_act,
+			t1.act_account,
+			t1.fee_account,
+			t1.salesman_name,
+			t1.salesman_id,
+			t1.salesman_city_code,
+			t1.salesman_city,
+			t1.salesman_dept_id,
+			t1.create_user_id,
+			t1.create_user_name,
+			t1.create_user_dept_id,
+			date_format(t1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+			t1.create_timestamp,
+			t1.last_update_user_id,
+			date_format(t1.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+			t1.last_update_timestamp,
+			t1.enable_flag,
+			t2.wms_inve_pruduct_category_id,
+			t2.wms_inve_transa_prod_id,
+			t2.product_deadline,
+			(t2.product_account/10000) as product_account,
+			t2.category_name,
+			t2.product_interest
+		
+		from wms_inve_transa t1,wms_inve_transa_prod t2
+		<where>
+			t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			and t1.enable_flag = '1'
+			and t2.enable_flag = '1'
+ 			and t1.data_status in (12)
+			<if test="idList != null">
+				and t1.wms_inve_transa_id in
+				<foreach collection="idList" item="wms_inve_transa_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_inve_transa_id}
+				</foreach>
+			</if>
+			<if test="cus_name != null">
+				and t1.cus_name like #{cus_name}
+			</if>
+			<if test="id_card != null">
+				and t1.id_card like #{id_card}
+			</if>
+			<if test="category_name != null">
+				and t2.category_name = #{category_name}
+			</if>
+			<if test="create_timestamp_begin != null">
+				and date_format(t1.create_timestamp,'%Y-%m-%d') &gt;= #{create_timestamp_begin}
+			</if>
+			<if test="create_timestamp_end != null">
+				and date_format(t1.create_timestamp,'%Y-%m-%d') &lt;= #{create_timestamp_end}
+			</if>
+		</where>
+		<if test="sortname != null and sortorder != null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<select id="searchforFHList" parameterType="map" resultType="java.util.HashMap">
+	   
+	</select>
+	
+	<select id="doSearchStatus" parameterType="int" resultType="String">
+	    select 
+	    	data_status
+	    from 
+	    	wms_inve_transa
+	    where 
+	    	wms_inve_transa_id = #{wms_inve_transa_id}
+	</select>
+	<select id="getFhConcurrent" parameterType="int" resultType="int">
+	    select 
+	    	data_status 
+	    from 
+	    	wms_inve_transa
+	    where 
+	    	wms_inve_transa_id = #{wms_inve_transa_id}
+	</select>
+	<select id="getInfoByPK4Extend" parameterType="int" resultType="map">
+		SELECT
+			t.wms_inve_transa_id,
+			t.wms_inve_transa_prod_id,
+			t.wms_inve_transa_protocol_id,
+			t.date_of_payment,
+			t.old_date_of_payment,
+			t.category_name,
+			t.end_of_date,
+			t.product_account,
+			t.product_interest,
+			t.product_deadline_name, 
+			t.product_deadline,
+			t.cus_name,
+			t.mobile_phone,
+			t.id_card,
+			t.date_of_start,
+			CASE WHEN t.old_date_of_payment IS NULL
+					  THEN 
+	                      CASE WHEN t.date_of_payment &lt;= '2015-12-14'
+                                    THEN DATE_ADD(t.date_of_start,INTERVAL t.product_deadline MONTH)
+                               ELSE 
+									CASE WHEN t.date_of_payment >= '2016-07-01'
+                                              THEN DATE_ADD(DATE_ADD(t.date_of_start,INTERVAL t.product_deadline MONTH),INTERVAL -1 DAY)
+                                         ELSE DATE_ADD(DATE_ADD(t.date_of_start,INTERVAL t.product_deadline MONTH),INTERVAL -1 DAY)
+                                    END
+                          END
+                ELSE
+                    CASE WHEN t.old_date_of_payment &lt;= '2015-12-14'
+                              THEN DATE_ADD(t.date_of_start,INTERVAL t.product_deadline MONTH)
+                         ELSE
+							  CASE WHEN t.old_date_of_payment >= '2016-07-01'
+										 THEN DATE_ADD(DATE_ADD(t.date_of_start,INTERVAL t.product_deadline MONTH),INTERVAL -1 DAY)
+								   ELSE DATE_ADD(DATE_ADD(t.date_of_start,INTERVAL t.product_deadline MONTH),INTERVAL -1 DAY)
+							  END		
+                    END
+             END
+			AS end_of_date_str,
+			t.customer_email
+			
+		FROM
+		(
+			select 
+				t1.wms_inve_transa_id,
+				t2.wms_inve_transa_prod_id,
+				t3.wms_inve_transa_protocol_id,
+				t1.date_of_payment,
+				t1.old_date_of_payment,
+				t2.category_name,
+				t3.end_of_date,
+				truncate(t2.product_account/10000,0) as product_account,
+				truncate(t2.product_interest,1) as product_interest,
+				CONCAT(t2.product_deadline,'个月') as product_deadline_name, 
+				t2.product_deadline,
+				t1.cus_name,
+				CONCAT(left(t1.mobile_phone,3),	'****',	right(t1.mobile_phone,4)) as mobile_phone,
+				CONCAT(left(t1.id_card,4),'**********',right(t1.id_card,4)) as id_card,
+				CASE WHEN t1.old_date_of_payment IS NULL
+						  THEN
+							  CASE WHEN t1.date_of_payment &lt;= '2015-12-14'
+                                        THEN t3.end_of_date
+                                   ELSE
+										CASE WHEN t1.date_of_payment >= '2016-07-01'
+                                                  THEN DATE_ADD(t3.end_of_date,INTERVAL +1 DAY)
+                                             ELSE t3.end_of_date
+                                        END
+                              END
+                     ELSE
+                         CASE WHEN t1.old_date_of_payment &lt;= '2015-12-14'
+                                   THEN t3.end_of_date
+                              ELSE
+                                  CASE WHEN t1.old_date_of_payment >= '2016-07-01'
+                                           THEN DATE_ADD(t3.end_of_date,INTERVAL +1 DAY)
+                                       ELSE t3.end_of_date
+                                  END
+                         END
+                END
+                AS date_of_start,
+                t1.customer_email
+			from wms_inve_transa t1,wms_inve_transa_prod t2,wms_inve_transa_protocol t3
+			where t1.wms_inve_transa_id=t2.wms_inve_transa_id
+			and t1.wms_inve_transa_id = t3.wms_inve_transa_id
+			and t3.wms_inve_redeem_id = 0
+			and t3.enable_flag = 1
+			and t1.wms_inve_transa_id = #{wms_inve_transa_id}
+		) t
+	</select>
+	
+		<!-- 更新单据状态 -->
+	<update id="updateDataStatus" parameterType="WmsInveTransa">
+		update wms_inve_transa
+		<set>
+		<if test="data_status != null">
+			 data_status = #{data_status},
+		</if>
+		<if test="is_order_extend != null">
+			is_order_extend=#{is_order_extend},
+		</if>
+		<if test="order_financial_bill_code != null">
+			order_financial_bill_code = #{order_financial_bill_code}
+		</if>
+		<if test="financial_bill_code != null">
+			financial_bill_code=#{financial_bill_code}
+		</if>
+		<if test="customer_email != null and customer_email != ''">
+			customer_email = #{customer_email}
+		</if>
+	   </set>
+		 where 
+    		wms_inve_transa_id = #{wms_inve_transa_id}
+	</update>	
+	
+	<update id="updateTransaProdAmount" parameterType="WmsInveTransaProd">
+		update wms_inve_transa_prod
+		<set>
+		    <if test="product_account != null">
+			 product_account = #{product_account},
+			</if>
+	   </set>
+		 where 
+    		wms_inve_transa_prod_id = #{wms_inve_transa_prod_id}
+	</update>	
+	
+	<select id="getAutoExtendTransa" parameterType="map" resultType="java.util.HashMap">
+		SELECT t1.wms_inve_transa_id, TIMESTAMPADD( MONTH, t2.product_deadline, t1.date_of_payment ) AS pay_of_date 
+		FROM wms_inve_transa t1, wms_inve_transa_prod t2, wms_inve_transa_auto_extend t3 
+		WHERE t1.wms_inve_transa_id = t2.wms_inve_transa_id 
+		AND (t1.wms_inve_transa_id = t3.wms_inve_transa_id or t1.old_wms_inve_transa_id=t3.wms_inve_transa_id)
+		AND TIMESTAMPADD( MONTH, t2.product_deadline, t1.date_of_payment ) &lt;= CURDATE()
+		AND t1.data_status = 4
+		<if test="is_new_data == 1">
+			and ifnull( t1.old_date_of_payment, t1.date_of_payment ) &gt;= '2016-07-01'
+		</if>
+		<if test="is_new_data == 0">
+			 and ifnull( t1.old_date_of_payment, t1.date_of_payment ) &lt; '2016-07-01'
+		</if>
+		<if test="product_account != null">
+			 and t1.wms_inve_transa_id=#{wms_inve_transa_id}
+		</if>
+	</select>
+	<select id="getNoIncomeList" parameterType="map" resultType="WmsInveTransaProtocol">
+		SELECT
+			t2.*
+		FROM
+			wms_inve_transa t1,
+			wms_inve_transa_protocol t2
+		WHERE
+			t1.wms_inve_transa_id = t2.wms_inve_transa_id
+		AND t2.wms_inve_redeem_id = 0
+		AND t1.data_status = 4
+		AND NOT EXISTS (
+			SELECT
+				1
+			FROM
+				wms_inve_transa_income t
+			WHERE
+				t.wms_inve_transa_id = t1.wms_inve_transa_id
+		)
+	</select>
+	<select id="getProtocolRenewalnew" parameterType="map" resultType="java.util.HashMap">
+		select 
+		
+				p.wms_inve_transa_id,
+				p.wms_inve_transa_prod_id,
+				p.wms_inve_transa_protocol_id,
+				t.wms_inve_customer_id,
+				t.bill_code,
+				t.id_card,
+				t.cus_name,
+				p.end_of_date,
+				p.product_account,
+				t1.wms_inve_pruduct_category_id
+		 from 
+				wms_inve_transa_protocol p ,wms_inve_transa t ,wms_inve_transa_prod t1
+		 where 
+				p.enable_flag=1 and t.enable_flag=1
+				and t.wms_inve_transa_id=t1.wms_inve_transa_id
+				and p.wms_inve_transa_id=t.wms_inve_transa_id 
+				<if test="product_account != null">
+				 	and t.data_status = #{data_status}
+				</if>
+				and p.wms_inve_redeem_id=0
+				and t.wms_inve_transa_id=#{wms_inve_transa_id}
+	</select>
+	
+	<insert id="saveWmsInveTransaSalesmanHis" parameterType="WmsInveTransaSalesmanHis" useGeneratedKeys="true" keyProperty="wms_inve_transa_salesman_his_id">
+		insert into wms_inve_transa_salesman_his
+		(
+			salesman_id,
+			wms_inve_transa_id,
+			salesman_dept_id,
+			department_manager_id,
+			department_manager_dept_id,
+			vice_general_manager_id,
+			vice_general_manager_dept_id,
+			general_manager_id,
+			general_manager_dept_id,
+			center_manager_id,
+			center_manager_dept_id,
+			remark,
+			create_user_id,
+			create_timestamp
+		)values(
+			#{salesman_id},
+			#{wms_inve_transa_id},
+			#{salesman_dept_id},
+			#{department_manager_id},
+			#{department_manager_dept_id},
+			#{vice_general_manager_id},
+			#{vice_general_manager_dept_id},
+			#{general_manager_id},
+			#{general_manager_dept_id},
+			#{center_manager_id},
+			#{center_manager_dept_id},
+			#{remark},
+			#{create_user_id},
+			#{create_timestamp}
+		)
+	</insert>
+	
+	<select id="getCustomerDataMoa" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT
+			w.wms_inve_transa_id,
+			w.cus_name,
+			w.date_of_payment,
+			p.category_name,
+			w.costomer_id
+		FROM
+			wms_inve_transa w,
+			wms_inve_transa_prod p
+		WHERE
+			w.wms_inve_transa_id = p.wms_inve_transa_id
+			and w.enable_flag = 1 and p.enable_flag = 1
+			and bel_salesman_id_id = #{pm_personnel_id} 
+			and w.costomer_id in
+			<foreach collection="cus_ids" item="item"
+				index="index" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+	</select>
+	
+	<update id="changeCustomerDataMoa" parameterType="java.util.HashMap" >
+		UPDATE wms_inve_transa w
+		SET bel_salesman_id_id = #{new_pm_personnel_id},
+			 bel_salesman_dept_id = #{new_pm_personnel_dept_id},
+			 bel_department_manager_id = getCommonDeptManageId (
+				#{new_pm_personnel_id},
+				#{new_pm_personnel_dept_id}
+			),
+			 bel_department_manager_dept_id = getCommonDeptId (
+				#{new_pm_personnel_id},
+				#{new_pm_personnel_dept_id},
+				1
+			),
+			 bel_center_manager_id = getCommonCenterManagerId (
+				#{new_pm_personnel_id},
+				#{new_pm_personnel_dept_id}
+			),
+			 bel_center_manager_dept_id = getCommonDeptId (
+				#{new_pm_personnel_id},
+				#{new_pm_personnel_dept_id},
+				2
+			),
+			 bel_vice_general_manager_id = getCommonViceGeneralManagerId (
+				#{new_pm_personnel_id},
+				#{new_pm_personnel_dept_id}
+			),
+			 bel_vice_general_manager_dept_id = getCommonDeptId (
+				#{new_pm_personnel_id},
+				#{new_pm_personnel_dept_id},
+				3
+			),
+			 bel_general_manager_id = getCommonGeneralManagerId(
+				#{new_pm_personnel_id},
+				#{new_pm_personnel_dept_id}
+			 ),
+			 bel_general_manager_dept_id = getCommonDeptId (
+				#{new_pm_personnel_id},
+				#{new_pm_personnel_dept_id},
+				4
+			)
+		WHERE bel_salesman_id_id = #{pm_personnel_id} 
+			and w.costomer_id in
+			<foreach collection="cus_ids" item="item"
+				index="index" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+	</update>
+	
+	<select id="findWmsInveTransaBills" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+		   w5.wms_inve_redeem_principal_detail_id,
+		   w1.wms_inve_redeem_id,
+  		   w2.wms_inve_redeem_detail_id,
+           w3.wms_inve_transa_id,
+           w4.wms_inve_transa_prod_id,
+		   w1.bill_code,  
+		   IFNULL(if(w5.principal_amount - w5.used_income_amount &lt; 0, 0, w5.principal_amount - w5.used_income_amount),0) as redeem_amount,
+		   date_format(w3.create_timestamp,'%Y-%c-%d %h:%i:%s') as create_timestamp, 
+		   date_format(w1.redeem_date,'%Y-%c-%d') as redeem_date, 
+		   w1.cus_name, 
+		   w4.category_name, 
+		   (select value_meaning from wms_sys_dict_data where wms_sys_dict_id=60 and value_code=w1.data_status) as data_status
+		FROM
+			wms_inve_redeem w1 
+		LEFT JOIN
+			wms_inve_redeem_detail w2
+		ON
+			w1.wms_inve_redeem_id = w2.wms_inve_redeem_id
+		LEFT JOIN
+			wms_inve_transa w3
+		ON
+			w2.wms_inve_transa_id = w3.wms_inve_transa_id
+		LEFT JOIN
+			wms_inve_transa_prod w4
+		ON
+			w3.wms_inve_transa_id = w4.wms_inve_transa_id
+		LEFT JOIN
+			wms_inve_redeem_principal_detail w5
+		ON
+			w2.wms_inve_redeem_detail_id=w5.wms_inve_redeem_detail_id
+		WHERE
+			w1.data_status in (1,2,3,5,6)
+		AND
+			w5.principal_type=2
+		AND
+			w5.principal_amount - w5.used_income_amount &gt; 0
+		AND
+			w1.enable_flag=1
+		AND
+			w2.enable_flag=1
+		AND
+			w3.enable_flag=1
+		AND
+			w4.enable_flag=1
+		AND
+      		DATE_FORMAT(NOW(),'%Y-%m-%d') &gt;= DATE_FORMAT(redeem_date,'%Y-%m-%d')
+		<if test="wms_inve_customer_id!=null">
+			AND
+				w1.wms_inve_customer_id=#{wms_inve_customer_id}
+		</if>
+		<if test="wms_inve_pruduct_category_id!=null">
+			AND
+				w4.wms_inve_pruduct_category_id=#{wms_inve_pruduct_category_id}
+		</if>
+		<if test="query_date!=null">
+			AND
+				w3.create_timestamp = #{query_date}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	
+	<select id="findCountWmsInveTransaBills" parameterType="map" resultType="int">
+		SELECT
+		  count(1)
+		FROM
+			wms_inve_redeem w1 
+		LEFT JOIN
+			wms_inve_redeem_detail w2
+		ON
+			w1.wms_inve_redeem_id = w2.wms_inve_redeem_id
+		LEFT JOIN
+			wms_inve_transa w3
+		ON
+			w2.wms_inve_transa_id = w3.wms_inve_transa_id
+		LEFT JOIN
+			wms_inve_transa_prod w4
+		ON
+			w3.wms_inve_transa_id = w4.wms_inve_transa_id
+		LEFT JOIN
+			wms_inve_redeem_principal_detail w5
+		ON
+			w2.wms_inve_redeem_detail_id=w5.wms_inve_redeem_detail_id
+		WHERE
+			w1.data_status in (1,2,3,5,6)
+		AND
+			w5.principal_type=2
+		AND
+			w5.principal_amount - w5.used_income_amount &gt; 0
+		AND
+			w1.enable_flag=1
+		AND
+			w2.enable_flag=1
+		AND
+			w3.enable_flag=1
+		AND
+			w4.enable_flag=1
+		<if test="wms_inve_customer_id!=null">
+			AND
+				w1.wms_inve_customer_id=#{wms_inve_customer_id}
+		</if>
+		<if test="wms_inve_pruduct_category_id!=null">
+			AND
+				w4.wms_inve_pruduct_category_id=#{wms_inve_pruduct_category_id}
+		</if>
+		<if test="query_date!=null">
+			AND
+				w3.create_timestamp = #{query_date}
+		</if>
+	</select>
+	
+	<select id="findCustomerInfoById" parameterType="int" resultType="map">
+		SELECT
+		  t1.costomer_id,
+		  t1.cus_name,
+		  t1.id_card,
+		  t1.mobile_phone,
+		  t1.customer_email,
+		  t1.contact_address
+		FROM
+		  wms_inve_customer t1
+		WHERE
+		  t1.enable_flag = 1
+		and
+		  t1.wms_inve_customer_id = #{wms_inve_customer_id}
+		
+	</select>
+	
+	
+	<select id="getWmsInveTransaByWmsInveTransaId" parameterType="int" resultType="WmsInveTransa">
+		SELECT
+			wms_inve_transa_id,
+			wms_inve_customer_id,
+			bill_code,
+			id_card,
+			cus_name,
+			cus_birthday,
+			cus_gender,
+			cus_address,
+			post_code,
+			address_phone,
+			work_phone,
+			cus_fax,
+			contact_address,
+			customer_email,
+			bill_send_mode,
+			inve_transa_type,
+			product_total_count_lower,
+			product_total_count_upper,
+			data_status,
+			account_status,
+			pay_type,
+			pay_usr_id,
+			date_of_payment,
+			pay_account,
+			cash_pay_name,
+			act_account_usr_id,
+			date_of_act,
+			act_account,
+			fee_account,
+			salesman_name,
+			salesman_id,
+			salesman_city_code,
+			salesman_city,
+			salesman_dept_id,
+			salesman_shortcode,
+			create_user_id,
+			create_user_name,
+			create_user_dept_id,
+			create_timestamp,
+			last_update_user_id,
+			last_update_timestamp,
+			enable_flag,
+			mobile_phone,
+			department_manager_id,
+			department_manager_city_code,
+			department_manager_dept_id,
+			vice_general_manager_id,
+			vice_general_manager_city_code,
+			vice_general_manager_dept_id,
+			general_manager_id,
+			general_manager_city_code,
+			general_manager_dept_id,
+			costomer_id,
+			customer_source,
+			customer_num,
+			trans_salesman_status,
+			convert_account,
+			relpace_type_detail,
+			bel_salesman_id_id,
+			bill_source,
+			old_wms_inve_transa_id,
+			old_date_of_payment ,
+			center_manager_id,
+			center_manager_dept_id,
+			bel_salesman_dept_id,
+			bel_department_manager_id,
+			bel_department_manager_dept_id,
+			bel_vice_general_manager_id,
+			bel_vice_general_manager_dept_id,
+			bel_general_manager_id,
+			bel_general_manager_dept_id,
+			bel_center_manager_id,
+			bel_center_manager_dept_id
+		FROM
+			wms_inve_transa
+		WHERE
+			wms_inve_transa_id=#{wms_inve_transa_id}
+	</select>
+	
+	<select id="findWmsInveTransaCardByDetailIdAndTransaId" parameterType="map" resultType="map">
+		SELECT
+			wms_inve_transa_card_id,
+			wms_inve_transa_id,
+			card_owner_name,
+			card_no,
+			bank_of_deposit_pro,
+			bank_of_deposit_city,
+			bank_of_deposit_name,
+			wms_inve_pos_id,
+			pay_account,
+			is_finish,
+			act_account,
+			create_user_id,
+			create_user_name,
+			create_timestamp,
+			last_update_timestamp,
+			last_update_user_id,
+			enable_flag,
+			pay_type,
+			bank_branch,
+			should_pay_account,
+			wms_inve_redeem_principal_detail_id,
+			is_valid
+		FROM
+			wms_inve_transa_card
+		WHERE
+			wms_inve_transa_id=#{wms_inve_transa_id}
+		AND
+			wms_inve_redeem_principal_detail_id=#{wms_inve_redeem_principal_detail_id}
+	</select>
+	
+	<select id="getWmsInveTransaIdByWmsInveRedeemId" parameterType="int" resultType="int">
+		SELECT
+			w2.wms_inve_transa_id
+		FROM
+			wms_inve_redeem w1,
+			wms_inve_redeem_detail w2
+		WHERE
+			w1.wms_inve_redeem_id = w2.wms_inve_redeem_id
+		AND 
+			w1.wms_inve_redeem_id = #{wms_inve_transa_id}
+	</select>
+	
+	<select id="getSumCategoryInveTransaPayaccountByCategoryId" parameterType="int" resultType="int">
+		SELECT 
+			IFNULL(SUM(w1.pay_account),0) AS pay_account
+ 		FROM 
+ 			wms_inve_transa w1, wms_inve_transa_prod w2
+		WHERE 
+			w1.wms_inve_transa_id = w2.wms_inve_transa_id
+		AND 
+			w2.wms_inve_pruduct_category_id= #{wms_inve_pruduct_category_id}
+		AND 
+			w1.data_status in (2,3,4,5,6,8,9,10,11,12,13,14,15,16,17,18)
+		<if test="wms_inve_transa_id!=null">
+			AND w1.wms_inve_transa_id != #{wms_inve_transa_id}
+		</if>
+	</select>
+	
+	
+	<select id="queryAllInIncomeTransa" resultType="java.lang.String">
+		select wms_inve_transa_id from wms_inve_transa where data_status = 4 and enable_flag = 1
+	</select>
+	
+	<select id="queryNewTransaForAutoExtend" parameterType="map" resultType="map">
+		select t.wms_inve_transa_id,p.wms_inve_transa_prod_id from wms_inve_transa t, wms_inve_transa_prod p where t.wms_inve_transa_id = p.wms_inve_transa_id and t.bill_code = #{bill_code};
+	</select>
+	
+	<!-- 
+		续期申请查询列表
+		查询的数据范围:
+			1. 不输入单据标号进行查询:查询2015-12-14之前的数据,并且结束日期在当前日期的前9天和后14天之内的数据.
+			2. 输入单据编号进行查询:
+				1). 根据单据编号进行查询.
+				2). 判断old_date_of_payment是否为空,如果为空则使用date_of_payment进行判断,不为空则使用old_date_of_payment进行判断
+				3). 如果old_date_of_payment为空,判断date_of_payment大于0,并且date_of_payment大于2015-12-14
+				           如果满足该条件则增加查询条件:ifnull(date_of_payment,0) > 0 并且 date_of_payment大于2015-15-14 并且 当前时间小于等于单据的结束时间 并且续期月份未打收益
+				4). 如果old_date_of_payment不为空,判断old_date_of_payment大于0,并且old_date_of_payment小于等于2015-12-14
+				           如果满足该条件则增加查询条件: IFNULL(t1.old_date_of_payment,0) > 0 并且 old_date_of_payment 小于等于 '2015-12-14'
+		    3. 返回列表中bill_type列(bill_type等于0表示为老单据(2015-12-14之前的数据),等于1表示新单据(2015-12-14之后的单据)):  
+		    	     判断old_date_of_payment是否为空,如果为空则使用date_of_payment进行判断,否则使用old_date_of_payment进行判断
+		          1. old_date_of_payment为空:IFNULL(t1.date_of_payment,0) >0 并且 date_of_payment 小于等于 '2015-12-14' 则返回 0 , 否则返回1.
+		          2. old_date_of_payment不为空:IFNULL(t1.old_date_of_payment,0) > 0 并且 old_date_of_payment 小于等于 '2015-12-14' 则返回0,否则返回1
+	 -->			
+	<select id="getRenewalList" parameterType="map" resultType="map">
+		SELECT
+			t1.bill_code,
+			t1.id_card,
+			t1.cus_name,
+			t1.cus_birthday,
+			t1.cus_gender,
+			t1.cus_address,
+			t1.post_code,
+			t1.address_phone,
+			t1.mobile_phone,
+			t1.work_phone,
+			t1.cus_fax,
+			t1.wms_inve_transa_id,
+			t1.wms_inve_customer_id,
+			t1.contact_address,
+			t1.customer_email,
+			t1.bill_send_mode,
+			t1.inve_transa_type,
+			t1.product_total_count_lower,
+			t1.product_total_count_upper,
+			t1.data_status,
+			(select value_meaning from wms_sys_dict_data where value_code = data_status
+			and wms_sys_dict_id = 55)as data_status_name,
+			t1.account_status,
+			t1.pay_type,
+			t1.pay_usr_id,
+			t1.pay_account,
+			t1.cash_pay_name,
+			t1.act_account_usr_id,
+			t1.date_of_act,
+			t1.act_account,
+			t1.fee_account,
+			t1.salesman_name,
+			t1.salesman_id,
+			t1.salesman_city_code,
+			t1.salesman_city,
+			t1.salesman_dept_id,
+			t1.create_user_id,
+			t1.create_user_name,
+			t1.create_user_dept_id,
+			t1.is_order_redeem,
+			date_format(t1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp,
+			t1.last_update_user_id,
+			t1.last_update_timestamp,
+			t1.enable_flag,
+			t1.old_wms_inve_transa_id,
+			<!-- 20160810修改赎回申请  通过支付日期计算收益 -->
+			IFNULL(t1.old_date_of_payment,t1.date_of_payment) as old_date_of_payment,
+			
+			t2.wms_inve_transa_protocol_id,
+			t2.wms_inve_transa_id,
+			t2.wms_inve_transa_prod_id,
+			t2.prot_code,
+			t2.a_name,
+			t2.a_id_card,
+			t2.date_of_payment,
+			t2.a_bank,
+			t2.a_number,
+			t2.b_name,
+			t2.b_id_card,
+			t2.category_name,
+			t2.product_deadline,
+			t2.sign_place,
+			t2.b_data,
+			t2.end_of_date,
+			t2.create_user_id,
+			t2.create_user_name,
+			t2.create_timestamp,
+			date_format(t2.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+			t2.last_update_user_id,
+			t2.last_update_timestamp,
+			t2.enable_flag,
+			t2.contact_address,
+			t2.post_code,
+			t2.wms_inve_redeem_id,
+			t3.wms_inve_transa_prod_id,
+			t3.wms_inve_transa_id,
+			t3.wms_inve_pruduct_category_id,
+			t3.product_interest,
+			t3.expect_interest_account,
+			t3.product_account,
+			t3.product_deadline_name,
+			t1.bill_source,
+			t2.end_of_date,
+			(select pm.personnel_shortCode from pm_personnel pm where pm.personnel_id=t1.salesman_id) as personnel_shortCode,
+			(select value_meaning from wms_sys_dict_data where value_code = bill_source
+			and wms_sys_dict_id = 97) as bill_source_name,
+			ifnull(t1.old_date_of_payment, t1.date_of_payment) > '2015-12-14' AS bill_type
+		FROM wms_inve_transa t1,wms_inve_transa_protocol t2,wms_inve_transa_prod t3
+		<where>
+			1=#{super_user}
+			and t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			and t1.wms_inve_transa_id = t3.wms_inve_transa_id
+			and t1.data_status = 4
+			and IFNULL(t1.is_order_extend,'0') = '0'
+			and t2.wms_inve_redeem_id = 0
+			and t2.enable_flag = 1
+			and (2>(SELECT COUNT(DISTINCT(p.group_info)) from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id in(t1.create_user_id,#{userid}) and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id) 
+			or 1=(SELECT p.group_info from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id =#{userid} and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id))
+			AND IFNULL(t1.old_wms_inve_transa_id,t1.wms_inve_transa_id) NOT IN (select e.wms_inve_transa_id from wms_inve_transa_auto_extend e)
+			<if test="category_name != null">
+				and t3.wms_inve_pruduct_category_id = #{category_name}
+			</if>
+			<if test="bill_code != null">
+				AND t1.bill_code = #{bill_code}
+				AND 
+				CASE WHEN t1.old_date_of_payment IS NULL
+				     THEN 
+						  CASE WHEN IFNULL(t1.date_of_payment,0) > 0 AND t1.date_of_payment > '2015-12-14' 
+									THEN IFNULL(t1.date_of_payment,0) > 0 
+										 AND t1.date_of_payment > '2015-12-14'
+										 AND
+										 CASE WHEN DATE_FORMAT(t1.date_of_payment,'%Y-%m-%d') >= '2016-07-01' 
+                                                   THEN DATE_FORMAT(NOW(),'%Y-%m-%d') &lt; DATE_ADD(DATE_FORMAT(t2.end_of_date,'%Y-%m-%d'),INTERVAL +1 DAY)
+									          ELSE
+												   DATE_FORMAT(NOW(),'%Y-%m-%d') &lt; DATE_FORMAT(t2.end_of_date,'%Y-%m-%d')
+                                    	 END
+									     AND (SELECT ifnull(pay_status,0) FROM wms_inve_transa_income WHERE DATE_FORMAT(return_date,'%Y-%m') = DATE_FORMAT(NOW(),'%Y-%m') AND wms_inve_transa_id = t1.wms_inve_transa_id GROUP BY wms_inve_transa_id) = 0
+	                     	   WHEN IFNULL(t1.date_of_payment,0) > 0 AND t1.date_of_payment &lt;= '2015-12-14'
+									THEN IFNULL(t1.date_of_payment,0) > 0 
+									     AND t1.date_of_payment &lt;= '2015-12-14'
+									     AND DATE_FORMAT(TIMESTAMPADD(MONTH,t3.product_deadline,t2.end_of_date),'%Y-%m-%d') >= DATE_FORMAT(NOW(),'%Y-%m-%d')
+	                	  END
+				     ELSE 
+						  CASE WHEN IFNULL(t1.old_date_of_payment,0) > 0 AND t1.old_date_of_payment > '2015-12-14' 
+	                                THEN IFNULL(t1.old_date_of_payment,0) > 0 
+	                                     AND t1.old_date_of_payment > '2015-12-14'
+	                                     AND 
+	                                     CASE WHEN DATE_FORMAT(t1.old_date_of_payment,'%Y-%m-%d') >= '2016-07-01' 
+                                                   THEN DATE_FORMAT(NOW(),'%Y-%m-%d') &lt; DATE_ADD(DATE_FORMAT(t2.end_of_date,'%Y-%m-%d'),INTERVAL +1 DAY)
+									          ELSE
+												   DATE_FORMAT(NOW(),'%Y-%m-%d') &lt; DATE_FORMAT(t2.end_of_date,'%Y-%m-%d')
+                                    	 END
+	                                     AND (SELECT ifnull(pay_status,0) FROM wms_inve_transa_income WHERE DATE_FORMAT(return_date,'%Y-%m') = DATE_FORMAT(NOW(),'%Y-%m') AND wms_inve_transa_id = t1.wms_inve_transa_id GROUP BY wms_inve_transa_id) = 0
+							   WHEN IFNULL(t1.old_date_of_payment,0) > 0 AND t1.old_date_of_payment &lt;= '2015-12-14' 
+								    THEN IFNULL(t1.old_date_of_payment,0) > 0 
+								         AND t1.old_date_of_payment &lt;= '2015-12-14'
+								         AND DATE_FORMAT(TIMESTAMPADD(MONTH,t3.product_deadline,t2.end_of_date),'%Y-%m-%d') >= DATE_FORMAT(NOW(),'%Y-%m-%d')
+	                      END
+				END
+			</if>
+			<if test="bill_code == null">
+				AND 
+				CASE WHEN t1.old_date_of_payment is null 
+			         THEN IFNULL(t1.date_of_payment,0) >0 
+			         	  AND t1.date_of_payment &lt;= '2015-12-14' 
+			         	  AND DATE_FORMAT(TIMESTAMPADD(MONTH,t3.product_deadline,t2.end_of_date),'%Y-%m-%d') >= DATE_FORMAT(NOW(),'%Y-%m-%d')
+			         ELSE IFNULL(t1.old_date_of_payment,0) > 0 
+			              AND t1.old_date_of_payment &lt;= '2015-12-14' 
+			              AND DATE_FORMAT(TIMESTAMPADD(MONTH,t3.product_deadline,t2.end_of_date),'%Y-%m-%d') >= DATE_FORMAT(NOW(),'%Y-%m-%d')
+			    END
+				and t2.end_of_date &gt;= DATE_FORMAT(date_add(NOW(), interval -9 day),'%Y-%m-%d')
+				and t2.end_of_date &lt;= DATE_FORMAT(date_add(NOW(), interval +14 day),'%Y-%m-%d')
+			</if>
+			<if test="cus_name != null">
+				and t1.cus_name like #{cus_name}
+			</if>
+
+			<if test="id_card !=null">
+				and t1.id_card  like #{id_card}
+			</if>
+			<if test="bill_source != null">
+				and t1.bill_source=#{bill_source}
+			</if>
+			<if test="extend_date == null and create_timestamp_begin != null and create_timestamp_end !='' ">
+				and date_format(t2.date_of_payment,'%Y-%m-%d') &gt;=#{create_timestamp_begin}
+			</if>
+            <if test="extend_date == null and create_timestamp_end !=null and create_timestamp_end !='' ">
+                and date_format(t2.date_of_payment,'%Y-%m-%d') &lt;=#{create_timestamp_end}
+            </if>
+            <if test="extend_date != null and create_timestamp_begin != null and create_timestamp_end !='' ">
+				and  t2.end_of_date &gt;=#{create_timestamp_begin}
+			</if>
+            <if test="extend_date != null and create_timestamp_end !=null and create_timestamp_end !='' ">
+                and  t2.end_of_date &lt;=#{create_timestamp_end}
+            </if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="sortname1 != '' and sortorder1 !=''">
+			,${sortname1} ${sortorder1}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	
+	<!-- 单据需求查询列表数量 -->
+	<select id="getRenewalCount" parameterType="map" resultType="int">
+		SELECT
+			count(1)
+		FROM wms_inve_transa t1,wms_inve_transa_protocol t2,wms_inve_transa_prod t3
+		<where>
+			1=#{super_user}
+			and t2.wms_inve_redeem_id = 0
+			and t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			and t1.wms_inve_transa_id = t3.wms_inve_transa_id
+			and t1.data_status = 4
+			and IFNULL(t1.is_order_extend,'0') = '0'
+<!-- 			and t2.wms_inve_redeem_id = 0 -->
+			and (2>(SELECT COUNT(DISTINCT(p.group_info)) from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id in(t1.create_user_id,#{userid}) and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id) 
+			or 1=(SELECT p.group_info from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id =#{userid} and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id))
+			AND case when t1.old_date_of_payment is null 
+			         then ifnull(t1.date_of_payment,0) >0
+			              and t1.date_of_payment &lt; '2015-12-14'
+			         else
+			              IFNULL(t1.old_date_of_payment,0) > 0
+			              AND t1.old_date_of_payment &lt; '2015-12-14'
+			     end
+<!-- 			<if test="extend_date != null"> -->
+<!-- 				and t2.end_of_date &lt;= curdate() -->
+<!-- 			</if> -->
+			and t2.wms_inve_redeem_id = 0
+			and t2.enable_flag = 1
+			<if test="category_name != null">
+				and t3.wms_inve_pruduct_category_id = #{category_name}
+			</if>
+			<if test="bill_code != null">
+				and t1.bill_code = #{bill_code}
+			</if>
+			<if test="bill_code == null">
+				and t2.end_of_date &gt;= DATE_FORMAT(date_add(NOW(), interval -9 day),'%Y-%m-%d')
+				and t2.end_of_date &lt;= DATE_FORMAT(date_add(NOW(), interval +14 day),'%Y-%m-%d')
+			</if>
+			<if test="cus_name != null">
+				and t1.cus_name like #{cus_name}
+			</if>
+
+			<if test="id_card !=null">
+				and t1.id_card  like #{id_card}
+			</if>
+			<if test="bill_source != null">
+				and t1.bill_source=#{bill_source}
+			</if>
+			<if test="extend_date == null and create_timestamp_begin != null and create_timestamp_end !='' ">
+				and date_format(t2.date_of_payment,'%Y-%m-%d') &gt;=#{create_timestamp_begin}
+			</if>
+            <if test="extend_date == null and create_timestamp_end !=null and create_timestamp_end !='' ">
+                and date_format(t2.date_of_payment,'%Y-%m-%d') &lt;=#{create_timestamp_end}
+            </if>
+            <if test="extend_date != null and create_timestamp_begin != null and create_timestamp_end !='' ">
+				and  t2.end_of_date &gt;=#{create_timestamp_begin}
+			</if>
+            <if test="extend_date != null and create_timestamp_end !=null and create_timestamp_end !='' ">
+                and  t2.end_of_date &lt;=#{create_timestamp_end}
+            </if>
+		</where>
+	</select>
+	
+	<!-- 更新预约赎回状态 -->
+	<update id="updateIsOrderRedeemByWmsInveTransaId" parameterType="int">
+		update wms_inve_transa 
+		set is_order_redeem = 0
+		where wms_inve_transa_id = #{wms_inve_transa_id}
+	</update>
+	
+	<!-- 添加预约续期的历史记录 -->
+	<insert id="saveWmsInveTransaExtendHis" parameterType="java.util.Map">
+		insert into wms_inve_transa_extend_his
+		(wms_inve_transa_id,end_of_date,act_extend_datetime)
+		values
+		(#{wms_inve_transa_id},#{end_of_date},now())
+	</insert>
+	
+	<!-- 根据系统当前时间和预约续期的标识进行查询预约续期的单据 -->
+	<select id="getInveRenewalByNowDateAndIsOrderExtend" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			t1.wms_inve_transa_id,
+			t1.wms_inve_customer_id,
+			t3.wms_inve_transa_prod_id,
+			t3.wms_inve_pruduct_category_id,
+			t3.product_account,
+			TIMESTAMPADD( MONTH, t3.product_deadline, t1.date_of_payment ) AS end_of_date,
+			t1.order_financial_bill_code,
+			ifnull(t1.old_date_of_payment,t1.date_of_payment)>'2015-12-14' AS bill_type
+		FROM 
+			wms_inve_transa t1, wms_inve_transa_prod t3
+		WHERE 
+			t1.wms_inve_transa_id = t3.wms_inve_transa_id
+		AND 
+			is_order_extend='1'
+		<if test="is_new_data == 1">
+			and ifnull( t1.old_date_of_payment, t1.date_of_payment ) &gt;= '2016-07-01'
+		</if>
+		<if test="is_new_data == 0">
+			 and ifnull( t1.old_date_of_payment, t1.date_of_payment ) &lt; '2016-07-01'
+		</if>
+		AND 
+			TIMESTAMPADD( MONTH, t3.product_deadline, t1.date_of_payment ) &lt;= CURDATE()
+		AND
+			t1.enable_flag = 1
+		AND
+			t1.data_status = 4;
+	</select>
+	<select id="getRedeemDataId" parameterType="java.lang.Integer" resultType="java.lang.String">
+		select t.wms_inve_redeem_id from wms_inve_redeem t,wms_inve_redeem_detail t2 
+		where 
+		t.wms_inve_redeem_id=t2.wms_inve_redeem_id
+		and t.data_status in ('1','2','3','4','5') 
+		and t2.wms_inve_transa_id=#{wms_inve_transa_id}
+		LIMIT 1
+	</select>
+	
+	<select id="getTransaExtendTime" parameterType="int" resultType="map">
+		select * from wms_inve_transa_extend_his h where h.wms_inve_transa_id = #{wms_inve_transa_id}
+	</select>
+	
+	<!-- 根据上单信息表主键查询对应的收益信息 -->
+	<select id="getWmsInveTransaIncomeByWmsInveTransaId" parameterType="int" resultType="map">
+		SELECT
+			wms_inve_transa_income_id,
+			wms_inve_transa_id,
+			wms_inve_transa_prod_id,
+			wms_inve_pruduct_category_id,
+			id_card,
+			cus_name,
+			product_deadline_month,
+			return_date,
+			product_account,
+			product_interest_account,
+			act_return_date,
+			pay_status,
+			create_user_id,
+			create_user_name,
+			create_timestamp,
+			last_update_user_id,
+			last_update_timestamp,
+			days_of_calculation,
+			bonus_rate,
+			payable_reward_income,
+			payable_basic_income,
+			remarks,
+			days_extend_income,
+			extend_income,
+			adjust_amount,
+			adjust_remark,
+			adjust_datetime,
+			pm_personnel_id,
+			pay_type,
+			income_rate,
+			renewal_income,
+			(IFNULL(payable_basic_income,0) + IFNULL(payable_reward_income,0) + IFNULL(extend_income,0)) as ying_income
+		FROM
+			wms_inve_transa_income
+		WHERE
+			wms_inve_transa_id = #{wmsInveTransaId}
+		AND 
+			DATE_FORMAT(return_date, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')
+		GROUP BY wms_inve_transa_id
+	</select>
+	
+	<select id="getYearCategoryTransaList" resultType="map">
+		SELECT
+			t.wms_inve_transa_id,
+			p.end_of_date,
+			tp.wms_inve_transa_prod_id,
+			c.wms_inve_pruduct_category_id,
+			t.id_card,
+			t.cus_name,
+			tp.product_deadline,
+			tp.product_account,
+			c.category_name
+		FROM
+			wms_inve_transa t,
+			wms_inve_transa_prod tp,
+			wms_inve_pruduct_category c,
+			wms_inve_transa_protocol p
+		WHERE
+			t.wms_inve_transa_id = tp.wms_inve_transa_id
+		AND tp.wms_inve_pruduct_category_id = c.wms_inve_pruduct_category_id
+		AND t.wms_inve_transa_id = p.wms_inve_transa_id
+		AND t.data_status = '4'
+		AND c.category_interest_pay_method = 2
+		AND p.wms_inve_redeem_id = 0
+	</select>
+	
+	
+	<select id="getLcInfoByTransaId" parameterType="int" resultType="java.util.HashMap">
+		select
+			t.wms_inve_transa_id,
+			t.wms_inve_customer_id,
+			t.bill_code,
+			t.id_card,
+			t.cus_name,
+			date_format(t.cus_birthday,'%Y-%m-%d') as cus_birthday_str,
+			t.cus_birthday,
+			case when t.cus_gender = 0 then '女' 
+				 when t.cus_gender = 1 then '男' 
+			end as cus_gender,
+			t.cus_address,
+			t.post_code,
+			t.address_phone,
+			t.work_phone,
+			t.cus_fax,
+			t.contact_address,
+			t.customer_email,
+			t.bill_send_mode,
+			t.inve_transa_type,
+			t.product_total_count_lower,
+			t.product_total_count_upper,
+			t.data_status,
+			t.account_status,
+			t.pay_type,
+			t.pay_usr_id,
+			date_format(t.date_of_payment,'%Y-%m-%d') as date_of_payment_str,
+			t.date_of_payment,
+			t.pay_account,
+			t.cash_pay_name,
+			t.act_account_usr_id,
+			date_format(t.date_of_act,'%Y-%m-%d') as date_of_act_str,
+			t.date_of_act,
+			t.act_account,
+			t.fee_account,
+			t.salesman_name,
+			t.salesman_id,
+			t.salesman_city_code,
+			t.salesman_city,
+			t.salesman_dept_id,
+			t.mobile_phone,
+			t.contract_signing_type as protocol_type,
+			p.product_deadline,
+			concat(p.product_deadline,'个月') as product_deadline_info,
+			p.category_name,
+			p.card_no,
+			p.wms_inve_pruduct_category_id,
+			p.product_account,
+			format(p.product_account,2) as product_account_info,
+			concat(p.bank_of_deposit,' | ',
+					(SELECT value_meaning FROM wms_sys_dict_data WHERE wms_sys_dict_id = 72 and value_code = p.bank_of_deposit_pro),
+					(SELECT value_meaning FROM wms_sys_dict_data WHERE wms_sys_dict_id = 73 AND value_code = p.bank_of_deposit_city),
+					p.bank_branch) as bank_info			
+		from wms_inve_transa t,wms_inve_transa_prod p
+		<where>
+			t.wms_inve_transa_id =p.wms_inve_transa_id 
+			and t.wms_inve_transa_id=#{wms_inve_transa_id}
+		</where>
+	</select>
+	
+	<select id="getCategoryIncomeByCategoryId" parameterType="map" resultType="map">
+		SELECT
+			round(ifnull((t1.category_return_rate / 100 * #{product_account} * #{product_dealine} / 12 + ifnull((SELECT reward_interest FROM wms_inve_pruduct_deadline_reward WHERE wms_inve_pruduct_deadline_reward_id = t1.wms_inve_pruduct_category_id),0) * #{product_account}),0)) AS expect_interest_account, 
+			(SELECT reward_interest FROM wms_inve_pruduct_deadline_reward WHERE wms_inve_pruduct_deadline_reward_id = t1.wms_inve_pruduct_category_id) AS reward_interest
+		FROM
+			wms_inve_pruduct_category t1
+		WHERE
+			t1.wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id}
+	</select>
+	
+	<select id="getWmsInveTransaProdByWmsInveTransaId" parameterType="String" resultType="WmsInveTransaProd">
+		SELECT
+			wms_inve_transa_id,
+			wms_inve_pruduct_category_id,
+			product_deadline,
+			product_interest,
+			product_account,
+			is_finish,
+			create_user_id,
+			create_user_name,
+			create_timestamp,
+			last_update_user_id,
+			last_update_timestamp,
+			enable_flag,
+			category_name,
+			card_owner_name,
+			bank_of_deposit,
+			card_no,
+			product_deadline_name,
+			reward_interest,
+			expect_interest_account,
+			wms_inve_pruduct_deadline_id,
+			org_product_account,
+			bank_of_deposit_pro,
+			bank_of_deposit_city,
+			bank_branch,
+			category_code,
+			category_type,
+			is_allopatry,
+			is_protocol_finish,
+			is_customer_confirmation
+		FROM
+			wms_inve_transa_prod
+		WHERE
+			wms_inve_transa_id = #{wms_inve_transa_id}
+	</select>
+	
+	
+	<insert id="saveWmsInveNotificationLog" parameterType="map">
+		insert into 
+		wms_inve_notification_log(
+			content, 
+			send_time,
+			notification_type,
+			remark
+		) values (
+			#{content }, 
+			#{send_time },
+			#{notification_type },
+			#{remark }
+		)
+	</insert>
+		
+	<select id="getAdjustShortMessage_grid" parameterType="map"
+		resultType="map">
+		SELECT
+		w.wms_inve_transa_id,
+		w.cus_name,
+		w.bill_code,
+		w.date_of_payment,
+		w.pay_account,
+		if(w.income_account is null,"",w.income_account) as
+		income_account,
+		if(w.expiration_reminder is
+		null,"",w.expiration_reminder) as expiration_reminder,
+		if(w.debt_expires is null,"",w.debt_expires) as debt_expires ,
+		if(p.category_name is null,"",p.category_name) as category_name
+		FROM
+		wms_inve_transa w INNER JOIN wms_inve_transa_prod p
+		on
+		p.wms_inve_transa_id =
+		w.wms_inve_transa_id
+		WHERE
+		w.wms_inve_transa_id IN
+		<foreach collection="ids" item="id" open="(" close=")"
+			separator=",">
+			#{id}
+		</foreach>
+		AND w.data_status = 4
+		AND w.enable_flag = 1
+		and p.enable_flag =1
+		order by w.create_timestamp desc ,w.wms_inve_transa_id desc
+	</select>
+
+	<update id="adjustShortMessage_update" parameterType="map">
+		update
+		wms_inve_transa
+		<set>
+			income_account = #{income_account},
+			expiration_reminder = #{expiration_reminder},
+			debt_expires =#{debt_expires},
+			last_update_user_id = #{last_update_user_id},
+			last_update_timestamp = now()
+		</set>
+		<where>
+			enable_flag =1
+			and
+			wms_inve_transa_id = #{wms_inve_transa_id}
+
+		</where>
+	</update>
+	
+	<insert id="savePayVouchersInfo" parameterType="map">
+			insert
+			into 
+			wms_inve_transa_att
+			(
+			data_type_name,
+			data_detail_name,
+			attachment_old_name,
+			attachment_new_name,
+			attachment_address,
+			attachment_type,
+			wms_inve_transa_id,
+			wms_inve_transa_prod_id
+			
+			)values(
+			#{data_type_name},
+			#{data_detail_name},
+			#{attachment_old_name},
+			#{attachment_new_name},
+			#{attachment_address},
+			#{attachment_type},
+			#{wms_inve_transa_id},
+			#{wms_inve_transa_prod_id}
+			)
+	
+	
+	</insert>
+	
+	<!-- 根据原始单据上单表主键查询股东单据 -->
+	<select id="getShareholderBillsByWmsInveTransaId" parameterType="int" resultType="int">
+		SELECT
+			count(1)
+		FROM
+			wms_inve_transa_auto_extend t1,
+			wms_inve_transa t2
+		where 
+			ifnull(t2.old_wms_inve_transa_id,t2.wms_inve_transa_id) = t1.wms_inve_transa_id
+    	AND t2.wms_inve_transa_id = #{wms_inve_transa_id}
+	</select>
+	
+	<!-- 根据查询条件参数进行获取收益账单信息 -->
+	<select id="getInveIncomeBillInfos" parameterType="map" resultType="map">
+		select
+			t.wms_inve_transa_income_id,
+			t.wms_inve_transa_id,
+			t.wms_inve_transa_prod_id,
+			t.bill_code,
+			t.cus_name,
+			t.id_card,
+			t.product_account,
+			t.prot_code,
+			t.begin_of_date,
+			CONCAT(t.personnel_name,'/',t.personnel_shortCode) AS salesman_name,
+			t.data_status_str,
+			#{return_date} AS return_date_str,
+			t.category_name,
+			t.personnel_regionNumber
+		from
+		(
+				SELECT
+					w1.wms_inve_transa_income_id,
+					w1.wms_inve_transa_id,
+					w1.wms_inve_transa_prod_id,
+					w4.wms_inve_pruduct_category_id,
+					w2.bill_code,
+					w2.cus_name,
+					w2.id_card,
+					w4.category_name,
+					case when w2.data_status = 6 
+							  then ROUND(w4.org_product_account / 10000)
+					     else ROUND(w4.product_account / 10000)
+					end  
+					AS product_account,
+					IFNULL(w2.financial_bill_code,'暂无') AS prot_code,
+					DATE_FORMAT(w2.date_of_payment,'%Y-%m-%d') AS begin_of_date,
+					p.personnel_name,
+					p.personnel_shortCode,
+					p.personnel_regionNumber,
+					(SELECT value_meaning FROM wms_sys_dict_data WHERE wms_sys_dict_id = 55 AND value_code = w2.data_status) AS data_status_str,
+					w2.data_status,
+					w2.create_user_id,
+					w2.create_user_dept_id,
+					w2.bel_salesman_id_id,
+					w2.bel_salesman_dept_id
+				FROM wms_inve_transa_income w1
+				LEFT JOIN wms_inve_transa w2 ON w1.wms_inve_transa_id = w2.wms_inve_transa_id
+				LEFT JOIN pm_personnel p on w2.bel_salesman_id_id = p.personnel_id
+				LEFT JOIN wms_inve_pruduct_category w3 ON w1.wms_inve_pruduct_category_id = w3.wms_inve_pruduct_category_id
+				LEFT JOIN wms_inve_transa_prod w4 ON w1.wms_inve_transa_prod_id = w4.wms_inve_transa_prod_id
+				WHERE w1.pay_type in (2,3)
+			  	AND w2.wms_inve_transa_id NOT IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t1) 
+				AND IFNULL(w2.old_wms_inve_transa_id,0) NOT IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t2)
+				AND w2.data_status in (4,5,6)
+				AND w1.pay_status in(0,1,3,4)
+				<if test="return_date != null and return_date != '全部月份'">
+					AND DATE_FORMAT(w1.return_date,'%Y-%m') = DATE_FORMAT(CONCAT(#{return_date},'-','01'),'%Y-%m')
+				</if>
+				GROUP BY w1.wms_inve_transa_id
+		) t
+		WHERE
+		1=1
+		<if test="cus_name != null">
+			AND t.cus_name like '%${cus_name}%'
+		</if>
+		<if test="id_card != null">
+			AND t.id_card = #{id_card}
+		</if>
+		<if test="prot_code != null">
+			AND t.prot_code = #{prot_code}
+		</if>
+		<if test="bill_code != null">
+			AND t.bill_code = #{bill_code}
+		</if>
+		<if test="salesman_name != null">
+			AND (
+				t.personnel_name like '%${salesman_name}%'
+				OR
+				t.personnel_shortCode = #{salesman_name}
+			)
+		</if>
+		<if test="data_status != null">
+			AND t.data_status = #{data_status}
+		</if>
+		<if test="wms_inve_pruduct_category_id">
+			AND t.wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id}
+		</if>
+		AND (1=2
+			<if test="salesman_id !=null">
+				OR t.bel_salesman_id_id = #{salesman_id}
+			</if>
+
+			<if test="salesman_dept_id !=null">
+				OR t.bel_salesman_dept_id = #{salesman_dept_id}
+			</if>
+
+			<if test="deptIds !=null">
+				OR t.bel_salesman_dept_id in
+				<foreach collection="deptIds" item="dept_id" index="index"
+					open="(" separator="," close=")">
+					#{dept_id}
+				</foreach>
+			</if>
+			<if test="deptIds_user_id !=null">
+				OR FIND_IN_SET(t.bel_salesman_dept_id,getMenuData(${deptIds_user_id},${deptIds_menu}))
+			</if>
+
+			<if test="financial_services !=null">
+				OR 1=#{financial_services}
+			</if>
+			<if test="personnel_id != null">
+				OR personnel_regionNumber = (select personnel_regionNumber from pm_personnel where personnel_id = #{personnel_id})
+			</if>
+			
+			<if test="super_user !=null">
+				OR 1=#{super_user}
+			</if>
+			)
+		ORDER BY t.bill_code DESC
+		LIMIT #{page}, #{page_size}
+	</select>
+	
+	<!-- 根据查询条件参数进行获取收益账单信息统计信息数量 -->
+	<select id="findInveIncomeBillCount" parameterType="map" resultType="int">
+		select
+			count(1)
+		from
+		(
+				SELECT
+					w1.wms_inve_transa_income_id,
+					w1.wms_inve_transa_id,
+					w1.wms_inve_transa_prod_id,
+					w4.wms_inve_pruduct_category_id,
+					w2.bill_code,
+					w2.cus_name,
+					w2.id_card,
+					w4.category_name,
+					case when w2.data_status = 6 
+							  then ROUND(w4.org_product_account / 10000)
+					     else ROUND(w4.product_account / 10000)
+					end  
+					AS product_account,
+					IFNULL(w2.financial_bill_code,'暂无') AS prot_code,
+					DATE_FORMAT(w2.date_of_payment,'%Y-%m-%d') AS begin_of_date,
+					p.personnel_name,
+					p.personnel_shortCode,
+					p.personnel_regionNumber,
+					(SELECT value_meaning FROM wms_sys_dict_data WHERE wms_sys_dict_id = 55 AND value_code = w2.data_status) AS data_status_str,
+					w2.data_status,
+					w2.create_user_id,
+					w2.create_user_dept_id,
+					w2.bel_salesman_id_id,
+					w2.bel_salesman_dept_id
+				FROM wms_inve_transa_income w1
+				LEFT JOIN wms_inve_transa w2 ON w1.wms_inve_transa_id = w2.wms_inve_transa_id
+				LEFT JOIN pm_personnel p on w2.bel_salesman_id_id = p.personnel_id
+				LEFT JOIN wms_inve_pruduct_category w3 ON w1.wms_inve_pruduct_category_id = w3.wms_inve_pruduct_category_id
+				LEFT JOIN wms_inve_transa_prod w4 ON w1.wms_inve_transa_prod_id = w4.wms_inve_transa_prod_id
+				WHERE w1.pay_type in (2,3)
+			  	AND w2.wms_inve_transa_id NOT IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t1) 
+				AND IFNULL(w2.old_wms_inve_transa_id,0) NOT IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t2)
+				AND w2.data_status in (4,5,6)
+				AND w1.pay_status in(0,1,3,4)
+				<if test="return_date != null and return_date != '全部月份'">
+					AND DATE_FORMAT(w1.return_date,'%Y-%m') = DATE_FORMAT(CONCAT(#{return_date},'-','01'),'%Y-%m')
+				</if>
+				GROUP BY w1.wms_inve_transa_id
+		) t
+		WHERE
+		1=1
+		<if test="cus_name != null">
+			AND t.cus_name like '%${cus_name}%'
+		</if>
+		<if test="id_card != null">
+			AND t.id_card = #{id_card}
+		</if>
+		<if test="prot_code != null">
+			AND t.prot_code = #{prot_code}
+		</if>
+		<if test="bill_code != null">
+			AND t.bill_code = #{bill_code}
+		</if>
+		<if test="salesman_name != null">
+			AND (
+				t.personnel_name like '%${salesman_name}%'
+				OR
+				t.personnel_shortCode = #{salesman_name}
+			)
+		</if>
+		<if test="data_status != null">
+			AND t.data_status = #{data_status}
+		</if>
+		<if test="wms_inve_pruduct_category_id">
+			AND t.wms_inve_pruduct_category_id = #{wms_inve_pruduct_category_id}
+		</if>
+		AND (1=2
+			<if test="salesman_id !=null">
+				OR t.bel_salesman_id_id = #{salesman_id}
+			</if>
+
+			<if test="salesman_dept_id !=null">
+				OR t.bel_salesman_dept_id = #{salesman_dept_id}
+			</if>
+
+			<if test="deptIds !=null">
+				OR t.bel_salesman_dept_id in
+				<foreach collection="deptIds" item="dept_id" index="index"
+					open="(" separator="," close=")">
+					#{dept_id}
+				</foreach>
+			</if>
+			<if test="deptIds_user_id !=null">
+				OR FIND_IN_SET(t.bel_salesman_dept_id,getMenuData(${deptIds_user_id},${deptIds_menu}))
+			</if>
+
+			<if test="financial_services !=null">
+				OR 1=#{financial_services}
+			</if>
+			<if test="personnel_id != null">
+				OR personnel_regionNumber = (select personnel_regionNumber from pm_personnel where personnel_id = #{personnel_id})
+			</if>
+			
+			<if test="super_user !=null">
+				OR 1=#{super_user}
+			</if>
+			)
+	</select>
+	
+	<!-- 获取收益账单单据状态 -->
+	<select id="getWmsInveTransaDataStatus" parameterType="String" resultType="map">
+		SELECT value_code, value_meaning FROM wms_sys_dict_data WHERE wms_sys_dict_id = 55 AND value_code in (4,5,6)
+	</select>
+	
+	<select id="getMaxIncomeMonth" parameterType="String" resultType="map">
+		SELECT 
+			MAX(DATE_FORMAT(return_date,'%Y-%m')) AS return_date
+		FROM wms_inve_transa_income 
+		WHERE pay_status in (1,3,4) 
+		AND pay_type in (2,3) 
+	</select>
+	
+	<select id="verifyBillIdCardIsConsistent" parameterType="java.util.List" resultType="WmsInveTransa">
+		select
+			wms_inve_transa_id,
+			wms_inve_customer_id,
+			bill_code,
+			id_card,
+			cus_name,
+			date_format(cus_birthday,'%Y-%m-%d') as cus_birthday_str,
+			cus_birthday,
+			cus_gender,
+			cus_address,
+			post_code,
+			address_phone,
+			work_phone,
+			cus_fax,
+			contact_address,
+			customer_email,
+			bill_send_mode,
+			inve_transa_type,
+			product_total_count_lower,
+			product_total_count_upper,
+			data_status,
+			account_status,
+			pay_type,
+			pay_usr_id,
+			date_format(date_of_payment,'%Y-%m-%d') as date_of_payment_str,
+			date_of_payment,
+			pay_account,
+			cash_pay_name,
+			act_account_usr_id,
+			date_format(date_of_act,'%Y-%m-%d') as date_of_act_str,
+			date_of_act,
+			act_account,
+			fee_account,
+			salesman_name,
+			salesman_id,
+			salesman_city_code,
+			salesman_city,
+			salesman_dept_id,
+			salesman_shortcode,
+			create_user_id,
+			create_user_name,
+			create_user_dept_id,
+			date_format(create_timestamp,'%Y-%m-%d') as create_timestamp_str,
+			create_timestamp,
+			last_update_user_id,
+			date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+			last_update_timestamp,
+			enable_flag,
+			mobile_phone,
+			department_manager_id,
+			department_manager_city_code,
+			department_manager_dept_id,
+			vice_general_manager_id,
+			vice_general_manager_city_code,
+			vice_general_manager_dept_id,
+			general_manager_id,
+			general_manager_city_code,
+			general_manager_dept_id,
+			costomer_id,
+			customer_source,
+			bel_salesman_id_id,
+			trans_salesman_status,
+			convert_account,
+			relpace_type_detail,
+			customer_num,
+			bill_source,
+			old_wms_inve_transa_id,
+			old_last_wms_inve_transa_id,
+			date_format(old_date_of_payment,'%Y-%m-%d') as old_date_of_payment_str,
+			center_manager_id,
+	  		center_manager_dept_id,
+	  		bel_salesman_dept_id,
+			bel_department_manager_id,
+			bel_department_manager_dept_id,
+			bel_vice_general_manager_id,
+			bel_vice_general_manager_dept_id,
+			bel_general_manager_id,
+			bel_general_manager_dept_id,
+			bel_center_manager_id,
+			bel_center_manager_dept_id,
+			old_date_of_payment,
+			financial_bill_code,
+			is_order_extend,
+			is_order_redeem,
+			income_account,
+			expiration_reminder,
+			debt_expires,
+			crm_name_query_type,
+			crm_mobile_query_type,
+			crm_id_card_query_type,
+			contract_signing_type
+		from
+			wms_inve_transa
+		where
+			wms_inve_transa_id in
+			<foreach collection="list" index="index" open="(" separator="," close=")" item="item">
+				#{item}
+			</foreach>
+	</select>
+	
+	<!-- 根据上单表主键的单据集合进行获取单据的收益信息(已获收益) -->
+	<select id="getCategoryTotalAlreadyIncomeInfosByIds" parameterType="map" resultType="map">
+		SELECT
+			CONCAT(b.category_name,'| ',b.product_account, '万元| ', DATE_FORMAT(b.date_of_payment,'%Y%m%d'), '签单') AS sigend_info,
+			b.return_date,
+			b.income_type,
+			b.payable_basic_income,
+			b.income_card,
+			b.act_return_date,
+			b.wms_inve_transa_id
+		FROM
+			(
+			SELECT
+				case when w2.data_status = 6 
+						  then ROUND(w3.org_product_account / 10000)
+					 else ROUND(w3.product_account / 10000)
+			    end  
+				AS product_account,
+				w2.date_of_payment,
+				w3.category_name,
+				DATE_FORMAT(w1.return_date,'%Y-%m') AS return_date,
+				'基本收益' AS income_type,
+				ROUND(IFNULL(w1.payable_basic_income,0) + IFNULL(w1.renewal_income,0), 2) AS payable_basic_income,
+				CONCAT(w5.bank_of_deposit,'| 尾号',RIGHT(w5.card_no,4)) AS income_card,
+				DATE_FORMAT(w1.act_return_date,'%Y-%m-%d') AS act_return_date,
+				w2.wms_inve_transa_id
+			FROM wms_inve_transa_income w1, wms_inve_transa w2, wms_inve_transa_prod w3, wms_inve_pruduct_category w4, wms_inve_customer_card w5
+			WHERE w1.wms_inve_transa_id = w2.wms_inve_transa_id
+			AND w1.wms_inve_transa_prod_id = w3.wms_inve_transa_prod_id
+			AND w1.wms_inve_pruduct_category_id = w4.wms_inve_pruduct_category_id
+			AND w1.wms_inve_customer_card_id = w5.wms_inve_customer_card_id
+			AND w2.wms_inve_transa_id not IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t1) 
+			AND
+				CASE WHEN ISNULL(w2.old_wms_inve_transa_id) = 0 
+		                  THEN w2.old_wms_inve_transa_id NOT IN (SELECT * FROM ( SELECT wms_inve_transa_id FROM wms_inve_transa_income_special ) t2)
+					 ELSE 1=1
+				END
+			AND w1.pay_type in (2,3)
+			AND w1.pay_status in(1,3,4)
+			AND w5.enable_flag = '1'
+			AND w1.wms_inve_transa_id in
+			<foreach collection="idLis" index="index" open="(" separator="," close=")" item="item">
+				#{item}
+			</foreach>
+			<if test="return_date != null and return_date != '全部月份'">
+			AND DATE_FORMAT(w1.return_date,'%Y-%m') = DATE_FORMAT(CONCAT(#{return_date},'-','01'),'%Y-%m')
+			</if>
+			AND IFNULL(w1.payable_basic_income,0) + IFNULL(w1.renewal_income,0) > 0
+<!-- 		    GROUP BY w1.wms_inve_transa_id -->
+<!-- 			HAVING IFNULL(payable_basic_income,0) > 0 -->
+			
+			UNION ALL
+		
+			SELECT
+				case when w2.data_status = 6 
+						  then ROUND(w3.org_product_account / 10000)
+					 else ROUND(w3.product_account / 10000)
+			    end  
+				AS product_account,
+				w2.date_of_payment,
+				w3.category_name,
+				DATE_FORMAT(w1.return_date,'%Y-%m') AS return_date,
+				'公益收益' AS income_type,
+				ROUND(IFNULL(sum(w1.extend_income), 0),2) as payable_basic_income,
+				CONCAT(w5.bank_of_deposit,'|尾号',RIGHT(w5.card_no,4)) AS income_card,
+				DATE_FORMAT(w1.act_return_date,'%Y-%m-%d') AS act_return_date,
+				w2.wms_inve_transa_id
+			FROM wms_inve_transa_income w1, wms_inve_transa w2, wms_inve_transa_prod w3, wms_inve_pruduct_category w4, wms_inve_customer_card w5
+			WHERE w1.wms_inve_transa_id = w2.wms_inve_transa_id
+			AND w1.wms_inve_transa_prod_id = w3.wms_inve_transa_prod_id
+			AND w1.wms_inve_pruduct_category_id = w4.wms_inve_pruduct_category_id
+			AND w1.wms_inve_customer_card_id = w5.wms_inve_customer_card_id
+			AND w2.wms_inve_transa_id not IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t1) 
+			AND
+				CASE WHEN ISNULL(w2.old_wms_inve_transa_id) = 0 
+						  THEN w2.old_wms_inve_transa_id NOT IN (SELECT * FROM ( SELECT wms_inve_transa_id FROM wms_inve_transa_income_special ) t2)
+								 ELSE 1=1
+						END
+			AND w1.pay_type in (2,3)
+			AND w1.pay_status in(1,3,4)
+			AND w5.enable_flag = '1'
+			AND w1.wms_inve_transa_id in
+			<foreach collection="idLis" index="index" open="(" separator="," close=")" item="item">
+				#{item}
+			</foreach>	
+			<if test="return_date != null and return_date != '全部月份'">
+			AND DATE_FORMAT(w1.return_date,'%Y-%m') = DATE_FORMAT(CONCAT(#{return_date},'-','01'),'%Y-%m')
+			</if>	
+			GROUP BY w1.wms_inve_transa_id,return_date
+			HAVING IFNULL(payable_basic_income, 0) > 0
+								
+			UNION ALL
+				
+			SELECT
+				case when w2.data_status = 6 
+						  then ROUND(w3.org_product_account / 10000)
+					 else ROUND(w3.product_account / 10000)
+			    end  
+				AS product_account,
+				w2.date_of_payment,
+				w3.category_name,
+				DATE_FORMAT(w1.return_date,'%Y-%m') AS return_date,
+				'奖励收益' AS income_type,
+				round(IFNULL(sum(w1.payable_reward_income),0), 2) as payable_basic_income,
+				CONCAT(w5.bank_of_deposit,'|尾号',RIGHT(w5.card_no,4)) AS income_card,
+				DATE_FORMAT(w1.act_return_date,'%Y-%m-%d') AS act_return_date,
+				w2.wms_inve_transa_id
+			FROM wms_inve_transa_income w1, wms_inve_transa w2, wms_inve_transa_prod w3, wms_inve_pruduct_category w4, wms_inve_customer_card w5
+			WHERE w1.wms_inve_transa_id = w2.wms_inve_transa_id
+			AND w1.wms_inve_transa_prod_id = w3.wms_inve_transa_prod_id
+			AND w1.wms_inve_pruduct_category_id = w4.wms_inve_pruduct_category_id
+			AND w1.wms_inve_customer_card_id = w5.wms_inve_customer_card_id
+			AND w2.wms_inve_transa_id not IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t1) 
+			AND
+				CASE WHEN ISNULL(w2.old_wms_inve_transa_id) = 0 
+		                 THEN w2.old_wms_inve_transa_id NOT IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t2)
+					 ELSE 1=1
+				END
+			AND w1.pay_type in (2,3)
+			AND w1.pay_status in(1,3,4)
+			AND w5.enable_flag = '1'
+			AND w1.wms_inve_transa_id in
+			<foreach collection="idLis" index="index" open="(" separator="," close=")" item="item">
+				#{item}
+			</foreach>
+			<if test="return_date != null and return_date != '全部月份'">
+			AND DATE_FORMAT(w1.return_date,'%Y-%m') = DATE_FORMAT(CONCAT(#{return_date},'-','01'),'%Y-%m')
+			</if>
+			GROUP BY w1.wms_inve_transa_id,return_date	
+			HAVING IFNULL(sum(w1.payable_reward_income),0) > 0
+		) b 
+		where 1=1
+		order by b.return_date asc
+	</select>
+	
+	<!-- 根据上单表主键的单据集合进行获取单据的收益信息(待获收益) -->
+	<select id="getCategoryTotalStayIncomeInfosByIds" parameterType="map" resultType="map">
+		SELECT
+			CONCAT(b.category_name,'| ',b.product_account, '万元| ', DATE_FORMAT(b.date_of_payment,'%Y%m%d'), '签单') AS sigend_info,
+			b.return_date,
+			b.income_type,
+			b.payable_basic_income,
+			b.income_card,
+			b.act_return_date,
+			b.wms_inve_transa_id
+		FROM
+			(
+			SELECT
+				case when w2.data_status = 6 
+						  then ROUND(w3.org_product_account / 10000)
+					 else ROUND(w3.product_account / 10000)
+			    end  
+				AS product_account,
+				w2.date_of_payment,
+				w3.category_name,
+				DATE_FORMAT(w1.return_date,'%Y-%m') AS return_date,
+				'基本收益' AS income_type,
+				ROUND(IFNULL(w1.payable_basic_income,0) + IFNULL(w1.renewal_income,0), 2) AS payable_basic_income,
+				CONCAT(w5.bank_of_deposit,'| 尾号',RIGHT(w5.card_no,4)) AS income_card,
+				NULL AS act_return_date,
+				w2.wms_inve_transa_id
+			FROM wms_inve_transa_income w1, wms_inve_transa w2, wms_inve_transa_prod w3, wms_inve_pruduct_category w4, wms_inve_customer_card w5
+			WHERE w1.wms_inve_transa_id = w2.wms_inve_transa_id
+			AND w1.wms_inve_transa_prod_id = w3.wms_inve_transa_prod_id
+			AND w1.wms_inve_pruduct_category_id = w4.wms_inve_pruduct_category_id
+			AND w1.wms_inve_customer_card_id = w5.wms_inve_customer_card_id
+			AND w2.wms_inve_transa_id not IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t1) 
+			AND
+				CASE WHEN ISNULL(w2.old_wms_inve_transa_id) = 0 
+		                  THEN w2.old_wms_inve_transa_id NOT IN (SELECT * FROM ( SELECT wms_inve_transa_id FROM wms_inve_transa_income_special ) t2)
+					 ELSE 1=1
+				END
+			AND w1.pay_type in (2,3)
+			AND w1.pay_status in(0)
+			AND w5.enable_flag = '1'
+			AND w1.wms_inve_transa_id in
+			<foreach collection="idLis" index="index" open="(" separator="," close=")" item="item">
+				#{item}
+			</foreach>
+			<if test="return_date != null and return_date != '全部月份'">
+				AND DATE_FORMAT(w1.return_date,'%Y-%m') = DATE_FORMAT(CONCAT(#{return_date},'-','01'),'%Y-%m')
+			</if>
+			AND IFNULL(w1.payable_basic_income,0) + IFNULL(w1.renewal_income,0) > 0
+<!-- 		    GROUP BY w1.wms_inve_transa_id -->
+<!-- 		    HAVING IFNULL(payable_basic_income, 0) > 0  -->
+						
+			UNION ALL
+		
+			SELECT
+				case when w2.data_status = 6 
+						  then ROUND(w3.org_product_account / 10000)
+					 else ROUND(w3.product_account / 10000)
+			    end  
+				AS product_account,
+				w2.date_of_payment,
+				w3.category_name,
+				DATE_FORMAT(w1.return_date,'%Y-%m') AS return_date,
+				'公益收益' AS income_type,
+				ROUND(IFNULL(sum(w1.extend_income),0),2) as payable_basic_income,
+				CONCAT(w5.bank_of_deposit,'|尾号',RIGHT(w5.card_no,4)) AS income_card,
+				NULL AS act_return_date,
+				w2.wms_inve_transa_id
+			FROM wms_inve_transa_income w1, wms_inve_transa w2, wms_inve_transa_prod w3, wms_inve_pruduct_category w4, wms_inve_customer_card w5
+			WHERE w1.wms_inve_transa_id = w2.wms_inve_transa_id
+			AND w1.wms_inve_transa_prod_id = w3.wms_inve_transa_prod_id
+			AND w1.wms_inve_pruduct_category_id = w4.wms_inve_pruduct_category_id
+			AND w1.wms_inve_customer_card_id = w5.wms_inve_customer_card_id
+			AND w2.wms_inve_transa_id not IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t1) 
+			AND
+				CASE WHEN ISNULL(w2.old_wms_inve_transa_id) = 0 
+						  THEN w2.old_wms_inve_transa_id NOT IN (SELECT * FROM ( SELECT wms_inve_transa_id FROM wms_inve_transa_income_special ) t2)
+								 ELSE 1=1
+						END
+			AND w1.pay_type in (2,3)
+			AND w1.pay_status in(0)
+			AND w5.enable_flag = '1'
+			AND w1.wms_inve_transa_id in
+			<foreach collection="idLis" index="index" open="(" separator="," close=")" item="item">
+				#{item}
+			</foreach>	
+			<if test="return_date != null and return_date != '全部月份'">
+				AND DATE_FORMAT(w1.return_date,'%Y-%m') = DATE_FORMAT(CONCAT(#{return_date},'-','01'),'%Y-%m')
+			</if>	
+			GROUP BY w1.wms_inve_transa_id,return_date
+			having IFNULL(sum(w1.extend_income), 0) > 0				
+								
+			UNION ALL
+					
+			SELECT
+				case when w2.data_status = 6 
+						  then ROUND(w3.org_product_account / 10000)
+					 else ROUND(w3.product_account / 10000)
+			    end  
+				AS product_account,
+				w2.date_of_payment,
+				w3.category_name,
+				DATE_FORMAT(w1.return_date,'%Y-%m') AS return_date,
+				'奖励收益' AS income_type,
+				round(IFNULL(sum(w1.payable_reward_income),0), 2) as payable_basic_income,
+				CONCAT(w5.bank_of_deposit,'|尾号',RIGHT(w5.card_no,4)) AS income_card,
+				NULL AS act_return_date,
+				w2.wms_inve_transa_id
+			FROM wms_inve_transa_income w1, wms_inve_transa w2, wms_inve_transa_prod w3, wms_inve_pruduct_category w4, wms_inve_customer_card w5
+			WHERE w1.wms_inve_transa_id = w2.wms_inve_transa_id
+			AND w1.wms_inve_transa_prod_id = w3.wms_inve_transa_prod_id
+			AND w1.wms_inve_pruduct_category_id = w4.wms_inve_pruduct_category_id
+			AND w1.wms_inve_customer_card_id = w5.wms_inve_customer_card_id
+			AND w2.wms_inve_transa_id not IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t1) 
+			AND
+				CASE WHEN ISNULL(w2.old_wms_inve_transa_id) = 0 
+		                 THEN w2.old_wms_inve_transa_id NOT IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t2)
+					 ELSE 1=1
+				END
+			AND w1.pay_type in (2,3)
+			AND w1.pay_status in(0)
+			AND w5.enable_flag = '1'
+			AND w1.wms_inve_transa_id in
+			<foreach collection="idLis" index="index" open="(" separator="," close=")" item="item">
+				#{item}
+			</foreach>
+			<if test="return_date != null and return_date != '全部月份'">
+				AND DATE_FORMAT(w1.return_date,'%Y-%m') = DATE_FORMAT(CONCAT(#{return_date},'-','01'),'%Y-%m')
+			</if>
+			GROUP BY w1.wms_inve_transa_id,return_date	
+			having IFNULL(sum(w1.payable_reward_income),0)>0
+		) b 
+		where 1=1
+		order by b.return_date asc
+	</select>
+	
+	<!-- 根据收益月份进行统计(已获收益) -->
+	<select id="getMonthTotalAlreadyIncomeInfosByIds" parameterType="map" resultType="map">
+		SELECT
+			CONCAT(b.category_name,'| ',b.product_account, '万元| ', DATE_FORMAT(b.date_of_payment,'%Y%m%d'), '签单') AS sigend_info,
+			b.return_date,
+			b.income_type,
+			b.payable_basic_income,
+			b.income_card,
+			b.act_return_date,
+			b.wms_inve_transa_id
+		FROM
+			(
+			SELECT
+				case when w2.data_status = 6 
+						  then ROUND(w3.org_product_account / 10000)
+					 else ROUND(w3.product_account / 10000)
+			    end  
+				AS product_account,
+				w2.date_of_payment,
+				w3.category_name,
+				DATE_FORMAT(w1.return_date,'%Y-%m') AS return_date,
+				'基本收益' AS income_type,
+				ROUND(IFNULL(w1.payable_basic_income,0) + IFNULL(w1.renewal_income,0), 2) AS payable_basic_income,
+				CONCAT(w5.bank_of_deposit,'| 尾号',RIGHT(w5.card_no,4)) AS income_card,
+				DATE_FORMAT(w1.act_return_date,'%Y-%m-%d') AS act_return_date,
+				w2.wms_inve_transa_id
+			FROM wms_inve_transa_income w1, wms_inve_transa w2, wms_inve_transa_prod w3, wms_inve_pruduct_category w4, wms_inve_customer_card w5
+			WHERE w1.wms_inve_transa_id = w2.wms_inve_transa_id
+			AND w1.wms_inve_transa_prod_id = w3.wms_inve_transa_prod_id
+			AND w1.wms_inve_pruduct_category_id = w4.wms_inve_pruduct_category_id
+			AND w1.wms_inve_customer_card_id = w5.wms_inve_customer_card_id
+			AND w2.wms_inve_transa_id not IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t1) 
+			AND
+				CASE WHEN ISNULL(w2.old_wms_inve_transa_id) = 0 
+		                  THEN w2.old_wms_inve_transa_id NOT IN (SELECT * FROM ( SELECT wms_inve_transa_id FROM wms_inve_transa_income_special ) t2)
+					 ELSE 1=1
+				END
+			AND w1.pay_type in (2,3)
+			AND w1.pay_status in(1,3,4)
+			AND w5.enable_flag = '1'
+			AND w1.wms_inve_transa_id in
+			<foreach collection="idLis" index="index" open="(" separator="," close=")" item="item">
+				#{item}
+			</foreach>
+			<if test="return_date != null and return_date != '全部月份'">
+				AND DATE_FORMAT(w1.return_date,'%Y-%m') = DATE_FORMAT(CONCAT(#{return_date},'-','01'),'%Y-%m')
+			</if>
+			AND IFNULL(w1.payable_basic_income,0) + IFNULL(w1.renewal_income,0) > 0
+<!-- 		    GROUP BY w1.wms_inve_transa_id -->
+<!-- 		    HAVING IFNULL(payable_basic_income, 0) > 0 -->
+						
+			UNION ALL
+		
+			SELECT
+				case when w2.data_status = 6 
+						  then ROUND(w3.org_product_account / 10000)
+					 else ROUND(w3.product_account / 10000)
+			    end  
+				AS product_account,
+				w2.date_of_payment,
+				w3.category_name,
+				DATE_FORMAT(w1.return_date,'%Y-%m') AS return_date,
+				'公益收益' AS income_type,
+				ROUND(IFNULL(sum(w1.extend_income), 0),2) as payable_basic_income,
+				CONCAT(w5.bank_of_deposit,'|尾号',RIGHT(w5.card_no,4)) AS income_card,
+				DATE_FORMAT(w1.act_return_date,'%Y-%m-%d') AS act_return_date,
+				w2.wms_inve_transa_id
+			FROM wms_inve_transa_income w1, wms_inve_transa w2, wms_inve_transa_prod w3, wms_inve_pruduct_category w4, wms_inve_customer_card w5
+			WHERE w1.wms_inve_transa_id = w2.wms_inve_transa_id
+			AND w1.wms_inve_transa_prod_id = w3.wms_inve_transa_prod_id
+			AND w1.wms_inve_pruduct_category_id = w4.wms_inve_pruduct_category_id
+			AND w1.wms_inve_customer_card_id = w5.wms_inve_customer_card_id
+			AND w2.wms_inve_transa_id not IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t1) 
+			AND
+				CASE WHEN ISNULL(w2.old_wms_inve_transa_id) = 0 
+						  THEN w2.old_wms_inve_transa_id NOT IN (SELECT * FROM ( SELECT wms_inve_transa_id FROM wms_inve_transa_income_special ) t2)
+					 ELSE 1=1
+			    END
+			AND w1.pay_type in (2,3)
+			AND w1.pay_status in(1,3,4)
+			AND w5.enable_flag = '1'
+			AND w1.wms_inve_transa_id in
+			<foreach collection="idLis" index="index" open="(" separator="," close=")" item="item">
+				#{item}
+			</foreach>	
+			<if test="return_date != null and return_date != '全部月份'">
+				AND DATE_FORMAT(w1.return_date,'%Y-%m') = DATE_FORMAT(CONCAT(#{return_date},'-','01'),'%Y-%m')
+			</if>	
+			GROUP BY w1.wms_inve_transa_id,return_date
+			HAVING IFNULL(sum(w1.extend_income), 0) > 0				
+								
+			UNION ALL
+					
+			SELECT
+				case when w2.data_status = 6 
+						  then ROUND(w3.org_product_account / 10000)
+					 else ROUND(w3.product_account / 10000)
+			    end  
+				AS product_account,
+				w2.date_of_payment,
+				w3.category_name,
+				DATE_FORMAT(w1.return_date,'%Y-%m') AS return_date,
+				'奖励收益' AS income_type,
+				round(IFNULL(sum(w1.payable_reward_income),0), 2) as payable_basic_income,
+				CONCAT(w5.bank_of_deposit,'|尾号',RIGHT(w5.card_no,4)) AS income_card,
+				DATE_FORMAT(w1.act_return_date,'%Y-%m-%d') AS act_return_date,
+				w2.wms_inve_transa_id
+			FROM wms_inve_transa_income w1, wms_inve_transa w2, wms_inve_transa_prod w3, wms_inve_pruduct_category w4, wms_inve_customer_card w5
+			WHERE w1.wms_inve_transa_id = w2.wms_inve_transa_id
+			AND w1.wms_inve_transa_prod_id = w3.wms_inve_transa_prod_id
+			AND w1.wms_inve_pruduct_category_id = w4.wms_inve_pruduct_category_id
+			AND w1.wms_inve_customer_card_id = w5.wms_inve_customer_card_id
+			AND w2.wms_inve_transa_id not IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t1) 
+			AND
+				CASE WHEN ISNULL(w2.old_wms_inve_transa_id) = 0 
+		                 THEN w2.old_wms_inve_transa_id NOT IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t2)
+					 ELSE 1=1
+				END
+			AND w1.pay_type in (2,3)
+			AND w1.pay_status in(1,3,4)
+			AND w5.enable_flag = '1'
+			AND w1.wms_inve_transa_id in
+			<foreach collection="idLis" index="index" open="(" separator="," close=")" item="item">
+				#{item}
+			</foreach>
+			<if test="return_date != null and return_date != '全部月份'">
+				AND DATE_FORMAT(w1.return_date,'%Y-%m') = DATE_FORMAT(CONCAT(#{return_date},'-','01'),'%Y-%m')
+			</if>
+			GROUP BY w1.wms_inve_transa_id,return_date	
+			HAVING IFNULL(sum(w1.payable_reward_income),0)>0
+		) b 
+		where 1=1
+		order by b.return_date asc
+	</select>
+	
+	<!-- 根据收益月份进行统计(待获收益) -->
+	<select id="getMonthTotalStayIncomeInfosByIds" parameterType="map" resultType="map">
+		SELECT
+			CONCAT(b.category_name,'| ',b.product_account, '万元| ', DATE_FORMAT(b.date_of_payment,'%Y%m%d'), '签单') AS sigend_info,
+			b.return_date,
+			b.income_type,
+			b.payable_basic_income,
+			b.income_card,
+			b.act_return_date,
+			b.wms_inve_transa_id
+		FROM
+			(
+			SELECT
+				case when w2.data_status = 6 
+						  then ROUND(w3.org_product_account / 10000)
+					 else ROUND(w3.product_account / 10000)
+			    end  
+				AS product_account,
+				w2.date_of_payment,
+				w3.category_name,
+				DATE_FORMAT(w1.return_date,'%Y-%m') AS return_date,
+				'基本收益' AS income_type,
+				ROUND(IFNULL(w1.payable_basic_income,0) + IFNULL(w1.renewal_income,0), 2) AS payable_basic_income,
+				CONCAT(w5.bank_of_deposit,'| 尾号',RIGHT(w5.card_no,4)) AS income_card,
+				NULL AS act_return_date,
+				w2.wms_inve_transa_id
+			FROM wms_inve_transa_income w1, wms_inve_transa w2, wms_inve_transa_prod w3, wms_inve_pruduct_category w4, wms_inve_customer_card w5
+			WHERE w1.wms_inve_transa_id = w2.wms_inve_transa_id
+			AND w1.wms_inve_transa_prod_id = w3.wms_inve_transa_prod_id
+			AND w1.wms_inve_pruduct_category_id = w4.wms_inve_pruduct_category_id
+			AND w1.wms_inve_customer_card_id = w5.wms_inve_customer_card_id
+			AND w2.wms_inve_transa_id not IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t1) 
+			AND
+				CASE WHEN ISNULL(w2.old_wms_inve_transa_id) = 0 
+		                  THEN w2.old_wms_inve_transa_id NOT IN (SELECT * FROM ( SELECT wms_inve_transa_id FROM wms_inve_transa_income_special ) t2)
+					 ELSE 1=1
+				END
+			AND w1.pay_type in (2,3)
+			AND w1.pay_status in(0)
+			AND w5.enable_flag = '1'
+			AND w1.wms_inve_transa_id in
+			<foreach collection="idLis" index="index" open="(" separator="," close=")" item="item">
+				#{item}
+			</foreach>
+			<if test="return_date != null and return_date != '全部月份'">
+				AND DATE_FORMAT(w1.return_date,'%Y-%m') = DATE_FORMAT(CONCAT(#{return_date},'-','01'),'%Y-%m')
+			</if>
+			AND IFNULL(w1.payable_basic_income,0) + IFNULL(w1.renewal_income,0) > 0
+<!-- 		    GROUP BY w1.wms_inve_transa_id -->
+<!-- 		    HAVING IFNULL(payable_basic_income, 0) > 0 -->
+						
+			UNION ALL
+		
+			SELECT
+				case when w2.data_status = 6 
+						  then ROUND(w3.org_product_account / 10000)
+					 else ROUND(w3.product_account / 10000)
+			    end  
+				AS product_account,
+				w2.date_of_payment,
+				w3.category_name,
+				DATE_FORMAT(w1.return_date,'%Y-%m') AS return_date,
+				'公益收益' AS income_type,
+				ROUND(IFNULL(sum(w1.extend_income),0), 2) AS payable_basic_income,
+				CONCAT(w5.bank_of_deposit,'|尾号',RIGHT(w5.card_no,4)) AS income_card,
+				NULL AS act_return_date,
+				w2.wms_inve_transa_id
+			FROM wms_inve_transa_income w1, wms_inve_transa w2, wms_inve_transa_prod w3, wms_inve_pruduct_category w4, wms_inve_customer_card w5
+			WHERE w1.wms_inve_transa_id = w2.wms_inve_transa_id
+			AND w1.wms_inve_transa_prod_id = w3.wms_inve_transa_prod_id
+			AND w1.wms_inve_pruduct_category_id = w4.wms_inve_pruduct_category_id
+			AND w1.wms_inve_customer_card_id = w5.wms_inve_customer_card_id
+			AND w2.wms_inve_transa_id not IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t1) 
+			AND
+				CASE WHEN ISNULL(w2.old_wms_inve_transa_id) = 0 
+						  THEN w2.old_wms_inve_transa_id NOT IN (SELECT * FROM ( SELECT wms_inve_transa_id FROM wms_inve_transa_income_special ) t2)
+					 ELSE 1=1
+			    END
+			AND w1.pay_type in (2,3)
+			AND w1.pay_status in(0)
+			AND w5.enable_flag = '1'
+			AND w1.wms_inve_transa_id in
+			<foreach collection="idLis" index="index" open="(" separator="," close=")" item="item">
+				#{item}
+			</foreach>	
+			<if test="return_date != null and return_date != '全部月份'">
+				AND DATE_FORMAT(w1.return_date,'%Y-%m') = DATE_FORMAT(CONCAT(#{return_date},'-','01'),'%Y-%m')
+			</if>
+			GROUP BY w1.wms_inve_transa_id,return_date
+			HAVING IFNULL(sum(w1.extend_income), 0) > 0				
+								
+			UNION ALL
+					
+			SELECT
+				case when w2.data_status = 6 
+						  then ROUND(w3.org_product_account / 10000)
+					 else ROUND(w3.product_account / 10000)
+			    end  
+				AS product_account,
+				w2.date_of_payment,
+				w3.category_name,
+				DATE_FORMAT(w1.return_date,'%Y-%m') AS return_date,
+				'奖励收益' AS income_type,
+				round(IFNULL(sum(w1.payable_reward_income),0), 2) as payable_basic_income,
+				CONCAT(w5.bank_of_deposit,'|尾号',RIGHT(w5.card_no,4)) AS income_card,
+				NULL AS act_return_date,
+				w2.wms_inve_transa_id
+			FROM wms_inve_transa_income w1, wms_inve_transa w2, wms_inve_transa_prod w3, wms_inve_pruduct_category w4, wms_inve_customer_card w5
+			WHERE w1.wms_inve_transa_id = w2.wms_inve_transa_id
+			AND w1.wms_inve_transa_prod_id = w3.wms_inve_transa_prod_id
+			AND w1.wms_inve_pruduct_category_id = w4.wms_inve_pruduct_category_id
+			AND w1.wms_inve_customer_card_id = w5.wms_inve_customer_card_id
+			AND w2.wms_inve_transa_id not IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t1) 
+			AND
+				CASE WHEN ISNULL(w2.old_wms_inve_transa_id) = 0 
+		                 THEN w2.old_wms_inve_transa_id NOT IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t2)
+					 ELSE 1=1
+				END
+			AND w1.pay_type in (2,3)
+			AND w1.pay_status in(0)
+			AND w5.enable_flag = '1'
+			AND w1.wms_inve_transa_id in
+			<foreach collection="idLis" index="index" open="(" separator="," close=")" item="item">
+				#{item}
+			</foreach>
+			<if test="return_date != null and return_date != '全部月份'">
+				AND DATE_FORMAT(w1.return_date,'%Y-%m') = DATE_FORMAT(CONCAT(#{return_date},'-','01'),'%Y-%m')
+			</if>
+			GROUP BY w1.wms_inve_transa_id,return_date	
+			HAVING IFNULL(sum(w1.payable_reward_income),0)>0
+		) b 
+		where 1=1
+		order by b.return_date asc
+	</select>
+	
+	<!-- 根据查询条件进行获取客户的收益信息 -->
+	<select id="getCustomerTotalBillInfos" parameterType="map" resultType="map">
+		SELECT
+			SUBSTRING_INDEX(GROUP_CONCAT(b.cus_name),',',1) as cus_name,
+			CASE WHEN LENGTH(SUBSTRING_INDEX(GROUP_CONCAT(b.id_card),',',1)) = 18 OR LENGTH(SUBSTRING_INDEX(GROUP_CONCAT(b.id_card),',',1)) = 8 THEN CONCAT(LEFT(SUBSTRING_INDEX(GROUP_CONCAT(b.id_card),',',1),4),'********',RIGHT(SUBSTRING_INDEX(GROUP_CONCAT(b.id_card),',',1),4))
+			     ELSE '********' 
+			END
+			AS id_card,
+			FORMAT(ROUND(IFNULL(SUM(b.already_income),0),2) - 0,2) AS already_income,
+			FORMAT(ROUND(IFNULL(SUM(b.stay_income),0),2) - 0,2) AS stay_income,
+			#{return_date} AS return_date
+		FROM
+		(
+			SELECT
+				t.cus_name,
+				t.id_card,
+				sum(t.extend_income) + SUM(t.payable_reward_income) + SUM(t.payable_basic_income) + sum(t.renewal_income) AS already_income,
+				null AS stay_income
+			FROM
+				(
+					SELECT
+						IFNULL(sum(e.extend_income),0) as extend_income,
+						IFNULL(sum(e.payable_reward_income),0) as payable_reward_income,
+						IFNULL(sum(e.payable_basic_income),0) as payable_basic_income,
+						case when DATE_FORMAT(e.return_date,'%Y-%m') = DATE_FORMAT(now(),'%Y-%m') 
+						          then IFNULL(sum(e.renewal_income),0) 
+						     else 0 
+						end 
+						as renewal_income,
+						a.cus_name,
+						a.id_card,
+						NULL AS stay_income
+					FROM wms_inve_transa_income e
+					LEFT JOIN wms_inve_transa a ON e.wms_inve_transa_id=a.wms_inve_transa_id
+					LEFT JOIN wms_inve_transa_prod p ON e.wms_inve_transa_prod_id=p.wms_inve_transa_prod_id
+					LEFT JOIN wms_inve_pruduct_category y ON e.wms_inve_pruduct_category_id=y.wms_inve_pruduct_category_id
+					WHERE a.enable_flag=1
+					AND p.enable_flag=1
+					AND e.pay_type in (2,3)
+					AND a.wms_inve_transa_id NOT IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t1) 
+					AND 
+						CASE WHEN ISNULL(a.old_wms_inve_transa_id) = 0 
+                                  THEN a.old_wms_inve_transa_id NOT IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t2)
+							 ELSE 1=1
+						END
+					AND e.pay_status in (1,3,4)
+            		AND a.data_status in (4,5,6)
+            		AND a.wms_inve_transa_id in 
+            		<foreach collection="idLis" index="index" open="(" separator="," close=")" item="item">
+						#{item}
+					</foreach>
+					<if test="return_date != null and return_date != '全部月份'">
+						AND DATE_FORMAT(e.return_date,'%Y-%m') = DATE_FORMAT(CONCAT(#{return_date},'-','01'),'%Y-%m')
+					</if>
+					GROUP BY e.wms_inve_transa_id
+				) t
+				
+			UNION ALL
+				
+			SELECT
+				t1.cus_name,
+				t1.id_card,
+				null AS already_income,
+				sum(t1.extend_income) + SUM(t1.payable_reward_income) + SUM(t1.payable_basic_income) + sum(t1.renewal_income) AS stay_income
+			FROM
+				(
+				SELECT
+					IFNULL(sum(e.extend_income),0) as extend_income,
+					IFNULL(sum(e.payable_reward_income),0) as payable_reward_income,
+					IFNULL(sum(e.payable_basic_income),0) as payable_basic_income,
+					CASE WHEN DATE_FORMAT(e.return_date,'%Y-%m') = DATE_FORMAT(now(),'%Y-%m')
+					          THEN IFNULL(sum(e.renewal_income),0)
+					     ELSE 0
+					END 
+					AS renewal_income,
+					a.cus_name,
+					a.id_card,
+					NULL AS stay_income
+				FROM wms_inve_transa_income e
+				LEFT JOIN wms_inve_transa a ON e.wms_inve_transa_id=a.wms_inve_transa_id
+				LEFT JOIN wms_inve_transa_prod p ON e.wms_inve_transa_prod_id=p.wms_inve_transa_prod_id
+				LEFT JOIN wms_inve_pruduct_category y ON e.wms_inve_pruduct_category_id=y.wms_inve_pruduct_category_id
+				WHERE a.enable_flag=1
+				AND p.enable_flag=1
+				AND e.pay_type in (2,3)
+				AND a.wms_inve_transa_id NOT IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t1) 
+				AND 
+					CASE WHEN ISNULL(a.old_wms_inve_transa_id) = 0 
+                              THEN a.old_wms_inve_transa_id NOT IN (SELECT * FROM (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) t2)
+						 ELSE 1=1
+					END
+				AND e.pay_status in (0)
+            	AND a.data_status in (4,5,6)
+            	AND a.wms_inve_transa_id in 
+            	<foreach collection="idLis" index="index" open="(" separator="," close=")" item="item">
+					#{item}
+				</foreach>
+				<if test="return_date != null and return_date != '全部月份'">
+					AND DATE_FORMAT(e.return_date,'%Y-%m') = DATE_FORMAT(CONCAT(#{return_date},'-','01'),'%Y-%m')
+				</if>
+				GROUP BY e.wms_inve_transa_id
+			) t1
+		) b
+	</select>
+	
+	<select id="findWmsInveCustomerIdByCostomerId" parameterType="int" resultType="int">
+		SELECT DISTINCT wms_inve_customer_id FROM wms_inve_customer WHERE costomer_id = #{costomerId} LIMIT 0,1
+	</select>
+	
+	<!-- 获取当前的已支付的线上金额 -->
+	<select id="getNowDayPaidAccount" parameterType="int" resultType="Map">
+		SELECT
+			IFNULL(SUM(tmp.totalTransaOnlineAccountPaid)/10000,0) as totalTransaOnlineAccountPaid
+		FROM
+			(
+				SELECT
+					count(1) as totalTransaCount,
+					SUM(IFNULL(tp.org_product_account,0)) as totalTransaAccount,
+					0 as totalTransaOfflineCountPaid,
+					0 as totalTransaOfflineAccountPaid,
+					0 as totalTransaOnlineCountPaid,
+					0 as totalTransaOnlineAccountPaid
+				FROM
+					wms_inve_clerk_data d, wms_inve_transa t, wms_inve_transa_prod tp
+				WHERE
+					d.wms_inve_transa_id = t.wms_inve_transa_id
+				AND t.wms_inve_transa_id = tp.wms_inve_transa_id
+				AND DATE_FORMAT(d.sort_timestamp,'%y-%m-%d') = DATE_FORMAT(NOW(), '%y-%m-%d')
+				AND ifnull(t.date_of_act,CURDATE()) = CURDATE()
+				AND d.data_type = '1'
+				AND d.personnel_regionNumber = (SELECT personnel_regionNumber FROM pm_personnel WHERE personnel_id = #{userId})
+				AND t.data_status NOT IN ('1','7')
+				AND d.enable_flag = '1'
+				UNION ALL
+				SELECT
+					0 as totalTransaCount,
+					0 as totalTransaAccount,
+					IFNULL(CASE WHEN IFNULL(t.contract_signing_type,1) = 1 THEN count(1) END,0) AS totalTransaOfflineCountPaid,
+					IFNULL(CASE WHEN IFNULL(t.contract_signing_type,1) = 1 THEN SUM(tp.org_product_account) END,0) as totalTransaOfflineAccountPaid,
+					IFNULL(CASE WHEN t.contract_signing_type = 2 THEN count(1) END,0) as totalTransaOnlineCountPaid,
+					IFNULL(CASE WHEN t.contract_signing_type = 2 THEN SUM(tp.org_product_account) END,0) as totalTransaOnlineAccountPaid
+				FROM wms_inve_clerk_data d, wms_inve_transa t, wms_inve_transa_prod tp
+				WHERE d.wms_inve_transa_id = t.wms_inve_transa_id
+				AND t.wms_inve_transa_id = tp.wms_inve_transa_id
+				AND DATE_FORMAT(d.sort_timestamp,'%y-%m-%d') = DATE_FORMAT(NOW(), '%y-%m-%d')
+				AND ifnull(t.date_of_act,CURDATE()) = CURDATE()
+				AND d.data_type = '1'
+				AND d.personnel_regionNumber = (SELECT personnel_regionNumber FROM pm_personnel WHERE personnel_id = #{userId})
+				AND t.data_status IN ('4','5','6','11','12','13','19')
+				AND d.enable_flag = '1'
+				GROUP BY t.contract_signing_type
+			) tmp
+	</select>
+	
+	<!-- 获取每月债权销售限额 -->
+	<select id="getNowDayCreditSaleLimit" parameterType="int" resultType="WmsInveSaleLimit">
+		SELECT 
+			t.wms_inve_sale_limit_id,
+			t.limit_type,
+			t.region_number,
+			t.limit_amount,
+			t.create_user_id,
+			t.create_timestamp,
+			t.last_update_user_id,
+			t.last_update_timestamp,
+			t.enable_flag
+		FROM wms_inve_sale_limit t
+		WHERE t.limit_type = 1 
+		AND t.enable_flag = 1
+		AND t.region_number = (SELECT personnel_regionNumber FROM pm_personnel WHERE personnel_id = #{userId})
+		AND DATE_FORMAT(create_timestamp,'%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d')
+	</select>
+	
+	<!-- 获取客户的续期本金的使用情况 -->
+	<select id="getCustomerExtendBillInfo" parameterType="map" resultType="map">
+		SELECT
+			SUM(IFNULL(t.total_principal_amount,0)) AS total_principal_amount,
+			SUM(IFNULL(t.used_income_amount,0)) AS used_income_amount,
+			SUM(IFNULL(t.extend_amount,0)) AS extend_amount
+		FROM
+		(
+			SELECT
+				sum(IFNULL(t1.principal_amount,0)) AS total_principal_amount,
+				sum(IFNULL(t1.used_income_amount,0)) AS used_income_amount,
+				NULL AS extend_amount
+			FROM
+				wms_inve_redeem_principal_detail t1,
+				wms_inve_transa t2,
+				wms_inve_redeem_detail t3
+			WHERE
+				t2.wms_inve_transa_id = t3.wms_inve_transa_id
+			AND
+				t1.wms_inve_redeem_detail_id = t3.wms_inve_redeem_detail_id
+			AND
+				t1.principal_type = 2
+			AND
+				t2.enable_flag = 1
+			AND
+			 	t3.enable_flag = 1
+			AND
+				t2.wms_inve_customer_id = #{wms_inve_customer_id}
+		
+		UNION ALL
+		
+			SELECT
+				NULL AS total_principal_amount,
+				NULL AS used_income_amount,
+				SUM(IFNULL(t2.product_account,0)) AS extend_amount
+			FROM
+				wms_inve_transa t1,
+				wms_inve_transa_prod t2
+			WHERE
+				t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			AND
+				t1.enable_flag = 1
+			AND
+				t1.is_extend_amount = 1
+			AND
+				t1.data_status = 2
+			AND
+				t1.wms_inve_customer_id = #{wms_inve_customer_id}
+		) t
+	</select>
+	
+	<select id="getCategoryType" parameterType="int" resultType="map">
+		SELECT
+			t3.category_type
+		FROM
+			wms_inve_pruduct_category t3
+		WHERE
+			t3.wms_inve_pruduct_category_id = #{wms_inve_product_category_id}
+	</select>
+	
+	<select id="getCUstomerProductAccount" parameterType="map" resultType="map">
+		SELECT
+			CEIL(IFNULL(SUM(b.product_account) / 10000,0)) AS product_account_num,			
+			FORMAT(ROUND(IFNULL(SUM(b.product_account),0),2) - 0,2) AS product_account
+		FROM
+		(
+			SELECT
+				CASE WHEN t1.data_status = 6 THEN t2.org_product_account
+						 ELSE t2.product_account
+				END
+				AS product_account
+			FROM wms_inve_transa t1,wms_inve_transa_prod t2
+			WHERE t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			AND t1.wms_inve_transa_id IN 
+            <foreach collection="idLis" index="index" open="(" separator="," close=")" item="item">
+				#{item}
+			</foreach>
+		) b
+	</select>
+	
+	<select id="getCategoryTypeByWmsInveTransaId" parameterType="int" resultType="map">
+		SELECT
+			t3.category_type
+		FROM
+			wms_inve_transa t1,
+			wms_inve_transa_prod t2,
+			wms_inve_pruduct_category t3
+		WHERE
+			t1.wms_inve_transa_id = t2.wms_inve_transa_id
+		AND t2.wms_inve_pruduct_category_id = t3.wms_inve_pruduct_category_id
+		AND t1.wms_inve_transa_id = #{wms_inve_transa_id}
+	</select>
+	
+	<select id="searchFinancialTransaListForExport" parameterType="map" resultType="map">
+		SELECT
+			t.wms_inve_transa_id,
+			(SELECT region_name FROM wms_inve_clerk_region WHERE region_number = p.personnel_regionNumber) AS region_name,
+			getParenetDeptNameByDeptId(t.bel_salesman_dept_id) as company_name,
+			(select dept_name from sys_dept where dept_id=t.bel_salesman_dept_id) as dept_name,
+			case when c.bel_personnel_id is not null then CONCAT((select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_salesman_id_id),'(转)') 
+			else (select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_salesman_id_id) end as salesman_name,
+			IFNULL((select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_department_manager_id),'--') as department_manager_name,
+			IFNULL((select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_center_manager_id),'--') as center_manager_name,
+			IFNULL((select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_vice_general_manager_id),'--') as vice_general_manager_name,
+			(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_general_manager_id) as general_manager_name,
+			t.bill_code,
+			IFNULL(t.financial_bill_code,'--') AS financial_bill_code,
+			t.cus_name,
+			DATE_FORMAT(t.date_of_payment,'%Y/%m/%d') AS date_of_payment,
+			tp.category_name,
+			tp.product_deadline,
+			tp.org_product_account / 10000 as org_product_account,
+			GROUP_CONCAT(DISTINCT tc.pay_type) as pay_types,
+			getPayMethodName(GROUP_CONCAT(DISTINCT tc.pay_type)) as pay_types_name,
+			IF(t.data_status = '4','收益中',IF(t.data_status = 5,'赎回中',IF(t.data_status = '6','已完成','待审核'))) as data_status
+		FROM
+			wms_inve_transa t
+			LEFT JOIN (
+				SELECT
+					wms_inve_customer_id,
+					bel_personnel_id,
+					max(end_of_date) AS end_date
+				FROM
+					wms_inve_customer_remove_his
+				WHERE
+					data_type = '1'
+				GROUP BY
+					wms_inve_customer_id,
+					bel_personnel_id
+			) c ON t.wms_inve_customer_id = c.wms_inve_customer_id,
+			wms_inve_transa_prod tp,
+			wms_inve_transa_card tc,
+			pm_personnel p
+		WHERE
+			t.wms_inve_transa_id = tp.wms_inve_transa_id
+			AND t.wms_inve_transa_id = tc.wms_inve_transa_id
+			AND t.bel_salesman_id_id = p.personnel_id
+			AND t.data_status IN (4,5,6,11)
+			AND t.enable_flag = '1'
+			AND tp.enable_flag = '1'
+			<if test="category_name != null">
+				and tp.wms_inve_pruduct_category_id = #{category_name}
+			</if>
+
+			<if test="data_status!= null">
+				and t.data_status=#{data_status}
+			</if>
+			
+			<if test="bill_source != null">
+				and t.bill_source=#{bill_source}
+			</if>
+
+			<if test="cus_name != null">
+				and t.cus_name like #{cus_name}
+			</if>
+
+			<if test="create_timestamp_begin != null">
+				and date_format(t.create_timestamp,'%Y-%m-%d')  &gt;= #{create_timestamp_begin}
+			
+			</if>
+			<if test="create_timestamp_end !=null">
+				and date_format(t.create_timestamp,'%Y-%m-%d')  &lt;=#{create_timestamp_end}
+			</if>
+			<if test="id_card !=null">
+				and t.id_card like #{id_card}
+			</if>
+            <if test="create_user_name != null">
+                and (t.create_user_name=#{create_user_name} or t.create_user_name =(select personnel_name from pm_personnel where personnel_shortCode=#{create_user_name}))
+            </if>
+            <if test="salesman_name != null">
+            	and (t.salesman_name =#{salesman_name} or t.salesman_shortcode=#{salesman_name})
+            </if>
+            <if test="bel_salesman_id_id != null">
+            	and (p.personnel_name =#{bel_salesman_id_id} or p.personnel_shortCode=#{bel_salesman_id_id})
+            </if>
+         	<if test="contract_begin != null and contract_begin !=''">
+				and date_format(t.date_of_payment,'%Y-%m-%d')  &gt;= #{contract_begin}
+			</if>
+			<if test="contract_end !=null and contract_end !='' " >
+				and date_format(t.date_of_payment,'%Y-%m-%d')  &lt;=#{contract_end}
+			</if>
+		GROUP BY t.wms_inve_transa_id
+		ORDER BY t.bill_code DESC
+	</select>
+</mapper> 

@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-
+
+transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<link href="../../css/ligerui-main.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<title>审批</title>
+<style type="text/css">
+.td_title {
+	background: none repeat scroll 0 0 #EAF0FB;
+}
+
+.tb_input TD {
+	background: none repeat scroll 0 0 #FFFFFF;
+	padding: 3px 1px 1px 4px;
+}
+</style>
+
+<script type="text/javascript">
+	var wms_cre_credit_head_id;
+	$(function() {
+		//获取单据ID
+		wms_cre_credit_head_id=$.query.get('wms_cre_credit_head_id');
+	});
+</script>
+</head>
+<body>
+	<!-- 页面加载的时候，审批流程为显示 -->
+	<hr />
+	<div>
+		<div class="center-title">审批流程</div>
+	</div>
+	<hr />
+	<div id="grid"></div>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+		var grid;
+		var dialog;
+		var columns;	
+		var pageType;
+		$(function() {
+			pageType=$.query.get('pageType');		
+			initGrid();
+			//search();
+			if(pageType==1){
+				hideList();
+			}
+		});
+		var dialog;
+		function initGrid() {
+			columns = [ {
+				display : '节点名称',
+				name : 'taskName',
+				width : 140,
+				minWidth : 140,
+				render: function (rowdata, rowindex, value) { 
+					if(rowdata.taskName == '证信审批'){
+						return  '征信审批';
+					}else if(rowdata.taskName=='信息审批'){
+						return '信息调查';
+					}
+					return value;
+        		}
+			}, {
+				display : '审批人',
+				name : 'approvers',
+				width : 100,
+				minWidth : 100,
+				render: function (rowdata, rowindex, value) { 
+					if(rowdata.approvers == '贷前证信复核员'){
+						return  '贷前征信复核员';
+					}
+					return value;
+        		}
+			}, {
+				display : '审批人部门',
+				name : 'personnel_deptName',
+				width : 150,
+				minWidth : 150
+			}, {
+				display : '职务',
+				name : 'personnel_postName',
+				width : 100,
+				minWidth : 100
+			},{
+				display : '审批结果',
+				name : 'approveResult',
+				width : 100,
+				minWidth : 100
+			}, {
+				display : '审批意见',
+				name : 'approveAdvice',
+				width : 180,
+				minWidth : 180
+			}, {
+				display : '审批时间',
+				name : 'approveTime',
+				width : 180,
+				minWidth : 180
+			} ];
+
+			grid = $("#grid").ligerGrid({
+				columns : columns,
+				url : global_param.context_name + '/cremanage/getcarLoanWorkFlowView.do?wms_cre_credit_head_id='+wms_cre_credit_head_id,
+				rownumbers : true,
+				allowUnSelectRow : true,
+				usePager : false,
+				width : '100%',
+				height : '100%',
+				heightDiff : -4,
+				parms : {
+					_filterParms : 0
+				}
+			});
+		}
+		//查询
+		function search() {
+			global_ligerui_extend.search(grid);
+		}
+		function close(){
+			dialog.close();
+			search();
+		}
+		function closeDialog(){
+			window.parent.dialog.hide();
+		}
+		function hideList(){
+        	grid.toggleCol('approvers',false);
+        	grid.toggleCol('personnel_postName',false);
+        }
+	</script>
+</body>
+</html>

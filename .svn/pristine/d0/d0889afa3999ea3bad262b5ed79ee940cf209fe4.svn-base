@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.reportmanage.persist.WmsLoanInveClaimsInquiryReportDao">
+<select id="getLoanInveClaims" parameterType="map" resultType="java.util.HashMap">
+		select 
+			a.bill_code,
+			a.cus_name,
+			p.product_deadline,
+			p.product_account,
+			p.category_name,
+			p.wms_inve_transa_prod_id,
+			a.wms_inve_transa_id,
+			l.prot_code
+		from wms_inve_transa a,wms_inve_transa_prod p ,wms_inve_transa_protocol l
+		<where>
+			a.enable_flag=1 and p.enable_flag=1 and l.enable_flag=1
+			and a.wms_inve_transa_id = p.wms_inve_transa_id
+			and l.wms_inve_transa_id=p.wms_inve_transa_id 
+			and p.is_finish='1'
+			and l.wms_inve_redeem_id=0
+			<if test="bill_code != null">
+				 and a.bill_code like #{bill_code} 
+			</if>
+			<if test="prot_code != null">
+			 	 and l.prot_code like #{prot_code} 
+			</if>
+			<if test="cus_name != null">
+				 and a.cus_name like #{cus_name} 
+			</if>
+			<if test="credit_name != null">
+				 and (SELECT credit_name FROM wms_inve_transa_match where wms_inve_transa_prod_id = p.wms_inve_transa_prod_id) like #{credit_name} 
+			</if>
+			<if test="date_of_assign_begin != null and date_of_assign_end != null">
+				 and (SELECT date_of_assign FROM wms_inve_transa_match where wms_inve_transa_prod_id = p.wms_inve_transa_prod_id) between  #{date_of_assign_begin}  and #{date_of_assign_end} 
+			</if>
+			<if test="date_of_assign_begin != null and date_of_assign_end == null">
+				 and (SELECT DATE_ADD(date_of_assign,INTERVAL 1 DAY) FROM wms_inve_transa_match where wms_inve_transa_prod_id = p.wms_inve_transa_prod_id) &gt;  #{date_of_assign_begin}
+			</if>
+			<if test="date_of_assign_begin == null and date_of_assign_end != null">
+				 and (SELECT  DATE_ADD(date_of_assign,INTERVAL -1 DAY) FROM wms_inve_transa_match where wms_inve_transa_prod_id = p.wms_inve_transa_prod_id) &lt;  #{date_of_assign_end}
+			</if>
+			<if test="category_name != null">
+				and p.wms_inve_pruduct_category_id = #{category_name} 
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+		<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select
+			count(p.wms_inve_transa_prod_id) as count
+		from wms_inve_transa a,wms_inve_transa_prod p ,wms_inve_transa_protocol l,wms_inve_transa_match m,wms_fina_cre_repay r
+		<where>
+			a.enable_flag=1 and p.enable_flag=1 and l.enable_flag=1 AND m.enable_flag=1 and r.enable_flag=1 
+			and a.wms_inve_transa_id = p.wms_inve_transa_id
+			and l.wms_inve_transa_id = p.wms_inve_transa_id 
+			and p.is_finish='1'
+			and m.wms_inve_transa_prod_id = p.wms_inve_transa_prod_id
+			and m.wms_fina_cre_repay_id = r.wms_fina_cre_pay_id
+			and l.wms_inve_redeem_id=0
+			<if test="bill_code != null">
+				 and a.bill_code like #{bill_code} 
+			</if>
+			<if test="prot_code != null">
+			 	 and l.prot_code like #{prot_code} 
+			</if>
+			<if test="cus_name != null">
+				 and a.cus_name like #{cus_name} 
+			</if>
+			<if test="credit_name != null">
+				 and (SELECT credit_name FROM wms_inve_transa_match where wms_inve_transa_prod_id = p.wms_inve_transa_prod_id) like #{credit_name} 
+			</if>
+			<if test="date_of_assign_begin != null and date_of_assign_end != null">
+				 and (SELECT date_of_assign FROM wms_inve_transa_match where wms_inve_transa_prod_id = p.wms_inve_transa_prod_id) between  #{date_of_assign_begin}  and #{date_of_assign_end} 
+			</if>
+			<if test="date_of_assign_begin != null and date_of_assign_end == null">
+				 and (SELECT DATE_ADD(date_of_assign,INTERVAL 1 DAY) FROM wms_inve_transa_match where wms_inve_transa_prod_id = p.wms_inve_transa_prod_id) &gt;  #{date_of_assign_begin}
+			</if>
+			<if test="date_of_assign_begin == null and date_of_assign_end != null">
+				 and (SELECT  DATE_ADD(date_of_assign,INTERVAL -1 DAY) FROM wms_inve_transa_match where wms_inve_transa_prod_id = p.wms_inve_transa_prod_id) &lt;  #{date_of_assign_end}
+			</if>
+			<if test="category_name != null">
+				 and p.wms_inve_pruduct_category_id = #{category_name} 
+			</if>
+		</where>
+	</select>
+	<select id="getLoanInveClaimsMx" parameterType="map" resultType="java.util.HashMap">
+		select 
+			m.wms_inve_transa_prod_id,
+			m.wms_fina_cre_repay_id,
+	  		m.credit_name,
+	  		m.assign_account,
+	  		m.date_of_assign,
+	  		r.protocol_code,
+			r.wms_cre_credit_head_id
+		from wms_inve_transa_match m,wms_fina_cre_repay r
+		<where>
+			m.enable_flag=1 and r.enable_flag=1 
+			and m.wms_inve_transa_prod_id = #{wms_inve_transa_prod_id}
+			and m.wms_fina_cre_repay_id = r.wms_fina_cre_pay_id
+		</where>
+		
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+			<!-- count num -->
+	<select id="findCountMx" parameterType="map" resultType="int">
+		select 
+			count(m.wms_inve_transa_prod_id) as count
+		from wms_inve_transa_match m,wms_fina_cre_repay r
+		<where>
+			m.enable_flag=1 and r.enable_flag=1 
+			and m.wms_inve_transa_prod_id = #{wms_inve_transa_prod_id}
+			and m.wms_fina_cre_repay_id = r.wms_fina_cre_pay_id
+		</where>
+	</select>
+	<!-- 导出Excel -->
+	<select id="getLoanInveClaimsExcel" parameterType="map" resultType="java.util.HashMap">
+	 	select 
+			a.bill_code,
+			a.cus_name,
+			p.product_deadline,
+			p.product_account,
+			p.category_name,
+			l.prot_code,
+			m.wms_fina_cre_repay_id,
+	  	    m.credit_name,
+			m.assign_account,
+			m.date_of_assign,
+			r.protocol_code,
+			p.wms_inve_transa_prod_id,
+			a.wms_inve_transa_id
+		from wms_inve_transa a,wms_inve_transa_prod p ,wms_inve_transa_protocol l,wms_inve_transa_match m,wms_fina_cre_repay r
+		<where>
+			a.enable_flag=1 and p.enable_flag=1 and l.enable_flag=1 AND m.enable_flag=1 and r.enable_flag=1 
+			and a.wms_inve_transa_id = p.wms_inve_transa_id
+			and l.wms_inve_transa_id = p.wms_inve_transa_id 
+			and p.is_finish='1'
+			and m.wms_inve_transa_prod_id = p.wms_inve_transa_prod_id
+			and m.wms_fina_cre_repay_id = r.wms_fina_cre_pay_id
+			and l.wms_inve_redeem_id=0
+			<if test="bill_code != null">
+				 and a.bill_code like #{bill_code} 
+			</if>
+			<if test="prot_code != null">
+			 	 and l.prot_code like #{prot_code} 
+			</if>
+			<if test="cus_name != null">
+				 and a.cus_name like #{cus_name} 
+			</if>
+			<if test="credit_name != null">
+				 and (SELECT credit_name FROM wms_inve_transa_match where wms_inve_transa_prod_id = p.wms_inve_transa_prod_id) like #{credit_name} 
+			</if>
+			<if test="date_of_assign_begin != null and date_of_assign_end != null">
+				 and (SELECT date_of_assign FROM wms_inve_transa_match where wms_inve_transa_prod_id = p.wms_inve_transa_prod_id) between  #{date_of_assign_begin}  and #{date_of_assign_end} 
+			</if>
+			<if test="date_of_assign_begin != null and date_of_assign_end == null">
+				 and (SELECT DATE_ADD(date_of_assign,INTERVAL 1 DAY) FROM wms_inve_transa_match where wms_inve_transa_prod_id = p.wms_inve_transa_prod_id) &gt;  #{date_of_assign_begin}
+			</if>
+			<if test="date_of_assign_begin == null and date_of_assign_end != null">
+				 and (SELECT  DATE_ADD(date_of_assign,INTERVAL -1 DAY) FROM wms_inve_transa_match where wms_inve_transa_prod_id = p.wms_inve_transa_prod_id) &lt;  #{date_of_assign_end}
+			</if>
+			<if test="category_name != null">
+				 and p.wms_inve_pruduct_category_id = #{category_name} 
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	
+	<select id="getLoanInveClaimsCategory" parameterType="map" resultType="java.util.HashMap">
+		select 
+			wms_inve_pruduct_category_id,
+			category_name
+		from wms_inve_pruduct_category
+		<where>
+			enable_flag=1 
+			and is_forbidden='0'
+		</where>
+	</select>
+	<select id="getLoanInveClaimsCategoryAll" resultType="java.util.HashMap">
+		select 
+			wms_inve_pruduct_category_id,
+			category_name
+			from wms_inve_pruduct_category
+		<where>
+			enable_flag=1
+		</where>
+	</select>
+</mapper>

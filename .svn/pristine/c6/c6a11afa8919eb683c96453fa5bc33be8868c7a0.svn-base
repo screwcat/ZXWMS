@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>合同信息完善</title>
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+</head>
+<body>
+	<div class="pop-center overflow-au" style="margin: 5px;" id="data">
+	<div id="bgs">
+		<div class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 5px;" >
+	        <div class="center-title" style="margin-top: 0px;">债权信息</div>
+		    <div class="center-content2 clearboth" style="min-width: 500px;" id="customerHouseInfo">
+		        <div class="l-panel-search-cond clearfix" style="padding-top: 10px; max-height: 800px;">
+<!-- 		        	隐藏域 -->
+<!-- 					合同编号 -->
+		        	<input id="protocol_id_year" type="text" style="display: none"/>
+		        	<input id="protocol_id_num" type="text" style="display: none"/>
+		        	<input id="owner" type="text" style="display: none"/>
+		        
+			         <div class="float-l" style="margin-left: 80px">
+			         	<div class="l-panel-search-title">债权人：</div>
+			         	<div class="l-panel-search-item">
+			         		<select id="creditor_name" name="creditor_name" onchange="creditor_name_val()"></select>
+			         	</div>
+			         </div>
+			         <!-- 							分割线 -->
+						<div class="float-l commonstyle clearboth">
+							<div style="width:800px;height:4px;border-bottom:1px dashed #999; margin-left: 50px"></div>
+						</div>
+			         
+		        	  <div class="float-l clearboth" style="margin-left: 80px">
+			         	<div class="l-panel-search-title">债务人：</div>
+			         	<div class="l-panel-search-item">
+			         		<input type="text" id="debtor_name" name="debtor_name" maxlength="50" onchange="debtor_name_change()"/>
+			         	</div>
+			         </div>
+		        	 <div class="float-l" style="margin-left: 30px">
+			         	<div class="l-panel-search-title">身份证号：</div>
+			         	<div class="l-panel-search-item">
+			         		<input type="text" id="debtor_identity_id" maxlength="50" onblur="debtor_identity_id_onblur(this)"/>
+			         	</div>
+			         </div>
+		        	<div class="float-l" style="margin-left: 30px">
+			         	<div class="l-panel-search-title">联系电话：</div>
+			         	<div class="l-panel-search-item">
+			         		<input type="text" id="debtor_tel" maxlength="50" onblur="phone_onblur(this)"/>
+			         	</div>
+			         </div>
+		        	<div class="float-l clearboth" style="margin-left: 68px">
+			         	<div class="l-panel-search-title">通讯地址：</div>
+			         	<div class="l-panel-search-item">
+			         		<input type="text" id="debtor_address" style="width: 390px"/>
+			         	</div>
+			         </div>
+			          <!-- 							分割线 -->
+						<div class="float-l commonstyle clearboth">
+							<div style="width:800px;height:4px;border-bottom:1px dashed #999; margin-left: 50px"></div>
+						</div>
+		        
+		        	<div class="float-l clearboth" style="margin-left: 56px">
+			         	<div class="l-panel-search-title">共同债务人：</div>
+			         	<div class="l-panel-search-item">
+			         		<input type="text" id="com_debtor_name" name="com_debtor_name" maxlength="50" onchange="com_debtor_name_onchange()"/>
+			         	</div>
+			         </div>
+		        	 <div class="float-l" style="margin-left: 30px">
+			         	<div class="l-panel-search-title">身份证号：</div>
+			         	<div class="l-panel-search-item">
+			         		<input type="text" id="com_debtor_identity_id" maxlength="50" onblur="debtor_identity_id_onblur(this)"/>
+			         	</div>
+			         </div>
+		        	<div class="float-l" style="margin-left: 30px">
+			         	<div class="l-panel-search-title">联系电话：</div>
+			         	<div class="l-panel-search-item">
+			         		<input type="text" id="com_debtor_tel" maxlength="50" onblur="phone_onblur(this)"/>
+			         	</div>
+			         </div>
+		        	<div class="float-l clearboth" style="margin-left: 68px">
+			         	<div class="l-panel-search-title">通讯地址：</div>
+			         	<div class="l-panel-search-item">
+			         		<input type="text" id="com_debtor_address" style="width: 390px"/>
+			         	</div>
+			         </div>
+
+						</div>
+					</div>
+				</div>
+
+
+		        <div class="center-title" style="margin-top: 0px;">台账信息</div>
+		     	<div class="center-content2 clearboth" style="min-width: 500px;height: 280px;">
+		     	<div class="l-panel-search-cond clearfix" style="padding-top: 10px; height: 280px;">
+		        	<div class="float-l clearboth" style="margin-left: 68px">
+			         	<div class="l-panel-search-title">贷款产品：</div>
+			         	<div class="l-panel-search-item">
+			         		<input type="text" id="cre_loan_type" onchange="cre_loan_type_onchange()"/>
+			         	</div>
+			         </div>
+			         <div class="float-l" style="margin-left: 38px">
+		                <div class="l-panel-search-title">借款期限：</div>
+		                <div class="l-panel-search-item" style="margin-right: 0px">
+		                    <input type="text" id="borrow_deadline" name="borrow_deadline" maxlength="50" style="width: 105px" onchange="borrow_deadline_change()"/>
+		                </div>
+	                    <div class="l-panel-search-title">月</div>
+		            </div>
+			        <div class="float-l" style="margin-left: 68px">
+			         	<div class="l-panel-search-title">月利率：</div>
+			         	<div class="l-panel-search-item" style="margin-right: 0px">
+			         		<input type="text" id="borrow_interest" name="borrow_interest"
+			         			maxlength="50" style="width: 105px" onchange="borrow_interest_onchange()"/>
+			         	</div>
+			         	<div class="l-panel-search-title">%</div>
+			         </div>
+			          <div class="float-l clearboth" style="margin-left: 68px">
+			         	<div class="l-panel-search-title">平台费率：</div>
+			         	<div class="l-panel-search-item" style="margin-right: 0px">
+			         		<input type="text" id="service_cost_month" maxlength="50" style="width: 105px" onchange="jisuan()"/>
+			         	</div>
+			         </div>
+		    		 <div class="l-panel-search-title">%</div>
+		    		 
+			          <div class="float-l" style="margin-left: 63px">
+			         	<div class="l-panel-search-title">手续费率：</div>
+			         	<div class="l-panel-search-item" style="margin-right: 0px">
+			         		<input type="text" id="consult_service_cost" maxlength="50"style="width: 100px" onchange="consult_service_cost_onchange()"/>
+			         		%
+			         	</div>
+			         </div>
+			         <div class="float-l" style="margin-left: 53px">
+			         	<div class="l-panel-search-title">违约金利率：</div>
+			         	<div class="l-panel-search-item" style="margin-right: 0px">
+			         		<input type="text" id="weiyuejin" maxlength="50" style="width: 105px" onchange="weiyuejin_onchange()"/>
+<!-- 			         		<input type="text" id="weiyuejin" style="display: none"/> -->
+			         	</div>
+			         </div>
+		        	<div class="float-l clearboth" style="margin-left: 68px">
+		                <div class="l-panel-search-title">借款本金：</div>
+		                <div class="l-panel-search-item" style="margin-right: 0px">
+		                    <input type="text" id="appro_limit" name="appro_limit" 
+		                    	maxlength="50" style="width: 105px" onchange="appro_limit_change()" onkeyup="appro_limit_onkeyup()"/>
+		                </div>
+	                    <div class="l-panel-search-title">元</div>
+		            </div>
+		        	<div class="float-l" style="margin-left: 63px">
+		                <div class="l-panel-search-title">合同金额：</div>
+		                <div class="l-panel-search-item" style="margin-right: 0px">
+		                    <input type="text" id="principal_lower" maxlength="50" style="width: 105px" onchange="principal_lower_onchange()"/>
+		                      <input type="text" id="principal_caps" style="display: none"/>
+		                </div>
+	                    <div class="l-panel-search-title">元</div>
+		            </div>
+		            <div class="float-l" style="margin-left: 56px">
+		                <div class="l-panel-search-title">还款金额：</div>
+		                <div class="l-panel-search-item" style="margin-right: 0px">
+		                    <input type="text" id="refund_limit_month" maxlength="50" style="width: 105px"/>
+		                </div>
+	                    <div class="l-panel-search-title">元/月</div>
+		             </div>
+		            
+		            <div class="float-l" style="margin-left: 80px">
+		                <div class="l-panel-search-title">平台费：</div>
+		                <div class="l-panel-search-item" style="margin-right: 0px">
+		                    <input type="text" id="notarial_fee" maxlength="50" style="width: 105px"/>
+		                </div>
+		                <div class="l-panel-search-title">元</div>
+		             </div>
+		            <div class="float-l" style="margin-left: 75px">
+		                <div class="l-panel-search-title">手续费：</div>
+		                <div class="l-panel-search-item" style="margin-right: 0px">
+		                    <input type="text" id="fees" maxlength="50" style="width: 105px" onchange="fee_onchage()"/>
+		                </div>
+		                <div class="l-panel-search-title">元</div>
+		             </div>
+		             <div class="float-l" style="margin-left: 68px">
+			         	<div class="l-panel-search-title">违约金：</div>
+			         	<div class="l-panel-search-item" style="margin-right: 0px">
+			         		<input type="text" id="liquidated_damages" maxlength="50" style="width: 105px"/>
+			         	</div>
+			         	<div class="l-panel-search-title">元/天</div>
+			         </div>
+		             <div class="float-l clearboth" style="margin-left: 90px">
+			         	<div class="l-panel-search-title">他项费:</div>
+			         	<div class="l-panel-search-item" style="margin-right: 0px">
+			         		<input type="text" id="it_cost_fee" maxlength="50" style="width: 105px" onchange="itCostFeeAndExpeditedFeeonchange()"/>
+			         	</div>
+			         	<div class="l-panel-search-title">元</div>
+			         </div>
+		             <div class="float-l" style="margin-left: 73px">
+			         	<div class="l-panel-search-title">加急费：</div>
+			         	<div class="l-panel-search-item" style="margin-right: 0px">
+			         		<input type="text" id="expedited_fee" maxlength="50" style="width: 105px" onchange="itCostFeeAndExpeditedFeeonchange()"/>
+			         	</div>
+			         	<div class="l-panel-search-title">元</div>
+			         </div>
+		               <div class="float-l" style="margin-left: 55px">
+			         	<div class="l-panel-search-title">转账金额：</div>
+			         	<div class="l-panel-search-item" style="margin-right: 0px">
+			         		<input type="text" id="loan_amount" maxlength="50" style="width: 105px" onchange="loan_amount_change()"/>
+			         	</div>
+			         	<div class="l-panel-search-title">元</div>
+			         </div>
+			         
+			          <div class="float-l clearboth" style="margin-left: 68px">
+		                <div class="l-panel-search-title">合同编号：</div>
+		                <div class="l-panel-search-item" style="margin-right: 0px">
+		                    <input type="text" id="protocol_id_year_num" maxlength="50" style="width: 105px"/>
+		                </div>
+		             </div>
+			         <div class="float-l" style="margin-left: 83px">
+			         	<div class="l-panel-search-title">签订日期：</div>
+						<div class="l-panel-search-item">
+							<input id="borrow_begin_date" name="borrow_begin_date" class="Wdate" type="text"
+								onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})" onchange="borrow_begin_date_change()"
+								style="width: 133px; vertical-align: top;" />
+						</div>
+			         </div>
+			         <div class="float-l" style="margin-left: 28px">
+			         	<div class="l-panel-search-title">截止时间：</div>
+						<div class="l-panel-search-item">
+							<input id="borrow_end_date" type="text" class="Wdate"
+								onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+								style="width: 133px; vertical-align: top;"/>
+						</div>
+			         </div>
+		            <div class="float-l clearboth" style="margin-left: 68px">
+						<div class="l-panel-search-title">还款日期：</div>
+						<div class="l-panel-search-item">
+							<input id="first_refund_date" type="text" class="Wdate"
+								onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+								style="width: 133px; vertical-align: top;"/>
+						</div>
+			         </div>
+			         <div class="float-l" style="margin-left: 24px">
+			         	<div class="l-panel-search-title">公证书类型：</div>
+			         	<div class="l-panel-search-item">
+			         		<input type="text" id="justice_type"/>
+			         	</div>
+			         </div>
+		             <div class="float-l" style="margin-left: 53px" id="cs">
+		                <div class="l-panel-search-title">次数：</div>
+			         	<div class="l-panel-search-item" style="margin-right: 0px">
+		                    <input type="text" id="the_number" maxlength="50" disabled="disabled"/>
+		                </div>
+		            </div>
+		            <div class="float-l clearboth" style="margin-left: 56px">
+			         	<div class="l-panel-search-title">打款用户名：</div>
+			         	<div class="l-panel-search-item">
+			         		<input type="text" id="debtor_loan_name" name="debtor_name" maxlength="50" />
+			         	</div>
+			         </div>
+		            
+		            <div class="float-l" style="margin-left: 36px">
+			         	<div class="l-panel-search-title">打款账号：</div>
+			         	<div class="l-panel-search-item">
+			         		<input type="text" id="debtor_loan_number" maxlength="50" />
+			         	</div>
+			         </div>
+		        	<div class="float-l" style="margin-left: 28px">
+			         	<div class="l-panel-search-title">打款银行：</div>
+			         	<div class="l-panel-search-item">
+			         		<input type="text" id="debtor_loan_bank" maxlength="50" onMouseOver="initTitle(this)"/>
+			         	</div>
+			         </div>
+		            
+		              <div class="float-l clearboth" style="margin-left: 56px">
+			         	<div class="l-panel-search-title">还款用户名：</div>
+			         	<div class="l-panel-search-item">
+			         		<input type="text" id="refund_name" name="debtor_name" maxlength="50" />
+			         	</div>
+			         </div>
+		        	<div class="float-l" style="margin-left: 36px">
+			         	<div class="l-panel-search-title">还款账号：</div>
+			         	<div class="l-panel-search-item">
+			         		<input type="text" id="refund_number" maxlength="50" />
+			         	</div>
+			         </div>
+		        	<div class="float-l" style="margin-left: 28px">
+			         	<div class="l-panel-search-title">还款银行：</div>
+			         	<div class="l-panel-search-item">
+			         		<input type="text" id="refund_bank" maxlength="50" onMouseOver="initTitle(this)"/>
+			         	</div>
+			         </div>
+		          	</div>
+		    	</div>   
+		            
+		      <div class="center-title" style="margin-top: 0px;">房产信息</div>
+		     	<div class="center-content2 clearboth" style="min-width: 500px;height: 110px;">
+		     	<div class="l-panel-search-cond clearfix" style="padding-top: 10px; height: 110px;">
+		    		 
+		    		 <div class="float-l" style="margin-left: 45px">
+			         	<div class="l-panel-search-title">抵押房产座落：</div>
+			         	<div class="l-panel-search-item">
+			         		<input id="explicit_address" name="explicit_address" type="text" size="60" class="text0" style="width: 394px"
+											name="explicit_address" maxlength="50" onchange="dyhtTable()" onMouseOver="initTitle(this)"/>
+			         	</div>
+			         </div>
+			         <div class="float-l" style="margin-left: 17px">
+			         	<div class="l-panel-search-title">房产权利人：</div>
+			         	<div class="l-panel-search-item">
+			         		<input type="text" size="30" class="text0" id="debtor_name_fcdyqlr" name="debtor_name" disabled="disabled" maxlength="50" onchange="dyhtTable()"/>
+			         	</div>
+			         </div>
+			         
+			         <div class="float-l clearboth" style="margin-left: 45px">
+			         	<div class="l-panel-search-title">房产权属证号：</div>
+			         	<div class="l-panel-search-item">
+			         		<input id="house_certificate_number" name="house_certificate_number" type="text" size="50"
+											class="text0" name="house_certificate_number" maxlength="50"
+										 onchange="dyhtTable()" onMouseOver="initTitle(this)" onMouseOver="initTitle(this)"/>
+			         	</div>
+			         </div>
+			         <div class="float-l" style="margin-left: 10px">
+			         	<div class="l-panel-search-title">房产权属卷号：</div>
+			         	<div class="l-panel-search-item">
+			         		<input id="house_roll_number" name="house_roll_number" type="text" size="50" class="text0"
+											name="house_roll_number" maxlength="50" onchange="dyhtTable()" onMouseOver="initTitle(this)"/>
+			         	</div>
+			         </div>
+			         
+			         <div class="float-l" style="margin-left: 5px">
+			         	<div class="l-panel-search-title">房产建筑面积：</div>
+			         	<div class="l-panel-search-item">
+			         		<input id="house_area" type="text" size="15" class="text0" name="house_area" maxlength="50" onchange="dyhtTable()"/>
+			         	</div>
+			         	<div class="l-panel-search-title">m²</div>
+			         </div>
+			       </div>
+			    </div>
+			    </div>
+		   </div>
+		   
+	<!-- 提交功能按钮区 -->
+    <div class="pop-footer6 clearboth" style="bottom: 1px; height: 35px" id="tb_btn">
+        <!-- 提交 -->
+        <a id="save" class="btnType1 btnSize1" onclick="save(0)" >提交</a>  
+        <!-- 取消 -->   
+        <a id="cancel" class="btnType1 btnSize1" >取消</a>			
+		<!--打印-->   
+<!--         <a id="dybtn" class="btnType1 btnSize3"  onclick="save(1)">本公司合同打印</a> -->
+		<!--下载 -->	
+<!-- 	    <a id="downloadbtn" class="btnType1 btnSize3"  onclick="exportWord()">本公司合同下载</a>   -->
+		<form id="exportWord">
+			<input type="hidden" id="wms_cre_credit_head_id" name="wms_cre_credit_head_id" />
+			<input type="hidden" id="protocol_num" name="protocol_num" />
+		</form>
+    </div>
+	<script type="text/javascript">
+	var protocol_num="1";//标识合同是本公司还是房产局 1本公司 2房产局
+	var protocol_type;//合同编号   先息后本 保人担责
+	var wms_cre_credit_head_id  =  $.query.get('wms_cre_credit_head_id');
+	var wms_cre_credit_notary_warn_id = $.query.get('wms_cre_credit_notary_warn_id');
+	var bill_type = $.query.get('bill_type');
+	var bill_status = $.query.get('bill_status');
+	var bill_code = null;
+	var salesman_shortcode = null;
+	var status = null;
+	var wms_cre_appro_id = null;
+	var appro_limit_quanju = null;
+	//还款类型
+	var payment_contract_type = null;
+	//组合贷单据
+	var groupList= null;
+	//是否是组合贷标志
+	var is_group_all;
+	 $(function() {
+		 //隐藏次数
+		 if(bill_type == "01"){
+			 $("#cs").css("display","none");
+		 }
+		 //初始化债权人
+		 init_wms_cre_contract_lender();
+		 //获取债权人给房产局合同的债权人
+		 $('input[name="creditor_name"]').val($("#creditor_name  option:selected").text());
+		 if(bill_type == '01'){
+			 //初始化产品种类默认值
+			 init_cre_loan_type_value();
+		 }
+// 		 init_justice_type();
+		 //初始化数据
+		 init_data();
+		 
+			//银行卡号输入自动加空格
+			$('#debtor_loan_number').keyup(function() {
+				var val = $('#debtor_loan_number').val();//获取用户输入
+		        val = val.replace(/\D/g, '');
+		        var ncard = '';
+		        for(var n = 0; n < val.length; n = n + 4) {
+		            ncard += val.substring(n, n + 4) + ' ';
+		        }
+		        $('#debtor_loan_number').val(ncard.replace(/(\s*$)/g, ''));
+			});
+			//银行卡号输入自动加空格
+			$('#refund_number').keyup(function() {
+				var val = $('#refund_number').val();//获取用户输入
+		        val = val.replace(/\D/g, '');
+		        var ncard = '';
+		        for(var n = 0; n < val.length; n = n + 4) {
+		            ncard += val.substring(n, n + 4) + ' ';
+		        }
+		        $('#refund_number').val(ncard.replace(/(\s*$)/g, ''));
+			});
+		 
+		//取消
+	    $('#cancel').click(function(){
+	        try {
+	            window.parent.dialog.hide();
+	        } catch(e) {
+	            globalUtil.closeCurrentTab();
+	        }
+	    });
+		
+		
+		
+	 }); 
+	 
+	 
+	 function init_data(protocol_type_val){
+		 var data = {};
+		 if(wms_cre_credit_notary_warn_id != "undefined" && wms_cre_credit_head_id != "undefined"){
+			 data = {
+				"bill_type": bill_type,
+	 			"protocol_type": protocol_type,
+				"wms_cre_credit_notary_warn_id" : wms_cre_credit_notary_warn_id,
+				"wms_cre_credit_head_id" : wms_cre_credit_head_id	
+			 }
+			 
+		 }else if(wms_cre_credit_notary_warn_id != "undefined"){
+	        	data = {
+	        			"bill_type": bill_type,
+	        			"protocol_type": protocol_type,
+						"wms_cre_credit_notary_warn_id" : wms_cre_credit_notary_warn_id	
+	        	}
+	        }else{
+	        	data = {
+	        			"bill_type": bill_type,
+	        			"protocol_type": protocol_type,
+						"wms_cre_credit_head_id" : wms_cre_credit_head_id	
+	        	}
+	        	
+	        }
+		 $.ajax({ 
+		        type: "POST", 
+		        url: global_param.context_name + "/loanappro/wmsPerfectContract.do",
+		        async: false,
+		        dataType: "json",
+		        data: data, 
+		        success: function(jsonForSys) {//展期和续期 页面赋值
+		        	salesman_shortcode = jsonForSys.salesman_shortcode;
+		        	wms_cre_credit_head_id = jsonForSys.wms_cre_credit_head_id;
+					
+					//初始化公证书类型
+					var justiceJson = {};
+			       	justiceJson.justice_type = jsonForSys.justice_type;
+			       	//如果数据库没存，默认下拉列表第一个项
+			       	if(justiceJson.justice_type == null){
+			       		justiceJson.justice_type = 1;
+			       	}
+					init_justice_type(justiceJson);
+					 
+		        	if(jsonForSys.status == 2){
+		        		var jsonval={};
+		        		jsonval.cre_loan_type=jsonForSys.category_name;
+						init_Combox('cre_loan_type',102,jsonval);//初始产品下拉框
+		        	 	$('#data input,select').each(function() {
+		            		if($(this).attr('id') in jsonForSys) {
+		            			$(this).val(jsonForSys[$(this).attr('id')]);
+		            		}
+		            	});
+		        	 	bill_code = jsonForSys.bill_code;
+		        	 	status = jsonForSys.status;
+		        	 	payment_contract_type = jsonForSys.payment_contract_type;
+		        	 	jisuan();
+		        	 	
+		        	 	//平台费=本金*平台费率
+		        	 	$("#notarial_fee").val(Math.ceil(parseFloat(jsonForSys.appro_limit*10000)*(jsonForSys.service_cost_month/100)));
+		        	 	//房产抵押权利人=债务人
+						$("#debtor_name_fcdyqlr").val(jsonForSys.debtor_name);
+		        }else{
+	        	    status = jsonForSys.status;
+	        	    wms_cre_appro_id = jsonForSys.wms_cre_appro_id;
+	        	    appro_limit_quanju = parseFloat(jsonForSys.appro_limit_quanju)*10000;
+	        	    payment_contract_type = jsonForSys.payment_contract_type;
+	        	    if(jsonForSys.groupList!=null&&jsonForSys.groupList!=undefined){
+	        	    	 groupList=jsonForSys.groupList;//组合贷信息	
+	        	    }
+	        	    $("#owner").val(jsonForSys.owner);
+					//签订时间
+					$('#protocol_date').val(jsonForSys.protocol_date);
+
+					//申请时间
+					$("input[name='borrow_begin_date']").val(jsonForSys.borrow_begin_date);
+					//如果打款空户名为空  默认赋值债务人
+					if(jsonForSys.status == 1){
+						init_cre_loan_type(jsonForSys);
+						//债权人
+						$("#creditor_name").val(jsonForSys.creditor_name);
+						$("#debtor_name").val(jsonForSys.debtor_name);
+						$("#debtor_loan_name").val(jsonForSys.debtor_loan_name);
+						$("#refund_name").val(jsonForSys.refund_name);
+						$("#refund_number").val(jsonForSys.refund_number);
+						$("#refund_bank").val(jsonForSys.refund_bank);
+						$("#person_name").val(jsonForSys.person_name);
+						$("#person_identity_id").val(jsonForSys.person_identity_id);
+						$("#a_c_relation").val(jsonForSys.a_c_relation);
+						$("#second_house_address").val(jsonForSys.second_house_address);
+						$("#c_house_address").val(jsonForSys.c_house_address);
+						$("#sign_place").val(jsonForSys.sign_place);
+						//房产抵押权利人=债务人
+						$("#debtor_name_fcdyqlr").val(jsonForSys.debtor_name);
+						$("#protocol_refund_interest_month").val(jsonForSys.protocol_refund_interest_month);
+						$("#plan_borrow_date").val(jsonForSys.plan_borrow_date);
+						$("#weiyuejin").val(jsonForSys.weiyuejin);
+//							//还款金额
+//							$("#refund_limit_month").val(jsonForSys.refund_limit_month);
+						$("#debtor_name_fcj").val(jsonForSys.debtor_name);
+						$("#debtor_name_fcj_dyfcqlr").val(jsonForSys.debtor_name);
+						//房产局合同截止时间 
+						$("#regular_borrow_end_date").val(jsonForSys.regular_borrow_end_date);
+						//本公司合同截止时间
+						$("#borrow_end_date").val(jsonForSys.borrow_end_date);
+						//双方确认房屋价值
+						$("#confirm_house_value").val(jsonForSys.confirm_house_value);
+						$("#liquidated_damages").val((jsonForSys.liquidated_damages));
+						$('#deduct_money').val(jsonForSys.deduct_money);
+						$('#protocol_refund_interest_month_fcj').val(jsonForSys.protocol_refund_interest_month);
+						$('#service_cost_month').val(jsonForSys.service_cost_month);
+						//转账金额  先息后本：本金-手续费-本月还款额-他项-加急。
+		     			$("#loan_amount").val(jsonForSys.loan_amount);
+		     			//借款期限(默认24个月，并且不会随着本公司合同借款期限联动)
+						$("#regular_borrow_deadline").val(jsonForSys.regular_borrow_deadline);
+		     				//如果先息后本显示平台费率
+							if(jsonForSys.payment_contract_type == 2){
+				    			//合同金额  ：合同金额等于借款本金
+								$("#principal_lower").val(jsonForSys.principal_lower);
+								$("#ptfl").html("平台费率:");
+								$("#ptfl_dw").html("%");
+				    			//平台费
+								$("#service_cost_month").val(jsonForSys.service_cost_month);
+				    			//还款金额 
+				    			$("#refund_limit_month").val(jsonForSys.refund_limit_month);
+				    			$("#ptzfl").html("平台总费率:");
+				    			$("#ptzfl_dw").html("%");
+				    			$("#jujian_service_cost").val(jsonForSys.jujian_service_cost);
+				     			
+				    		}
+							//如果等额本息显示借款本金
+				    		else if(jsonForSys.payment_contract_type == 1){
+				    			//合同金额  ：合同金额等于借款本金+利息（月）*期数
+								$("#principal_lower").val(parseInt(jsonForSys.principal_lower));
+				    			//还款金额  合同金额/期数
+				    			$("#refund_limit_month").val(jsonForSys.refund_limit_month);
+				    			$("#ptzfl").html("借款本金:");
+				    			$("#ptzfl_dw").html("元");
+				     			$("#jujian_service_cost").val(jsonForSys.jujian_service_cost);
+				    			$("#ptfl").html("每期还款:");
+				    			$("#ptfl_dw").html("元");
+// 				     			$("#service_cost_month").val(jsonForSys.service_cost_month);
+				    		}
+							//合同编号
+							$("#protocol_id_num").val(jsonForSys.protocol_id_num);
+							$("#protocol_id_year").val(jsonForSys.protocol_id_year);
+							$("#notarial_fee").val(jsonForSys.platform_fee);
+							$("#fees").val(jsonForSys.fees);
+							$("#protocol_id_year_num").val(jsonForSys.protocol_id_year_num);
+							$("#the_number").val(jsonForSys.the_number);
+					}else{
+							$('input[name=debtor_name]').val(jsonForSys.debtor_name);
+//							  	$("#protocol_id_year").val(jsonForSys.protocol_id_year);
+//				        		$("#protocol_id_num").val(jsonForSys.protocol_id_num);
+			        		//每期还款
+			        		$("input[name='protocol_refund_interest_month']").val(Math.ceil(jsonForSys.borrow_interest*jsonForSys.principal_lower*0.01));
+			        		//初始化违约金 借款合同内的借款本金 * 每日违约金利率。
+							$("#liquidated_damages").val(Math.ceil((jsonForSys.appro_limit*10000)*jsonForSys.weiyuejin));
+							$('#sign_place').val(jsonForSys.sign_place);
+							
+							//初始化双方确认金额=借款本金
+							$('#confirm_house_value').val((jsonForSys.appro_limit)*10000);
+							
+							if(jsonForSys.payment_contract_type == 2){
+				    			//合同金额  ：合同金额等于借款本金
+								$("#principal_lower").val(jsonForSys.appro_limit*10000);
+								$("#ptfl").html("平台费率:");
+								$("#ptfl_dw").html("%");
+				    			//平台费
+								$("#service_cost_month").val(jsonForSys.service_cost_month);
+				    			//还款金额  本金*（月利率+平台费利率（0.49%））
+				    			var refund_limit_month_val=Math.round(parseFloat(jsonForSys.appro_limit*10000)*(parseFloat(jsonForSys.borrow_interest)+parseFloat(jsonForSys.service_cost_month))/100);
+				    			$("#refund_limit_month").val(refund_limit_month_val);
+				    			$("#ptzfl").html("平台总费率:");
+				    			$("#ptzfl_dw").html("%");
+				    			$("#jujian_service_cost").val(((parseFloat(jsonForSys.service_cost_month)/100)*(parseFloat(jsonForSys.borrow_deadline)))*100);
+				     			//转账金额  先息后本：本金-手续费-本月还款额-他项-加急。
+				     			$("#loan_amount").val(Math.ceil(parseFloat(jsonForSys.appro_limit*10000)-(parseFloat(jsonForSys.appro_limit*10000)*(parseFloat(jsonForSys.consult_service_cost)/100))-refund_limit_month_val-parseFloat(jsonForSys.expedited_fee)-parseFloat(jsonForSys.it_cost_fee)));
+							}
+							else if(jsonForSys.payment_contract_type == 1){
+				    			//合同金额  ：合同金额等于借款本金+利息（月）*期数
+				    			var principal_lower_val=Math.ceil(parseFloat(jsonForSys.appro_limit*10000)+(parseFloat(jsonForSys.appro_limit*10000)*(parseFloat(jsonForSys.borrow_interest)/100))*parseFloat(jsonForSys.borrow_deadline));
+								$("#principal_lower").val(parseInt(principal_lower_val));
+				    			//还款金额  合同金额/期数
+				    			$("#refund_limit_month").val(Math.ceil(principal_lower_val/jsonForSys.borrow_deadline));
+				    			$("#ptzfl").html("借款本金:");
+				    			$("#ptzfl_dw").html("元");
+				     			$("#jujian_service_cost").val(jsonForSys.appro_limit*10000);
+				    			$("#ptfl").html("每期还款:");
+				    			$("#ptfl_dw").html("元");
+// 				     			$("#service_cost_month").val(Math.ceil(jsonForSys.appro_limit*10000/jsonForSys.borrow_deadline));
+				     			//转账金额  等额本息：本金-手续费-他项-加急
+				     			$("#loan_amount").val(Math.ceil(parseFloat(jsonForSys.appro_limit*10000)-(parseFloat(jsonForSys.appro_limit*10000)*(parseFloat(jsonForSys.consult_service_cost)/100))-parseFloat(jsonForSys.expedited_fee)-parseFloat(jsonForSys.it_cost_fee)));
+				    		}
+							//现金支付金额
+				    		var principal_lower1 = $("#principal_lower").val();
+				    		var loan_amount1 = $("#loan_amount").val();
+							$('#deduct_money').val(principal_lower1-loan_amount1);
+							//房产局合同
+							//借款期限(默认24个月，并且不会随着本公司合同借款期限联动)
+							$("#regular_borrow_deadline").val(jsonForSys.regular_borrow_deadline);
+							//房产局合同截止时间 
+							$("#regular_borrow_end_date").val(jiSuanTime(parseInt(jsonForSys.regular_borrow_deadline)));
+							
+							//平台费=本金*平台费率
+							$("#notarial_fee").val(Math.ceil(parseFloat(jsonForSys.appro_limit*10000)*(jsonForSys.service_cost_month/100)));
+							$("#fees").val(Math.ceil(parseFloat((jsonForSys.appro_limit*10000)*(jsonForSys.consult_service_cost/100))));//手续费
+					}
+					//打款账号
+					$("#debtor_loan_number").val(jsonForSys.debtor_loan_number);
+					//打款银行
+					$("#debtor_loan_bank").val(jsonForSys.debtor_loan_bank);
+					//初始化债务人身份证号
+					$("#debtor_identity_id").val(jsonForSys.debtor_identity_id);
+					//初始化债务人电话
+					$("#debtor_tel").val(jsonForSys.debtor_tel);
+					//初始化债务人地址
+					$("#debtor_address").val(jsonForSys.debtor_address);
+					
+//					共同债务人
+					if(jsonForSys.com_debtor_name!=null&&jsonForSys.com_debtor_name!=""){	
+						//初始化共同债务人姓名
+						$('input[name="com_debtor_name"]').val(jsonForSys.com_debtor_name);
+					}
+					if(jsonForSys.com_debtor_identity_id!=null&&jsonForSys.com_debtor_identity_id!=""){	
+						//初始化共同债务人身份证
+						$("#com_debtor_identity_id").val(jsonForSys.com_debtor_identity_id);
+					}
+					if(jsonForSys.com_debtor_tel!=null&&jsonForSys.com_debtor_tel!=""){	
+						//初始化共同债务人身份证
+						$("#com_debtor_tel").val(jsonForSys.com_debtor_tel);
+					}
+					if(jsonForSys.com_debtor_address!=null&&jsonForSys.com_debtor_address!=""){	
+						//初始化共同债务人身份证
+						$("#com_debtor_address").val(jsonForSys.com_debtor_address);
+					}
+					//房产位置坐落
+					$("input[name='explicit_address']").val(jsonForSys.explicit_address);
+					//房产面积
+					$("input[name='house_area']").val(jsonForSys.house_area);
+					//抵押房产权属证号
+					$("input[name='house_certificate_number']").val(jsonForSys.house_certificate_number);
+					//抵押房产权属卷号
+					$("input[name='house_roll_number']").val(jsonForSys.house_roll_number);
+					
+					
+					//还款事项提醒函
+//					初始化还款日期
+					$("#refund_day").val(jsonForSys.refund_day);
+					//借款本金
+					$("input[name='appro_limit']").val(parseInt(jsonForSys.appro_limit*10000));
+					//借款用途
+					$("#borrow_purpose").val(jsonForSys.borrow_purpose);
+					//借款期限
+					$("input[name='borrow_deadline']").val(jsonForSys.borrow_deadline);
+//						//申请时间
+//						$("input[name='borrow_begin_date']").val(jsonForSys.borrow_begin_date);
+					//月利率
+					$("input[name='borrow_interest']").val(jsonForSys.borrow_interest);
+				
+					//截止时间
+					$("#borrow_end_date").val(jsonForSys.borrow_end_date);
+					//违约金利率(用于显示)
+// 					$("#yuqi_damages").val(jsonForSys.weiyuejin);
+					//违约金利率（用于计算）
+					$("#weiyuejin").val(jsonForSys.weiyuejin);
+					//第一期利息日
+					$("#first_refund_date").val(jsonForSys.first_refund_date);
+					//第二期利息日
+					$("#second_refund_date").val(jsonForSys.second_refund_date);
+					//他项
+					$("#it_cost_fee").val(jsonForSys.it_cost_fee);
+					//加急费
+					$("#expedited_fee").val(jsonForSys.expedited_fee);
+					//手续费律
+					$('#consult_service_cost').val(jsonForSys.consult_service_cost);
+					 //如果是组合贷，并且其他单据保存过合同，本单据没保存过，重新赋值
+					 is_group_all = jsonForSys.is_group;
+			        if(jsonForSys.is_group == 1 && jsonForSys.is_protocol == 1){
+			        	 $('#creditor_name').val(jsonForSys.creditor_name);
+			        	 
+			        	 $('#debtor_name').val(jsonForSys.debtor_name);
+			        	 $('#debtor_identity_id').val(jsonForSys.debtor_identity_id);
+			        	 $('#debtor_tel').val(jsonForSys.debtor_tel);
+			        	 $('#debtor_address').val(jsonForSys.debtor_address);
+			        	 
+			        	 $('#com_debtor_name').val(jsonForSys.com_debtor_name);
+			        	 $('#com_debtor_identity_id').val(jsonForSys.com_debtor_identity_id);
+			        	 $('#com_debtor_tel').val(jsonForSys.com_debtor_tel);
+			        	 $('#com_debtor_address').val(jsonForSys.com_debtor_address);
+			        	 
+			        	 $('#borrow_purpose').val(jsonForSys.borrow_purpose);
+			        	 $('#borrow_begin_date').val(jsonForSys.borrow_begin_date);
+			        	 $('#first_refund_date').val(jsonForSys.first_refund_date);
+			        	 $('#second_refund_date').val(jsonForSys.second_refund_date);
+			        	 $('#debtor_loan_name').val(jsonForSys.debtor_loan_name);
+			        	 $('#debtor_loan_number').val(jsonForSys.debtor_loan_number);
+			        	 $('#debtor_loan_bank').val(jsonForSys.debtor_loan_bank);
+			        	 
+			        	 $('#protocol_date').val(jsonForSys.protocol_date);
+			        	 $('#explicit_address').val(jsonForSys.explicit_address);
+			        	 $('#house_area').val(jsonForSys.house_area);
+			        	 $('#house_certificate_number').val(jsonForSys.house_certificate_number);
+			        	 $('#house_roll_number').val(jsonForSys.house_roll_number);
+			        	 
+			        	 $('#refund_name').val(jsonForSys.refund_name);
+			        	 $('#refund_number').val(jsonForSys.refund_number);
+			        	 $('#refund_bank').val(jsonForSys.refund_bank);
+			        	 $('#refund_day').val(jsonForSys.refund_day);
+			        	 
+			        	 $('#plan_borrow_date').val(jsonForSys.plan_borrow_date);
+			        	 
+			        	 $('#sign_place').val(jsonForSys.sign_place);
+			        	 
+			        	 $('#person_name').val(jsonForSys.person_name); 
+			        	 $('#person_identity_id').val(jsonForSys.person_identity_id); 
+			        	 $('#a_c_relation').val(jsonForSys.a_c_relation); 
+			        	 $('#second_house_address').val(jsonForSys.second_house_address); 
+			        	 $('#c_house_address').val(jsonForSys.c_house_address); 
+			        }
+			        if(jsonForSys.is_group == 1){
+			        	//是否打印过合同
+			        	if(jsonForSys.noone == 0) {//打印过
+			        		/* if(jsonForSys.this_protocol == 1) {//本单据是否打印过合同
+			        			 $("#appro_limit_fcj").val(jsonForSys.regular_appro_limit);
+				        		 $("#borrow_interest_fcj").val(jsonForSys.regular_borrow_interest);
+				        		 $("#protocol_refund_interest_month_fcj").val(jsonForSys.regular_protocol_refund_interest_month);
+				        	} else {//未打印合同 */
+				        		$("#appro_limit_fcj").val((parseFloat(jsonForSys.appro_limit_counum)) );
+				        		//$("#appro_limit_fcj").val((parseFloat(jsonForSys.appro_limit_counum)) + (parseFloat(jsonForSys.appro_limit*10000)));
+				        		var this_interest = $("#borrow_interest").val();
+				        		if(this_interest > jsonForSys.borrow_interest_top){
+				        			$("#borrow_interest_fcj").val(this_interest);
+				        		}else{
+				        			$("#borrow_interest_fcj").val(jsonForSys.borrow_interest_top);
+				        		}
+				        		var appro_limit_fcj = $("#appro_limit_fcj").val();
+				        		var borrow_interest_fcj = $("#borrow_interest_fcj").val();
+				        		$("#protocol_refund_interest_month_fcj").val(Math.ceil(appro_limit_fcj*((borrow_interest_fcj)/100)));
+				        		
+				        		//双方房屋确认价值
+				        		$("#confirm_house_value").val($("#appro_limit_fcj").val());
+				        	//}
+			        	} else {//没打印过
+							//终审金额
+							
+			        	}
+			        }
+		        }
+// 		        	if($("#notarial_fee").val() == null){
+// 		        		$("#notarial_fee").val(0)
+// 		        	}
+	        }
+	       
+		});
+ }
+	//加载债权人下拉列表信息
+	function init_wms_cre_contract_lender(json){
+		$.ajax({ 
+	        type: "GET", 
+	        url: global_param.context_name + "/sysmanage/wmscrecontractlender.do",
+	        async: false,
+	        dataType: "json",
+	        data: { 
+	        }, 
+	        success: function(data) {
+	        	for(var i = 0; i < data.length; i++) {
+	        		$('#creditor_name').append(
+	        			'<option value="' + data[i].lender_name + '">' + data[i].lender_name + '</option>'
+	        		);
+	        	}
+	        }
+	    });
+	}
+	//初始化产品种类
+	function init_cre_loan_type(json){
+		var cre_loan_type_params ={
+				dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?wms_sys_dict_id=102',
+				t_col_name:'cre_loan_type',
+				valueField:'value_code',   //下拉框value对应的值，默认为id
+				textField:'value_meaning',    //下拉框text对应的值，默认为text
+				def_val:'first'
+				};
+		global_ligerui_extend.initCombox("cre_loan_type",null,cre_loan_type_params);
+  		if(json){
+			//把值装载设定
+			global_ligerui_extend.syncRequestInitComboxData(json,"cre_loan_type");
+		}else{			
+		    global_ligerui_extend.initComboxDefVal("cre_loan_type");
+		}
+	}
+	//初始化产品种类默认值
+	function init_cre_loan_type_value(){
+		$.ajax({ 
+	        type: "GET", 
+	        url: global_param.context_name + "/sysmanage/getwmscrecredit.do",
+	        async: false,
+	        dataType: "json",
+	        data: { 
+	        	"wms_cre_credit_head_id": wms_cre_credit_head_id
+	        }, 
+	        success: function(data) {
+	        	//判断是否没选产品，如果没选默认房贷一号
+	        	if(data.cre_loan_type == "-1"){
+	        		protocol_type=785;
+	        		data.cre_loan_type=785;
+	        		data.value_code=785;
+	        		data.value_meaning="新房贷1号";
+	        		init_cre_loan_type(data);
+	        	}else{
+	        		protocol_type=data.cre_loan_type;
+		        	init_cre_loan_type(data);
+	        	}
+	        	
+	        }
+	    });
+	}
+	
+	
+	//初始化产品种类
+	function init_justice_type(json){
+		var cre_loan_type_params ={
+				dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?wms_sys_dict_id=142',
+				t_col_name:'justice_type',
+				valueField:'value_code',   //下拉框value对应的值，默认为id
+				textField:'value_meaning',    //下拉框text对应的值，默认为text
+				def_val:'first'
+				};
+		global_ligerui_extend.initCombox("justice_type",null,cre_loan_type_params);
+  		if(json){
+			//把值装载设定
+			global_ligerui_extend.syncRequestInitComboxData(json,"justice_type");
+		}else{			
+		    global_ligerui_extend.initComboxDefVal("justice_type");
+		}
+	}
+	
+	
+	
+	//手续费率变动事件
+	function consult_service_cost_onchange(){
+		jisuan();
+	}
+	
+	//产品变动事件
+	function cre_loan_type_onchange(){
+		var cre_loan_type = $("#cre_loan_type_hidden").val();
+		var borrow_deadline = $("#borrow_deadline").val();
+		//申请额度
+    	var appro_limit = $("#appro_limit").val();
+    	appro_limit = appro_limit/10000
+		 //初始化需要动态计算的数据
+			 $.ajax({ 
+			        type: "POST", 
+			        url: global_param.context_name + "/loanappro/getCreLoanTypeChange.do",
+			        async: false,
+			        dataType: "json",
+			        data: { 
+			        	"appro_limit" : appro_limit,
+			        	"protocol_type": cre_loan_type,
+ 						"wms_cre_credit_head_id": wms_cre_credit_head_id,
+						"borrow_deadline" : borrow_deadline
+			        }, 
+			        success: function(jsonForSys){
+			        	console.log(jsonForSys);
+			        	//借款期限
+						var borrow_deadline = $('#borrow_deadline').val();
+			        	if(jsonForSys.payment_contract_type == 2){
+							$("#ptfl").html("平台费率:");
+							$("#ptfl_dw").html("%");
+							$("#service_cost_month").val(jsonForSys.service_cost_month);
+			    			//还款金额  本金*（月利率+平台费利率（0.49%））
+			    			$("#ptzfl").html("平台总费率:");
+			    			$("#ptzfl_dw").html("%");
+			    			$("#jujian_service_cost").val((jsonForSys.service_cost_month)*borrow_deadline);
+			    		}
+			    		else if(jsonForSys.payment_contract_type == 1){
+// 			    			//还款金额  合同金额/期数
+// 			    			$("#ptzfl").html("借款本金:");
+// 			    			$("#ptzfl_dw").html("元");
+// 			     			$("#jujian_service_cost").val(jsonForSys.appro_limit*10000);
+// 			    			$("#ptfl").html("每期还款:");
+// 			    			$("#ptfl_dw").html("元");
+			    		}
+			        	$("#it_cost_fee").val(jsonForSys.it_cost_fee);//加急
+			        	$("#expedited_fee").val(jsonForSys.expedited_fee);//公正
+			        	//月利率
+			        	$("input[name='borrow_interest']").val(jsonForSys.borrow_interest);
+			        	//手续费率
+			        	$("#consult_service_cost").val(jsonForSys.consult_service_cost);
+			        	//平台费
+			        	$("#service_cost_month").val(jsonForSys.service_cost_month);
+			        	payment_contract_type = jsonForSys.payment_contract_type;
+			    		jisuan(jsonForSys,cre_loan_type);
+			        }
+			});
+	}
+	function appro_limit_onkeyup(){
+		if(bill_type == "01"){
+			var appro_limit = $("#appro_limit").val();
+			if(appro_limit > appro_limit_quanju){
+				$("#appro_limit").val(appro_limit_quanju);
+			}
+		}
+	}
+	
+	//违约金利率变动事件
+	function weiyuejin_onchange(){
+		jisuan();
+	}
+	
+	//合同金额变动事件
+	function principal_lower_onchange(){
+		jisuan();
+	}
+	
+	
+	//本金变动事件
+	function appro_limit_change(){
+		//修改本公司合同，房产局合同联动
+		var appro_limit = $("#appro_limit").val();
+		borrow_deadline_change();
+		var appro_limit = $("#appro_limit").val();
+		if(bill_type == "01"){
+			if(appro_limit > appro_limit_quanju){
+				$("#appro_limit").val(appro_limit_quanju);
+			}
+		}
+		
+// 		var appro_limit_fcj = parseFloat(appro_limit);
+// 		if(groupList!=null&&groupList.length>0){
+// 			for(var i =0 ;i<groupList.length;i++){
+// 				if(wms_cre_credit_head_id != groupList[i].wms_cre_credit_head_id){
+// 					appro_limit_fcj+=parseFloat(groupList[i].appro_limit);
+// 				}
+// 			}
+// 		}
+// 		$("#appro_limit_fcj").val(appro_limit_fcj);
+		//双方房屋确认价值
+		//$("#confirm_house_value").val(appro_limit_fcj);
+	}
+	//借款期限变动事件
+	function borrow_deadline_change(){
+		
+		//贷款期限
+		var borrow_deadline = $("#borrow_deadline").val();
+		//申请额度
+    	var appro_limit = $("#appro_limit").val();
+		//产品
+		var cre_loan_type_hidden = $("#cre_loan_type_hidden").val();
+		 $.ajax({ 
+		        type: "POST", 
+		        url: global_param.context_name + "/loanappro/getBorrowDeadlineChange.do",
+		        async: false,
+		        dataType: "json",
+		        data: { 
+		        	"protocol_type": cre_loan_type_hidden,
+ 					"wms_cre_credit_head_id": wms_cre_credit_head_id,
+					"borrow_deadline" : borrow_deadline,
+					"appro_limit" : appro_limit,
+		        }, 
+		        success: function(json){
+		        	//月利率
+		        	$("input[name='borrow_interest']").val(json.borrow_interest);
+		        	//手续费率
+		        	$("#consult_service_cost").val(json.consult_service_cost);
+		        	//平台费
+		        	$("#service_cost_month").val(json.service_cost_month);
+		        	jisuan();
+		        }
+		});
+	}
+	//他项和加急费变动事件（主要用来计算转账金额）
+	function itCostFeeAndExpeditedFeeonchange(){
+		//如果他项和加急费为空默认赋0
+		var  it_cost_fee = $("#it_cost_fee").val();
+		var expedited_fee = $("#expedited_fee").val();
+		if(it_cost_fee == ""){
+			$("#it_cost_fee").val("0");
+		}
+		if(expedited_fee == ""){
+			$("#expedited_fee").val("0");
+		}
+		jisuan();
+	}
+	//月利率变动事件
+	function borrow_interest_onchange(){
+		jisuan();
+	}
+	
+	
+	//无脑计算方法
+	function jisuan(jsonForSys){
+		cre_loan_type1 = $("#cre_loan_type_hidden").val();
+		//本金
+    	var appro_limit = $("#appro_limit").val();
+    	//平台费律
+    	var service_cost_month = $("#service_cost_month").val();
+    	//月利率
+		var borrow_interest = $("#borrow_interest").val();
+		//获取他项
+		var expedited_fee =  $("#expedited_fee").val();
+		//获取加急费
+		var it_cost_fee = $("#it_cost_fee").val();
+		//手续费律
+		var consult_service_cost = $('#consult_service_cost').val();
+		//借款期限
+		var borrow_deadline = $('#borrow_deadline').val();
+			
+		 var appro_limit = $("#appro_limit").val();
+// 	 	 var consult_service_cost = $("#consult_service_cost").val();
+	 	 var fees = $("#fees").val();
+	 	 $("#fees").val(Math.ceil(appro_limit*(consult_service_cost/100)));//手续费
+	 	 
+	 	 
+	 	 var weiyuejin = $("#weiyuejin").val();
+	 	 $("#liquidated_damages").val(appro_limit*(weiyuejin/100));//违约金
+	 	
+	 	
+	 	 $("#notarial_fee").val(Math.ceil(appro_limit*(service_cost_month/100)));
+	 	 
+// 	 	$("#yuqi_damages").val(weiyuejin);//手续费
+		if(payment_contract_type == 2){
+			//合同金额  ：合同金额等于借款本金
+			$("#principal_lower").val(appro_limit);
+			//还款金额  本金*（月利率+平台费利率（0.49%））
+			var refund_limit_month_val=Math.ceil(parseFloat(appro_limit)*(parseFloat(service_cost_month)+parseFloat(borrow_interest))/100);
+			$("#refund_limit_month").val(refund_limit_month_val);
+ 			//平台总费率
+ 			$("#jujian_service_cost").val((service_cost_month)*borrow_deadline);
+			//转账金额  先息后本：本金-手续费-本月还款额-他项-加急。
+ 			$("#loan_amount").val(Math.ceil(parseFloat(appro_limit)-(parseFloat(fees))-refund_limit_month_val-parseFloat(expedited_fee)-parseFloat(it_cost_fee)));
+		}
+		else if(payment_contract_type == 1){
+			if(borrow_interest == ""){
+				borrow_interest = 0;
+			}
+			//合同金额  ：合同金额等于借款本金+利息（月）*期数
+			var principal_lower_val=Math.ceil(parseFloat(appro_limit)+(parseFloat(appro_limit)*(parseFloat(borrow_interest)/100))*parseFloat(borrow_deadline));
+			$("#principal_lower").val(principal_lower_val);
+			//还款金额  合同金额/期数
+			$("#refund_limit_month").val(Math.ceil(principal_lower_val/borrow_deadline));
+			//平台费率（每期还款）
+// 			$("#service_cost_month").val(Math.ceil(appro_limit/borrow_deadline));
+ 			//转账金额  等额本息：本金-手续费-他项-加急
+ 			$("#loan_amount").val(Math.ceil(parseFloat(appro_limit)-(parseFloat(fees))-parseFloat(expedited_fee)-parseFloat(it_cost_fee)));
+			//平台总费率【借款本金】
+ 			$("#jujian_service_cost").val(appro_limit);
+		}
+		//现金支付金额
+		var principal_lower1 = $("#principal_lower").val();
+		var loan_amount1 = $("#loan_amount").val();
+		$('#deduct_money').val(principal_lower1-loan_amount1);
+		//违约金
+		var weiyuejin =  $("#weiyuejin").val();
+		$("#liquidated_damages").val(Math.ceil((appro_limit)*weiyuejin));
+		//每月还款 本金*月利率
+		$("#protocol_refund_interest_month").val(Math.ceil(appro_limit*(borrow_interest/100)));
+         
+		//组合贷利率问问题
+		var appro_limit_fcj = parseFloat($("#appro_limit_fcj").val()|0);
+		var borrow_interest_fcj = borrow_interest;
+		if(groupList!=null&&groupList.length>0){
+			for(var i =0 ;i<groupList.length;i++){
+				if(wms_cre_credit_head_id != groupList[i].wms_cre_credit_head_id){
+					if(borrow_interest_fcj<groupList[i].borrow_interest){
+							borrow_interest_fcj=groupList[i].borrow_interest;
+					} 
+				}
+			}		
+		}
+		//房产局利率
+		$("#borrow_interest_fcj").val(borrow_interest_fcj);
+		//双方房屋确认价值
+		//$("#confirm_house_value").val($("#appro_limit_fcj").val());
+		//房产局合同每月还款金额
+		$("#protocol_refund_interest_month_fcj").val(Math.ceil(appro_limit_fcj*((borrow_interest_fcj)/100)));
+		
+		//计算结束时间方法
+		borrow_begin_date_change();
+		//如果借款本金为空 清空联动input
+		clearApproLimit();
+		//借款期限为空相关处理方法
+		iFNullBorrow_Deadline();
+	}
+	
+	//债权人联动方法
+	function creditor_name_val(){
+		$('input[name="creditor_name"]').val($("#creditor_name  option:selected").text());
+	}
+	function clearApproLimit(){
+		//本金
+    	var appro_limit = $("#appro_limit").val();
+		if(appro_limit == '' || appro_limit == 0 || appro_limit == null){
+			$("#principal_lower").val('0');
+			$("#refund_limit_month").val('0');
+			$("#loan_amount").val('0');
+			$("#deduct_money").val('0');
+			$("#loan_amount").val('0');
+			$("#deduct_money").val('0');
+// 			$("#yuqi_damages").val('0');
+			$("#weiyuejin").val('0');
+			$("#borrow_interest").val('0');
+			$("#protocol_refund_interest_month").val('0');
+			$("#protocol_refund_interest_month_fcj").val('0');
+		}
+	}
+	//申请时间联动事件
+	function borrow_begin_date_change(){
+		//联动房产局合同申请时间
+		var borrow_begin_date1 = $("#borrow_begin_date").val();
+		$("#borrow_begin_date_fcj").val(borrow_begin_date1);
+		
+		var  regular_borrow_deadline = $("#regular_borrow_deadline").val();
+		$("#regular_borrow_end_date").val(jiSuanTime(regular_borrow_deadline));
+		//期数
+		var borrow_deadline = $("#borrow_deadline").val();
+		jiSuanTime(borrow_deadline);
+		$("#borrow_end_date").val(jiSuanTime(borrow_deadline));
+		$("#first_refund_date").val(jiSuanTime1($("#borrow_begin_date").val()));
+		$("#second_refund_date").val(jiSuanTime2($("#borrow_begin_date").val()));
+		var refund = $("#borrow_end_date").val();
+		var refund_day = refund.split("-")[2];
+		var day = refund_day.substring(0,1);
+		if(day == 0){
+			refund_day = refund_day.substring(1,2);
+		}
+		$("#refund_day").val(refund_day);
+		//如果申请时间为空联动事件
+		iFNullBorrow_Begin_Date();
+	}
+	//根据申请时间计算结束时间方法
+	function jiSuanTime(borrow_deadline){
+		//开始时间
+		 var borrow_begin_date = new Date($("#borrow_begin_date").val());
+		 var month;
+		 if((borrow_begin_date.getMonth() + 1) == 11){
+			 month = 12;
+		 }else{
+			 month = (borrow_begin_date.getMonth() + 1 + parseInt(borrow_deadline)) % 12;  
+		 }
+		 var year = borrow_begin_date.getFullYear() + Math.floor((borrow_begin_date.getMonth() + 1 + parseInt(borrow_deadline)) / 12);  
+         var day = borrow_begin_date.getDate();  
+         var date_to = new Date();
+         
+         if(month == 2 && day > globalUtil.getDayCountByYearAndMonth(year, 2)) {//2月份
+         	month = 2;
+         	day = globalUtil.getDayCountByYearAndMonth(year, 2);
+         	 date_to = new Date(year, month - 1, day);
+         } else {
+        	 date_to = new Date(new Date(year, month - 1, day).getTime() - 60 * 60 * 24 * 1000);
+         }
+         
+         year = date_to.getFullYear();
+         month = date_to.getMonth() + 1;
+         day = date_to.getDate();
+         
+         if (month < 10) {  
+             month = '0' + month;  
+         }
+         
+         if(day == 31) {
+        	 day = 30;//志刚说没有31号
+         }
+         
+         if (day < 10) {  
+             day = '0' + day;  
+         }  
+		return year + '-' + month + '-' + day;
+	}
+	
+	//计算第一个利息日
+	function jiSuanTime1(time) {
+		//开始时间
+		var borrow_begin_date = new Date(time);
+		var month = borrow_begin_date.getMonth() + 1;  
+		var year = borrow_begin_date.getFullYear();  
+        var day = borrow_begin_date.getDate();  
+        
+        if(day == 1) {//1号则为当月30号(2月1号为二月最后一天)
+        	if(month == 2) {
+        		day = globalUtil.getDayCountByYearAndMonth(year, month);
+        	} else {
+        		day = 30;//志刚说没有31号
+        	}
+        } else if(month == 1 && day > globalUtil.getDayCountByYearAndMonth(year, 2)) {//1月份大于2月份最大的天数按照2月最后一天处理
+       		month = 2;
+	        day = globalUtil.getDayCountByYearAndMonth(year, month);     	
+        } else if(month == 12) {//12月份(跨年)
+        	year++;
+        	month = 1;
+        	day--;
+        } else {
+        	month++;
+        	day--;
+        }
+        
+		return getFormatDate(year, month, day);
+	}
+	
+	//计算第二个利息日
+	function jiSuanTime2(time) {
+		//开始时间
+		var borrow_begin_date = new Date(time);
+		var month = borrow_begin_date.getMonth() + 1;  
+		var year = borrow_begin_date.getFullYear();  
+        var day = borrow_begin_date.getDate();  
+        
+        if(day == 1) {//1号则为当月30号(2月1号为二月最后一天)
+        	month++;
+        	day = globalUtil.getDayCountByYearAndMonth(year, month);
+        	if(day > 30) {
+        		day = 30;//志刚说没有31号
+        	}
+        } else if(month == 12 && day > globalUtil.getDayCountByYearAndMonth((year + 1), 2)) {//12月份(跨年)
+        	year++;
+        	month = 2;
+        	day = globalUtil.getDayCountByYearAndMonth(year, month);
+        } else {
+        	var month_old = month;
+        	month += 2 - Math.floor((month_old + 2) / 12) * 12;
+        	year += Math.floor((month_old + 2) / 12);
+        	day--;
+        }
+        
+		return getFormatDate(year, month, day);
+	}
+	
+	function getFormatDate(year, month, day) {
+		if (month < 10) {  
+            month = '0' + month;  
+        }  
+        if (day < 10) {  
+            day = '0' + day;  
+        }  
+		return year + '-' + month + '-' + day;
+	}
+	
+	function loan_amount_change(){
+		//合同金额
+		var principal_lower = $("#principal_lower").val();
+		//转账金额
+		var loan_amount = $("#loan_amount").val();
+		$('#deduct_money').val(principal_lower-loan_amount);
+	}
+	//抵押合同联动方法
+	function dyhtTable(){
+		$("#explicit_address_fcj").val($("#explicit_address").val());
+		$("#debtor_name_fcj_dyfcqlr").val($("#debtor_name_fcdyqlr").val());
+		$("#house_area_fcj").val($("#house_area").val());
+		$("#house_certificate_number_fcj").val($("#house_certificate_number").val());
+		$("#house_roll_number_fcj").val($("#house_roll_number").val());
+	}
+	//共同债务人联动
+	function com_debtor_name_onchange(){
+		var com_debtor_name = $("#com_debtor_name").val();
+		$("#com_debtor_name_fcj").val(com_debtor_name);
+	}
+	//小写金额转大写金额
+	function convertCurrency(currencyDigits) {  
+		var MAXIMUM_NUMBER = 99999999999.99;
+		var CN_ZERO = "零";
+		var CN_ONE = "壹";
+		var CN_TWO = "贰";
+		var CN_THREE = "叁";
+		var CN_FOUR = "肆";
+		var CN_FIVE = "伍";
+		var CN_SIX = "陆";
+		var CN_SEVEN = "柒";
+		var CN_EIGHT = "捌";
+		var CN_NINE = "玖";
+		var CN_TEN = "拾";
+		var CN_HUNDRED = "佰";
+		var CN_THOUSAND = "仟";
+		var CN_TEN_THOUSAND = "万";
+		var CN_HUNDRED_MILLION = "亿";
+		var CN_SYMBOL = "";
+		var CN_DOLLAR = "元";
+		var CN_TEN_CENT = "角";
+		var CN_CENT = "分";
+		var CN_INTEGER = "整";
+
+		var integral;
+		var decimal;
+		var outputCharacters;
+		var parts;
+		var digits, radices, bigRadices, decimals;
+		var zeroCount;
+		var i, p, d;
+		var quotient, modulus;
+
+		currencyDigits = currencyDigits.toString();
+
+		currencyDigits = currencyDigits.replace(/,/g, "");
+		currencyDigits = currencyDigits.replace(/^0+/, "");
+
+		if (Number(currencyDigits) > MAXIMUM_NUMBER) {
+			globalUtil.errorMsg(globalErrorMsg['100404']);
+			return "";
+		}
+		parts = currencyDigits.split(".");
+		if (parts.length > 1) {
+			integral = parts[0];
+			decimal = parts[1];
+			decimal = decimal.substr(0, 2);
+		} else {
+			integral = parts[0];
+			decimal = "";
+		}
+		digits = new Array(CN_ZERO, CN_ONE, CN_TWO, CN_THREE, CN_FOUR,
+				CN_FIVE, CN_SIX, CN_SEVEN, CN_EIGHT, CN_NINE);
+		radices = new Array("", CN_TEN, CN_HUNDRED, CN_THOUSAND);
+		bigRadices = new Array("", CN_TEN_THOUSAND, CN_HUNDRED_MILLION);
+		decimals = new Array(CN_TEN_CENT, CN_CENT);
+		outputCharacters = "";
+		if (Number(integral) > 0) {
+			zeroCount = 0;
+			for (i = 0; i < integral.length; i++) {
+				p = integral.length - i - 1;
+				d = integral.substr(i, 1);
+				quotient = p / 4;
+				modulus = p % 4;
+				if (d == "0") {
+					zeroCount++;
+				} else {
+					if (zeroCount > 0) {
+						outputCharacters += digits[0];
+					}
+					zeroCount = 0;
+					outputCharacters += digits[Number(d)]
+							+ radices[modulus];
+				}
+				if (modulus == 0 && zeroCount < 4) {
+					outputCharacters += bigRadices[quotient];
+				}
+			}
+			outputCharacters += CN_DOLLAR;
+		}
+		if (decimal != "") {
+			for (i = 0; i < decimal.length; i++) {
+				d = decimal.substr(i, 1);
+				if (d != "0") {
+					outputCharacters += digits[Number(d)] + decimals[i];
+				}
+			}
+		}
+		if (outputCharacters == "") {
+			outputCharacters = CN_ZERO + CN_DOLLAR;
+		}
+		if (decimal == "") {
+			outputCharacters += CN_INTEGER;
+		}
+		outputCharacters = CN_SYMBOL + outputCharacters;
+		return outputCharacters;
+	}  
+	//关闭本页并刷新查询页面
+    function refreshAndClosePage(){  
+    	window.parent.search();    
+    	closeDialog();
+    }
+	//关闭本对话框
+	function closeDialog() {
+		try{
+			window.parent.dialog.hide();
+		}catch(e){
+			globalUtil.closeCurrentTab();
+		}	
+	}
+	function debtor_identity_id_onblur(value){
+		if(value.value == ""){
+			return;
+		}
+		var zwrsf_val = value.value.substring(0,17);
+		if(isNaN(zwrsf_val)){
+			globalUtil.errorMsg(globalErrorMsg['500189']); //身份证格式不正确！
+		}else if(value.value.length != 18){
+			globalUtil.errorMsg(globalErrorMsg['500189']); //身份证格式不正确！
+		}
+	}
+	
+	function phone_onblur(value){
+		if(value.value == ""){
+			return;
+		}
+		if(isNaN(value.value)){
+			globalUtil.errorMsg(globalErrorMsg['500190']); //电话格式不正确！
+		}else if(value.value.length != 11){
+			globalUtil.errorMsg(globalErrorMsg['500190']); //电话格式不正确！
+		}
+	}
+	
+	
+	
+	function save(json){
+		var debtor_identity_id_val = $("#debtor_identity_id").val();
+		if(debtor_identity_id_val != ""){
+			var zwrsf_val = debtor_identity_id_val.substring(0,17);
+			if(isNaN(zwrsf_val)){
+				globalUtil.errorMsg(globalErrorMsg['500185']); //债务人身份证格式不正确！
+				return;
+			}else if(debtor_identity_id_val.length != 18){
+				globalUtil.errorMsg(globalErrorMsg['500185']); //债务人身份证格式不正确！
+				return;
+			}
+		}
+		
+		var debtor_tel_val = $("#debtor_tel").val();
+		if(debtor_tel_val != ""){
+			if(isNaN(debtor_tel_val)){
+				globalUtil.errorMsg(globalErrorMsg['500186']); //债务人身份证格式不正确！
+				return;
+			}else if(debtor_tel_val.length != 11){
+				globalUtil.errorMsg(globalErrorMsg['500186']); //债务人身份证格式不正确！
+				return;
+			}
+		}
+	
+		var com_debtor_identity_id_val = $("#com_debtor_identity_id").val();
+		if(com_debtor_identity_id_val != ""){
+			var gtzwrsf_val = com_debtor_identity_id_val.substring(0,17);
+			if(isNaN(gtzwrsf_val)){
+				globalUtil.errorMsg(globalErrorMsg['500187']); //共同债务人身份证格式不正确！
+				return;
+			}else if(com_debtor_identity_id_val.length != 18){
+				globalUtil.errorMsg(globalErrorMsg['500187']); //共同债务人身份证格式不正确！
+				return;
+			}
+		}
+		
+		var com_debtor_tel_val = $("#com_debtor_tel").val();
+		if(com_debtor_tel_val != ""){
+			if(isNaN(com_debtor_tel_val)){
+				globalUtil.errorMsg(globalErrorMsg['500188']); //共同债务人电话格式不正确！
+				return;
+			}else if(com_debtor_tel_val.length != 11){
+				globalUtil.errorMsg(globalErrorMsg['500188']); //共同债务人电话证格式不正确！
+				return;
+			}
+		}
+		var borrow_deadline = $("#borrow_deadline").val();
+		if(isNaN(borrow_deadline)){
+			globalUtil.errorMsg(globalErrorMsg['500208']); 
+			return;
+		}
+		
+		var borrow_interest = $("#borrow_interest").val();
+		if(isNaN(borrow_interest)){
+			globalUtil.errorMsg(globalErrorMsg['500209']); 
+			return;
+		}
+		
+		var service_cost_month = $("#service_cost_month").val();
+		if(isNaN(service_cost_month)){
+			globalUtil.errorMsg(globalErrorMsg['500300']); 
+			return;
+		}
+		
+		var consult_service_cost = $("#consult_service_cost").val();
+		if(isNaN(consult_service_cost)){
+			globalUtil.errorMsg(globalErrorMsg['500301']); 
+			return;
+		}
+		
+		var weiyuejin = $("#weiyuejin").val();
+		if(isNaN(weiyuejin)){
+			globalUtil.errorMsg(globalErrorMsg['500302']); 
+			return;
+		}
+		
+		var appro_limit = $("#appro_limit").val();
+		if(isNaN(appro_limit)){
+			globalUtil.errorMsg(globalErrorMsg['500303']); 
+			return;
+		}
+		
+		var principal_lower = $("#principal_lower").val();
+		if(isNaN(principal_lower)){
+			globalUtil.errorMsg(globalErrorMsg['500304']); 
+			return;
+		}
+		
+		var refund_limit_month = $("#refund_limit_month").val();
+		if(isNaN(refund_limit_month)){
+			globalUtil.errorMsg(globalErrorMsg['500305']); 
+			return;
+		}
+		
+		var notarial_fee = $("#notarial_fee").val();
+		if(isNaN(notarial_fee)){
+			globalUtil.errorMsg(globalErrorMsg['500306']); 
+			return;
+		}
+		
+		var fees = $("#fees").val();
+		if(isNaN(fees)){
+			globalUtil.errorMsg(globalErrorMsg['500307']); 
+			return;
+		}
+		
+		var liquidated_damages = $("#liquidated_damages").val();
+		if(isNaN(liquidated_damages)){
+			globalUtil.errorMsg(globalErrorMsg['500308']);
+			return;
+		}
+		
+		var it_cost_fee = $("#it_cost_fee").val();
+		if(isNaN(it_cost_fee)){
+			globalUtil.errorMsg(globalErrorMsg['500309']); 
+			return;
+		}
+		
+		var expedited_fee = $("#expedited_fee").val();
+		if(isNaN(expedited_fee)){
+			globalUtil.errorMsg(globalErrorMsg['500310']); 
+			return;
+		}
+		var loan_amount = $("#loan_amount").val();
+		if(isNaN(loan_amount)){
+			globalUtil.errorMsg(globalErrorMsg['500311']);
+			return;
+		}
+		var the_number = $("#the_number").val();
+		if(isNaN(the_number)){
+			globalUtil.errorMsg(globalErrorMsg['500313']); 
+			return;
+		}
+		
+		var debtor_loan_number = $("#debtor_loan_number").val();
+		var debtor_loan_number_val = debtor_loan_number.replace(/\s+/g,"");
+		if(isNaN(debtor_loan_number_val)){
+			globalUtil.errorMsg(globalErrorMsg['500315']); 
+			return;
+		}
+		
+		
+		var refund_number = $("#refund_number").val();
+		var refund_number_val = refund_number.replace(/\s+/g,"");
+		if(isNaN(refund_number_val)){
+			globalUtil.errorMsg(globalErrorMsg['500316']); 
+			return;
+		}
+		
+		
+		if(!globalUtil.validHouseNo($('#house_certificate_number').val())) {
+	        globalUtil.errorMsg(globalErrorMsg['500194']); //输入房产证号格式错误！例如：沈房权证大东字第205231号或辽（2017）大连不动产权第1000号
+	        return;
+	    }
+		
+		
+		//给需要转换金额大写的隐藏域赋值
+		//合同金额
+		$("#principal_caps").val(convertCurrency($("#principal_lower").val()));
+		//月还款额     
+		$("#refund_limit_month_caps").val(convertCurrency($("#refund_limit_month").val()));
+		
+		$('#cancel').css('display','none');
+		$('#save').css('display','none');
+		$('#dybtn').css('display','none');
+		var jsonStr={};
+		globalUtil.getFormParam('bgs', jsonStr);
+// 		globalUtil.getFormParam('fcj', jsonStr);
+		
+		jsonStr.refund_name = $("#refund_name").val();
+		jsonStr.debtor_loan_name = $("#debtor_loan_name").val();
+		jsonStr.house_certificate_number = $("#house_certificate_number").val();
+		jsonStr.status = status;
+		jsonStr.wms_cre_appro_id = wms_cre_appro_id;
+		jsonStr.appro_limit =  $("#appro_limit").val();
+		jsonStr.protocol_refund_interest_month = $("#protocol_refund_interest_month").val();
+		jsonStr.borrow_interest = $("#borrow_interest").val();
+		jsonStr.payment_contract_type = payment_contract_type;
+		jsonStr.creditor_name = $("#creditor_name").val();
+		jsonStr.owner = $("#owner").val();
+		jsonStr.debtor_name = $("#debtor_name").val();
+		jsonStr.refund_name = $("#refund_name").val();
+		jsonStr.debtor_name_fcdyqlr = $("#debtor_name_fcdyqlr").val();
+		jsonStr.appro_limit_fcj = $("#appro_limit_fcj").val();
+		jsonStr.borrow_interest_fcj = $("#borrow_interest_fcj").val();
+		jsonStr.protocol_refund_interest_month_fcj = $("#protocol_refund_interest_month_fcj").val();
+// 		jsonStr.regular_appro_limit_caps = convertCurrency($("#appro_limit_fcj").val());
+		
+		jsonStr.bill_type = bill_type;
+		if(salesman_shortcode != null){
+			jsonStr.salesman_shortcode = salesman_shortcode;
+		}
+		var the_number = $("#the_number").val();
+		if(the_number != null){
+			jsonStr.the_number = the_number;
+		}
+		if(wms_cre_credit_notary_warn_id != null && wms_cre_credit_notary_warn_id != "undefined"){
+			jsonStr.wms_cre_credit_notary_warn_id = wms_cre_credit_notary_warn_id;
+		}
+		if(wms_cre_credit_head_id != null  && wms_cre_credit_head_id != "undefined"){
+			jsonStr.wms_cre_credit_head_id = wms_cre_credit_head_id;
+		}
+		jsonStr.service_cost_month = $("#service_cost_month").val();
+		jsonStr.principal_lower = $("#principal_lower").val();
+		jsonStr.borrow_deadline = $("#borrow_deadline").val();
+		jsonStr.cre_loan_type = $("#cre_loan_type_hidden").val();
+		jsonStr.notarial_fee = $("#notarial_fee").val();
+		jsonStr.loan_amount_caps = convertCurrency($("#loan_amount").val());//转账金额大写
+		jsonStr.house_area = $("#house_area").val();
+		jsonStr.fees = $("#fees").val();
+		jsonStr.bill_code = bill_code;
+		jsonStr.consult_service_cost = $("#consult_service_cost").val();
+		jsonStr.cre_type_name = $("#cre_loan_type").val();
+		if(bill_status != null && typeof(bill_status) != 'undefined' && bill_status != 'undefined' && bill_status != ""){
+			jsonStr.bill_status = bill_status;
+		}else{
+			jsonStr.bill_status ="meiyou";
+		}
+		$.post(globalUtil.getTimestampUrl("/loancheck/perfectContractSave.do"),
+				   jsonStr, function(data) {
+				   		if (data === 'success') {
+		           			globalUtil.successMsg(globalErrorMsg['100002'],
+		           				function(){        
+			           				if(json == 1){
+			           					window.open("../showPDF.html?wms_cre_credit_head_id="+wms_cre_credit_head_id+"&protocol_num="+protocol_num);
+			           				}
+			           				$('#cancel').css('display','');
+			               			$('#save').css('display','');
+			               			$('#dybtn').css('display','');
+// 			               		 	refresh();
+// 			               		 	window.parent.research();
+		               				refreshAndClosePage();
+		           			});//保存成功  
+				   		}else {
+		               		globalUtil.errorMsg(globalErrorMsg['100012'], //保存失败
+		               		function(){            		 		
+		               			$('#cancel').css('display','');
+		               			$('#save').css('display','');
+		               			$('#dybtn').css('display','');
+	           				});
+				   		}
+				});
+	}
+	//债务人联动事件
+	function debtor_name_change(){
+		//债务人联动事件
+		var debtor_name = $("#debtor_name").val();
+		$("#debtor_name_fcj").val(debtor_name);
+		//打款用户名联动
+		$("#debtor_loan_name").val(debtor_name);
+		//还款用户名联动
+		$("#refund_name").val(debtor_name);
+		//房产抵押权利人联动
+		$("#debtor_name_fcdyqlr").val(debtor_name);
+	}
+	//如果借款期限为空处理方法
+	function iFNullBorrow_Deadline(){
+		var borrow_deadline = $("#borrow_deadline").val();
+		
+		var cre_loan_type =  $("#cre_loan_type_hidden").val();
+		if(borrow_deadline == "" || borrow_deadline == "0"){
+			$("#borrow_deadline").val("0");
+			$("#borrow_end_date").val('');
+			$("#first_refund_date").val('');
+			$("#second_refund_date").val('');
+			$("#refund_limit_month").val('0');
+			$("#refund_day").val('');
+			$("#loan_amount").val('0');
+			$("#deduct_money").val('0');
+			$("#service_cost_month").val('0');
+			if(cre_loan_type == 786){
+				var benjin = $("#appro_limit").val();
+				$("#principal_lower").val(benjin);
+			}
+		}
+	}
+	function iFNullBorrow_Begin_Date(){
+		var borrow_begin_date = $("#borrow_begin_date").val();
+		if(borrow_begin_date == ""){
+			$("#borrow_end_date").val('');
+			$("#second_refund_date").val('');
+			$("#first_refund_date").val('');
+			$("#regular_borrow_end_date").val('');
+			$("#refund_day").val('');
+		}
+	}
+	//初始化title
+	function initTitle(obj){
+		$(obj).attr("title",$(obj).val());
+	}
+	//点击按钮调用的方法
+	function refresh(){
+	    window.location.reload();//刷新当前页面.
+	}
+	
+	//导出word
+	function exportWord() {
+		//查询合同表是否有记录
+		$.ajax({ 
+		        type: "POST", 
+		        url: global_param.context_name + "/loanappro/wmscreapproborrowprotocolwithoutpaginglist.do",
+		        async: false,
+		        dataType: "json",
+		        data: { 
+					"wms_cre_credit_head_id": wms_cre_credit_head_id
+		        }, 
+		        success: function(data) {
+		        	if(data.Rows != null && data.Rows.length > 0) {
+		        		$('#wms_cre_credit_head_id').val(wms_cre_credit_head_id);
+		        		$('#protocol_num').val(protocol_num);
+		        		$('#exportWord').attr('action', global_param.context_name + '/loanappro/exportWordForContract.do');
+		        		$('#exportWord').submit();
+		        	} else {
+		        		globalUtil.errorMsg(globalErrorMsg['500196']);
+		        	}
+		        }
+		});
+	}
+	
+	//根据主表id查询组合贷信息
+	function searchInfoForHeadId(){
+		$.ajax({ 
+	        type: "POST", 
+	        url: global_param.context_name + "/loanappro/wmscreapproborrowprotocolwithoutpaginglist.do",
+	        async: false,
+	        dataType: "json",
+	        data: { 
+				"wms_cre_credit_head_id": wms_cre_credit_head_id
+	        }, 
+	        success: function(data) {
+	        	
+	        	
+	        }
+		});
+	}
+	
+	function init_Combox(id,wms_sys_dict_id,json){
+		var params ={
+				dest_url:'/sysmanage/wmssysdictdatabydictid.do?isEmpty=flase&wms_sys_dict_id='+wms_sys_dict_id,
+				t_col_name:id,
+				valueField:'value_code',   //下拉框value对应的值，默认为id
+				textField:'value_meaning',    //下拉框text对应的值，默认为text
+				def_val:'first',
+				input_width:'133'
+				};
+		global_ligerui_extend.initCombox(id,null,params);
+		global_ligerui_extend.initComboxDefVal(id);
+	}
+	//手续费变动事件
+	function fee_onchage(){
+		//本金
+    	var appro_limit = $("#appro_limit").val();
+    	//平台费律
+    	var service_cost_month = $("#service_cost_month").val();
+    	//月利率
+		var borrow_interest = $("#borrow_interest").val();
+		//获取他项
+		var expedited_fee =  $("#expedited_fee").val();
+		//获取加急费
+		var it_cost_fee = $("#it_cost_fee").val();
+		//手续费律
+		var consult_service_cost = $('#consult_service_cost').val();
+		//借款期限
+		var borrow_deadline = $('#borrow_deadline').val();
+			
+		 var appro_limit = $("#appro_limit").val();
+	 	 var fees = $("#fees").val();
+	 	if(payment_contract_type == 2){
+			//还款金额  本金*（月利率+平台费利率（0.49%））
+			var refund_limit_month_val=Math.ceil(parseFloat(appro_limit)*(parseFloat(service_cost_month)+parseFloat(borrow_interest))/100);
+			//转账金额  先息后本：本金-手续费-本月还款额-他项-加急。
+ 			$("#loan_amount").val(Math.ceil(parseFloat(appro_limit)-(parseFloat(fees))-refund_limit_month_val-parseFloat(expedited_fee)-parseFloat(it_cost_fee)));
+		}
+		else if(payment_contract_type == 1){
+ 			//转账金额  等额本息：本金-手续费-他项-加急
+ 			$("#loan_amount").val(Math.ceil(parseFloat(appro_limit)-(parseFloat(fees))-parseFloat(expedited_fee)-parseFloat(it_cost_fee)));
+		}
+	}
+	
+	</script>
+</body>
+</html>

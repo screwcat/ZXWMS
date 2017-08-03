@@ -1,0 +1,351 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script type="text/javascript" charset="utf-8"
+	src="../../js/media/js/ZeroClipboard.js"></script>
+<title>缴费查询</title>
+</head>
+<body style="overflow-y: hidden;">
+	<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<!--查询条件-->
+			<div class="l-panel-search-cond clearfix">
+				<div class="float-l">
+					<div class="l-panel-search-title" style="margin-left: 16px">&nbsp;&nbsp;&nbsp;单据编号:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="bill_code" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title" style="margin-left: 16px">申请时间:</div>
+					<div class="l-panel-search-item">
+						<input id="create_timestamp_begin" class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+							style="width: 133px; vertical-align: top;" /> 至
+						<input id="create_timestamp_end" class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+							style="width: 133px; vertical-align: top;" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;业务员/工号:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="salesman_name" />
+					</div>
+				</div>
+				
+				<div class="float-l">
+					<div class="l-panel-search-title" style="margin-left: 16px">&nbsp;&nbsp;&nbsp;客户姓名:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="customer_name" />
+					</div>
+				</div>
+				<div class="float-l clearboth" style="margin-left: 11px">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;联系电话:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="mobile_telephone1" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title" style="margin-left: 16px">缴费时间:</div>
+					<div class="l-panel-search-item">
+						<input id="create_timestamp_JFbegin" class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+							style="width: 133px; vertical-align: top;" /> 至
+						<input id="create_timestamp_JFend" class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+							style="width: 133px; vertical-align: top;" />
+					</div>
+				</div>
+				<div class="float-l "style="margin-left: 25px">
+					<div class="l-panel-search-title">产品种类:</div>
+					<div class="l-panel-search-item">
+						<select id="mort_flag"  style="width: 133px;"></select>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="centertoolbar" class="minwidth400"></div>
+	<div id="grid"></div>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+        var grid;
+		var toolbar;
+		var params;
+		var dialog;
+		var columns;
+		var selectrow;
+		var adviceLC;
+        $(function() {
+        	initGrid();
+        	var toolbarItemData = [];
+        	
+        	 toolbarItemData.push({
+                 text: '补缴',
+                 click: toApprovel,
+                 icon: 'approve'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             toolbarItemData.push({
+                 text: '查询',
+                 click:search,
+                 icon: 'search'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             toolbarItemData.push({
+                 text: '清空',
+                 click:clear,
+                 icon: 'empty'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             toolbarItemData.push({
+                 text: '导出Excel',
+                 icon: 'export',
+                 id:'ToolTables_XLS_2'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             $("#centertoolbar").ligerToolBar({
+                  items: toolbarItemData
+        	 });
+             search();
+             registerCsv();
+             //init_category_name();
+             init_mort_flag_sel();
+        });
+    	 //实现数据导出功能
+        function registerCsv(){
+        	var moviePath = "../../js/media/swf/copy_csv_xls_pdf.swf";
+        	var fileName = '缴费查询.xls';
+        	var titleJson = '';
+        	var dataJson = '';
+        	var obj = $("div[toolbarid='ToolTables_XLS_2']")[0];//获取菜单对象
+        	var getDataFun = function(){
+        		var text = {};
+        		text.title={'bill_code':'单据编号','application_date':'申请时间','mort_flag_name':'产品种类','customer_name':'客户姓名','mobile_telephone1':'联系电话','product_account':'房产地址','community_name':'小区','create_timestamp_JFstr':'缴费时间','payment_amount':'缴费金额','salesman_name_str':'业务员/工号','bill_status_name':'单据状态'};//定义需要导出的列名以及列名与数据的对应关系
+        		initParams();
+        		var json = globalUtil.syncPostJson("/cremanage/wmscrecustomerchangelinehouseinfowithpagingseachout.do?sortname=t1.create_timestamp&sortorder=desc",params);//同步获取需要导出的数据内容
+        		for(var i=0;i<json.Rows.length;i++){
+	        		var address = "";
+	           		if(json.Rows[i].house_address_province != '' && json.Rows[i].house_address_province != undefined){
+	           			 address = json.Rows[i].house_address_province + "省";
+	           		}
+	           		if(json.Rows[i].house_address_city != ''  && json.Rows[i].house_address_city != undefined){
+	           			address = address + json.Rows[i].house_address_city +"市";
+	           		}
+	           		if(json.Rows[i].house_address_district != ''  && json.Rows[i].house_address_district != undefined){
+	           			address = address + json.Rows[i].house_address_district + "区";
+	           		}
+	           		if(json.Rows[i].house_address_more != ''  && json.Rows[i].house_address_more != undefined){
+	           			address = address + json.Rows[i].house_address_more;
+	           		}
+	           		json.Rows[i].product_account=address;
+        		}
+        		text.data = json.Rows;
+        		return text;
+        	};
+        	registerXlsFlashBtn(moviePath,fileName,titleJson,dataJson,obj,getDataFun);
+        }
+        //清空所填写内容
+        function clear(){
+        	$("#bill_code").val("");
+        	$("#create_timestamp_begin").val("");
+        	$("#create_timestamp_end").val("");
+        	$("#salesman_name").val("");
+        	$("#customer_name").val("");
+        	$("#mobile_telephone1").val("");   
+        	$("#create_timestamp_JFbegin").val("");
+        	$("#create_timestamp_JFend").val("");
+        	$("#mort_flag").val("-1");
+            search();	
+        }
+        //初始产品种类
+	    function  init_mort_flag_sel(){
+			globalUtil.init_select_value('mort_flag', 'value_code', 'value_meaning', true, '147');
+		}
+        //表格初始化
+        function initGrid() {
+        	columns = [{
+                display: '单据编号',
+                name: 'bill_code',
+                width: 130,
+                minWidth: 130,
+                //添加超链接的东西
+                render: function (rowdata, rowindex, value) { 
+                    return '<a href="javascript:creditInfo('+rowdata.wms_cre_credit_head_id+','+rowdata.version_number+');" style="color:#056AFF;text-decoration: none;">'+value+'</a>';
+                }
+            },{
+            	display:'申请时间',
+            	name:'application_date',
+            	width:180,
+            	minWidth:180,
+            },{
+                display: '客户姓名',
+                name: 'customer_name',
+                width: 130,
+                minWidth: 130,
+            }, {
+                display: '产品种类',
+                name: 'mort_flag_name',
+                width: 100,
+                minWidth: 100,
+            },{
+            	display:'联系电话',
+            	name:'mobile_telephone1',
+            	width:130,
+            	minWidth:130,
+            },{
+            	display:'房产地址',
+            	name:'product_account',
+            	width:400,
+            	minWidth:400,
+            	 render: function (rowdata, rowindex, value) {
+            		 var address = "";
+            		 if(rowdata.house_address_province != '' && rowdata.house_address_province != undefined){
+            			 address = rowdata.house_address_province + "省";
+            		 }
+            		 if(rowdata.house_address_city != ''  && rowdata.house_address_city != undefined){
+            			 address = address + rowdata.house_address_city +"市";
+            		 }
+            		 if(rowdata.house_address_district != ''  && rowdata.house_address_district != undefined){
+            			 address = address + rowdata.house_address_district + "区";
+            		 }
+            		 if(rowdata.house_address_more != ''  && rowdata.house_address_more != undefined){
+            			 address = address + rowdata.house_address_more;
+            		 }
+            		 return address;
+            	 }
+            },{
+            	display:'小区名称',
+            	name:'community_name',
+            	width:160,
+            	minWidth:160,
+            },{
+            	display:'缴费时间',
+            	name:'create_timestamp_JFstr',
+            	width:160,
+            	minWidth:160,
+            },{
+            	display:'缴费金额（元）',
+            	name:'payment_amount',
+            	width:160,
+            	minWidth:160,
+            },{
+            	display:'业务员/工号',
+            	name:'salesman_name_str',
+            	width:130,
+            	minWidth:130,
+            },{
+            	display:'单据状态',
+            	name:'bill_status_name',
+            	width:100,
+            	minWidth:100,
+            }];
+            grid = $("#grid").ligerGrid({
+        		columns: columns,
+        		url: global_param.context_name + '/cremanage/wmscrecustomerchangelinehouseinfowithpagingseach.do',
+        		sortName: 't4.create_timestamp', // 排序列名
+				sortOrder: 'desc', // 排序方式
+        		rownumbers: true,
+        		allowUnSelectRow: true,
+        		usePager: true,
+        		enabledSort: true, 
+        		width: '100%',
+        		height: '95%',
+        		heightDiff: -4,
+        		parms: {
+        			_filterParms: -1
+        		}
+            });
+        }  
+    	//加载收索信息
+        function initParams() {
+        	params = globalUtil.getFormParam("searchbar");
+        	params.mort_flag=$("#mort_flag").val();
+        	if(params.mort_flag == '-1'){
+            	params.mort_flag = '';
+            }		
+        }
+        //查询
+        var search= function() {
+            initParams();
+            global_ligerui_extend.search(grid, params);
+        }
+        //初始化理财产品类型查询项
+        function init_category_name(json){
+            var category_name_params ={
+                    dest_url:'/inve/wmsinvepruductcategorylistforselect.do',
+                    t_col_name:'category_name',
+                    valueField:'wms_inve_pruduct_category_id',   //下拉框value对应的值，默认为id
+                    textField:'category_name',    //下拉框text对应的值，默认为text
+                    input_width:133,
+                    def_val:'first'
+                    };
+            global_ligerui_extend.initCombox("category_name",null,category_name_params);
+            global_ligerui_extend.initComboxDefVal("category_name");
+        }
+        function closeDialogShow(){
+      	  dialog.hide();
+      	  search();
+         }
+        function closeDialog(){
+        	  dialog.hide();
+        	  search();
+        }
+        function creditInfo(wms_cre_credit_head_id,version_number){
+        	var url ="";
+        	//if(version_number=="2"){
+        		url = globalUtil.getHtml("../creditManage/houseLoanApply.html?wms_cre_credit_head_id="+wms_cre_credit_head_id+"&type=1");
+        	/* }else{
+				url=globalUtil.getHtml("../creditManage/checkHouseCredit.html?wms_cre_credit_head_id="+wms_cre_credit_head_id+"&pageType=ck");
+        	} */
+        	dialog = $.ligerDialog.open({
+		        url: url,
+		        title: '客户贷款详细信息',
+		        width: 1500,
+		        height: globalUtil.setDialogHeight(1000),
+		        onHiddenOrClose: function(){
+		    	},
+		        isResize: false
+	    	});
+        }
+        //缴费
+    	function toApprovel() {
+    		var row = grid.getSelectedRow();
+			if(row == null) {
+	                globalUtil.warnMsg(globalErrorMsg['100000']);//请选择一行记录进行修改
+	                return;
+			} else {
+				 var title_val='补缴确认';
+				 if(row.mort_flag_name!=undefined&&row.mort_flag_name!=""&&row.mort_flag=="2"){
+					 title_val='补缴确认'+"  ##"+row.mort_flag_name+"##"; 
+				 }
+			     var url = globalUtil.getHtml("housingPaymentVerificationTwo.html?wms_cre_credit_head_id=" + row.wms_cre_credit_head_id+"&taskId="+row.taskId+"&version_number="+row.version_number);
+	             dialog = $.ligerDialog.open({
+	        	     url: url,
+	        	 	 title:title_val ,
+	 		         width: 800,
+	 		         height: globalUtil.setDialogHeight(400),
+	 		         onHiddenOrClose: function() {
+	 		        	 
+	 		     	 },
+	 		         isResize: false
+	        	 }); 
+			 }
+    	}
+        </script>
+</body>
+</html>

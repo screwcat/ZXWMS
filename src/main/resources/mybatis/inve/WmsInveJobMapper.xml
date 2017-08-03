@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveJobDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveJob">
+		select
+        				wms_inve_job_id,
+        				job_code,
+        				job_encode,
+        				job_name,
+        				enable_flag
+        	from
+        		wms_inve_job
+        	where
+        				wms_inve_job_id = #{wms_inve_job_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_job_id) as count
+		from wms_inve_job
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_inve_job_id,
+				job_code,
+				job_encode,
+				job_name,
+				enable_flag
+		from wms_inve_job
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveJob" useGeneratedKeys="true" keyProperty="wms_inve_job_id">
+		INSERT INTO wms_inve_job
+		(
+				wms_inve_job_id,
+
+				job_code,
+
+				job_encode,
+
+				job_name,
+
+				enable_flag
+		)
+		VALUES
+		(
+				#{wms_inve_job_id},
+				#{job_code},
+				#{job_encode},
+				#{job_name},
+				#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveJob">
+		update wms_inve_job
+		<set>
+					<if test="wms_inve_job_id != null">
+						 wms_inve_job_id = #{wms_inve_job_id},
+					</if>
+					<if test="job_code != null">
+						 job_code = #{job_code},
+					</if>
+					<if test="job_encode != null">
+						 job_encode = #{job_encode},
+					</if>
+					<if test="job_name != null">
+						 job_name = #{job_name},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+	   </set>
+		 where 
+    				wms_inve_job_id = #{wms_inve_job_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveJob" resultType="WmsInveJob">
+		select 
+				wms_inve_job_id,
+				job_code,
+				job_encode,
+				job_name,
+				enable_flag
+		from
+		wms_inve_job
+		<where>
+					<if test="wms_inve_job_id != null">
+						and wms_inve_job_id = #{wms_inve_job_id}
+					</if>
+					<if test="job_code != null">
+						and job_code = #{job_code}
+					</if>
+					<if test="job_encode != null">
+						and job_encode = #{job_encode}
+					</if>
+					<if test="job_name != null">
+						and job_name = #{job_name}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_inve_job_id != #{wms_inve_job_id}
+					</if>
+		</where>
+	</select>
+</mapper> 

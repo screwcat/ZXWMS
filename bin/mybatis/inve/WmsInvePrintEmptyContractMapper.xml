@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInvePrintEmptyContractDao">
+	<select id="selectPrintEmptyContractList" parameterType="map"
+		resultType="map">
+		SELECT
+		wms_inve_clerk_protocol_blank_id,
+		protocol_type,
+		protocol_verson,
+		protocol_name,
+		start_date,
+		end_date,
+		protocol_dir
+		FROM
+		wms_inve_clerk_protocol_blank
+		WHERE
+		enable_flag = 1
+
+	</select>
+	<update id="updatePrintEmptyContractUrl" parameterType="map">
+	
+	
+	</update>
+
+
+
+</mapper>

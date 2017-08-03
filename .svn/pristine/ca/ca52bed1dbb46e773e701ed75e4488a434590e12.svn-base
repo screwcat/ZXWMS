@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.sysmanage.persist.WmsSysDictDataDao">
+	<!-- 删除用户 -->
+	<delete id="deleteByRoleId" parameterType="Integer">
+		delete from
+		sys_role_menu_function where id = #{role_id}
+	</delete>
+	<select id="getDictDataByDictId" parameterType="int" resultType="WmsSysDictData">
+	 	select * from wms_sys_dict_data
+		where
+		wms_sys_dict_id = #{wms_sys_dict_id}
+		order by sort_order
+	</select>
+	<select id="getDictDataByDictIdAll" parameterType="String" resultType="WmsSysDictData">
+	    select * from wms_sys_dict_data
+		where
+		find_in_set(wms_sys_dict_id, #{wms_sys_dict_id})>0
+		order by  wms_sys_dict_id ,sort_order
+	</select>
+	<select id="getValMeaningBycodes" parameterType="java.util.HashMap" resultType="WmsSysDictData">
+		select * from wms_sys_dict_data
+		where
+		wms_sys_dict_id = #{wms_sys_dict_id}
+		and value_code in 
+		<foreach collection="valueCodes" item="item" index="index" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		order by sort_order
+	</select>
+	
+	<select id="getDictData" parameterType="java.util.HashMap" resultType="WmsSysDictData">
+		select * from wms_sys_dict_data
+		<where>
+			<if test="wms_sys_dict_id != null">
+				and wms_sys_dict_id = #{wms_sys_dict_id}
+			</if>
+			<if test="p_wms_sys_dict_data_id != null">
+				and p_wms_sys_dict_data_id = #{p_wms_sys_dict_data_id}
+			</if>
+		</where>
+		order by sort_order
+	</select>
+	<select id="getDictDataByDictIdP" parameterType="map" resultType="WmsSysDictData">
+		select * from wms_sys_dict_data
+		where
+		wms_sys_dict_id = #{wms_sys_dict_id}
+		<if test="p_wms_sys_dict_data_id!=null">
+			and p_wms_sys_dict_data_id = #{p_wms_sys_dict_data_id}
+	   </if>
+		order by sort_order
+	</select>
+	<select id="getDictDataCode" parameterType="map" resultType="WmsSysDictData">
+		select * from wms_sys_dict_data
+		where
+		wms_sys_dict_id = #{wms_sys_dict_id}
+			<if test="value_code !=null">
+			and value_code = #{value_code}
+	  	 </if>
+		order by sort_order
+	</select>
+	<select id="getDictDataById" parameterType="int"
+		resultType="com.zx.emanage.loanappro.vo.WmsCreCreditApproModelScoreVO">
+		select
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t1.work_unit_property) as dwxz,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t1.work_year) as gznx,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t1.duty_of_work) as gzgw,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t1.comp_industry) as sjhy,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t1.comp_industry_year) as sjhysj,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t3.house_building_area) as fcmj,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t3.house_address) as fcwz,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t3.car_market_value) as ccsz,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t3.car_year) as ccygsj,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t3.lineal_relatives_tel) as zxqsth,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t3.collateral_relatives_tel) as pxqsth,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t3.ollateral_relatives_friends) as tspyth,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t3.relatives_evalu) as qspj,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t3.friends_evalu) as tspypj,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t4.guarantee_amount) as dbje,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t5.credit_purpose) as dkyt,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t5.borrower_quality) as brsz,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t5.relatives_quality) as qssz,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t5.couple_compensation) as fqdc,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t5.parents_compensation) as fmdc,
+		(select t2.weighted_value from wms_sys_dict_data t2 where
+		t2.wms_sys_dict_data_id = t5.children_compensation) as zndc
+
+		from wms_cre_rev_info_model t1,wms_cre_rev_phone_model
+		t3,wms_cre_rev_certificate_model t4,wms_cre_rev_phone_main t5
+		where t1.wms_cre_credit_head_id = #{wms_cre_credit_head_id} and
+		t1.wms_cre_credit_head_id = t3.wms_cre_credit_head_id and
+		t3.wms_cre_credit_head_id = t4.wms_cre_credit_head_id
+		and t4.wms_cre_credit_head_id = t5.wms_cre_credit_head_id
+	</select>
+	<select id="getDictById" parameterType="int" resultType="WmsSysDictData">
+		select * from wms_sys_dict_data
+		where
+		wms_sys_dict_data_id = #{wms_sys_dict_data_id}
+	</select>
+	<!-- getDictDataByDictIdAndCreType 条件字典表ID和产品类型 -->
+	<select id="getDictDataByDictIdAndCreType" parameterType="map"
+		resultType="WmsSysDictData">
+		select *
+		from wms_sys_dict_data
+		<where>
+			<!-- 信贷 -->
+			<if test="cre_type==1">
+				wms_sys_dict_id=24 AND value_code NOT REGEXP '[^0-9]';
+			</if>
+			<!-- 房贷 -->
+			<if test="cre_type==2">
+				<!-- wms_sys_dict_id=24 AND value_code REGEXP '[^0-9]';-->
+				wms_sys_dict_id=131 AND value_code REGEXP '^[A-Z]+$';
+			</if>
+			<!-- 车贷 -->
+			<if test="cre_type==3">
+				wms_sys_dict_id=24 AND value_code REGEXP '[A-Z][1]';
+			</if>
+		</where>
+	</select>
+		<select id="getDictDataByCode" parameterType="map" resultType="WmsSysDictData">
+		select * from wms_sys_dict_data
+		where
+		wms_sys_dict_id = #{wms_sys_dict_id}
+			<if test="value_code !=null">
+			and value_code = #{value_code}
+	  	 </if>
+		order by sort_order
+	</select>
+	<!-- 根据主键 只返回value_code -->
+	<select id="getCodeByDictId" parameterType="int" resultType="java.lang.String">
+		select value_code from wms_sys_dict_data
+		where
+		wms_sys_dict_id = #{wms_sys_dict_id}
+		order by sort_order
+	</select>
+	
+	<select id="getDictDataPad" parameterType="java.util.HashMap" resultType="WmsSysDictData">
+		select * from wms_sys_dict_data
+		<where>
+			<if test="wms_sys_dict_id != null">
+				and wms_sys_dict_id = #{wms_sys_dict_id}
+			</if>
+			<if test="p_wms_sys_dict_data_id != null">
+				and p_wms_sys_dict_data_id = #{p_wms_sys_dict_data_id}
+			</if>
+		</where>
+		order by sort_order
+	</select>
+</mapper> 
+

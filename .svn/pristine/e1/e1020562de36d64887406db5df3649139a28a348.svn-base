@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper
+	namespace="com.zx.emanage.cremanage.persist.WmsCreCustomerChangeLineWorkinfoDao">
+	<insert id="addNewRecord" parameterType="WmsCreCustomerChangeLineWorkinfo"
+		useGeneratedKeys="true" keyProperty="wms_cre_customer_change_line_workinfo_id">
+		insert into
+		wms_cre_customer_change_line_workinfo
+		(
+		wms_cre_customer_change_line_workinfo_id,
+		work_unit_full_name,
+		work_unit_address_province,
+		work_unit_address_city,
+		work_unit_address_district,
+		work_unit_address_more,
+		work_unit_telephone,
+		work_unit_entry_date,
+		work_unit_department,
+		work_unit_duty,
+		work_unit_property,
+		wms_cre_credit_line_customer_change_head_id,
+		create_user_id,
+		create_timestamp,
+		last_update_user_id,
+		last_update_timestamp,
+		enable_flag
+		)
+		values(
+		#{wms_cre_customer_change_line_workinfo_id},
+		#{work_unit_full_name},
+		#{work_unit_address_province},
+		#{work_unit_address_city},
+		#{work_unit_address_district},
+		#{work_unit_address_more},
+		#{work_unit_telephone},
+		#{work_unit_entry_date},
+		#{work_unit_department},
+		#{work_unit_duty},
+		#{work_unit_property},
+		#{wms_cre_credit_line_customer_change_head_id},
+		#{create_user_id},
+		#{create_timestamp},
+		#{last_update_user_id},
+		#{last_update_timestamp},
+		#{enable_flag}
+		)
+
+	</insert>
+	
+	<update id="update" parameterType="WmsCreCustomerChangeLineWorkinfo">
+        update wms_cre_customer_change_line_workinfo
+        <set>
+            <if test="wms_cre_customer_change_line_workinfo_id != null">
+                wms_cre_customer_change_line_workinfo_id = #{wms_cre_customer_change_line_workinfo_id},
+            </if>
+            <if test="work_unit_full_name != null">
+                work_unit_full_name = #{work_unit_full_name},
+            </if>
+            <if test="work_unit_address_province != null">
+                work_unit_address_province = #{work_unit_address_province},
+            </if>
+            <if test="work_unit_address_city != null">
+                work_unit_address_city = #{work_unit_address_city},
+            </if>
+            <if test="work_unit_address_district != null">
+                work_unit_address_district = #{work_unit_address_district},
+            </if>
+            <if test="work_unit_address_more != null">
+                work_unit_address_more = #{work_unit_address_more},
+            </if>
+            <if test="work_unit_telephone != null">
+                work_unit_telephone = #{work_unit_telephone},
+            </if>
+            <if test="work_unit_entry_date != null">
+                work_unit_entry_date = #{work_unit_entry_date},
+            </if>
+            <if test="work_unit_department != null">
+                work_unit_department = #{work_unit_department},
+            </if>
+            <if test="work_unit_duty != null">
+                work_unit_duty = #{work_unit_duty},
+            </if>
+            <if test="work_unit_property != null">
+                work_unit_property = #{work_unit_property},
+            </if>
+            <if test="wms_cre_credit_line_customer_change_head_id != null">
+                wms_cre_credit_line_customer_change_head_id = #{wms_cre_credit_line_customer_change_head_id},
+            </if>
+            <if test="create_user_id != null">
+                create_user_id = #{create_user_id},
+            </if>
+            <if test="create_timestamp != null">
+                create_timestamp = #{create_timestamp},
+            </if>
+            <if test="last_update_user_id != null">
+                last_update_user_id = #{last_update_user_id},
+            </if>
+            <if test="last_update_timestamp != null">
+                last_update_timestamp = #{last_update_timestamp},
+            </if>
+            <if test="enable_flag != null">
+                enable_flag = #{enable_flag},
+            </if>
+        </set>
+        where wms_cre_customer_change_line_workinfo_id = #{wms_cre_customer_change_line_workinfo_id}
+    </update>
+	
+	<!-- 查询WmsCreCustomerChangeLineWorkinfo ，返回List<Map>对象，如果返回类型不为SysUser对象集合，需要在自己的接口中重新进行定义 -->
+	<select id="search" parameterType="map" resultType="java.util.Map">
+		select
+		wms_cre_customer_change_line_workinfo_id,
+		work_unit_full_name,
+		work_unit_address_province,
+		work_unit_address_city,
+		work_unit_address_district,
+		work_unit_address_more,
+		work_unit_telephone,
+		date_format(work_unit_entry_date,'%Y-%m-%d') as work_unit_entry_date,
+		work_unit_department,
+		work_unit_duty,
+		work_unit_property,
+		wms_cre_credit_line_customer_change_head_id,
+		create_user_id,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp,
+		enable_flag
+		from wms_cre_customer_change_line_workinfo
+		<where>
+			wms_cre_credit_line_customer_change_head_id=#{wms_cre_credit_line_customer_change_head_id}
+		</where>
+
+	</select>
+
+	<select id="get" parameterType="Integer"
+		resultType="WmsCreCustomerChangeLineWorkinfo">
+		select *
+		from wms_cre_customer_change_line_workinfo
+		where
+		wms_cre_credit_line_customer_change_head_id =
+		#{wms_cre_credit_line_customer_change_head_id}
+	</select>
+	<delete id="deleteByMap" parameterType="map">
+		delete from wms_cre_customer_change_line_workinfo
+		<where>
+			<if test="dltIDArr !=null">
+				and wms_cre_credit_line_customer_change_head_id in
+				<foreach collection="dltIDArr"
+					item="wms_cre_credit_line_customer_change_head_id" index="index"
+					open="(" separator="," close=")">
+					#{wms_cre_credit_line_customer_change_head_id}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+		<!-- 获取表信息 -->
+	<select id="getCopyInfo" parameterType="Integer" resultType="WmsCreCustomerChangeLineWorkinfo">
+		select *
+		from wms_cre_customer_change_line_workinfo
+		where
+			wms_cre_credit_line_customer_change_head_id =
+			#{wms_cre_credit_line_customer_change_head_id}
+		and enable_flag=1
+	</select>
+	 <!-- save -->
+	<insert id="saveBatch" parameterType="java.util.List">
+		INSERT INTO wms_cre_customer_change_line_workinfo
+		(
+			wms_cre_customer_change_line_workinfo_id,
+			work_unit_full_name,
+			work_unit_address_province,
+			work_unit_address_city,
+			work_unit_address_district,
+			work_unit_address_more,
+			work_unit_telephone,
+			work_unit_entry_date,
+			work_unit_department,
+			work_unit_duty,
+			work_unit_property,
+			wms_cre_credit_line_customer_change_head_id,
+			create_user_id,
+			create_timestamp,
+			last_update_user_id,
+			last_update_timestamp,
+			enable_flag
+		)
+		VALUES
+		 <foreach collection="list" item="item" index="index" separator="," >  
+		 (	
+			#{item.wms_cre_customer_change_line_workinfo_id},
+			#{item.work_unit_full_name},
+			#{item.work_unit_address_province},
+			#{item.work_unit_address_city},
+			#{item.work_unit_address_district},
+			#{item.work_unit_address_more},
+			#{item.work_unit_telephone},
+			#{item.work_unit_entry_date},
+			#{item.work_unit_department},
+			#{item.work_unit_duty},
+			#{item.work_unit_property},
+			#{item.wms_cre_credit_line_customer_change_head_id},
+			#{item.create_user_id},
+			#{item.create_timestamp},
+			#{item.last_update_user_id},
+			#{item.last_update_timestamp},
+			#{item.enable_flag}
+		)  
+    	</foreach>
+	</insert>
+</mapper> 

@@ -1,0 +1,1544 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>个人主贷款人</title>
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script language="Javascript" src="../../js/zx-all.js"></script>
+</head>
+<body>
+	<div class="pop-center overflow-au">
+		<div class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 5px;" id="ztqk">
+			<!--个人基本情况  -->
+			<div class="center-content clearboth" style="min-width: 500px;"
+				id="xxpbase">
+				<div class="center-title3 position-re" style="margin-bottom: 10px">
+					个人基本情况
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				<div class="center-txt"
+					style="margin-bottom: 5px; height: 40px; padding: 5px; border: 1px solid #BFBFBF;">
+					<div class="float-l">
+						<div class="pop-form-title">姓名：</div>
+						<div class="pop-form-item">
+							<input type="text" id="customer_name" name="customer_name" />
+						</div>
+						<div class="pop-form-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;属性：</div>
+						<div class="pop-form-item">
+							<input type="checkbox" name="customer_prop" class="radio3"
+								value="1" />企业法人&nbsp;&nbsp; <input type="checkbox"
+								name="customer_prop" class="radio3" value="2" />个体户&nbsp;&nbsp;
+							<input type="checkbox" name="customer_prop" class="radio3"
+								value="3" />公司职员&nbsp;&nbsp; <input type="checkbox"
+								name="customer_prop" class="radio3" value="4" />公务员&nbsp;&nbsp;
+							<input type="checkbox" name="customer_prop" class="radio3"
+								value="5" />事业单位
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 法院网案件执行 -->
+			<div class="center-content clearboth" style="min-width: 500px;">
+				<div class="center-title3 position-re">
+					法院网案件执行(&nbsp;&nbsp; <input type="radio" class="radio3"
+						id="priv_court_case" value="1" name="priv_court_case"
+						onclick="togglegrfyw(this)" />有&nbsp; <input type="radio"
+						class="radio3" id="priv_court_case" name="priv_court_case"
+						value="0" checked="checked" onclick="togglegrfyw(this)" />无)
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				<div id="toolbar-grfyw" class="minwidth400"
+					style="border: 1px solid #bfbfbf; display: none; background-color: #e6f4ff; margin-bottom: 10px"></div>
+				<div class="center-txt   class_xxgrfyw"
+					style="margin-bottom: 5px; height: 120px; border: 1px solid #bfbfbf; padding: 5px;">
+					<div class="float-l">
+						<div class="pop-form-title">执行状态：</div>
+						<div class="pop-form-item">
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="radio"
+								id="execute_status" name="execute_status0" class="radio3"
+								value="1" checked="checked" disabled="disabled" />执行中
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="radio"
+								id="execute_status" name="execute_status0" class="radio3"
+								value="2" disabled="disabled" />结案
+						</div>
+						<div class="pop-form-title">立案时间：</div>
+						<div class="pop-form-item">
+							<input id="accreditation_date" name="accreditation_date"
+								class="Wdate" type="text"
+								onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+								style="vertical-align: top; width: 133px;" disabled="disabled" />
+						</div>
+						<div class="pop-form-title">执行标的：</div>
+						<div class="pop-form-item">
+							<input type="text" id="execute_target" name="execute_target"
+								disabled="disabled" />
+						</div>
+					</div>
+					<div class="float-l clearboth">
+						<div class="pop-form-title">特殊说明：</div>
+						<div class="pop-form-item">
+							<textarea rows="" cols=""
+								style="width: 700px; height: 80px; resize: none;"
+								id="court_case_remark" name="court_case_remark"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 法院网案件执行备份 -->
+			<div class="center-txt" id="copy_xxinfo_fyw_xz"
+				style="margin-bottom: 5px; height: 120px; border: 1px solid #bfbfbf; padding: 5px; display: none;">
+				<div class="float-l">
+					<div class="pop-form-title">执行状态：</div>
+					<div class="pop-form-item">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="radio"
+							id="execute_status" name="execute_status" class="radio3"
+							value="1" checked="checked" />执行中 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<input type="radio" id="execute_status" name="execute_status"
+							class="radio3" value="2" />结案
+					</div>
+					<div class="pop-form-title">立案时间：</div>
+					<div class="pop-form-item">
+						<input id="accreditation_date" name="accreditation_date"
+							class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+							style="vertical-align: top; width: 133px;" />
+					</div>
+					<div class="pop-form-title">执行标的：</div>
+					<div class="pop-form-item">
+						<input type="text" id="execute_target" name="execute_target" />
+					</div>
+				</div>
+				<div class="float-l clearboth">
+					<div class="pop-form-title">特殊说明：</div>
+					<div class="pop-form-item">
+						<textarea rows="" cols=""
+							style="width: 700px; height: 80px; resize: none;"
+							id="court_case_remark" name="court_case_remark"></textarea>
+					</div>
+					<!-- 删除功能 -->
+					<div class="pop-form-item delThisInfo">
+						<a onclick="delThisInfo(this);" style="cursor: pointer;">删除本组信息</a>
+					</div>
+				</div>
+			</div>
+			<!-- 犯罪记录 -->
+			<div class="center-content clearboth" style="min-width: 500px;"
+				id="info_fz">
+				<div class="center-title3 position-re">
+					犯罪记录(&nbsp;&nbsp; <input type="radio" class="radio3"
+						id="is_crime_record" name="is_crime_record" value="1"
+						onclick="togglegrfz(this)" />有&nbsp; <input type="radio"
+						class="radio3" id="is_crime_record" name="is_crime_record"
+						value="0" checked="checked" onclick="togglegrfz(this)" />无)
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				<div id="toolbar-grfz" class="minwidth400"
+					style="border: 1px solid #bfbfbf; background-color: #e6f4ff; margin-bottom: 10px; display: none;">
+				</div>
+				<div class="center-txt  class_xxgrfz"
+					style="margin-bottom: 5px; height: 150px; border: 1px solid #bfbfbf; padding: 5px;">
+					<div class="float-l">
+						<div class="pop-form-title">案件类别：</div>
+						<div class="pop-form-item">
+							<input type="text" id="case_type" name="case_type"
+								disabled="disabled" />
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">立案时间：</div>
+						<div class="pop-form-item">
+							<input id="accreditation_date" name="accreditation_date"
+								class="Wdate" type="text"
+								onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+								style="vertical-align: top; width: 133px;" disabled="disabled" />
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">结案时间：</div>
+						<div class="pop-form-item">
+							<input id="close_date" name="close_date" class="Wdate"
+								type="text"
+								onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+								style="vertical-align: top; width: 133px;" disabled="disabled" />
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">执行地：</div>
+						<div class="pop-form-item">
+							<input id="executive_area" name="executive_area" type="text"
+								disabled="disabled" />
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">执行方式：</div>
+						<div class="pop-form-item">
+							<input id="executive_way" type="text" disabled="disabled"
+								name="executive_way" />
+						</div>
+					</div>
+					<div class="float-l clearboth">
+						<div class="pop-form-title">案件说明：</div>
+						<div class="pop-form-item">
+							<textarea rows="" cols=""
+								style="width: 700px; height: 80px; resize: none;"
+								id="criminal_remark" name="criminal_remark"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 个人犯罪记录备份 -->
+			<div class="center-txt " id="copy_xxinfo_grfz_xz"
+				style="margin-bottom: 5px; height: 150px; border: 1px solid #bfbfbf; padding: 5px; display: none;">
+				<div class="float-l">
+					<div class="pop-form-title">案件类别：</div>
+					<div class="pop-form-item">
+						<input type="text" id="case_type" name="case_type" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">立案时间：</div>
+					<div class="pop-form-item">
+						<input id="accreditation_date" name="accreditation_date"
+							class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+							style="vertical-align: top; width: 133px;" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">结案时间：</div>
+					<div class="pop-form-item">
+						<input id="close_date" name="close_date" class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+							style="vertical-align: top; width: 133px;" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">执行地：</div>
+					<div class="pop-form-item">
+						<input id="executive_area" type="text" name="executive_area" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">执行方式：</div>
+					<div class="pop-form-item">
+						<input id="executive_way" type="text" name="executive_way" />
+					</div>
+				</div>
+				<div class="float-l clearboth">
+					<div class="pop-form-title">案件说明：</div>
+					<div class="pop-form-item">
+						<textarea rows="" cols=""
+							style="width: 700px; height: 80px; resize: none;"
+							id="criminal_remark" name="criminal_remark"></textarea>
+					</div>
+					<!-- 删除功能 -->
+					<div class="pop-form-item delThisInfo">
+						<a onclick="delThisInfo(this);" style="cursor: pointer;">删除本组信息</a>
+					</div>
+				</div>
+			</div>
+			<!-- 车辆记录 -->
+			<div class="center-content clearboth" style="min-width: 500px;"
+				id="info_cliang">
+				<div class="center-title3 position-re">
+					车辆记录(&nbsp;&nbsp; <input type="radio" class="radio3"
+						id="is_car_record" name="is_car_record" value="1"
+						onclick="togglegrcl(this)" />有&nbsp; <input type="radio"
+						class="radio3" id="is_car_record" name="is_car_record" value="0"
+						checked="checked" onclick="togglegrcl(this)" />无)
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				<div id="toolbar-cheliang" class="minwidth400"
+					style="border: 1px solid #bfbfbf; background-color: #e6f4ff; margin-bottom: 10px; display: none;"></div>
+				<div class="center-txt  class_xxgrcl"
+					style="margin-bottom: 5px; height: 120px; border: 1px solid #bfbfbf; padding: 5px;">
+					<div class="float-l">
+						<div class="pop-form-title">车辆牌子：</div>
+						<div class="pop-form-item">
+							<input type="text" id="car_brand" name="car_brand"
+								style="width: 700px;" disabled="disabled" />
+						</div>
+					</div>
+					<div class="float-l clearboth">
+						<div class="pop-form-title">特殊说明：</div>
+						<div class="pop-form-item">
+							<textarea rows="" cols=""
+								style="width: 700px; height: 80px; resize: none;"
+								id="car_remark" name="car_remark"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 个人车辆信息备份 -->
+			<div class="center-txt " id="copy_xxinfo_grcl_xz"
+				style="margin-bottom: 5px; height: 120px; border: 1px solid #bfbfbf; padding: 5px; display: none;">
+				<div class="float-l">
+					<div class="pop-form-title">车辆牌子：</div>
+					<div class="pop-form-item">
+						<input type="text" id="car_brand" style="width: 700px;"
+							name="car_brand" />
+					</div>
+
+				</div>
+				<div class="float-l clearboth">
+					<div class="pop-form-title">特殊说明：</div>
+					<div class="pop-form-item">
+						<textarea rows="" cols=""
+							style="width: 700px; height: 80px; resize: none;" id="car_remark"
+							name="car_remark"></textarea>
+					</div>
+					<!-- 删除功能 -->
+					<div class="pop-form-item delThisInfo">
+						<a onclick="delThisInfo(this);" style="cursor: pointer;">删除本组信息</a>
+					</div>
+				</div>
+			</div>
+			<!-- 循环贷情况 -->
+			<div class="center-content clearboth" style="min-width: 500px;">
+				<div class="center-title3 position-re" style="margin-bottom: 10px">
+					循环贷情况(&nbsp;&nbsp; <input type="radio" class="radio3"
+						id="is_re_loan" name="is_re_loan" value="1"
+						onclick="togglegrxh(this)" />有&nbsp; <input type="radio"
+						class="radio3" id="is_re_loan" name="is_re_loan" value="0"
+						checked="checked" onclick="togglegrxh(this)" />无)
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				<div class="center-txt  class_xxgrxh"
+					style="margin-bottom: 10px; height: 150px; border: 1px solid #bfbfbf; padding: 5px;">
+					<div class="float-l">
+						<div class="pop-form-title">上期借款合同金额：</div>
+						<div class="pop-form-item">
+							&nbsp;&nbsp;<input type="text" id="last_loan_money"
+								disabled="disabled" name="last_loan_money"
+								onkeyup="valiFloat(this)" onblur="valiFloat2(this)" /> 元
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">还款情况：</div>
+						<div class="pop-form-item">
+							<input type="checkbox" name="repayment_status" value="1"
+								class="radio3" disabled="disabled" />无逾期 <input type="checkbox"
+								name="repayment_status" value="2" class="radio3"
+								id="repayment_status" onclick="setOverdue_status()"
+								disabled="disabled" />有逾期 <input type="checkbox"
+								name="repayment_status" value="3" class="radio3"
+								disabled="disabled" />正常结清
+						</div>
+					</div>
+					<div class="float-l clearboth">
+						<div class="pop-form-title">上期合同申请日期：</div>
+						<div class="pop-form-item">
+							&nbsp;&nbsp;<input id="last_apply_date" name="last_apply_date"
+								class="Wdate" type="text"
+								onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+								style="vertical-align: top; width: 133px;" disabled="disabled" />
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">上期合同结清日期：</div>
+						<div class="pop-form-item">
+							&nbsp;&nbsp;<input id="last_clean_date" name="last_clean_date"
+								class="Wdate" type="text"
+								onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+								style="vertical-align: top; width: 133px;" disabled="disabled" />
+						</div>
+					</div>
+					<div class="float-l clearboth">
+						<div class="pop-form-title">特殊说明：</div>
+						<div class="pop-form-item">
+							<textarea rows="" cols=""
+								style="width: 700px; height: 80px; resize: none;"
+								id="overdue_status" name="overdue_status"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 保险及公积金 -->
+			<div class="center-content clearboth" style="min-width: 500px">
+				<div class="center-title3 position-re" style="margin-bottom: 10px">
+					保险及公积金
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				<div class="center-txt  clearfix"
+					style="margin-bottom: 10px; height: auto; border: 1px solid #bfbfbf; padding: 5px;">
+					<div class="float-l">
+						<div class="pop-form-title">
+							<strong>养老保险：1</strong>
+						</div>
+						<div class="pop-form-item">
+							查询方式： <input type="hidden" name="lnsurance_type1" value="1" /> <input
+								type="radio" class="radio3" name="lookup_mode1" value="1" />网络&nbsp;
+							<input type="radio" class="radio3" name="lookup_mode1" value="2" />电话
+							&nbsp;&nbsp;&nbsp;查询结果： <input type="radio" class="radio3"
+								name="lookup_result1" value="1" checked="checked" />有&nbsp; <input
+								type="radio" class="radio3" name="lookup_result1" value="0" />无
+							&nbsp;&nbsp;&nbsp;单位名称是否一致： <input type="radio" class="radio3"
+								name="lnsurance_com_same1" value="1" checked="checked" />是&nbsp;
+							<input type="radio" class="radio3" name="lnsurance_com_same1"
+								value="0" />否 参保状态： <input type="radio" class="radio3"
+								name="lnsurance_status1" value="1" checked="checked" />正常&nbsp;
+							<input type="radio" class="radio3" name="lnsurance_status1"
+								value="2" />不正常
+						</div>
+					</div>
+					<div class="float-l clearboth">
+						<div class="pop-form-title">
+							<strong>医疗保险：2</strong>
+						</div>
+						<div class="pop-form-item">
+							查询方式： <input type="hidden" name="lnsurance_type2" value="2" /> <input
+								type="radio" class="radio3" name="lookup_mode2" value="1" />网络&nbsp;
+							<input type="radio" class="radio3" name="lookup_mode2" value="2" />电话
+							&nbsp;&nbsp;&nbsp;查询结果： <input type="radio" class="radio3"
+								name="lookup_result2" value="1" checked="checked" />有&nbsp; <input
+								type="radio" class="radio3" name="lookup_result2" value="0" />无
+							&nbsp;&nbsp;&nbsp;单位名称是否一致： <input type="radio" class="radio3"
+								name="lnsurance_com_same2" value="1" checked="checked" />是&nbsp;
+							<input type="radio" class="radio3" name="lnsurance_com_same2"
+								value="0" />否 参保状态： <input type="radio" class="radio3"
+								name="lnsurance_status2" value="1" checked="checked" />正常&nbsp;
+							<input type="radio" class="radio3" name="lnsurance_status2"
+								value="2" />不正常
+						</div>
+					</div>
+					<div class="float-l clearboth">
+						<div class="pop-form-title">
+							<strong>公积金：3</strong>
+						</div>
+						<div class="pop-form-item">
+							查询方式： <input type="hidden" name="lnsurance_type3" value="3" /> <input
+								type="radio" class="radio3" name="lookup_mode3" value="1" />网络&nbsp;
+							<input type="radio" class="radio3" name="lookup_mode3" value="2" />电话
+							&nbsp;&nbsp;&nbsp;查询结果： <input type="radio" class="radio3"
+								id="lookup_result" name="lookup_result3" value="1"
+								checked="checked" />有&nbsp; <input type="radio" class="radio3"
+								id="lookup_result" name="lookup_result3" value="0" />无
+							&nbsp;&nbsp;&nbsp;单位名称是否一致： <input type="radio" class="radio3"
+								name="lnsurance_com_same3" id="lnsurance_com_same" value="1"
+								checked="checked" />是&nbsp; <input type="radio" class="radio3"
+								name="lnsurance_com_same3" id="lnsurance_com_same" value="0" />否
+							参保状态： <input type="radio" class="radio3" name="lnsurance_status3"
+								id="lnsurance_status" value="1" checked="checked" />正常&nbsp; <input
+								type="radio" class="radio3" name="lnsurance_status3"
+								id="lnsurance_status" value="2" />不正常
+						</div>
+					</div>
+					<div class="float-l clearboth">
+						<div class="pop-form-title">特殊说明：</div>
+						<div class="pop-form-item">
+							<textarea rows="" cols=""
+								style="width: 700px; height: 80px; resize: none;"
+								id="insurance_remark" name="insurance_remark"></textarea>
+						</div>
+					</div>
+					<div class="float-l clearboth clearfix " style="height: auto">
+						<br />
+						<br />
+						<br />
+						<br />
+						<div class="pop-form-title2" align="right">附件：</div>
+						<div class="pop-form-item clearfix" align="right"
+							style="height: auto">
+							<div class="pop-form-item">
+								<a class="btn" href="#" onclick="openAddAttDialog()"
+									id="uploadButton">上传附件</a>
+							</div>
+							<div class="pop-form-item clearfix" id="fileinfo"
+								style="height: auto"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 通话记录 -->
+			<div class="center-content clearboth" style="min-width: 500px;">
+				<div class="center-title3 position-re" style="margin-bottom: 10px">
+					通话记录
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				<div class="center-txt"
+					style="margin-bottom: 10px; height: 400px; border: 1px solid #bfbfbf; padding: 5px;">
+					<div class="float-l">
+						<div class="pop-form-title">&nbsp;&nbsp;&nbsp;&nbsp;1号卡是否实名：</div>
+						<div class="pop-form-item">
+							&nbsp;&nbsp;<input type="radio" class="radio3"
+								id="is_real_name_tel1" name="is_real_name_tel1" value="1" />是&nbsp;<input
+								type="radio" class="radio3" id="is_real_name_tel1"
+								name="is_real_name_tel1" value="2" />否
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">卡主姓名：</div>
+						<div class="pop-form-item">
+							<input type="text" id="real_name_tel1" name="real_name_tel1" />
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">入网时间：</div>
+						<div class="pop-form-item">
+							<input id="phone_access_date1" name="phone_access_date1"
+								class="Wdate" type="text"
+								onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+								style="vertical-align: top;" />
+						</div>
+					</div>
+					<div class="float-l clearboth">
+						<div class="pop-form-title">&nbsp;&nbsp;&nbsp;&nbsp;2号卡是否实名：</div>
+						<div class="pop-form-item">
+							&nbsp;&nbsp;<input type="radio" class="radio3"
+								id="is_real_name_tel2" name="is_real_name_tel2" value="1" />是&nbsp;<input
+								type="radio" class="radio3" id="is_real_name_tel2"
+								name="is_real_name_tel2" value="2" />否
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">卡主姓名：</div>
+						<div class="pop-form-item">
+							<input type="text" id="real_name_tel2" name="real_name_tel2" />
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">入网时间：</div>
+						<div class="pop-form-item">
+							<input id="phone_access_date2" name="phone_access_date2"
+								class="Wdate" type="text"
+								onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+								style="vertical-align: top;" />
+						</div>
+					</div>
+					<div class="clearboth">
+						<div class="pop-form-title">其他说明：</div>
+						<div class="pop-form-item">
+							<!-- 其他说明列表 -->
+							<div id="grid_telphone_conut"></div>
+						</div>
+					</div>
+					<div class="float-l clearboth" style="margin-top: 225px;">
+						<div class="pop-form-title">特殊说明：</div>
+						<div class="pop-form-item">
+							<textarea style="width: 700px; height: 80px; resize: none;"
+								id="phone_remark" name="phone_remark"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 房产调档记录-->
+			<div class="center-content clearboth" style="min-width: 500px;"
+				id="xxfcdd">
+				<div class="center-title3 position-re" style="margin-bottom: 10px">
+					房产调档记录
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				<div class="center-txt"
+					style="margin-bottom: 10px; height: 350px; border: 1px solid #bfbfbf; padding: 5px;">
+					房产信息：
+					<!-- 添加的虚线 -->
+					<div class="line clearboth" id="info_l3"></div>
+					<div class="float-l">
+						<div class="pop-form-title">申请人姓名:</div>
+						<div class="pop-form-item">
+							<input type="text" id="apply_name" />
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">身份证号码:</div>
+						<div class="pop-form-item">
+							<input type="text" id="id_card" />
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">产权人:</div>
+						<div class="pop-form-item">
+							<input type="text" id="owner_name" />
+						</div>
+					</div>
+					<div class="float-l clearboth">
+						<div class="pop-form-title">共同拥有人:</div>
+						<div class="pop-form-item">
+							<input type="text" id="co_owner_name" />
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">房产证号:</div>
+						<div class="pop-form-item">
+							<input type="text" id="house_card_id" />
+						</div>
+					</div>
+					<div class="float-l clearboth">
+						<div class="pop-form-title">房产地址:</div>
+						<div class="pop-form-item">
+							<input type="text" style="width: 800px;" id="house_address" />
+						</div>
+					</div>
+					<!-- 添加的虚线 -->
+					<div class="line clearboth" id="info_l3"></div>
+					抵押信息：
+					<div class="line clearboth" id="info_l3"></div>
+					<div class="float-l">
+						<div class="pop-form-title">权利人:</div>
+						<div class="pop-form-item">
+							<input type="text" id="obligee_name" />
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">抵押金额:</div>
+						<div class="pop-form-item">
+							<input type="text" id="mortgage_amount" onkeyup="valiFloat(this)"
+								onblur="valiFloat2(this)" /> 元
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">约定期限:</div>
+						<div class="pop-form-item">
+							<input type="text" id="agree_limit_time" /> 月
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">其他:</div>
+						<div class="pop-form-item">
+							<input type="text" style="width: 800px;" id="other_remark" />
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">经</div>
+						<div class="pop-form-item">
+							<input type="text" id="estate_board" /> 房产局查询,此人房屋产权登记情况正常。
+						</div>
+					</div>
+					<div class="float-l clearboth">
+						<div class="pop-form-title">特殊说明：</div>
+						<div class="pop-form-item">
+							<textarea style="width: 700px; height: 80px; resize: none;"
+								id="board_remark"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 结束 -->
+	</div>
+
+	<script type="text/javascript">
+	 //获取主表单ID
+	var wms_cre_credit_head_id=$.query.get('wms_cre_credit_head_id');
+	var wms_cre_credit_line_customer_change_head_id=$.query.get('wms_cre_credit_line_customer_change_head_id');
+	var key =$.query.get('key');
+	 //获取流程taskId
+	var grid_telphone_conut;
+	var grid_telphone_count_data={};
+	//只读标示
+	var cktype = $.query.get('cktype');
+	//上传附件列表
+	var fileArr = [];	
+	
+	$(function(){
+		if(cktype=='ck'){
+			initForm();
+			setReadOnly();
+		}else{
+			initForm1();
+		}
+		//初始化
+		init_telphone_grid();	
+		
+	});
+	//查看信息
+	function initForm(){
+		$.getJSON(globalUtil.getTimestampUrl('/loanreview/wmscrerevinfomainbyfkforaddgr.do'),
+			{
+			"wms_cre_credit_head_id" : wms_cre_credit_head_id,
+			"wms_cre_credit_line_customer_change_head_id" : wms_cre_credit_line_customer_change_head_id
+			},
+			function(json){
+				if(json.ztqk!=null){
+					globalUtil.setFormVal("ztqk",json.ztqk);
+					setCheckBoxValues("customer_prop", json.ztqk.customer_prop==null?"":json.ztqk.customer_prop.split("#"));//获取个人信息属性
+					setRadioVal("priv_court_case", json.ztqk.priv_court_case);//设置个人法院网有无
+					setRadioVal("is_crime_record", json.ztqk.is_crime_record);//犯罪记录有无
+					 setRadioVal("is_car_record",json.ztqk.is_car_record);//车辆记录有无
+					 setRadioVal("is_re_loan",json.ztqk.is_re_loan);//循环贷的有无
+					//通话记录
+					setRadioVal("is_real_name_tel1", json.ztqk.is_real_name_tel1);//卡1是否实名
+				    setRadioVal("is_real_name_tel2", json.ztqk.is_real_name_tel2);//卡2是否实名
+				    //设置循环贷信息
+				  	setCheckBoxValues("repayment_status",json.ztqk.repayment_status==null?"":json.ztqk.repayment_status.split("#")) //还款情况处理
+					//设置个人法院网记录信息
+					for(var i=0;i<json.grfyw.length-1;i++){
+						add_grfyw();
+					}
+				   if(json.ztqk.priv_court_case==1){
+				   		$('.class_xxgrfyw').each(function(i){
+						   setRadioVal("execute_status", json.grfyw[i].execute_status,this,true);//案件执行状态			   					   
+						   $(this).find("input[name=accreditation_date]").val(json.grfyw[i].accreditation_date);//立案时间
+						   $(this).find("input[name=execute_target]").val(json.grfyw[i].execute_target);//执行标的
+						   $(this).find("textarea[name=court_case_remark]").val(json.grfyw[i].court_case_remark);//特殊说明
+						   $(".delThisInfo").css({
+								"display" : "none"
+							});
+				   		});      
+				   }else{
+					   $('.class_xxgrfyw').each(function(i){
+						   if(json.grfyw[i]!=undefined){
+						   $(this).find("textarea[name=court_case_remark]").val(json.grfyw[i].court_case_remark);//特殊说明							   
+						   }
+				   		});     
+				   }
+				    //设置犯罪记录信息
+				    for(var i=0;i<json.grfz.length-1;i++){
+				    	add_grfz();
+				    }
+				    if(json.ztqk.is_crime_record==1){
+					    $('.class_xxgrfz').each(function(i){
+					    	$(this).find("input[name=case_type]").val(json.grfz[i].case_type);
+					    	$(this).find("input[name=accreditation_date]").val(json.grfz[i].accreditation_date);
+					    	$(this).find("input[name=close_date]").val(json.grfz[i].close_date);
+					    	$(this).find("input[name=executive_area]").val(json.grfz[i].executive_area);
+					    	$(this).find("input[name=executive_way]").val(json.grfz[i].executive_way);
+					    	$(this).find("textarea[name=criminal_remark]").val(json.grfz[i].criminal_remark);
+					    	$(".delThisInfo").css({
+								"display" : "none"
+							});
+					    });			    	
+				    }else{
+				    	 $('.class_xxgrfz').each(function(i){
+				    		 if(json.grfz[i] !=undefined){
+						    	$(this).find("textarea[name=criminal_remark]").val(json.grfz[i].criminal_remark);				    			 
+				    		 }
+						    });			
+				    }
+				    //设置车辆记录信息
+				    for(var i=0;i<json.grcl.length-1;i++){
+				    	add_grcheliang();
+				    }
+				    if(json.ztqk.is_car_record==1){
+					    $('.class_xxgrcl').each(function(i){
+					    	$(this).find("input[name=car_brand]").val(json.grcl[i].car_brand);//车辆牌子
+					    	$(this).find("textarea[name=car_remark]").val(json.grcl[i].car_remark);//特殊说明
+					    	$(".delThisInfo").css({
+								"display" : "none"
+							});
+					    });			    	
+				    }else{
+				    	 $('.class_xxgrcl').each(function(i){
+				    		 if(json.grcl[i]!=undefined){
+						    	$(this).find("textarea[name=car_remark]").val(json.grcl[i].car_remark);//特殊说明				    			 
+				    		 }
+						    });		
+				    }
+				    //设置养老保险和公积金记录信息
+				    //1.养老
+				    setRadioVal("lookup_mode1", json.gryanglao.lookup_mode);
+				    setRadioVal("lookup_result1", json.gryanglao.lookup_result);
+				    setRadioVal("lnsurance_com_same1", json.gryanglao.lnsurance_com_same);
+				    setRadioVal("lnsurance_status1", json.gryanglao.lnsurance_status);
+				    //2.医疗
+				    setRadioVal("lookup_mode2", json.gryiliao.lookup_mode);
+				    setRadioVal("lookup_result2", json.gryiliao.lookup_result);
+				    setRadioVal("lnsurance_com_same2",json.gryiliao.lnsurance_com_same);
+				    setRadioVal("lnsurance_status2",json.gryiliao.lnsurance_status);
+				    //3.公积金
+				    setRadioVal("lookup_mode3", json.grgongjijin.lookup_mode);
+				    setRadioVal("lookup_result3", json.grgongjijin.lookup_result);
+				    setRadioVal("lnsurance_com_same3", json.grgongjijin.lnsurance_com_same);
+				    setRadioVal("lnsurance_status3", json.grgongjijin.lnsurance_status);
+				    //附件
+				    fileArr=json.fjxx;
+				    init_attr();
+				}
+			}
+		);
+	}
+	//审批时候，查看该单据是否有数据
+	function initForm1(){
+		$.getJSON(globalUtil.getTimestampUrl('/loanreview/wmscrerevinfomainbyfkforaddgr.do'),
+				{
+				"wms_cre_credit_head_id" : wms_cre_credit_head_id,
+				"wms_cre_credit_line_customer_change_head_id" : wms_cre_credit_line_customer_change_head_id
+				},
+				function(json){
+					if(json.ztqk != null){
+						globalUtil.setFormVal("ztqk",json.ztqk);
+						setCheckBoxValues("customer_prop", json.ztqk.customer_prop==null?"":json.ztqk.customer_prop.split("#"));//获取个人信息属性
+						setRadioVal("priv_court_case", json.ztqk.priv_court_case);//设置个人法院网有无
+						setRadioVal("is_crime_record", json.ztqk.is_crime_record);//犯罪记录有无
+						setRadioVal("is_car_record",json.ztqk.is_car_record);//车辆记录有无
+						setRadioVal("is_re_loan",json.ztqk.is_re_loan);//循环贷的有无
+						//循环贷有
+						 if(json.ztqk.is_re_loan==1){
+							 togglegrxh("#is_re_loan");
+						 }
+						//通话记录
+						setRadioVal("is_real_name_tel1", json.ztqk.is_real_name_tel1);//卡1是否实名
+					    setRadioVal("is_real_name_tel2", json.ztqk.is_real_name_tel2);//卡2是否实名
+						 
+					    //设置循环贷信息
+					    setCheckBoxValues("repayment_status",json.ztqk.repayment_status==null?"":json.ztqk.repayment_status.split("#")) //还款情况处理
+						//设置个人法院网记录信息
+						for(var i=0;i<json.grfyw.length-1;i++){
+							add_grfyw();
+						}
+					   if(json.ztqk.priv_court_case==1){
+							togglegrfyw("#priv_court_case");
+					   		$('.class_xxgrfyw').each(function(i){
+						  	 	setRadioVal("execute_status", json.grfyw[i].execute_status,this,true);//案件执行状态			   					   
+						   		$(this).find("input[name=accreditation_date]").val(json.grfyw[i].accreditation_date);//立案时间
+						  	 	$(this).find("input[name=execute_target]").val(json.grfyw[i].execute_target);//执行标的
+						   		$(this).find("textarea[name=court_case_remark]").val(json.grfyw[i].court_case_remark);//特殊说明
+					   		});                                        				   
+					   }else{
+						   $('.class_xxgrfyw').each(function(i){
+							   if(json.grfyw[i]!=undefined){
+							   $(this).find("textarea[name=court_case_remark]").val(json.grfyw[i].court_case_remark);//特殊说明								   
+							   }
+						   	});   
+					   }
+					    //设置犯罪记录信息
+					    for(var i=0;i<json.grfz.length-1;i++){
+					    	add_grfz();
+					    }
+					    if(json.ztqk.is_crime_record==1){
+					    togglegrfz("#is_crime_record");
+					    $('.class_xxgrfz').each(function(i){
+					    	$(this).find("input[name=case_type]").val(json.grfz[i].case_type);
+					    	$(this).find("input[name=accreditation_date]").val(json.grfz[i].accreditation_date);
+					    	$(this).find("input[name=close_date]").val(json.grfz[i].close_date);
+					    	$(this).find("input[name=executive_area]").val(json.grfz[i].executive_area);
+					    	$(this).find("input[name=executive_way]").val(json.grfz[i].executive_way);
+					    	$(this).find("textarea[name=criminal_remark]").val(json.grfz[i].criminal_remark);
+					    });			    	
+					    }else{
+					    	 $('.class_xxgrfz').each(function(i){
+					    		 if(json.grfz[i]!=undefined){
+							    	$(this).find("textarea[name=criminal_remark]").val(json.grfz[i].criminal_remark);					    			 
+					    		 }
+							    });			
+					    }
+					    //设置车辆记录信息
+					    for(var i=0;i<json.grcl.length-1;i++){
+					    	add_grcheliang();
+					    }
+					    if(json.ztqk.is_car_record==1){
+					    	togglegrcl("#is_car_record");
+					    	$('.class_xxgrcl').each(function(i){
+					    		$(this).find("input[name=car_brand]").val(json.grcl[i].car_brand);//车辆牌子
+					    		$(this).find("textarea[name=car_remark]").val(json.grcl[i].car_remark);//特殊说明
+					    	});			    	
+					    }else{
+					    	$('.class_xxgrcl').each(function(i){
+					    		if(json.grcl[i]!=undefined){
+					    		$(this).find("textarea[name=car_remark]").val(json.grcl[i].car_remark);//特殊说明					    			
+					    		}
+					    	});	
+					    }
+					    //设置养老保险和公积金记录信息
+					    //1.养老
+					    setRadioVal("lookup_mode1", json.gryanglao.lookup_mode);
+					    setRadioVal("lookup_result1", json.gryanglao.lookup_result);
+					    setRadioVal("lnsurance_com_same1", json.gryanglao.lnsurance_com_same);
+					    setRadioVal("lnsurance_status1", json.gryanglao.lnsurance_status);
+					    //2.医疗
+					    setRadioVal("lookup_mode2", json.gryiliao.lookup_mode);
+					    setRadioVal("lookup_result2", json.gryiliao.lookup_result);
+					    setRadioVal("lnsurance_com_same2",json.gryiliao.lnsurance_com_same);
+					    setRadioVal("lnsurance_status2",json.gryiliao.lnsurance_status);
+					    //3.公积金
+					    setRadioVal("lookup_mode3", json.grgongjijin.lookup_mode);
+					    setRadioVal("lookup_result3", json.grgongjijin.lookup_result);
+					    setRadioVal("lnsurance_com_same3", json.grgongjijin.lnsurance_com_same);
+					    setRadioVal("lnsurance_status3", json.grgongjijin.lnsurance_status);
+					    //附件
+					    fileArr=json.fjxx;
+					    init_attr1();
+					}
+				}
+			);
+		}
+	//获取上传附件内容，可以删除查看功能
+	function init_attr1(){
+		var filehtml = '';
+		for(var i=0;i<fileArr.length;i++){
+			var nnme=fileArr[i].attachment_new_name.replace('/','thxg1');
+			nnme=nnme.replace('/','thxg2');
+			filehtml += '<div id="delUploadDivId'+nnme+'">';
+			filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+fileArr[i].attachment_address+'">'+fileArr[i].attachment_old_name+'</a>';
+			filehtml += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\''+nnme+'\')"/>';
+			filehtml += '</div>'
+		}
+		$("#fileinfo").html(filehtml);   
+	}
+	//获取上传附件内容，并且只能查看功能
+	function init_attr(){
+		var filehtml = '';
+		for(var i=0;i<fileArr.length;i++){
+			var nnme=fileArr[i].attachment_new_name.replace('/','thxg1');
+			nnme=nnme.replace('/','thxg2');
+			filehtml += '<div id="delUploadDivId'+nnme+'">';
+			filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+fileArr[i].attachment_address+'">'+fileArr[i].attachment_old_name+'</a>';
+			filehtml += '</div>'
+		}
+		$("#fileinfo").html(filehtml);   
+	}
+	//设置checkBox的Values
+	function setCheckBoxValues(nameVal,valFromDb,ele,flag){
+		if(flag){
+			$(ele).find("input[name^='"+nameVal+"']").each(function(i) {
+				var obj = $(this);
+				for(var j = 0;j<valFromDb.length;j++){
+					if(obj.val() == valFromDb[j]){
+						obj.attr('checked', 'checked');
+					}
+				}
+			});
+			
+		}else{
+			$("input[name='"+nameVal+"']").each(function(i) {
+				var obj = $(this);
+				for(var j = 0;j<valFromDb.length;j++){
+					if(obj.val() == valFromDb[j]){
+						obj.attr('checked', 'checked');
+					}
+				}
+			});
+		}	
+	}
+	//设置Radio控件的值
+	function setRadioVal(nameVal,valFromDb,ele,flag){
+		if(flag){
+			$(ele).find("input[name^='"+nameVal+"']").each(function() {
+				if ($(this).val() == valFromDb) {
+					$(this).attr('checked', 'checked');
+					return false;
+				}
+			});
+			
+		}else{
+			$("input[name='"+nameVal+"']").each(function() {
+				if ($(this).val() == valFromDb) {
+					$(this).attr('checked', 'checked');
+					return false;
+				}
+			});
+		}	
+	}
+	//获取表单中所有数据组合成一个JSON对象
+	function getFromValues(){
+		var  reslutJson={};//获取个人信息总体Json对象
+		var  ztqkJson={};//信息总体情况表
+		ztqkJson.customer_name=getValue('customer_name');//主贷人个人姓名
+		ztqkJson.customer_prop=getCheckBoxValues('customer_prop');//主贷人个人属性
+		ztqkJson.priv_court_case=getRadioValues('priv_court_case');//获取法院网记录有无
+		var info_grfyw =[];
+		if(ztqkJson.priv_court_case=='1'){
+			$('.class_xxgrfyw').each(function(i){
+				var  grfywJson={};//获取个人法院网信息
+				grfywJson.court_case_type="1";//法院网类型 1个人 2企业
+				grfywJson.execute_status=$(this).find('[name ^=execute_status]:checked').get(0).value;//获取执行状态
+				grfywJson.accreditation_date=$(this).find('[name=accreditation_date]').get(0).value;//获取时间
+				grfywJson.execute_target=$(this).find('[name=execute_target]').get(0).value;//获取执行标的
+				grfywJson.court_case_remark=$(this).find('[name=court_case_remark]').get(0).value;//获取特殊说明
+				info_grfyw.push(grfywJson);
+			});
+		}else{
+			//当选择无的时候，要将特殊说明记录
+			$('.class_xxgrfyw').each(function(i){
+				var  grfywJson={};//获取个人法院网信息
+				grfywJson.court_case_type="1";//法院网类型 1个人 2企业
+				grfywJson.court_case_remark=$(this).find('[name=court_case_remark]').get(0).value;//获取特殊说明
+				info_grfyw.push(grfywJson);
+			});
+		}
+		//获取个人犯罪记录内容
+		ztqkJson.is_crime_record=getRadioValues('is_crime_record');//获取犯罪记录有无
+	    var info_grfz=[];
+		if(ztqkJson.is_crime_record=='1'){
+			$('.class_xxgrfz').each(function(i){
+				var grfzJson={};//获取犯罪记录
+				grfzJson.case_type=$(this).find('[name=case_type]').get(0).value;//案件类别
+				grfzJson.accreditation_date=$(this).find('[name=accreditation_date]').get(0).value;//立案时间
+				grfzJson.close_date=$(this).find('[name=close_date]').get(0).value;//结案时间
+				grfzJson.executive_area=$(this).find('[name=executive_area]').get(0).value;//执行的
+				grfzJson.executive_way=$(this).find('[name=executive_way]').get(0).value;//执行方式
+				grfzJson.criminal_remark=$(this).find('[name=criminal_remark]').get(0).value;//犯罪案件说明
+				info_grfz.push(grfzJson);
+			});
+		}else{
+			//当选择无的时候，要将特殊说明记录
+			$('.class_xxgrfz').each(function(i){
+				var grfzJson={};//获取犯罪记录
+				grfzJson.criminal_remark=$(this).find('[name=criminal_remark]').get(0).value;//犯罪案件说明
+				info_grfz.push(grfzJson);
+			});
+		}
+		//获取车辆记录内容
+		ztqkJson.is_car_record=getRadioValues('is_car_record');//获取车辆信息有无
+		var info_grcl=[];
+		if(ztqkJson.is_car_record=='1'){
+			$('.class_xxgrcl').each(function(i){
+				var grclJson={};//获取车辆记录
+				grclJson.car_brand=$(this).find('[name=car_brand]').get(0).value;//获取车辆车牌号
+				grclJson.car_remark=$(this).find('[name=car_remark]').get(0).value;//获取车辆信息的说明
+				info_grcl.push(grclJson);
+			});	
+		}else{
+			//当选择无的时候，要将特殊说明记录
+			$('.class_xxgrcl').each(function(i){
+				var grclJson={};//获取车辆记录
+				grclJson.car_remark=$(this).find('[name=car_remark]').get(0).value;//获取车辆信息的说明
+				info_grcl.push(grclJson);
+			});	
+		}
+		//循环贷情况
+		ztqkJson.is_re_loan=getRadioValues('is_re_loan');//存储循环贷有无标记
+		if(ztqkJson.is_re_loan=='1'){
+			ztqkJson.repayment_status=getCheckBoxValues('repayment_status');//还款情况	
+			ztqkJson.last_loan_money=getValue('last_loan_money');//上期借款合同金额
+			ztqkJson.last_apply_date=getValue('last_apply_date');//上期合同申请日期
+			ztqkJson.last_clean_date=getValue('last_clean_date');//上期合同结清日期
+			ztqkJson.overdue_status=getValue('overdue_status');//特殊说明
+		}else{
+			ztqkJson.overdue_status=getValue('overdue_status');//特殊说明
+		}
+		//保险及公积金
+		var grbxyanglao={};//养老
+		var grbxyiliao={};//医疗
+		var grbxgongjj={};//公积金
+		grbxyanglao.lnsurance_type=getValue('lnsurance_type1');//保险类型
+		grbxyanglao.lookup_mode=getRadioValues('lookup_mode1');//查询方式
+		grbxyanglao.lookup_result=getRadioValues('lookup_result1');//查询结果
+		grbxyanglao.lnsurance_com_same=getRadioValues('lnsurance_com_same1');//是否与原单位相同
+		grbxyanglao.lnsurance_status=getRadioValues('lnsurance_status1');//参保状态
+
+		grbxyiliao.lnsurance_type=getValue('lnsurance_type2');//保险类型
+		grbxyiliao.lookup_mode=getRadioValues('lookup_mode2');//查询方式
+		grbxyiliao.lookup_result=getRadioValues('lookup_result2');//查询结果
+		grbxyiliao.lnsurance_com_same=getRadioValues('lnsurance_com_same2');//是否与原单位相同
+		grbxyiliao.lnsurance_status=getRadioValues('lnsurance_status2');//参保状态
+
+		grbxgongjj.lnsurance_type=getValue('lnsurance_type3');//保险类型
+		grbxgongjj.lookup_mode=getRadioValues('lookup_mode3');//查询方式
+		grbxgongjj.lookup_result=getRadioValues('lookup_result3');//查询结果
+		grbxgongjj.lnsurance_com_same=getRadioValues('lnsurance_com_same3');//是否与原单位相同
+		grbxgongjj.lnsurance_status=getRadioValues('lnsurance_status3');//参保状态
+
+		//通话记录
+		ztqkJson.is_real_name_tel1=getRadioValues('is_real_name_tel1');//卡1真实性
+		ztqkJson.is_real_name_tel2=getRadioValues('is_real_name_tel2');//卡2真实性
+		ztqkJson.real_name_tel1=getValue('real_name_tel1');//卡1姓名
+		ztqkJson.real_name_tel2=getValue('real_name_tel2');//卡2姓名
+		ztqkJson.phone_access_date1=getValue('phone_access_date1');//卡1入网时间
+		ztqkJson.phone_access_date2=getValue('phone_access_date2');//卡2入网时间
+		ztqkJson.phone_remark=getValue('phone_remark');//通话记录特殊说明
+		//获取房产调档记录
+		ztqkJson.xxfcdd=globalUtil.getFormParam("xxfcdd");
+		//公积金保险特殊说明
+		ztqkJson.insurance_remark=getValue('insurance_remark');//特殊说明
+		//通话记录的其他说明
+		var grid_telphone_count=JSON.stringify(getGridData(grid_telphone_conut));
+		reslutJson.grid_telphone_count=grid_telphone_count;
+		//养老保险  医疗保险  公积金
+		reslutJson.grbxyanglao=grbxyanglao;
+		reslutJson.grbxyiliao=grbxyiliao;
+		reslutJson.grbxgongjj=grbxgongjj;
+		//信息总体情况
+		reslutJson.ztqkJson=ztqkJson;
+		//保险及公积金附件
+		reslutJson.fileArr=fileArr;
+		//个人法院网信息
+		reslutJson.info_grfyw=info_grfyw;
+		//个人犯罪
+		reslutJson.info_grfz=info_grfz;
+		//个人车辆记录
+		reslutJson.info_grcl=info_grcl;
+		
+		return reslutJson;
+	}
+	var index=1;
+	//个人法院网案件执行情况增加
+	function add_grfyw(){
+		var outDiv=$('<div class="center-txt   class_xxgrfyw" style=" margin-bottom:5px;height: 120px;border: 1px solid #bfbfbf;padding:5px;"></div>');
+		outDiv.html($('#copy_xxinfo_fyw_xz').html());
+		$(outDiv).find('[name=execute_status]').attr('name','execute_status'+index);
+		$('.class_xxgrfyw:last').after(outDiv);	
+	     index++;
+	}
+	//个人犯罪记录增加
+	function add_grfz(){
+		var outDiv=$('<div class="center-txt  class_xxgrfz" style="margin-bottom:5px; height: 150px;border: 1px solid #bfbfbf;padding:5px; "></div>');
+		outDiv.html($('#copy_xxinfo_grfz_xz').html());
+		$('.class_xxgrfz:last').after(outDiv);
+	}
+	//车辆记录信息增加
+	function add_grcheliang(){
+		var outDiv=$(' <div class="center-txt  class_xxgrcl" style="margin-bottom:5px;height: 120px;border: 1px solid #bfbfbf;padding: 5px;"></div>');
+		outDiv.html($('#copy_xxinfo_grcl_xz').html());
+		$('.class_xxgrcl:last').after(outDiv);
+	}
+	//通话记录其他说明
+	function init_telphone_grid(){
+		//多行列表
+		var columnsAdd1=[
+                {display: '近第一个月', name: 'phone1_1', width: 100, 
+                	editor: { 
+     				type: 'text', // 该列为可编辑状态
+     				ext:{
+    					onChangeValue: function(value){ // 单元格内容发生变化时的触发事件
+    						var textObj = this;
+    						if(!globalUtil.isEmpty(value) && !(globalUtil.isNum(value))){								
+    							textObj.setValue('');
+    							globalUtil.warnMsg(globalErrorMsg['400412'],function(){
+    								textObj.inputText.focus();	//此行代码暂不可用
+    							});								
+    						}
+    			    	}
+    				}
+     			    }
+                },
+                {display: '近第二个月', name: 'phone1_2', width: 100, 
+                	editor: { 
+     				type: 'text',// 该列为可编辑状态
+     				ext:{
+    					onChangeValue: function(value){ // 单元格内容发生变化时的触发事件
+    						var textObj = this;
+    						if(!globalUtil.isEmpty(value) && !(globalUtil.isNum(value))){								
+    							textObj.setValue('');
+    							globalUtil.warnMsg(globalErrorMsg['400412'],function(){
+    								textObj.inputText.focus();	//此行代码暂不可用
+    							});								
+    						}
+    			    	}
+    				}
+     			    }
+                },
+                {display: '近第三个月', name: 'phone1_3', width: 100, 
+                	editor: { 
+     				type: 'text', // 该列为可编辑状态
+     				ext:{
+    					onChangeValue: function(value){ // 单元格内容发生变化时的触发事件
+    						var textObj = this;
+    						if(!globalUtil.isEmpty(value) && !(globalUtil.isNum(value))){								
+    							textObj.setValue('');
+    							globalUtil.warnMsg(globalErrorMsg['400412'],function(){
+    								textObj.inputText.focus();	//此行代码暂不可用
+    							});								
+    						}
+    			    	}
+    				}
+     			    }
+                }
+		        ];
+		var columnsAdd2=[
+		       {display: '近第一个月', name: 'phone2_1', width: 100,
+		    	   editor: { 
+	 				type: 'text',
+	 				ext:{
+						onChangeValue: function(value){ // 单元格内容发生变化时的触发事件
+							var textObj = this;
+							if(!globalUtil.isEmpty(value) && !(globalUtil.isNum(value))){								
+								textObj.setValue('');
+								globalUtil.warnMsg(globalErrorMsg['400412'],function(){
+									textObj.inputText.focus();	//此行代码暂不可用
+								});								
+							}
+				    	}
+					}
+	 			    }},
+		       {display: '近第二个月', name: 'phone2_2', width: 100, 
+	 			    editor: { 
+	 				type: 'text',
+	 				ext:{
+						onChangeValue: function(value){ // 单元格内容发生变化时的触发事件
+							var textObj = this;
+							if(!globalUtil.isEmpty(value) && !(globalUtil.isNum(value))){								
+								textObj.setValue('');
+								globalUtil.warnMsg(globalErrorMsg['400412'],function(){
+									textObj.inputText.focus();	//此行代码暂不可用
+								});								
+							}
+				    	}
+					}
+	 			    }},
+		       {display: '近第三个月', name: 'phone2_3', width: 100, 
+	 			    editor: { 
+	 				type: 'text',
+	 				ext:{
+						onChangeValue: function(value){ // 单元格内容发生变化时的触发事件
+							var textObj = this;
+							if(!globalUtil.isEmpty(value) && !(globalUtil.isNum(value))){								
+								textObj.setValue('');
+								globalUtil.warnMsg(globalErrorMsg['400412'],function(){
+									textObj.inputText.focus();	//此行代码暂不可用
+								});								
+							}
+				    	}
+					}
+	 			    }}                    
+			        ];
+		var columns = [{
+            display: '联系人姓名',
+            name: 'contact_name',
+            width: 150,
+            minWidth: 150,
+         },{
+        	 display: '1号卡联系次数',
+             name: 'phone1',
+             resizable: false,
+             width: 500,
+             minWidth: 500,
+             columns:columnsAdd1
+	    },{
+			display: '2号卡联系次数',
+	        name: 'phone2',
+	        resizable: false,
+	        width:600,
+	        minWidth: 500,
+	        columns:columnsAdd2
+	    }];
+		//根据主表单wms_cre_credit_head_id查询出信用贷款的客户变更联系人表中的所有联系人信息
+		grid_telphone_count_data= globalUtil.syncGetJson('/cremanage/wmscrecustomerchangelinecontactListWithPagingFK.do',{
+			'wms_cre_credit_head_id': wms_cre_credit_head_id, //主贷款ID
+			'wms_cre_credit_line_customer_change_head_id':wms_cre_credit_line_customer_change_head_id
+         },'GET');
+		var enabled=true;
+		if(cktype=='ck'){
+			enabled=false;
+		}
+		grid_telphone_conut = $("#grid_telphone_conut").ligerGrid({
+			columns: columns,
+			data:grid_telphone_count_data,
+			rownumbers: true,
+			allowUnSelectRow: false,
+			width: 784,
+	        height: 195,
+	        heightDiff: -4,
+			usePager: false,
+			enabledEdit:enabled
+	    });
+	}
+	var dialog_att;
+	//打开附件上传页面
+	function openAddAttDialog(){
+		var url = globalUtil.getHtml("../creditManage/addFileForCre.html");
+		dialog_att = $.ligerDialog.open({
+	        url: url,
+	        title: '上传附件',
+	        width: 650,
+	        height: globalUtil.setDialogHeight(250),
+	        onHiddenOrClose: function(){
+	        	//alert('关闭或隐藏都调用的事件!');
+	    	},
+	        isResize: false
+		});
+	}
+	//添加上传文件的信息链接
+	function addAttFile(newfileArr,objid){
+		fileArr = fileArr.concat(newfileArr);
+		var filehtml = $("#fileinfo").html();
+		for(var i=0;i<newfileArr.length;i++){
+			var nnme=newfileArr[i].attachment_new_name.replace('/','thxg1');
+			nnme=nnme.replace('/','thxg2');
+			filehtml += '<div id="delUploadDivId'+nnme+'">';
+			filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+newfileArr[i].attachment_address+'">'+newfileArr[i].attachment_old_name+'</a>';
+			filehtml += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\''+nnme+'\')"/>';
+			filehtml += '</div>'
+		}		
+		$("#fileinfo").html(filehtml);
+	}
+	//删除上传文件的信息链接
+	function deleteFile(filename){
+	   	$.ligerDialog.confirm(globalErrorMsg['100016'],
+	    function(yes) {
+	    	if (yes) {
+	    		$("#delUploadDivId"+filename).remove();
+	    		filename=filename.replace('thxg1','/');
+	    		filename=filename.replace('thxg2','/');
+	    		for(var i=0;i<fileArr.length;i++){
+	    			if(filename == fileArr[i].attachment_new_name){
+	    				fileArr.splice(i,1);
+	    				break;
+	    			}
+	    		}
+	    	}                                            
+		});
+	}
+	//个人法院网案件执行情况有无的判断
+	function  togglegrfyw(ele){
+		if($(ele).val()==1 && $(ele).attr('checked')){
+			//状态  有
+			$('#toolbar-grfyw').css('display','');
+			$.each($(ele).parent().parent().find(".class_xxgrfyw").get(),function(i,inele){
+				$(inele).find("input").removeAttr("disabled","disabled");
+				$(inele).find("textarea").removeAttr("disabled","disabled");
+			});
+		}else if($(ele).val()==0 && $(ele).attr('checked')){
+			//状态  无
+			$('#toolbar-grfyw').css('display','none');
+			//把里面的内容全部改为不可编辑
+			$.each($(ele).parent().parent().find(".class_xxgrfyw").get(),function(i,inele){
+				$(inele).find("input").attr("disabled","disabled");
+				//如果有选择的内容的清空
+				$(inele).find("input").val("");
+			});
+		}
+	}
+	//个人犯罪记录有无的判断
+	function togglegrfz(ele){
+		if($(ele).val()==1 && $(ele).attr('checked')){
+			$('#toolbar-grfz').css('display','');
+			//把里面的内容全部改不可编辑状态class_xxgrfz
+			$.each($(ele).parent().parent().find('.class_xxgrfz').get(),function(i,inele){
+				$(inele).find("input").removeAttr('disabled','disabled');
+				$(inele).find("textarea").removeAttr('disabled','disabled');
+			});
+		}else if($(ele).val()==0 && $(ele).attr('checked')){
+			$('#toolbar-grfz').css('display','none');
+			//把里面的内容全部改不可编辑状态class_xxgrfz
+			$.each($(ele).parent().parent().find('.class_xxgrfz').get(),function(i,inele){
+				$(inele).find("input").attr('disabled','disabled');
+				$(inele).find("input").val("");
+			});
+		}
+	}
+	//个人车辆记录有无判断
+	function togglegrcl(ele){
+		if($(ele).val()==1 && $(ele).attr('checked')){
+			$('#toolbar-cheliang').css('display','');
+			$.each($(ele).parent().parent().find('.class_xxgrcl').get(),function(i,inele){
+			$(inele).find("input").removeAttr('disabled','disabled');
+			$(inele).find("textarea").removeAttr('disabled','disabled');
+			});
+		}else if($(ele).val()==0 && $(ele).attr('checked')){
+			$('#toolbar-cheliang').css('display','none');
+			//把里面内容全部改不可编辑状态
+			$.each($(ele).parent().parent().find('.class_xxgrcl').get(),function(i,inele){
+				$(inele).find("input").attr('disabled','disabled');
+				$(inele).find("input").val("");
+			});
+		}
+	}
+	//个人循环贷情况有无判断
+	function togglegrxh(ele){
+		if($(ele).val()==1 && $(ele).attr('checked')){
+			//判断有
+			$.each($(ele).parent().parent().find('.class_xxgrxh').get(),function(i,inele){
+			$(inele).find("input").removeAttr('disabled','disabled');
+			$(inele).find("textarea").removeAttr('disabled','disabled');
+			$(inele).find("checkbox").removeAttr('disabled','disabled');
+			});
+		}else if($(ele).val()==0 && $(ele).attr('checked')){
+			//判断无
+			//把里面内容全部改不可编辑状态
+			$.each($(ele).parent().parent().find('.class_xxgrxh').get(),function(i,inele){
+				$(inele).find("input").attr('disabled','disabled');
+				$(inele).find("checkbox").removeAttr('checked','');
+				$(inele).find("checkbox").attr('disabled','disabled');
+				$(inele).find("input").val('');
+			});
+		}
+	}
+	//法院网案件执行
+	$("#toolbar-grfyw").ligerToolBar({
+		 items: [{
+		        text: '新增',
+		        click:add_grfyw ,
+		        icon: 'add'
+		    },{
+		            line: true
+		    }]
+	});
+	//犯罪记录
+	$("#toolbar-grfz").ligerToolBar({
+		 items: [{
+		        text: '新增',
+		        click:add_grfz ,
+		        icon: 'add'
+		    },{
+		            line: true
+		    }]
+	});
+	//车辆记录
+	$("#toolbar-cheliang").ligerToolBar({
+		 items: [{
+		        text: '新增',
+		        click:add_grcheliang ,
+		        icon: 'add'
+		    },{
+		            line: true
+		    }]
+	});
+	//当点击有逾期按钮的时候 设置特殊说明文字
+	function setOverdue_status(){
+		if($("#repayment_status").attr('checked')){
+			$('#overdue_status').val("逾期		次\n第		期,逾期		天\n第		期,逾期		天");
+		}else{
+			$("#overdue_status").val("");
+		}
+	}
+	//公共删除本组信息
+	function delThisInfo(ele){
+		globalUtil.confirmMsg(globalErrorMsg['100035'],
+		    	function(yes) { //确认删除
+		    			if(yes){
+		    				$(ele).parent().parent().parent().remove();
+		    		}
+		    });	
+	}
+	//根据name或class获取控件的值(适合没有新增)
+	function getValue(nameValue,classValue){
+		if(classValue==null){
+			return document.getElementsByName(nameValue)[0].value;
+		}else{
+			return $('.'+classValue).val();
+		}
+	}
+	//获取多选按钮的值选中的值
+	function getCheckBoxValues(nameValue,classValue){
+		var result=[];
+		if(classValue==null){
+			var eleArr = document.getElementsByName(nameValue);
+			$.each(eleArr,function(i,ele){
+				if($(ele).attr('checked')){
+					result.push($(ele).val());
+				}
+			});
+		}else{
+			var eleArr = $('.'+classValue);
+			$.each(eleArr.get(),function(i,ele){
+				if($(ele).attr('checked')){
+					result.push($(ele).val());
+				}
+			});
+		}
+		return result.join('#');
+	}
+	//获取单选按钮的值
+	function  getRadioValues(nameValue,classValue){
+		var result;
+		if(classValue==null){
+			var eleArr = document.getElementsByName(nameValue);
+			$.each(eleArr,function(i,ele){
+				if($(ele).attr('checked')){
+					result = $(ele).val();
+					return false;
+				}
+			});
+		}else{
+			var eleArr = $('.'+classValue);
+			$.each(eleArr.get(),function(i,ele){
+				if($(ele).attr('checked')){
+					result = $(ele).val();
+					return false;
+				}
+			});
+		}
+		return result;
+	}
+	//获取表格数据，去除全部为空的记录
+	function getGridData(grid){
+		grid.endEdit();
+   		var data_all = grid.getData();
+   		var griddata = [];
+   		for(var i=0;i<data_all.length;i++){
+   			var data = data_all[i];
+   			var isEmpty = true;
+   				if(data){
+					for(var key in data){
+						if($.trim(key) == '' || $.trim(key) == '__status' ||  $.trim(key) == 'contact_name'){continue;}
+						if(!globalUtil.isEmpty(data[key])){
+							if(data[key] instanceof Date){
+								data[key]= data[key].format('yyyy-MM-dd');//格式化日期类型数据
+						}
+						isEmpty = false;
+					}
+				}
+			}
+			if(!isEmpty){
+				griddata.push(data);
+			}else{
+				if(data['contact_name'] == ''){
+					griddata.push(data);
+				}
+			}
+   		}
+   				return griddata;
+    }
+	//设置为只读模式
+	function setReadOnly(){
+		$("input[type=text]").attr({
+			"disabled" : "disabled"
+		});
+		$("input[type=checkbox]").attr({
+			"disabled" : "disabled"
+		});
+		$("input[type=radio]").attr({
+			"disabled" : "disabled"
+		});	
+		$("select").attr({
+			"disabled" : "disabled"
+		});
+		$("textarea").attr({
+			"disabled" : "disabled"
+		});
+		$("#uploadButton").css({
+			"display" : "none"
+		});
+		$(".minwidth400").remove();
+	}
+	//------------------------------------------------------------------------------------------------------------
+	//验证所填如信息必须是数字
+	function  valiisNum(ele){
+		var textObj =ele;
+		if(!globalUtil.isEmpty(textObj) && !(globalUtil.isNum(textObj))){
+			globalUtil.warnMsg(globalErrorMsg['400412']);
+		}
+	}
+	//验证非负整数
+	function valiInt(ele){
+		var val = $(ele).val();
+		if(val!='' && !(globalUtil.isNum(val) || val==0)){
+			errorMsg(globalErrorMsg['400101'],ele);
+		}
+	}
+	//验证非负小数，用于onkeyup事件
+	 function valiFloat(ele){
+	 	var val = $(ele).val();
+	 	if(val!='' && !(globalUtil.isFloat(val) || (globalUtil.isNum(val.substring(0,val.length-2))||val.substring(0,val.length-2)==0) && val.substring(val.length-1)=='.')){
+	 		errorMsg(globalErrorMsg['400107'],ele);
+	 	}
+	 }
+	//用于onblur事件
+	 function valiFloat2(ele){
+	 	var val = $(ele).val();
+	 	if(val!='' && (globalUtil.isNum(val.substring(0,val.length-2)) || val.substring(0,val.length-2)==0) && val.substring(val.length-1)=='.'){
+	 		errorMsg(globalErrorMsg['400107'],ele);
+	 	}
+	 }
+	//验证日期
+	function valiDay(ele){
+		var val = $(ele).val();
+		if(val!='' && !(globalUtil.isNum(val) && val>0 && val<32)){
+			errorMsg(globalErrorMsg['400103'],ele);
+		}
+	}
+	//验证尾号
+	function valiEndNo(ele){
+		var val = $(ele).val();
+		if(val!='' && !(/^[0-9]+$/.test(val))){
+			errorMsg(globalErrorMsg['400104'],ele);
+		}
+	}
+	//弹出错误提示框
+	function errorMsg(msg,ele){
+		globalUtil.addMask('1');
+		var obj = $.ligerDialog.error(msg, null, null);
+		obj.options.onHiddenOrClose = function() {
+			$(ele).val('');
+			$(ele).focus();
+			globalUtil.delMask('1');
+	    };
+	}
+	</script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/media/js/ZeroClipboard.js"></script>
+<title>系统管理>贷款产品>理财产品列表</title>
+</head>
+<body style="overflow-y: hidden;">
+	<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<!--查询条件-->
+			<div class="l-panel-search-cond clearfix">
+				<div class="float-l">
+					<div class="l-panel-search-title">产品名称:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="category_name" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">产品状态:</div>
+					<div class="l-panel-search-item">
+						<!--  <input type="text" id="is_forbidden" />-->
+						<select name="is_forbidden" style="width: 135px;">
+							<option selected="selected" value="">请选择</option>
+							<option value="0">启用</option>
+							<option value="1">禁用</option>
+							<option value="3">未通过</option>
+							<!--  0：启用   1：禁用    2:待审批   3:未通过-->
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="centertoolbar" class="minwidth400"></div>
+	<div id="grid"></div>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+        var grid;
+		var toolbar;
+		var params;
+		var dialog;
+		var columns;
+
+        $(function() {
+           	     		
+        	initGrid();
+        	//init_is_forbidden();//查询条件  如否启用
+        	var toolbarItemData = [];
+        	toolbarItemData.push({
+                text: '产品新增',
+                click: add_match,
+                icon: 'add'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+            toolbarItemData.push({
+                text: '产品复制',
+                click:copy_match,
+                icon: 'copy'
+            });
+            toolbarItemData.push({
+          		 text: '产品修改',
+                click: update_match,
+                icon: 'modify'
+	        });
+	        toolbarItemData.push({
+	            line: true
+	        });
+            toolbarItemData.push({
+                 text: '查询',
+                 click:search,
+                 icon: 'search'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             
+             toolbarItemData.push({
+                 text: '清空',
+                 click:clear,
+                 icon: 'empty'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             $("#centertoolbar").ligerToolBar({
+                  items: toolbarItemData
+        	 });
+             search();
+        });
+        //产品类型
+    	function init_category_name(){
+    		var category_name_params ={
+    				dest_url:'/inve/wmsinvepruductcategorylistforselect.do',
+    				t_col_name:'category_name',
+    				valueField:'wms_inve_pruduct_category_id',   //下拉框value对应的值，默认为id
+    				textField:'category_name',    //下拉框text对应的值，默认为text
+    				input_width:133,
+    				def_val:'first'
+    				};
+    		global_ligerui_extend.initCombox("category_name",null,category_name_params);
+   		    global_ligerui_extend.initComboxDefVal("category_name");
+    	}
+        //清空所填写内容
+        function clear(){
+          $("#category_name").val("");
+          $("select[name='is_forbidden']").val("");
+  			// init_category_name();
+        }
+      	//初始化查询条件--是否启用
+    	function init_is_forbidden(json){    	
+        	var owner_1_params ={
+    				dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=57',
+    				t_col_name:"is_forbidden",
+    				valueField:'wms_sys_dict_data_id',   //下拉框value对应的值，默认为id
+    				textField:'value_meaning',    //下拉框text对应的值，默认为text
+    				def_val:'first',
+    				input_width:'132'
+    				};
+    		global_ligerui_extend.initCombox("is_forbidden",null,owner_1_params);
+    		if(json){
+    			//把值装载设定
+    			global_ligerui_extend.syncRequestInitComboxData(json,"is_forbidden");
+    		}else{			
+    			global_ligerui_extend.initComboxDefVal("is_forbidden");	
+    		}
+        }
+      
+        //表格初始化
+        function initGrid() {
+        	columns = [{
+                display: '产品名称',
+                name: 'category_name',
+                width: 200,
+                minWidth: 200,
+                //添加超链接的东西
+                render: function (rowdata, rowindex, value) { 
+                	return '<a href="javascript:inveInfo('+rowdata.wms_inve_pruduct_category_id+');" style="color:#056AFF;text-decoration: none;">'+value+'</a>';
+        		},
+            },{
+            	display:'启用时间',
+            	name:'valid_begin_date',
+            	width:200,
+            	minWidth:200
+            },{
+            	display:'终止时间',
+            	name:'category_over_time',
+            	width:200,
+            	minWidth:200,
+            	render: function (rowdata, nowRowIndex, value, column) {
+            		if(value==="9999-01-01"){
+            			value="--";
+            		}
+            		return value;
+       			}
+            },{
+                display: "产品状态",
+                name: 'is_forbidden_str',
+                resizable: false,
+                width: 110,
+                minWidth: 110,
+            },{
+                display: "审批意见",
+                name: 'appro_advice',
+                resizable: false,
+                width: 220,
+                minWidth: 220,
+            },{
+                display: '创建时间',
+                name: 'create_timestamp_str',
+                width: 200,
+                minWidth:200
+            }];
+        	
+            grid = $("#grid").ligerGrid({
+        		columns: columns,
+        		url: global_param.context_name + '/inve/wmsinvepruductcategorywithpaginglist.do',
+        		sortName: 'create_timestamp', // 排序列名
+				sortOrder: 'desc', // 排序方式
+        		rownumbers: true,
+        		allowUnSelectRow: true,
+        		usePager: true,
+        		width: '100%',
+        		height: '95%',
+        		heightDiff: -4,
+            });
+        }   
+        function inveInfo(wms_inve_pruduct_category_id){
+        		var url = globalUtil.getHtml("updateFinancingProduct.html?wms_inve_pruduct_category_id=" + wms_inve_pruduct_category_id+"&cktype=ck");
+           		dialog=$.ligerDialog.open({
+           			url:url,
+           			title: '产品详细信息',
+    		        width: 1000,
+    		        height: globalUtil.setDialogHeight(700),
+    		        onHiddenOrClose: function(){
+    		    	},
+    		        isResize: false
+           		}); 	
+		}
+        //-------------------------------------------------------------实现方法----------------------------------------------------------
+        var rowsled;
+        //理财产品新增
+        function add_match(){
+        		var url = globalUtil.getHtml("addFinancingProduct.html");
+           		dialog=$.ligerDialog.open({
+           			url:url,
+           			title: '产品新增',
+    		        width: 1000,
+    		        height: globalUtil.setDialogHeight(700),
+    		        onHiddenOrClose: function(){
+    		    	},
+    		        isResize: false
+           		}); 	
+        }
+		//理财产品复制
+        function copy_match(){
+        	//判断如果没有选择任何单据，不允许跳出债权匹配页面。
+        	var row=grid.getSelectedRow();
+        	if(row==null){
+        		globalUtil.warnMsg(globalErrorMsg['900110']);//请选择一行单据进行匹配
+               return;
+        	}else{
+        		var url = globalUtil.getHtml("copyFinancingProduct.html?wms_inve_pruduct_category_id=" + row.wms_inve_pruduct_category_id);
+           		dialog=$.ligerDialog.open({
+           			url:url,
+           			title: '产品复制',
+    		        width: 1000,
+    		        height: globalUtil.setDialogHeight(700),
+    		        onHiddenOrClose: function(){
+    		    	},
+    		        isResize: false
+           		}); 	
+       		}
+		}
+     	 //理财产品修改
+        function  update_match(){
+        	//判断如果没有选择任何单据，不允许跳出债权匹配页面。
+        	var row=grid.getSelectedRow();
+        	if(row==null){
+        		globalUtil.warnMsg(globalErrorMsg['900110']);//请选择一行单据进行匹配
+               return;
+        	}else{
+        		//0：启用   1：禁用    2:待审批   3:未通过
+        		if (row.is_forbidden!="3"){
+        			globalUtil.warnMsg(globalErrorMsg['901137']);//只能修改未通过的产品
+                    return;
+        		}
+        		rowsled=row;
+        		var url = globalUtil.getHtml("updateFinancingProduct.html?wms_inve_pruduct_category_id=" + row.wms_inve_pruduct_category_id);
+           		dialog=$.ligerDialog.open({
+           			url:url,
+           			title: '产品修改',
+    		        width: 1000,
+    		        height: globalUtil.setDialogHeight(700),
+    		        onHiddenOrClose: function(){
+    		    	},
+    		        isResize: false
+           		}); 	
+       		}
+		}
+        function initParams() {
+        	params = globalUtil.getFormParam("searchbar");
+        	params.is_forbidden = $("select[name='is_forbidden'] option:selected").val();
+        }
+
+        //查询
+        var search= function() {
+            initParams();
+            global_ligerui_extend.search(grid, params);
+        }
+        
+        function toforbidden(){
+        	//判断如果没有选择任何单据，不允许跳出债权匹配页面。
+        	var row=grid.getSelectedRow();
+        	if(row==null){
+        		globalUtil.warnMsg(globalErrorMsg['900110']);//请选择一行单据进行匹配
+               return;
+        	}else{
+        		if(row.is_forbidden == "禁用"){
+        			globalUtil.warnMsg(globalErrorMsg['900111']);//单据匹配已经完成
+        			return;
+        		}
+        		rowsled=row;
+        		var url = globalUtil.getHtml("forbiddenPage.html?wms_inve_pruduct_category_id=" + row.wms_inve_pruduct_category_id);
+           		dialog=$.ligerDialog.open({
+           			url:url,
+           			title: '禁用提示框',
+    		        width: 500,
+    		        height: globalUtil.setDialogHeight(300),
+    		        onHiddenOrClose: function(){
+    		    	},
+    		        isResize: false
+           		}); 	
+       		}
+		}       
+</script>
+</body>
+</html>

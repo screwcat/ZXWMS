@@ -1,0 +1,260 @@
+/* --------------
+   *   layout  *
+* ------------ */
+.l-layout{ position:relative;}
+.l-layout-left,.l-layout-right,.l-layout-center,.l-layout-top {position:absolute; border:1px solid #bfbfbf; background:white; z-index:10; overflow:hidden;} 
+.l-layout-left {/*border:1px solid #bfbfbf;*/ border-bottom:1px solid #004896; border-top:none; border-left:none; border-right:none; background-color:#fafafa;}
+.l-layout-center {margin-left:10px; width:1010px;}
+.l-layout-maincenter {position:absolute; width:100%;/* border:1px solid #959697;*/ background:white; z-index:10; overflow:hidden;}
+.l-layout-top{width:100%;}
+.l-layout-bottom{line-height:24px; border:1px solid #fff; width:1158px; position:absolute; background:white; z-index:10; overflow:hidden;}
+/*.l-layout-right {border:1px solid #b7bdc2;}
+.l-layout-center {border:1px solid #b7bdc2;}
+.l-layout-top {border:1px solid #b7bdc2;}
+.l-layout-bottom {border:1px solid #b7bdc2;}*/
+
+.l-layout-left .l-layout-header-toggle{position:absolute; top:0; right:0; height:27px; width:26px; overflow:hidden; background:url('../images/layout/togglebar.gif');background-position:-21px 0px; cursor:pointer;}
+.l-layout-left .l-layout-header-toggle-over{ background-position:-21px -27px;}
+
+.l-layout-right .l-layout-header-toggle{position:absolute; top:3px; left:3px; height:20px; width:20px; overflow:hidden; background:url('../images/layout/togglebar.gif');background-position:-20px -40px; cursor:pointer;}
+.l-layout-right .l-layout-header-toggle-over{ background-position:-20px -60px;}
+
+.l-layout-center .l-layout-header{ cursor:default; background:#ebebeb url(../images/layout/layout-header.gif) repeat-x;}
+.l-layout-maincenter .l-layout-header{ cursor:default; background:#e0effa url(../images/layout/layout-header-r.gif) repeat-x;}
+.l-layout-header{position:relative; color:#333; font-weight:bold; height:39px; line-height:28px;  background:#fff url('../images/layout/layout-header.gif') bottom repeat-x; overflow:hidden; border-bottom:#005edb 3px solid;}
+.l-layout-header-inner{padding-right:1px;}
+.l-layout-right .l-layout-header-inner { padding-left:1px; padding-right:auto;}
+.l-layout-right .l-layout-header-inner { padding-left:1px; padding-right:auto;}
+.l-layout-header-over{background:#EFF4FE url('../images/layout/layout-header.gif') repeat-x;} 
+
+.l-layout-collapse-left,.l-layout-collapse-right{ width:26px; background-image:url(../images/layout/l-layout-collapse.gif); background-position:0 0; background-repeat:repeat-y; border:1px solid #959697; position:absolute; top:0px;   display:none; height:100%;z-index:10;}
+.l-layout-collapse-left-over,.l-layout-collapse-right-over{ background-image:url(../images/layout/l-layout-collapse.gif);}
+.l-layout-collapse-left-toggle,.l-layout-collapse-right-toggle{position:absolute; height:27px; width:26px; overflow:hidden; background:url('../images/layout/togglebar.gif');cursor:pointer;}
+.l-layout-collapse-left{left:0;}
+.l-layout-collapse-left-toggle{top:0px; left:0; background-position:-21px -54px;}
+.l-layout-collapse-left-toggle-over{background-position:-21px -81px;} 
+
+.l-layout-collapse-right{right:2px;}
+.l-layout-collapse-right-toggle{top:0px; left:2px; background-position:-20px 0px;}
+.l-layout-collapse-right-toggle-over{background-position:-20px -20px;}
+
+
+
+.l-layout-drophandle-left{ position:absolute;width:5px;cursor:col-resize; z-index:10;display:none;}
+.l-layout-drophandle-right{ position:absolute;width:5px;cursor:col-resize; z-index:10;display:none;}
+.l-layout-drophandle-top{ position:absolute;height:5px;cursor:row-resize; z-index:10;display:none; line-height:1px;overflow:hidden;}
+.l-layout-drophandle-bottom{ position:absolute;height:5px;cursor:row-resize; z-index:10;display:none;line-height:1px;overflow:hidden;}
+.l-layout-dragging-xline{ background:#E0E4E2;height:4px;position:absolute;display:none; z-index:9999; padding:0; margin:0;line-height:1px; overflow:hidden;}
+.l-layout-dragging-yline{ background:#E0E4E2;width:4px;position:absolute;display:none; z-index:9999; padding:0; margin:0;}
+.l-layout-lock{ position:absolute; width:100%; height:100%; display:none; z-index:9990; margin:0; padding:0;}
+.l-layout-content{position:relative; /*background:white;*/ overflow:hidden;}
+.l-layout-maincontent{position:relative; /*background:white;*/ overflow:hidden;}
+.l-layout-drophandle{ position:absolute; top:0px; left:-5px; width:5px;cursor:col-resize; z-index:10;height:100%; display:none;}
+.l-layout-collapse{ width:24px; background:#EAF2FE;border:1px solid #B8D0D6; position:absolute; top:0px; left:4px; display:none; height:100%;z-index:10;}
+.l-layout-collapse-over{background:#F5F9FA;}
+.l-layout-collapse-toggle{position:absolute; top:0px; right:2px; height:20px; width:20px; overflow:hidden; background:url('../images/layout/togglebar.gif');background-position:-20px -40px; cursor:pointer;}
+.l-layout-collapse-toggle-over{background-position:-20px -60px;} 
+.l-layout-dragging-line{ background:#E0E4E2;width:4px;position:absolute;top:0px; display:none; z-index:9999; padding:0; margin:0;height:100%;}
+ 
+/* --------------
+   *   accordion  *
+* ------------ */
+.l-accordion-panel{ /*border-left:1px solid #BED5F3; border-right:1px solid #BED5F3; border-bottom:1px solid #BED5F3;*/ background:#e9e9eb; }
+.l-accordion-toggle{ position:absolute; top:1px; left:15px; height:24px; width:24px; overflow:hidden; background:url('../images/icons/menu-icons.png');cursor:pointer;}
+.l-accordion-toggle-close{}
+.l-accordion-toggle-close-over{}
+.l-accordion-toggle-open{}
+.l-accordion-toggle-open-over{}
+
+/*----左侧树一级菜单图标（开始）-----*/
+.l-accordion-toggle-close-icon1{ background-position:0 0;}
+.l-accordion-toggle-open-icon1{ background-position:-24px 0;}
+.l-accordion-toggle-close-icon2{ background-position:0 -24px;}
+.l-accordion-toggle-open-icon2{ background-position:-24px -24px;}
+.l-accordion-toggle-close-icon3{ background-position:0 -48px;}
+.l-accordion-toggle-open-icon3{ background-position:-24px -48px;}
+.l-accordion-toggle-close-icon4{ background-position:0 -72px;}
+.l-accordion-toggle-open-icon4{ background-position:-24px -72px;}
+.l-accordion-toggle-close-icon5{ background-position:0 -96px;}
+.l-accordion-toggle-open-icon5{ background-position:-24px -96px;}
+.l-accordion-toggle-close-icon6{ background-position:0 -120px;}
+.l-accordion-toggle-open-icon6{ background-position:-24px -120px;}
+.l-accordion-toggle-close-icon7{ background-position:0 -144px;}
+.l-accordion-toggle-open-icon7{ background-position:-24px -144px;}
+.l-accordion-toggle-close-icon8{ background-position:0 -168px;}
+.l-accordion-toggle-open-icon8{ background-position:-24px -168px;}
+/*----左侧树一级菜单图标（结束）-----*/
+.l-accordion-header{ position:relative; padding-left:51px; color:#2c2f33; font-weight:bold; height:25px; line-height:25px; line-height:27px\9; background:#e6e6e6 url('../images/layout/accordion-header.gif') top repeat-x; overflow:hidden; cursor:pointer;}
+.l-accordion-header-over{color:#2c2f33; background:#9bccf2 url('../images/layout/accordion-header-over.gif') top repeat-x;}
+.l-accordion-header-click{color:#fff; background:#147ccc url('../images/layout/accordion-header-click.gif') top repeat-x;}
+.l-accordion-content{position:relative; overflow:auto; background:#e9e9eb url('../images/layout/accordion-content.gif') bottom repeat-x; }
+
+.l-layout-left .l-accordion-panel{ border-left:none; border-right:none; /*border-bottom:#d1d1d1 1px solid;*/ }
+
+
+/*-----表格样式1--------------------------------------*/
+.table-layout1 {
+	font-size:12px; color:#333; margin:10px; border-collapse:collapse; border:none; border-color:#2e3134; width:660px;
+}
+.table-layout1 tr {
+	text-align:left; padding:0; border:#2e3134 1px solid;
+}
+.table-layout1 tr td {
+	height:22px; line-height:22px; padding-left:5px; padding-right:5px; vertical-align:middle; word-break:break-all; word-wrap:break-word;
+}
+.table-layout1 .td-titlel {
+	width:90px; text-align:right; padding-right:3px; padding-left:5px;
+}
+.table-layout1 .td-con1 {
+	width:120px; padding-right:15px; text-align:left; padding-left:3px;
+}
+/*----委托单表格中input或textarea长度设定：colspan=2时，width=220px----colspan=3时，width=320px----colspan=5时，width=550px----当不合并单元格，colspan=1时，width=120px----*/
+.TrustDeed {margin:15px auto; text-align:center; width:680px;}
+.TrustDeed input {border:none; background-color:inherit; width:220px; margin-top:3px; margin-bottom:3px;} 
+.TrustDeed textarea {border:none; background-color:inherit; width:550px; margin-top:3px; margin-bottom:3px;}
+
+/*-----表格样式2--------------------------------------*/
+.table-layout2 {
+	font-size:12px;
+	color:#333;
+	margin:10px;
+	/*white-space:nowrap;*/
+	border-collapse:collapse;
+	border:none;
+	border-color:#d1d1d1;
+	/*min-width:97%;*/
+	width:auto;
+}
+.table-layout2 tr {
+	text-align:left;
+	padding:0;
+	border:#d1d1d1 1px solid;
+	/*border-top:none;
+	border-left:none;
+	border-right:none;*/
+}
+.table-layout2 tr td {
+	height:22px; line-height:22px;
+}
+.table-layout2 .tr-bg {
+	
+}
+.table-layout2 .td-title-l {
+	width:auto; font-weight:bold; text-align:right; background-color:#efefef; padding-right:5px; padding-left:15px;  white-space:nowrap;
+}
+.table-layout2 .td-con1 {
+	width:auto; padding-right:15px; text-align:left; padding-left:8px; word-break:break-all; word-wrap:break-word; min-width:180px;
+}
+/*查看详情等表格，可参照水泥料仓对应关系历史记录查看*/
+.table-layout3 {border:none; line-height:20px; margin-top:10px; margin-left:10px; border-collapse:collapse; border-color:#fff; text-align:center;}
+.table-layout3 tr {
+	height:24px; line-height:24px; border:#fff 1px solid;
+}
+.table-layout3 .td-title1 {text-align:right; background:#67717c; color:#fff; width:40px;}
+.table-layout3 .td-input1 {padding-left:1px; text-align:left; width:85px;}/*查看行*/
+.table-layout3 .td-input1 input {width:80px;}
+.table-layout3 .row-title1 {width:23px; line-height:16px; word-break:break-all; word-wrap:break-word; background:#fff;}
+/*单元格表单编辑Table*/
+.table-formeidt, .table-formeidt2 {
+	border:none; line-height:20px; margin-top:10px; margin-left:10px; border-collapse:collapse; border-color:#fff; text-align:center;
+}
+.table-formeidt2 {border-color:#f0f1f2; margin:2px; }
+.table-formeidt2 .td-title {background:#67717c; color:#fff;}
+.table-formeidt2 .td-title td {padding-left:2px;}
+.table-formeidt tr {
+	height:24px; line-height:24px; border:#fff 1px solid;
+}
+.table-formeidt tr td {/*width:57px;*/}
+
+.table-formeidt .td-title-3 {text-align:right; background:#67717c; color:#fff; width:40px;}
+.table-formeidt .td-title-l {text-align:right; background:#67717c; color:#fff; padding-right:8px; padding-left:10px; width:67px;}
+.table-formeidt .td-title-2 {text-align:right; background:#67717c; color:#fff; padding-right:8px; padding-left:10px; width:78px; white-space:nowrap;}/*左侧表头*/
+.table-formeidt .td-select {padding-left:1px; text-align:left;}/*下拉表行*/
+.table-formeidt .td-select2 {padding-left:1px; text-align:left; width:137px;}/*下拉表行*/
+.table-formeidt .td-select3 {padding-left:1px; text-align:center;}/*下拉表行*/
+.table-formeidt .td-select4 {padding-left:1px; text-align:center; width:100px;}/*下拉表行*/
+.table-formeidt .td-title-4 {padding-left:1px; width:200px; text-align: center;}/*下拉表行*/
+.table-formeidt .td-title-5 {padding-left:1px; width:80px; text-align: left; background: #fff; vertical-align: top; line-height: 24px;}/*下拉表行*/
+
+.input100 {width:100px;}
+.table-formeidt .td-top {background:#ebeced; height:21px; line-height:21px;}/*序号*/
+.table-formeidt .td-edit {background:#ffefd9;}/*当前编辑单元格*/
+.table-formeidt input {
+	width:54px;
+}
+.table-formeidt .row-title1 {width:23px; line-height:16px; word-break:break-all; word-wrap:break-word; background:#fff;}
+/*可编辑表格3*/
+.table-formeidt3 {border:none; line-height:20px; margin:0; border-color:#fff; text-align:center;}
+.table-formeidt3 .td-title {background:#67717c; color:#fff;}
+.table-formeidt3 tr {height:24px; line-height:24px; border:#fff 1px solid;}
+.table-formeidt3 tr td {width:42px; border:#fff 1px solid;}
+.table-formeidt3 .input35 {width:42px;}
+.table-formeidt3 .bgWhite {background-color:#fff;}
+.table-formeidt3 .space {width:5px;}
+
+/*leftmenus系统左侧菜单样式*/
+.l-layout-leftmenu {/*border-right:1px solid #959697;*/}
+.l-layout-leftmenu .l-layout-header-toggle{position:absolute; bottom:0; right:0; height:23px; width:27px; overflow:hidden; background:url('../images/layout/togglebar.gif'); background-position:-21px 0px; cursor:pointer;}
+.l-layout-leftmenu .l-layout-header-toggle-over{ background-position:-21px -23px;}
+.layout-leftmenu-header{ position:relative; padding-left:10px; color:#333; font-weight:bold; height:27px; line-height:27px; line-height:30px\0;  background:#e3e3e3 url('../images/layout/layout-leftmenu-header.gif') top repeat-x; overflow:hidden; border-bottom:#737b83 3px solid;}
+.layout-leftmenu-header-inner{padding-right:22px;}
+.layout-leftmenu-content{position:relative; background:#e9e9eb; overflow:hidden; border-right:1px solid #959697;}
+
+/*内页表单table样式*/
+table.page-center-form {
+	margin:11px auto; width:auto; border:none; white-space:nowrap;
+}
+.page-center-form td {
+	vertical-align:middle; text-align:left; white-space:nowrap;
+}
+.page-center-form td.r-label {
+	padding-right:13px; width:122px; text-align:right; height:30px;
+}
+.page-center-form td.l-input {
+	width:171px; height:30px;
+}
+.page-center-form td.colspan {
+	width:auto; height:30px;
+}
+.page-center-form td.left0 {
+	padding-left:0;
+}
+.page-center-form td.text-r {
+	text-align:right;
+}
+.page-center-form hr{
+	height:1px; border-top:#cccccc 1px dashed; border-bottom:none; border-left:none; border-right:none;
+}
+.white-space1 {white-space:nowrap;}
+/*水泥料仓对应关系*/
+.centerDiv1 {border:#bfbfbf 1px solid; margin:10px 10px 0 0;}
+.centerBtn1 {text-align:right; height:25px; width:702px; padding-top:10px;}
+
+/*表格上方图表布局*/
+.chart-layout1 {height: 180px; overflow: auto; overflow-y:hidden; max-height: 180px; position: relative;}
+.chart-layout1 .chart-position {position:absolute; top:0; height:160px;}
+
+/*标签弹窗工具栏*/
+.l-poptab-bar {
+	background:#d2e5f7; border-top:#e9f3fd 1px solid; border-bottom:1px solid #acbbc5; width:100%; padding:0; position:absolute; top:0; height:24px; padding-top:1px;
+}
+
+/*-----主页快捷方式------*/
+.home-shortcut{
+	position:absolute;
+	top:30px;
+	left:47px;
+	right:50px;
+	text-align:left;
+	margin:0;
+	padding:0;
+}
+.home-shortcut ul {margin:0 auto; padding:0; width:960px;}
+.home-shortcut ul li {width:160px; padding:0 40px; text-align:center; height:136px; float:left; margin-top:15px;}
+/*.home-shortcut ul li img {width:72px; height:72px;}
+.home-shortcut ul li a {line-height:20px; font-weight:bold; cursor:pointer; color:#333; text-decoration:none;}
+.home-shortcut ul li a:hover {color:#1591d1; text-decoration:none;}*/
+
+/*提示类文本div*/
+.reminder_red {border:1px solid #d67e6a; background-color:#fff5f2; margin:10px; padding:0 5px; text-align:left;}
+.reminder_red .redword {color:#db2900; font-weight:600;}

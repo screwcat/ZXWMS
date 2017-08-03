@@ -1,0 +1,3705 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.loanfina.persist.WmsFinaCreRepayDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsFinaCreRepay">
+		select
+		wms_fina_cre_pay_id,
+		wms_cre_credit_head_id,
+		cre_type,
+		wms_cre_appro_borrow_protocol_id,
+		protocol_code,
+		protocol_type,
+		borrow_deadline,
+		borrow_interest,
+		date_format(protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		protocol_creat_date,
+		protocol_amount,
+		principal,
+		interest,
+		date_format(loan_date,'%Y-%m-%d') as loan_date_str,
+		loan_date,
+		loan_amount,
+		date_format(repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		repay_begin_date,
+		date_format(repay_end_date,'%Y-%m-%d') as repay_end_date_str,
+		repay_end_date,
+		date_format(current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		current_repay_date,
+		refund_limit_month,
+		liquidated_damages,
+		repay_period,
+		repay_principal,
+		repay_interest,
+		un_pay_period,
+		un_pay_principal,
+		un_pay_interest,
+		cur_overdue_type,
+		cur_overdue_day,
+		cur_late_fee,
+		total_overdue_period,
+		total_overdue_day,
+		total_late_fee,
+		total_pay_late_fee,
+		total_derate,
+		repay_status,
+		date_format(clean_up_date,'%Y-%m-%d') as clean_up_date_str,
+		clean_up_date,
+		clean_up_status,
+		back_interest_period,
+		back_ammont,
+		customer_officer_id,
+		customer_officer_name,
+		is_upload,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		salesman_id,
+		salesman_name,
+		migration_status,
+		pre_repay_status,
+		matching_creditor,
+		is_occupy,
+		occupants
+		from
+		wms_fina_cre_repay
+		where
+		wms_fina_cre_pay_id = #{wms_fina_cre_pay_id}
+	</select>
+
+	<!-- get entity by pk -->
+	<select id="getInfoByPK" parameterType="Integer" resultType="java.util.HashMap">
+		select
+		r.cre_type,
+		(case cre_type when '1' then '信贷产品' when '2' then '房贷产品' end) as cre_type_name,
+        (select cre_loan_type from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as cre_loan_type,
+		(select value_meaning from wms_sys_dict_data where wms_sys_dict_data_id=(select cre_loan_type from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id)) as cre_loan_type_name,
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		r.protocol_type,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.principal,
+		r.interest,
+		date_format(r.loan_date,'%Y-%m-%d') as loan_date_str,
+		r.loan_date,
+		r.loan_amount,
+		date_format(r.repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		r.repay_begin_date,
+		date_format(r.repay_end_date,'%Y-%m-%d') as repay_end_date_str,
+		r.repay_end_date,
+		date_format(r.current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		r.current_repay_date,
+		r.refund_limit_month,
+		r.liquidated_damages,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_type,
+		r.cur_overdue_day,
+		r.cur_late_fee,
+		r.total_overdue_period,
+		r.total_overdue_day,
+		r.total_late_fee,
+		r.total_pay_late_fee,
+		r.total_derate,
+		r.repay_status,
+		(case r.repay_status when '1' then '正常' when '2' then '逾期' when '3' then
+		'结清' when '4' then '贷账' when '5' then '存档' when '6' then '诉讼' end) as
+		repay_status_name,
+		date_format(r.clean_up_date,'%Y-%m-%d') as repay_status_name,
+		r.clean_up_date,
+		r.clean_up_status,
+		r.is_upload,
+		r.create_user_id,
+		r.create_user_name,
+		date_format(r.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		r.create_timestamp,
+		r.last_update_user_id,
+		date_format(r.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		r.last_update_timestamp,
+		r.enable_flag,
+		r.borrow_deadline,
+		r.customer_officer_name,
+		r.borrow_interest,
+		r.salesman_name,
+		r.interest_limit_month,
+		r.dunning_name,
+		p.refund_day,
+		p.debtor_name,
+		p.debtor_tel,
+		p.org_repay_interest,
+		(r.un_pay_interest+r.un_pay_principal) as un_matching_creditor,
+    	p.refund_bank,
+		p.refund_number,
+		p.refund_name,
+		r.is_occupy,
+		r.occupants
+		from
+		wms_fina_cre_repay r,wms_cre_appro_borrow_protocol p
+		where r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id
+		and wms_fina_cre_pay_id = #{wms_fina_cre_pay_id}
+	</select>
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(r.wms_fina_cre_pay_id) as count
+		from wms_fina_cre_repay
+		r,wms_cre_appro_borrow_protocol p
+		<where>
+			r.enable_flag='1' and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id and
+			r.repay_status in ('1','2') and (r.pre_repay_status='0'
+			<if test="idList !=null and idList.size()!=0">
+				or r.wms_cre_credit_head_id in
+				<foreach collection="idList" item="wms_cre_credit_head_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_cre_credit_head_id}
+				</foreach>
+			</if>
+			)
+			<if test="protocol_code != null">
+				and r.protocol_code like '${protocol_code}'
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like '${debtor_name}'
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like '${debtor_tel}'
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like '${salesman_name}'
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+		</where>
+	</select>
+
+	<!-- count num -->
+	<select id="findCount2" parameterType="map" resultType="int">
+		select count(r.wms_fina_cre_pay_id) as count
+		from wms_fina_cre_repay
+		r,wms_cre_appro_borrow_protocol p
+		<where>
+			r.enable_flag='1' and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id and
+			r.repay_status in ('1','2')
+			<if test="protocol_code != null">
+				and r.protocol_code like '${protocol_code}'
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like '${debtor_name}'
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like '${debtor_tel}'
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like '${salesman_name}'
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+			<if test="idList !=null">
+				and r.wms_cre_credit_head_id in
+				<foreach collection="idList" item="wms_cre_credit_head_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_cre_credit_head_id}
+				</foreach>
+			</if>
+		</where>
+	</select>
+	<select id="findCountforClear" parameterType="map" resultType="int">
+		select count(r.wms_fina_cre_pay_id) as count
+		from wms_fina_cre_repay
+		r,wms_cre_appro_borrow_protocol p
+		<where>
+			r.enable_flag='1' and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id and
+			r.repay_status='3'
+			<if test="protocol_code != null">
+				and r.protocol_code like '${protocol_code}'
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like '${debtor_name}'
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like '${debtor_tel}'
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like '${salesman_name}'
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+		</where>
+	</select>
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		(select bill_code from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as bill_code,
+		r.cre_type,
+		(select value_meaning from wms_sys_dict_data where value_code=r.cre_type and wms_sys_dict_id=15) as cre_type_name,
+		(select value_meaning from wms_sys_dict_data where wms_sys_dict_data_id=(select cre_loan_type from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id)) as cre_loan_type_name,
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		r.protocol_type,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.principal,
+		r.interest,
+		date_format(r.loan_date,'%Y-%m-%d') as loan_date_str,
+		r.loan_date,
+		r.loan_amount,
+		date_format(r.repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		r.repay_begin_date,
+		date_format(r.repay_end_date,'%Y-%m-%d') as repay_end_date_str,
+		r.repay_end_date,
+		date_format(r.current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		r.current_repay_date,
+		r.refund_limit_month,
+		r.liquidated_damages,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_type,
+		r.cur_overdue_day,
+		r.cur_late_fee,
+		r.total_overdue_period,
+		r.total_overdue_day,
+		r.total_late_fee,
+		r.total_pay_late_fee,
+		r.total_derate,
+		r.repay_status,
+		(case r.repay_status when '1' then '正常' when '2' then '逾期' when '3' then
+		'结清' when '4' then '贷账' when '5' then '存档' when '6' then '诉讼' end) as
+		repay_status_name,
+		date_format(r.clean_up_date,'%Y-%m-%d') as clean_up_date_str,
+		r.clean_up_date,
+		r.clean_up_status,
+		r.back_interest_period,
+		r.back_ammont,
+		r.is_upload,
+		r.create_user_id,
+		r.create_user_name,
+		date_format(r.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		r.create_timestamp,
+		r.last_update_user_id,
+		date_format(r.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		r.last_update_timestamp,
+		r.enable_flag,
+		r.salesman_name,
+		r.dunning_name,
+		p.debtor_name,
+		p.debtor_tel,
+		r.is_occupy,
+		r.occupants,
+		a.wms_cre_credit_group_id,
+		(select ifnull(b.bill_code_group, '') from wms_cre_credit_group b where b.wms_cre_credit_group_id = a.wms_cre_credit_group_id) as bill_code_group
+		from wms_fina_cre_repay r,wms_cre_appro_borrow_protocol p, wms_cre_credit_head a
+		<where>
+			r.enable_flag='1' and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id 
+			and r.wms_cre_credit_head_id = a.wms_cre_credit_head_id
+			and r.repay_status in ('1','2')
+			and (r.pre_repay_status='0'
+			<if test="idList !=null and idList.size()!=0">
+				or r.wms_cre_credit_head_id in
+				<foreach collection="idList" item="wms_cre_credit_head_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_cre_credit_head_id}
+				</foreach>
+			</if>
+			)
+			<if test="protocol_code != null">
+				and r.protocol_code like '${protocol_code}'
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like '${debtor_name}'
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like '${debtor_tel}'
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like '${salesman_name}'
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- list -->
+	<select id="search2" parameterType="map" resultType="java.util.HashMap">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		r.cre_type,
+		(case r.cre_type when '1' then '信贷产品' when '2' then '房贷产品' end) as
+		cre_type_name,
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		r.protocol_type,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.principal,
+		r.interest,
+		date_format(r.loan_date,'%Y-%m-%d') as loan_date_str,
+		r.loan_date,
+		r.loan_amount,
+		date_format(r.repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		r.repay_begin_date,
+		date_format(r.repay_end_date,'%Y-%m-%d') as repay_end_date_str,
+		r.repay_end_date,
+		date_format(r.current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		r.current_repay_date,
+		r.refund_limit_month,
+		r.liquidated_damages,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_type,
+		r.cur_overdue_day,
+		r.cur_late_fee,
+		r.total_overdue_period,
+		r.total_overdue_day,
+		r.total_late_fee,
+		r.total_pay_late_fee,
+		r.total_derate,
+		r.repay_status,
+		(case r.repay_status when '1' then '正常' when '2' then '逾期' when '3' then
+		'结清' when '4' then '贷账' when '5' then '存档' when '6' then '诉讼' end) as
+		repay_status_name,
+		date_format(r.clean_up_date,'%Y-%m-%d') as clean_up_date_str,
+		r.clean_up_date,
+		r.clean_up_status,
+		r.back_interest_period,
+		r.back_ammont,
+		r.is_upload,
+		r.create_user_id,
+		r.create_user_name,
+		date_format(r.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		r.create_timestamp,
+		r.last_update_user_id,
+		date_format(r.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		r.last_update_timestamp,
+		r.enable_flag,
+		r.salesman_name,
+		r.dunning_name,
+		p.debtor_name,
+		p.debtor_tel,
+		r.occupants,
+		r.is_occupy,
+		(select ifnull(b.bill_code_group, '') from wms_cre_credit_group b where a.wms_cre_credit_group_id = b.wms_cre_credit_group_id) as bill_code_group
+		from wms_fina_cre_repay r,wms_cre_appro_borrow_protocol p, wms_cre_credit_head a
+		<where>
+			r.enable_flag='1' and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id and
+			r.wms_cre_credit_head_id = a.wms_cre_credit_head_id and
+			r.repay_status in ('1','2')
+			<if test="protocol_code != null">
+				and r.protocol_code like '${protocol_code}'
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like '${debtor_name}'
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like '${debtor_tel}'
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like '${salesman_name}'
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+			<if test="idList !=null">
+				and r.wms_cre_credit_head_id in
+				<foreach collection="idList" item="wms_cre_credit_head_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_cre_credit_head_id}
+				</foreach>
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<select id="searchforClear" parameterType="map" resultType="java.util.HashMap">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		r.cre_type,
+		(case r.cre_type when '1' then '信贷产品' when '2' then '房贷产品' when '3' then '车贷产品' end) as
+		cre_type_name,
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		r.protocol_type,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.principal,
+		r.interest,
+		date_format(r.loan_date,'%Y-%m-%d') as loan_date_str,
+		r.loan_date,
+		r.loan_amount,
+		date_format(r.repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		r.repay_begin_date,
+		date_format(r.repay_end_date,'%Y-%m-%d') as repay_end_date_str,
+		r.repay_end_date,
+		date_format(r.current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		r.current_repay_date,
+		r.refund_limit_month,
+		r.liquidated_damages,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_type,
+		r.cur_overdue_day,
+		r.cur_late_fee,
+		r.total_overdue_period,
+		r.total_overdue_day,
+		r.total_late_fee,
+		r.total_pay_late_fee,
+		r.total_derate,
+		r.repay_status,
+		(case r.repay_status when '1' then '正常' when '2' then '逾期' when '3' then
+		'结清' when '4' then '贷账' when '5' then '存档' when '6' then '诉讼' end) as
+		repay_status_name,
+		date_format(r.clean_up_date,'%Y-%m-%d') as clean_up_date_str,
+		r.clean_up_date,
+		r.clean_up_status,
+		r.back_interest_period,
+		r.back_ammont,
+		r.is_upload,
+		r.create_user_id,
+		r.create_user_name,
+		date_format(r.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		r.create_timestamp,
+		r.last_update_user_id,
+		date_format(r.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		r.last_update_timestamp,
+		r.enable_flag,
+		r.salesman_name,
+		r.dunning_name,
+		p.debtor_name,
+		p.debtor_tel,
+		p.debtor_identity_id,
+		p.debtor_address,
+		p.refund_bank,
+		p.refund_number,
+		p.refund_day,
+		r.is_occupy,
+		r.occupants,
+		(select ifnull(b.bill_code_group, '') from wms_cre_credit_group b where b.wms_cre_credit_group_id = a.wms_cre_credit_group_id) as bill_code_group
+		from wms_fina_cre_repay r,wms_cre_appro_borrow_protocol p, wms_cre_credit_head a
+		<where>
+			r.enable_flag='1' and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id and
+			r.wms_cre_credit_head_id = a.wms_cre_credit_head_id and
+			r.repay_status='3'
+			<if test="protocol_code != null">
+				and r.protocol_code like '${protocol_code}'
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like '${debtor_name}'
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like '${debtor_tel}'
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like '${salesman_name}'
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<!-- save -->
+	<insert id="save" parameterType="WmsFinaCreRepay" useGeneratedKeys="true" keyProperty="wms_fina_cre_pay_id">
+		INSERT INTO wms_fina_cre_repay
+		(
+				wms_fina_cre_pay_id,
+
+				wms_cre_credit_head_id,
+
+				cre_type,
+
+				wms_cre_appro_borrow_protocol_id,
+
+				protocol_code,
+
+				protocol_type,
+
+				borrow_deadline,
+
+				borrow_interest,
+
+				protocol_creat_date,
+
+				protocol_amount,
+
+				principal,
+
+				interest,
+
+				loan_date,
+
+				loan_amount,
+
+				repay_begin_date,
+
+				repay_end_date,
+
+				current_repay_date,
+
+				refund_limit_month,
+
+				liquidated_damages,
+
+				repay_period,
+
+				repay_principal,
+
+				repay_interest,
+
+				un_pay_period,
+
+				un_pay_principal,
+
+				un_pay_interest,
+
+				cur_overdue_type,
+
+				cur_overdue_day,
+
+				cur_late_fee,
+
+				total_overdue_period,
+
+				total_overdue_day,
+
+				total_late_fee,
+
+				total_pay_late_fee,
+
+				total_derate,
+
+				repay_status,
+
+				clean_up_date,
+
+				clean_up_status,
+
+				back_interest_period,
+
+				back_ammont,
+
+				customer_officer_id,
+
+				customer_officer_name,
+
+				is_upload,
+
+				create_user_id,
+
+				create_user_name,
+
+				create_timestamp,
+
+				last_update_user_id,
+
+				last_update_timestamp,
+
+				enable_flag,
+
+				salesman_id,
+
+				salesman_name,
+
+				migration_status,
+
+				pre_repay_status,
+
+				interest_limit_month,
+
+				matching_creditor,
+
+				act_creditor,
+
+				dunning_id,
+
+				dunning_name,
+
+				dunning_deptid,
+
+				dunning_datetime,
+				
+				is_occupy,
+				
+				occupants
+		)
+		VALUES
+		(
+				#{wms_fina_cre_pay_id},
+				#{wms_cre_credit_head_id},
+				#{cre_type},
+				#{wms_cre_appro_borrow_protocol_id},
+				#{protocol_code},
+				#{protocol_type},
+				#{borrow_deadline},
+				#{borrow_interest},
+				#{protocol_creat_date},
+				#{protocol_amount},
+				#{principal},
+				#{interest},
+				#{loan_date},
+				#{loan_amount},
+				#{repay_begin_date},
+				#{repay_end_date},
+				#{current_repay_date},
+				#{refund_limit_month},
+				#{liquidated_damages},
+				#{repay_period},
+				#{repay_principal},
+				#{repay_interest},
+				#{un_pay_period},
+				#{un_pay_principal},
+				#{un_pay_interest},
+				#{cur_overdue_type},
+				#{cur_overdue_day},
+				#{cur_late_fee},
+				#{total_overdue_period},
+				#{total_overdue_day},
+				#{total_late_fee},
+				#{total_pay_late_fee},
+				#{total_derate},
+				#{repay_status},
+				#{clean_up_date},
+				#{clean_up_status},
+				#{back_interest_period},
+				#{back_ammont},
+				#{customer_officer_id},
+				#{customer_officer_name},
+				#{is_upload},
+				#{create_user_id},
+				#{create_user_name},
+				#{create_timestamp},
+				#{last_update_user_id},
+				#{last_update_timestamp},
+				#{enable_flag},
+				#{salesman_id},
+				#{salesman_name},
+				#{migration_status},
+				#{pre_repay_status},
+				#{interest_limit_month},
+				#{matching_creditor},
+				#{act_creditor},
+				#{dunning_id},
+				#{dunning_name},
+				#{dunning_deptid},
+				#{dunning_datetime},
+				#{is_occupy},
+				#{occupants}
+		);
+	</insert>
+
+	<!-- update -->
+	<update id="update" parameterType="WmsFinaCreRepay">
+		update wms_fina_cre_repay
+		<set>
+					<if test="wms_fina_cre_pay_id != null">
+						 wms_fina_cre_pay_id = #{wms_fina_cre_pay_id},
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						 wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+					</if>
+					<if test="cre_type != null">
+						 cre_type = #{cre_type},
+					</if>
+					<if test="wms_cre_appro_borrow_protocol_id != null">
+						 wms_cre_appro_borrow_protocol_id = #{wms_cre_appro_borrow_protocol_id},
+					</if>
+					<if test="protocol_code != null">
+						 protocol_code = #{protocol_code},
+					</if>
+					<if test="protocol_type != null">
+						 protocol_type = #{protocol_type},
+					</if>
+					<if test="borrow_deadline != null">
+						 borrow_deadline = #{borrow_deadline},
+					</if>
+					<if test="borrow_interest != null">
+						 borrow_interest = #{borrow_interest},
+					</if>
+					<if test="protocol_creat_date != null">
+						 protocol_creat_date = #{protocol_creat_date},
+					</if>
+					<if test="protocol_amount != null">
+						 protocol_amount = #{protocol_amount},
+					</if>
+					<if test="principal != null">
+						 principal = #{principal},
+					</if>
+					<if test="interest != null">
+						 interest = #{interest},
+					</if>
+					<if test="loan_date != null">
+						 loan_date = #{loan_date},
+					</if>
+					<if test="loan_amount != null">
+						 loan_amount = #{loan_amount},
+					</if>
+					<if test="repay_begin_date != null">
+						 repay_begin_date = #{repay_begin_date},
+					</if>
+					<if test="repay_end_date != null">
+						 repay_end_date = #{repay_end_date},
+					</if>
+					<if test="current_repay_date != null">
+						 current_repay_date = #{current_repay_date},
+					</if>
+					<if test="refund_limit_month != null">
+						 refund_limit_month = #{refund_limit_month},
+					</if>
+					<if test="liquidated_damages != null">
+						 liquidated_damages = #{liquidated_damages},
+					</if>
+					<if test="repay_period != null">
+						 repay_period = #{repay_period},
+					</if>
+					<if test="repay_principal != null">
+						 repay_principal = #{repay_principal},
+					</if>
+					<if test="repay_interest != null">
+						 repay_interest = #{repay_interest},
+					</if>
+					<if test="un_pay_period != null">
+						 un_pay_period = #{un_pay_period},
+					</if>
+					<if test="un_pay_principal != null">
+						 un_pay_principal = #{un_pay_principal},
+					</if>
+					<if test="un_pay_interest != null">
+						 un_pay_interest = #{un_pay_interest},
+					</if>
+					<if test="cur_overdue_type != null">
+						 cur_overdue_type = #{cur_overdue_type},
+					</if>
+					<if test="cur_overdue_day != null">
+						 cur_overdue_day = #{cur_overdue_day},
+					</if>
+					<if test="cur_late_fee != null">
+						 cur_late_fee = #{cur_late_fee},
+					</if>
+					<if test="total_overdue_period != null">
+						 total_overdue_period = #{total_overdue_period},
+					</if>
+					<if test="total_overdue_day != null">
+						 total_overdue_day = #{total_overdue_day},
+					</if>
+					<if test="total_late_fee != null">
+						 total_late_fee = #{total_late_fee},
+					</if>
+					<if test="total_pay_late_fee != null">
+						 total_pay_late_fee = #{total_pay_late_fee},
+					</if>
+					<if test="total_derate != null">
+						 total_derate = #{total_derate},
+					</if>
+					<if test="repay_status != null">
+						 repay_status = #{repay_status},
+					</if>
+					<if test="clean_up_date != null">
+						 clean_up_date = #{clean_up_date},
+					</if>
+					<if test="clean_up_status != null">
+						 clean_up_status = #{clean_up_status},
+					</if>
+					<if test="back_interest_period != null">
+						 back_interest_period = #{back_interest_period},
+					</if>
+					<if test="back_ammont != null">
+						 back_ammont = #{back_ammont},
+					</if>
+					<if test="customer_officer_id != null">
+						 customer_officer_id = #{customer_officer_id},
+					</if>
+					<if test="customer_officer_name != null">
+						 customer_officer_name = #{customer_officer_name},
+					</if>
+					<if test="is_upload != null">
+						 is_upload = #{is_upload},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="create_user_name != null">
+						 create_user_name = #{create_user_name},
+					</if>
+					<if test="create_timestamp != null">
+						 create_timestamp = #{create_timestamp},
+					</if>
+					<if test="last_update_user_id != null">
+						 last_update_user_id = #{last_update_user_id},
+					</if>
+					<if test="last_update_timestamp != null">
+						 last_update_timestamp = #{last_update_timestamp},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+					<if test="salesman_id != null">
+						 salesman_id = #{salesman_id},
+					</if>
+					<if test="salesman_name != null">
+						 salesman_name = #{salesman_name},
+					</if>
+					<if test="migration_status != null">
+						 migration_status = #{migration_status},
+					</if>
+					<if test="pre_repay_status != null">
+						 pre_repay_status = #{pre_repay_status},
+					</if>
+					<if test="interest_limit_month != null">
+						 interest_limit_month = #{interest_limit_month},
+					</if>
+					<if test="matching_creditor != null">
+						 matching_creditor = #{matching_creditor},
+					</if>
+					<if test="act_creditor != null">
+						 act_creditor = #{act_creditor},
+					</if>
+					<if test="dunning_id != null">
+						 dunning_id = #{dunning_id},
+					</if>
+					<if test="dunning_name != null">
+						 dunning_name = #{dunning_name},
+					</if>
+					<if test="dunning_deptid != null">
+						 dunning_deptid = #{dunning_deptid},
+					</if>
+					<if test="dunning_datetime != null">
+						 dunning_datetime = #{dunning_datetime},
+					</if>
+					<if test="occupants != null and occupants != '0' ">
+					    occupants =#{occupants},
+					</if>
+					<if test="occupants =='0'">
+					    occupants = null,
+					</if>
+					<if test="is_occupy !=null">
+					   is_occupy =#{is_occupy},
+					</if>
+	   </set>
+		 where 
+    				wms_fina_cre_pay_id = #{wms_fina_cre_pay_id}
+	</update>
+
+	<update id="updateByEntity" parameterType="WmsFinaCreRepay">
+		update wms_fina_cre_repay
+		<set>
+			<if test="wms_fina_cre_pay_id != null">
+				wms_fina_cre_pay_id = #{wms_fina_cre_pay_id},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="cre_type != null">
+				cre_type = #{cre_type},
+			</if>
+			<if test="wms_cre_appro_borrow_protocol_id != null">
+				wms_cre_appro_borrow_protocol_id = #{wms_cre_appro_borrow_protocol_id},
+			</if>
+			<if test="protocol_code != null">
+				protocol_code = #{protocol_code},
+			</if>
+			<if test="protocol_type != null">
+				protocol_type = #{protocol_type},
+			</if>
+			<if test="borrow_deadline != null">
+				borrow_deadline = #{borrow_deadline},
+			</if>
+			<if test="borrow_interest != null">
+				borrow_interest = #{borrow_interest},
+			</if>
+			<if test="protocol_creat_date != null">
+				protocol_creat_date = #{protocol_creat_date},
+			</if>
+			<if test="protocol_amount != null">
+				protocol_amount = #{protocol_amount},
+			</if>
+			<if test="principal != null">
+				principal = #{principal},
+			</if>
+			<if test="interest != null">
+				interest = #{interest},
+			</if>
+			<if test="loan_date != null">
+				loan_date = #{loan_date},
+			</if>
+			<if test="loan_amount != null">
+				loan_amount = #{loan_amount},
+			</if>
+			<if test="repay_begin_date != null">
+				repay_begin_date = #{repay_begin_date},
+			</if>
+			<if test="repay_end_date != null">
+				repay_end_date = #{repay_end_date},
+			</if>
+			<if test="current_repay_date != null">
+				current_repay_date = #{current_repay_date},
+			</if>
+			<if test="refund_limit_month != null">
+				refund_limit_month = #{refund_limit_month},
+			</if>
+			<if test="liquidated_damages != null">
+				liquidated_damages = #{liquidated_damages},
+			</if>
+			<if test="repay_period != null">
+				repay_period = #{repay_period},
+			</if>
+			<if test="repay_principal != null">
+				repay_principal = #{repay_principal},
+			</if>
+			<if test="repay_interest != null">
+				repay_interest = #{repay_interest},
+			</if>
+			<if test="un_pay_period != null">
+				un_pay_period = #{un_pay_period},
+			</if>
+			<if test="un_pay_principal != null">
+				un_pay_principal = #{un_pay_principal},
+			</if>
+			<if test="un_pay_interest != null">
+				un_pay_interest = #{un_pay_interest},
+			</if>
+			<if test="cur_overdue_type != null">
+				cur_overdue_type = #{cur_overdue_type},
+			</if>
+			<if test="cur_overdue_day != null">
+				cur_overdue_day = #{cur_overdue_day},
+			</if>
+			<if test="cur_late_fee != null">
+				cur_late_fee = #{cur_late_fee},
+			</if>
+			<if test="total_overdue_period != null">
+				total_overdue_period = #{total_overdue_period},
+			</if>
+			<if test="total_overdue_day != null">
+				total_overdue_day = #{total_overdue_day},
+			</if>
+			<if test="total_late_fee != null">
+				total_late_fee = #{total_late_fee},
+			</if>
+			<if test="total_pay_late_fee != null">
+				total_pay_late_fee = #{total_pay_late_fee},
+			</if>
+			<if test="total_derate != null">
+				total_derate = #{total_derate},
+			</if>
+			<if test="repay_status != null">
+				repay_status = #{repay_status},
+			</if>
+			<if test="clean_up_date != null">
+				clean_up_date = #{clean_up_date},
+			</if>
+			<if test="clean_up_status != null">
+				clean_up_status = #{clean_up_status},
+			</if>
+			<if test="back_interest_period != null">
+				back_interest_period = #{back_interest_period},
+			</if>
+			<if test="back_ammont != null">
+				back_ammont = #{back_ammont},
+			</if>
+			<if test="customer_officer_id != null">
+				customer_officer_id = #{customer_officer_id},
+			</if>
+			<if test="customer_officer_name != null">
+				customer_officer_name = #{customer_officer_name},
+			</if>
+			<if test="is_upload != null">
+				is_upload = #{is_upload},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+			<if test="salesman_id != null">
+				salesman_id = #{salesman_id},
+			</if>
+			<if test="salesman_name != null">
+				salesman_name = #{salesman_name},
+			</if>
+			<if test="migration_status != null">
+				migration_status = #{migration_status},
+			</if>
+			<if test="pre_repay_status != null">
+				pre_repay_status = #{pre_repay_status},
+			</if>
+			<if test="occupants != null">
+                occupants =#{occupants},
+             </if>
+             <if test="is_occupy !=null">
+                is_occupy =#{is_occupy},
+             </if>
+		</set>
+		<where>
+			enable_flag='1'
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+		</where>
+	</update>
+	<select id="getListByEntity" parameterType="WmsFinaCreRepay"
+		resultType="WmsFinaCreRepay">
+		select
+		wms_fina_cre_pay_id,
+		wms_cre_credit_head_id,
+		cre_type,
+		wms_cre_appro_borrow_protocol_id,
+		protocol_code,
+		protocol_type,
+		borrow_deadline,
+		borrow_interest,
+		date_format(protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		protocol_creat_date,
+		protocol_amount,
+		principal,
+		interest,
+		date_format(loan_date,'%Y-%m-%d') as loan_date_str,
+		loan_date,
+		loan_amount,
+		date_format(repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		repay_begin_date,
+		date_format(repay_end_date,'%Y-%m-%d') as repay_end_date_str,
+		repay_end_date,
+		date_format(current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		current_repay_date,
+		refund_limit_month,
+		liquidated_damages,
+		repay_period,
+		repay_principal,
+		repay_interest,
+		un_pay_period,
+		un_pay_principal,
+		un_pay_interest,
+		cur_overdue_type,
+		cur_overdue_day,
+		cur_late_fee,
+		total_overdue_period,
+		total_overdue_day,
+		total_late_fee,
+		total_pay_late_fee,
+		total_derate,
+		repay_status,
+		date_format(clean_up_date,'%Y-%m-%d') as clean_up_date_str,
+		clean_up_date,
+		clean_up_status,
+		back_interest_period,
+		back_ammont,
+		customer_officer_id,
+		customer_officer_name,
+		is_upload,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		salesman_id,
+		salesman_name,
+		migration_status,
+		pre_repay_status,
+		is_occupy,
+		occupants
+		from
+		wms_fina_cre_repay
+		<where>
+			<if test="wms_fina_cre_pay_id != null">
+				and wms_fina_cre_pay_id = #{wms_fina_cre_pay_id}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="cre_type != null">
+				and cre_type = #{cre_type}
+			</if>
+			<if test="wms_cre_appro_borrow_protocol_id != null">
+				and wms_cre_appro_borrow_protocol_id =
+				#{wms_cre_appro_borrow_protocol_id}
+			</if>
+			<if test="protocol_code != null">
+				and protocol_code = #{protocol_code}
+			</if>
+			<if test="protocol_type != null">
+				and protocol_type = #{protocol_type}
+			</if>
+			<if test="borrow_deadline != null">
+				and borrow_deadline = #{borrow_deadline}
+			</if>
+			<if test="borrow_interest != null">
+				and borrow_interest = #{borrow_interest}
+			</if>
+			<if test="protocol_creat_date != null">
+				and protocol_creat_date = #{protocol_creat_date}
+			</if>
+			<if test="protocol_amount != null">
+				and protocol_amount = #{protocol_amount}
+			</if>
+			<if test="principal != null">
+				and principal = #{principal}
+			</if>
+			<if test="interest != null">
+				and interest = #{interest}
+			</if>
+			<if test="loan_date != null">
+				and loan_date = #{loan_date}
+			</if>
+			<if test="loan_amount != null">
+				and loan_amount = #{loan_amount}
+			</if>
+			<if test="repay_begin_date != null">
+				and repay_begin_date = #{repay_begin_date}
+			</if>
+			<if test="repay_end_date != null">
+				and repay_end_date = #{repay_end_date}
+			</if>
+			<if test="current_repay_date != null">
+				and current_repay_date = #{current_repay_date}
+			</if>
+			<if test="refund_limit_month != null">
+				and refund_limit_month = #{refund_limit_month}
+			</if>
+			<if test="liquidated_damages != null">
+				and liquidated_damages = #{liquidated_damages}
+			</if>
+			<if test="repay_period != null">
+				and repay_period = #{repay_period}
+			</if>
+			<if test="repay_principal != null">
+				and repay_principal = #{repay_principal}
+			</if>
+			<if test="repay_interest != null">
+				and repay_interest = #{repay_interest}
+			</if>
+			<if test="un_pay_period != null">
+				and un_pay_period = #{un_pay_period}
+			</if>
+			<if test="un_pay_principal != null">
+				and un_pay_principal = #{un_pay_principal}
+			</if>
+			<if test="un_pay_interest != null">
+				and un_pay_interest = #{un_pay_interest}
+			</if>
+			<if test="cur_overdue_type != null">
+				and cur_overdue_type = #{cur_overdue_type}
+			</if>
+			<if test="cur_overdue_day != null">
+				and cur_overdue_day = #{cur_overdue_day}
+			</if>
+			<if test="cur_late_fee != null">
+				and cur_late_fee = #{cur_late_fee}
+			</if>
+			<if test="total_overdue_period != null">
+				and total_overdue_period = #{total_overdue_period}
+			</if>
+			<if test="total_overdue_day != null">
+				and total_overdue_day = #{total_overdue_day}
+			</if>
+			<if test="total_late_fee != null">
+				and total_late_fee = #{total_late_fee}
+			</if>
+			<if test="total_pay_late_fee != null">
+				and total_pay_late_fee = #{total_pay_late_fee}
+			</if>
+			<if test="total_derate != null">
+				and total_derate = #{total_derate}
+			</if>
+			<if test="repay_status != null">
+				and repay_status = #{repay_status}
+			</if>
+			<if test="clean_up_date != null">
+				and clean_up_date = #{clean_up_date}
+			</if>
+			<if test="clean_up_status != null">
+				and clean_up_status = #{clean_up_status}
+			</if>
+			<if test="back_interest_period != null">
+				and back_interest_period = #{back_interest_period}
+			</if>
+			<if test="back_ammont != null">
+				and back_ammont = #{back_ammont}
+			</if>
+			<if test="customer_officer_id != null">
+				and customer_officer_id = #{customer_officer_id}
+			</if>
+			<if test="customer_officer_name != null">
+				and customer_officer_name = #{customer_officer_name}
+			</if>
+			<if test="is_upload != null">
+				and is_upload = #{is_upload}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name = #{create_user_name}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id = #{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+			<if test="salesman_id != null">
+				and salesman_id = #{salesman_id}
+			</if>
+			<if test="salesman_name != null">
+				and salesman_name = #{salesman_name}
+			</if>
+			<if test="migration_status != null">
+				and migration_status = #{migration_status}
+			</if>
+			<if test="pre_repay_status != null">
+				and pre_repay_status = #{pre_repay_status}
+			</if>
+			<if test="is_occupy !=null">
+			    and is_occupy  =#{is_occupy}
+			</if>
+			<if test="occupants !=null">
+			    and occupants =#{occupants}
+			</if>
+			<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+				and wms_fina_cre_pay_id != #{wms_fina_cre_pay_id}
+			</if>
+		</where>
+	</select>
+	<!-- get entity by pk 逾期还款确认 查询清单 -->
+	<select id="getbyfk" parameterType="int"
+		resultType="com.zx.emanage.loanfina.vo.WmsFinaCrePeriodRepaySearchBeanVO">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.refund_limit_month,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_day,
+		r.total_derate,
+		r.cur_late_fee,
+		r.dunning_name,
+		p.wms_fina_cre_period_pay_id,
+		p.wms_cre_credit_head_id,
+		sum(p.org_repay_principal) as org_repay_principal,
+		sum(p.org_repay_interest) as org_repay_interest
+		from
+		wms_fina_cre_period_repay p,wms_fina_cre_repay r
+		<where>
+			p.enable_flag=1 and r.enable_flag=1
+			and p.wms_cre_credit_head_id =r.wms_cre_credit_head_id
+			and r.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+		</where>
+	</select>
+	<!-- get entity by pk 逾期还款确认 查询清单  重新写的 上面的可能被其他地方使用 -->
+	<select id="getbyfk2" parameterType="int"
+		resultType="com.zx.emanage.loanfina.vo.WmsFinaCrePeriodRepaySearchBeanVO">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.refund_limit_month,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_day,
+		r.total_derate,
+		r.cur_late_fee,
+		r.dunning_name,
+		p.wms_fina_cre_period_pay_id,
+		p.wms_cre_credit_head_id,
+		p.org_repay_principal,
+		p.org_repay_interest
+		from
+		wms_fina_cre_period_repay p,wms_fina_cre_repay r
+		<where>
+			p.enable_flag=1 and r.enable_flag=1
+			and p.wms_cre_credit_head_id =r.wms_cre_credit_head_id
+			and p.current_repay_date = r.current_repay_date
+			and r.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+		</where>
+	</select>
+	<!-- get entity by pk 正常还款确认 查询清单 -->
+	<select id="getbyfkfornor" parameterType="int"
+		resultType="java.util.HashMap">
+		select
+		(select debtor_name from wms_cre_appro_borrow_protocol where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as debtor_name,
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.refund_limit_month,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_day,
+		r.total_derate,
+		r.cur_late_fee,
+		r.total_late_fee,
+		r.dunning_name,
+		p.wms_fina_cre_period_pay_id,
+		p.wms_cre_credit_head_id,
+		p.org_repay_principal,
+		p.org_repay_interest,
+		r.dunning_name,
+		r.liquidated_damages
+		from
+		wms_fina_cre_period_repay p,wms_fina_cre_repay r
+		<where>
+			p.enable_flag=1 and r.enable_flag=1
+			and p.wms_cre_credit_head_id =r.wms_cre_credit_head_id
+			and p.current_repay_date = r.current_repay_date
+			and r.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+		</where>
+	</select>
+	<!-- get entity by wms_cre_credit_head_id 根据wms_cre_credit_head_id查询所有信息 -->
+	<select id="getbyid" parameterType="int" resultType="WmsFinaCreRepay">
+		select
+		wms_fina_cre_pay_id,
+		wms_cre_credit_head_id,
+		cre_type,
+		wms_cre_appro_borrow_protocol_id,
+		protocol_code,
+		protocol_type,
+		borrow_deadline,
+		borrow_interest,
+		date_format(protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		protocol_creat_date,
+		protocol_amount,
+		principal,
+		interest,
+		date_format(loan_date,'%Y-%m-%d') as loan_date_str,
+		loan_date,
+		loan_amount,
+		date_format(repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		repay_begin_date,
+		date_format(repay_end_date,'%Y-%m-%d') as repay_end_date_str,
+		repay_end_date,
+		date_format(current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		current_repay_date,
+		refund_limit_month,
+		liquidated_damages,
+		repay_period,
+		repay_principal,
+		repay_interest,
+		un_pay_period,
+		un_pay_principal,
+		un_pay_interest,
+		cur_overdue_type,
+		cur_overdue_day,
+		cur_late_fee,
+		total_overdue_period,
+		total_overdue_day,
+		total_late_fee,
+		total_pay_late_fee,
+		total_derate,
+		repay_status,
+		date_format(clean_up_date,'%Y-%m-%d') as clean_up_date_str,
+		clean_up_date,
+		clean_up_status,
+		back_interest_period,
+		back_ammont,
+		customer_officer_id,
+		customer_officer_name,
+		is_upload,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		salesman_id,
+		salesman_name,
+		migration_status,
+		pre_repay_status
+		from
+		wms_fina_cre_repay
+		where
+		wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</select>
+	<!-- list 用于逾期列表查询 -->
+	<select id="searchforyuqi" parameterType="map" resultType="java.util.HashMap">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		r.cre_type,
+		(case r.cre_type when '1' then '信贷产品' when '2' then '房贷产品' when '3' then '车贷产品' end) as
+		cre_type_name,
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		r.protocol_type,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.principal,
+		r.interest,
+		date_format(r.loan_date,'%Y-%m-%d') as loan_date_str,
+		r.loan_date,
+		r.loan_amount,
+		date_format(r.repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		r.repay_begin_date,
+		date_format(r.repay_end_date,'%Y-%m-%d') as repay_end_date_str,
+		r.repay_end_date,
+		date_format(r.current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		r.current_repay_date,
+		r.refund_limit_month,
+		r.liquidated_damages,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_type,
+		r.cur_overdue_day,
+		r.cur_late_fee,
+		r.total_overdue_period,
+		r.total_overdue_day,
+		r.total_late_fee,
+		r.total_pay_late_fee,
+		r.total_derate,
+		r.repay_status,
+		(case repay_status when '1' then '正常' when '2' then '逾期' when '3' then '结清'
+		when '4' then '贷账' when '5' then '存档' when '6' then '诉讼' end) as
+		repay_status_name,
+		date_format(r.clean_up_date,'%Y-%m-%d') as clean_up_date_str,
+		r.clean_up_date,
+		r.clean_up_status,
+		r.back_interest_period,
+		r.back_ammont,
+		r.is_upload,
+		r.create_user_id,
+		r.create_user_name,
+		date_format(r.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		r.create_timestamp,
+		r.last_update_user_id,
+		date_format(r.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		r.last_update_timestamp,
+		r.enable_flag,
+		r.salesman_name,
+		r.dunning_name,
+		p.debtor_name,
+		p.debtor_tel,
+		p.payment_contract_type,
+		
+		(select home_dunning_status from wms_post_dunning_head dun where dun.wms_cre_credit_head_id=r.wms_cre_credit_head_id and dun.dunning_status=5 and ISNULL(dun.reject_status)) as home_dunning_status_str,
+		
+		(select wms_post_dunning_head_id from wms_post_dunning_head dun where dun.wms_cre_credit_head_id=r.wms_cre_credit_head_id and dun.dunning_status=5 and ISNULL(dun.reject_status)) as wms_post_dunning_head_id,
+		
+		(select (case dunning_status when '5' then '待逾期还款确认' END) as dunning_status from wms_post_dunning_head dun where dun.wms_cre_credit_head_id=r.wms_cre_credit_head_id and dun.dunning_status=5 and ISNULL(dun.reject_status)) as dunning_status_str,
+		
+		(select loansupervisor_result from wms_post_dunning_head dun where dun.wms_cre_credit_head_id=r.wms_cre_credit_head_id and dun.dunning_status=5 and ISNULL(dun.reject_status)) as loansupervisor_result,
+		
+		(select Max(repayment_date) from wms_fina_cre_repayment_history where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as repayment_date,
+		
+		ifnull(a.wms_cre_credit_group_id, '') as wms_cre_credit_group_id,
+		
+		(select ifnull(b.bill_code_group, '') from wms_cre_credit_group b where b.wms_cre_credit_group_id = a.wms_cre_credit_group_id) as bill_code_group 
+		
+		from wms_fina_cre_repay r,wms_cre_appro_borrow_protocol p, wms_cre_credit_head a
+		
+		<where>
+			r.enable_flag='1' and
+			r.wms_cre_appro_borrow_protocol_id = p.wms_cre_appro_id and 
+			r.wms_cre_credit_head_id = p.wms_cre_credit_head_id and
+			r.wms_cre_credit_head_id = a.wms_cre_credit_head_id and
+			r.repay_status ='2' and r.migration_status ='0'			
+			<if test="protocol_code != null">
+				and r.protocol_code like #{protocol_code}
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like #{debtor_name}
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like #{debtor_tel}
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like #{salesman_name}
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+			<if test="dunning_status != null">
+				 and r.wms_cre_credit_head_id in(select wms_cre_credit_head_id from wms_post_dunning_head where dunning_status=#{dunning_status} and ISNULL(reject_status))
+			</if>
+			<if test="repayment_date_start != null and  repayment_date_end != null">
+				and (select Max(repayment_date) from wms_fina_cre_repayment_history where wms_cre_credit_head_id=r.wms_cre_credit_head_id) between #{repayment_date_start} and #{repayment_date_end} 
+			</if>
+			<if test="repayment_date_start != null and  repayment_date_end == null">
+				and DATE_SUB((select Max(repayment_date) from wms_fina_cre_repayment_history where wms_cre_credit_head_id=r.wms_cre_credit_head_id),INTERVAL -1 DAY)  &gt;  #{repayment_date_start}
+			</if>
+			<if test="repayment_date_start == null and  repayment_date_end != null">
+				and DATE_SUB((select Max(repayment_date) from wms_fina_cre_repayment_history where wms_cre_credit_head_id=r.wms_cre_credit_head_id),INTERVAL 1 DAY)  &lt;  #{repayment_date_end} 
+			</if>
+			<if test="current_repay_date_start != null and  current_repay_date_end != null">
+				and r.current_repay_date  between #{current_repay_date_start} and #{current_repay_date_end} 
+			</if>
+			<if test="current_repay_date_start != null and  current_repay_date_end == null">
+				and DATE_SUB(r.current_repay_date,INTERVAL -1 DAY)  &gt;  #{current_repay_date_start}
+			</if>
+			<if test="current_repay_date_start == null and  current_repay_date_end != null">
+				and DATE_SUB(r.current_repay_date,INTERVAL 1 DAY)  &lt;  #{current_repay_date_end} 
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<sql id="selectOverdue">
+			from wms_post_dunning_head 
+			where 
+			wms_post_dunning_head_id= 
+			(SELECT MAX(wms_post_dunning_head_id)
+			from wms_post_dunning_head 
+			where 
+			enable_flag=1 
+			and wms_cre_credit_head_id=r.wms_cre_credit_head_id
+			and (dunning_status in(5) or dunning_status is null))
+	</sql>
+	<!-- count num 用于逾期查询列表 -->
+	<select id="findCountforyuqi" parameterType="map" resultType="int">
+		select count(r.wms_fina_cre_pay_id) as count
+		from wms_fina_cre_repay
+		r,wms_cre_appro_borrow_protocol p
+		<where>
+			r.enable_flag='1' and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id and r.wms_cre_credit_head_id=p.wms_cre_credit_head_id and
+			r.repay_status ='2' and r.migration_status ='0'			
+			<if test="protocol_code != null">
+				and r.protocol_code like #{protocol_code}
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like #{debtor_name}
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like #{debtor_tel}
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like #{salesman_name}
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+			<if test="dunning_status != null">
+				and r.wms_cre_credit_head_id in(select wms_cre_credit_head_id from wms_post_dunning_head where dunning_status=#{dunning_status} and ISNULL(reject_status))
+			</if>
+			<if test="repayment_date_start != null and  repayment_date_end != null">
+				and (select Max(repayment_date) from wms_fina_cre_repayment_history where wms_cre_credit_head_id=r.wms_cre_credit_head_id) between #{repayment_date_start} and #{repayment_date_end} 
+			</if>
+			<if test="repayment_date_start != null and  repayment_date_end == null">
+				and DATE_SUB((select Max(repayment_date) from wms_fina_cre_repayment_history where wms_cre_credit_head_id=r.wms_cre_credit_head_id),INTERVAL -1 DAY)  &gt;  #{repayment_date_start}
+			</if>
+			<if test="repayment_date_start == null and  repayment_date_end != null">
+				and DATE_SUB((select Max(repayment_date) from wms_fina_cre_repayment_history where wms_cre_credit_head_id=r.wms_cre_credit_head_id),INTERVAL 1 DAY)  &lt;  #{repayment_date_end} 
+			</if>
+			<if test="current_repay_date_start != null and  current_repay_date_end != null">
+				and r.current_repay_date  between #{current_repay_date_start} and #{current_repay_date_end} 
+			</if>
+			<if test="current_repay_date_start != null and  current_repay_date_end == null">
+				and DATE_SUB(r.current_repay_date,INTERVAL -1 DAY)  &gt;  #{current_repay_date_start}
+			</if>
+			<if test="current_repay_date_start == null and  current_repay_date_end != null">
+				and DATE_SUB(r.current_repay_date,INTERVAL 1 DAY)  &lt;  #{current_repay_date_end} 
+			</if>
+		</where>
+	</select>
+		<!-- list 用于逾期列表查询 导出excel-->
+	<select id="searchforyuqiexcel" parameterType="map" resultType="java.util.HashMap">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		r.cre_type,
+		(case r.cre_type when '1' then '信贷产品' when '2' then '房贷产品' when '3' then '车贷产品' end) as
+		cre_type_name,
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		r.protocol_type,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.principal,
+		r.interest,
+		date_format(r.loan_date,'%Y-%m-%d') as loan_date_str,
+		r.loan_date,
+		r.loan_amount,
+		date_format(r.repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		r.repay_begin_date,
+		date_format(r.repay_end_date,'%Y-%m-%d') as repay_end_date_str,
+		r.repay_end_date,
+		date_format(r.current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		r.current_repay_date,
+		r.refund_limit_month,
+		r.liquidated_damages,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_type,
+		r.cur_overdue_day,
+		r.cur_late_fee,
+		r.total_overdue_period,
+		r.total_overdue_day,
+		r.total_late_fee,
+		r.total_pay_late_fee,
+		r.total_derate,
+		r.repay_status,
+		(case repay_status when '1' then '正常' when '2' then '逾期' when '3' then '结清'
+		when '4' then '贷账' when '5' then '存档' when '6' then '诉讼' end) as
+		repay_status_name,
+		date_format(r.clean_up_date,'%Y-%m-%d') as clean_up_date_str,
+		r.clean_up_date,
+		r.clean_up_status,
+		r.back_interest_period,
+		r.back_ammont,
+		r.is_upload,
+		r.create_user_id,
+		r.create_user_name,
+		date_format(r.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		r.create_timestamp,
+		r.last_update_user_id,
+		date_format(r.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		r.last_update_timestamp,
+		r.enable_flag,
+		r.salesman_name,
+		r.dunning_name,
+		p.debtor_name,
+		p.debtor_tel,
+		p.payment_contract_type,
+		
+		(select home_dunning_status from wms_post_dunning_head dun where dun.wms_cre_credit_head_id=r.wms_cre_credit_head_id and dun.dunning_status=5 and ISNULL(dun.reject_status)) as home_dunning_status,
+		
+		(select wms_post_dunning_head_id from wms_post_dunning_head dun where dun.wms_cre_credit_head_id=r.wms_cre_credit_head_id and dun.dunning_status=5 and ISNULL(dun.reject_status)) as wms_post_dunning_head_id,
+		
+		(select (case dunning_status when '5' then '待逾期还款确认' END) as dunning_status from wms_post_dunning_head dun where dun.wms_cre_credit_head_id=r.wms_cre_credit_head_id and dun.dunning_status=5 and ISNULL(dun.reject_status)) as dunning_status_str,
+		
+		(select loansupervisor_result from wms_post_dunning_head dun where dun.wms_cre_credit_head_id=r.wms_cre_credit_head_id and dun.dunning_status=5 and ISNULL(dun.reject_status)) as loansupervisor_result,
+		
+		(select Max(repayment_date) from wms_fina_cre_repayment_history where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as repayment_date,
+		
+		(select ifnull(b.bill_code_group, '') from wms_cre_credit_group b where b.wms_cre_credit_group_id = a.wms_cre_credit_group_id) as bill_code_group
+		
+		from wms_fina_cre_repay r, wms_cre_appro_borrow_protocol p, wms_cre_credit_head a
+		
+		<where>
+			r.enable_flag='1' and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id and r.wms_cre_credit_head_id=p.wms_cre_credit_head_id and
+			r.wms_cre_credit_head_id = a.wms_cre_credit_head_id and
+			r.repay_status ='2' and r.migration_status ='0'			
+			<if test="protocol_code != null">
+				and r.protocol_code like #{protocol_code}
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like #{debtor_name}
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like #{debtor_tel}
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like #{salesman_name}
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+			<if test="dunning_status != null">
+				 and r.wms_cre_credit_head_id in(select wms_cre_credit_head_id from wms_post_dunning_head where dunning_status=#{dunning_status} and ISNULL(reject_status))
+			</if>
+			<if test="repayment_date_start != null and  repayment_date_end != null">
+				and (select Max(repayment_date) from wms_fina_cre_repayment_history where wms_cre_credit_head_id=r.wms_cre_credit_head_id) between #{repayment_date_start} and #{repayment_date_end} 
+			</if>
+			<if test="repayment_date_start != null and  repayment_date_end == null">
+				and DATE_SUB((select Max(repayment_date) from wms_fina_cre_repayment_history where wms_cre_credit_head_id=r.wms_cre_credit_head_id),INTERVAL -1 DAY)  &gt;  #{repayment_date_start}
+			</if>
+			<if test="repayment_date_start == null and  repayment_date_end != null">
+				and DATE_SUB((select Max(repayment_date) from wms_fina_cre_repayment_history where wms_cre_credit_head_id=r.wms_cre_credit_head_id),INTERVAL 1 DAY)  &lt;  #{repayment_date_end} 
+			</if>
+			<if test="current_repay_date_start != null and  current_repay_date_end != null">
+				and r.current_repay_date  between #{current_repay_date_start} and #{current_repay_date_end} 
+			</if>
+			<if test="current_repay_date_start != null and  current_repay_date_end == null">
+				and DATE_SUB(r.current_repay_date,INTERVAL -1 DAY)  &gt;  #{current_repay_date_start}
+			</if>
+			<if test="current_repay_date_start == null and  current_repay_date_end != null">
+				and DATE_SUB(r.current_repay_date,INTERVAL 1 DAY)  &lt;  #{current_repay_date_end} 
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<!-- list 用于正常列表查询 -->
+	<select id="searchfornormal" parameterType="map" resultType="java.util.HashMap">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		r.cre_type,
+		(case r.cre_type when '1' then '信贷产品' when '2' then '房贷产品' when '3' then '车贷产品' end) as
+		cre_type_name,
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		r.protocol_type,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.principal,
+		r.interest,
+		date_format(r.loan_date,'%Y-%m-%d') as loan_date_str,
+		r.loan_date,
+		r.loan_amount,
+		date_format(r.repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		r.repay_begin_date,
+		date_format(r.repay_end_date,'%Y-%m-%d') as repay_end_date_str,
+		r.repay_end_date,
+		date_format(r.current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		r.current_repay_date,
+		r.refund_limit_month,
+		r.liquidated_damages,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_type,
+		r.cur_overdue_day,
+		r.cur_late_fee,
+		r.total_overdue_period,
+		r.total_overdue_day,
+		r.total_late_fee,
+		r.total_pay_late_fee,
+		r.total_derate,
+		r.repay_status,
+		(case repay_status when '1' then '正常' when '2' then '逾期' when '3' then '结清'
+		when '4' then '贷账' when '5' then '存档' when '6' then '诉讼' end) as
+		repay_status_name,
+		date_format(r.clean_up_date,'%Y-%m-%d') as clean_up_date_str,
+		r.clean_up_date,
+		r.clean_up_status,
+		r.back_interest_period,
+		r.back_ammont,
+		r.is_upload,
+		r.create_user_id,
+		r.create_user_name,
+		date_format(r.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		r.create_timestamp,
+		r.last_update_user_id,
+		date_format(r.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		r.last_update_timestamp,
+		r.enable_flag,
+		r.salesman_name,
+		r.dunning_name,
+		p.debtor_name,
+		p.debtor_tel,
+		p.payment_contract_type,
+		r.current_repay_date,
+		(select max(repayment_date) from wms_fina_cre_repayment_history where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as repayment_date,
+		ifnull(a.wms_cre_credit_group_id, '') as wms_cre_credit_group_id,
+		(select ifnull(b.bill_code_group, '') from wms_cre_credit_group b where b.wms_cre_credit_group_id = a.wms_cre_credit_group_id) as bill_code_group
+		from wms_fina_cre_repay r,wms_cre_appro_borrow_protocol p, wms_cre_credit_head a
+		<where>
+			r.enable_flag='1' and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id and
+			r.wms_cre_credit_head_id = a.wms_cre_credit_head_id and
+			r.repay_status ='1'
+			<![CDATA[ and r.current_repay_date<=DATE_SUB(CURRENT_DATE(),INTERVAL -30 day)]]>
+			<if test="protocol_code != null">
+				and r.protocol_code like #{protocol_code}
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like #{debtor_name}
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like #{debtor_tel}
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like #{salesman_name}
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+			<if test="repayment_date_start != null and  repayment_date_end != null">
+				and (select Max(repayment_date) from wms_fina_cre_repayment_history where wms_cre_credit_head_id=r.wms_cre_credit_head_id) between #{repayment_date_start} and #{repayment_date_end} 
+			</if>
+			<if test="repayment_date_start != null and  repayment_date_end == null">
+				and DATE_SUB((select Max(repayment_date) from wms_fina_cre_repayment_history where wms_cre_credit_head_id=r.wms_cre_credit_head_id),INTERVAL -1 DAY)  &gt;  #{repayment_date_start}
+			</if>
+			<if test="repayment_date_start == null and  repayment_date_end != null">
+				and DATE_SUB((select Max(repayment_date) from wms_fina_cre_repayment_history where wms_cre_credit_head_id=r.wms_cre_credit_head_id),INTERVAL 1 DAY)  &lt;  #{repayment_date_end} 
+			</if>
+			<if test="current_repay_date_start != null and  current_repay_date_end != null">
+				and r.current_repay_date  between #{current_repay_date_start} and #{current_repay_date_end} 
+			</if>
+			<if test="current_repay_date_start != null and  current_repay_date_end == null">
+				and DATE_SUB(r.current_repay_date,INTERVAL -1 DAY)  &gt;  #{current_repay_date_start}
+			</if>
+			<if test="current_repay_date_start == null and  current_repay_date_end != null">
+				and DATE_SUB(r.current_repay_date,INTERVAL 1 DAY)  &lt;  #{current_repay_date_end} 
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- count num 用于正常查询列表 -->
+	<select id="findCountfornormal" parameterType="map" resultType="int">
+		select count(r.wms_fina_cre_pay_id) as count
+		from wms_fina_cre_repay
+		r,wms_cre_appro_borrow_protocol p
+		<where>
+			r.enable_flag='1' and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id and
+			r.repay_status='1'
+			<![CDATA[ and r.current_repay_date<=DATE_SUB(CURRENT_DATE(),INTERVAL -30 day)]]>
+			<if test="protocol_code != null">
+				and r.protocol_code like #{protocol_code}
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like #{debtor_name}
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like #{debtor_tel}
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like #{salesman_name}
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+			<if test="repayment_date_start != null and  repayment_date_end != null">
+				and (select Max(repayment_date) from wms_fina_cre_repayment_history where wms_cre_credit_head_id=r.wms_cre_credit_head_id) between #{repayment_date_start} and #{repayment_date_end} 
+			</if>
+			<if test="repayment_date_start != null and  repayment_date_end == null">
+				and DATE_SUB((select Max(repayment_date) from wms_fina_cre_repayment_history where wms_cre_credit_head_id=r.wms_cre_credit_head_id),INTERVAL -1 DAY)  &gt;  #{repayment_date_start}
+			</if>
+			<if test="repayment_date_start == null and  repayment_date_end != null">
+				and DATE_SUB((select Max(repayment_date) from wms_fina_cre_repayment_history where wms_cre_credit_head_id=r.wms_cre_credit_head_id),INTERVAL 1 DAY)  &lt;  #{repayment_date_end} 
+			</if>
+			<if test="current_repay_date_start != null and  current_repay_date_end != null">
+				and r.current_repay_date  between #{current_repay_date_start} and #{current_repay_date_end} 
+			</if>
+			<if test="current_repay_date_start != null and  current_repay_date_end == null">
+				and DATE_SUB(r.current_repay_date,INTERVAL -1 DAY)  &gt;  #{current_repay_date_start}
+			</if>
+			<if test="current_repay_date_start == null and  current_repay_date_end != null">
+				and DATE_SUB(r.current_repay_date,INTERVAL 1 DAY)  &lt;  #{current_repay_date_end} 
+			</if>
+		</where>
+	</select>
+	<select id="getBorrowAndLoanAppByPK" parameterType="Integer"
+		resultType="java.util.HashMap">
+		select
+		t1.wms_cre_appro_id,
+		t1.protocol_id_year,
+		t1.protocol_id_num,
+		CONCAT(t1.protocol_id_year,'年第',t1.protocol_id_num,'号')as protocol_id_year_num,
+		t1.protocol_date,
+		t1.creditor_name,
+		t1.creditor_identity_id,
+		t1.debtor_name,
+		t1.debtor_identity_id,
+		t1.creditor_address,
+		t1.debtor_address,
+		t1.creditor_tel,
+		t1.debtor_tel,
+		t1.debtor_fixed_line,
+		t1.principal_caps,
+		t1.principal_lower,
+		t1.borrow_deadline,
+		t1.borrow_begin_date,
+		t1.borrow_end_date,
+		t1.borrow_purpose,
+		t1.borrow_interest,
+		t1.refund_bank,
+		t1.refund_number,
+		t1.refund_name,
+		t1.refund_limit_month,
+		t1.refund_day,
+		t1.liquidated_damages,
+		t1.wms_cre_credit_head_id,
+		t1.create_user_id,
+		t1.create_user_name,
+		t1.create_timestamp,
+		t1.last_update_user_id,
+		t1.last_update_timestamp,
+		t1.enable_flag,
+		t2.wms_fina_cre_loan_app,
+		t2.wms_cre_credit_head_id,
+		t2.notarial_fee,
+		t2.platform_fee,
+		t2.loan_amount,
+		date_format(loan_date,'%Y-%m-%d') as loan_date_str,
+		t2.loan_date,
+		t2.remark,
+		t2.receive_bank,
+		t2.bank_of_deposit,
+		t2.card_no,
+		t3.service_cost_month
+		from wms_cre_appro_borrow_protocol t1, wms_fina_cre_loan_app
+		t2,wms_cre_appro_service_protocol t3 where
+		t1.wms_cre_credit_head_id=t2.wms_cre_credit_head_id
+		and t1.wms_cre_credit_head_id=t3.wms_cre_credit_head_id and
+		t1.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+
+	</select>
+
+	<update id="updateMatch" parameterType="WmsFinaCreRepay">
+		update wms_fina_cre_repay
+		<set>
+			<if test="matching_creditor != null">
+				matching_creditor = matching_creditor - #{matching_creditor},
+			</if>
+			<if test="is_occupy != null">
+                is_occupy = #{is_occupy},
+            </if>
+            <if test="occupants != null">
+                occupants = #{occupants},
+            </if>
+		</set>
+		<where>
+			enable_flag='1'
+			<if test="wms_fina_cre_pay_id != null">
+				and wms_fina_cre_pay_id = #{wms_fina_cre_pay_id}
+			</if>
+		</where>
+	</update>
+	<update id="updateRedeem" parameterType="WmsFinaCreRepay">
+		update wms_fina_cre_repay
+		<set>
+			<if test="matching_creditor != null">
+				matching_creditor = matching_creditor + #{matching_creditor},
+			</if>
+		</set>
+		<where>
+			enable_flag='1'
+			<if test="wms_fina_cre_pay_id != null">
+				and wms_fina_cre_pay_id = #{wms_fina_cre_pay_id}
+			</if>
+		</where>
+	</update>
+	<!-- 获取优先等级的债权包信息 -->
+	<select id="getListForFirstMatch" parameterType="WmsFinaCreRepay"
+		resultType="WmsFinaCreRepay">
+		select
+		wms_fina_cre_pay_id,
+		wms_cre_credit_head_id,
+		cre_type,
+		wms_cre_appro_borrow_protocol_id,
+		protocol_code,
+		protocol_type,
+		borrow_deadline,
+		borrow_interest,
+		date_format(protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		protocol_creat_date,
+		protocol_amount,
+		principal,
+		interest,
+		date_format(loan_date,'%Y-%m-%d') as loan_date_str,
+		loan_date,
+		loan_amount,
+		date_format(repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		repay_begin_date,
+		date_format(repay_end_date,'%Y-%m-%d') as repay_end_date_str,
+		repay_end_date,
+		date_format(current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		current_repay_date,
+		refund_limit_month,
+		liquidated_damages,
+		repay_period,
+		repay_principal,
+		repay_interest,
+		un_pay_period,
+		un_pay_principal,
+		un_pay_interest,
+		cur_overdue_type,
+		cur_overdue_day,
+		cur_late_fee,
+		total_overdue_period,
+		total_overdue_day,
+		total_late_fee,
+		total_pay_late_fee,
+		total_derate,
+		repay_status,
+		date_format(clean_up_date,'%Y-%m-%d') as clean_up_date_str,
+		clean_up_date,
+		clean_up_status,
+		back_interest_period,
+		back_ammont,
+		customer_officer_id,
+		customer_officer_name,
+		is_upload,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		salesman_id,
+		salesman_name,
+		migration_status,
+		pre_repay_status,
+		matching_creditor
+		from
+		wms_fina_cre_repay
+		<where>
+			<![CDATA[repay_end_date >= #{repay_end_date} ]]>
+			and repay_status in (1,2)
+			and enable_flag = "1"
+			and cre_type = "1"
+			and matching_creditor > 0
+		</where>
+		order by repay_end_date
+	</select>
+
+	<!-- 获取非优先等级的债权包信息 -->
+	<select id="getListForOtherMatch" parameterType="WmsFinaCreRepay"
+		resultType="WmsFinaCreRepay">
+		select
+		wms_fina_cre_pay_id,
+		wms_cre_credit_head_id,
+		cre_type,
+		wms_cre_appro_borrow_protocol_id,
+		protocol_code,
+		protocol_type,
+		borrow_deadline,
+		borrow_interest,
+		date_format(protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		protocol_creat_date,
+		protocol_amount,
+		principal,
+		interest,
+		date_format(loan_date,'%Y-%m-%d') as loan_date_str,
+		loan_date,
+		loan_amount,
+		date_format(repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		repay_begin_date,
+		date_format(repay_end_date,'%Y-%m-%d') as repay_end_date_str,
+		repay_end_date,
+		date_format(current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		current_repay_date,
+		refund_limit_month,
+		liquidated_damages,
+		repay_period,
+		repay_principal,
+		repay_interest,
+		un_pay_period,
+		un_pay_principal,
+		un_pay_interest,
+		cur_overdue_type,
+		cur_overdue_day,
+		cur_late_fee,
+		total_overdue_period,
+		total_overdue_day,
+		total_late_fee,
+		total_pay_late_fee,
+		total_derate,
+		repay_status,
+		date_format(clean_up_date,'%Y-%m-%d') as clean_up_date_str,
+		clean_up_date,
+		clean_up_status,
+		back_interest_period,
+		back_ammont,
+		customer_officer_id,
+		customer_officer_name,
+		is_upload,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		salesman_id,
+		salesman_name,
+		migration_status,
+		pre_repay_status,
+		matching_creditor
+		from
+		wms_fina_cre_repay
+		<where>
+			<![CDATA[repay_end_date < #{repay_end_date} ]]>
+			and repay_status in (1,2)
+			and enable_flag = "1"
+			and cre_type = "1"
+			and matching_creditor > 0
+		</where>
+		order by repay_end_date desc
+	</select>
+	<!-- 按照债权包实时余额2 -->
+	<update id="changeMatchRuleToSurplus" parameterType="map">
+		update wms_fina_cre_repay
+		<set>
+			matching_creditor = (un_pay_principal+un_pay_interest) * #{ratio}
+		</set>
+		<where>
+			cre_type = "1"
+			and enable_flag = "1"
+			and repay_status in (1,2)
+		</where>
+	</update>
+	<!--按照债权包总额1 -->
+	<update id="changeMatchRuleToTotal" parameterType="map">
+		update wms_fina_cre_repay
+		<set>
+			matching_creditor = protocol_amount * #{ratio}
+		</set>
+		<where>
+			cre_type = "1"
+			and enable_flag = "1"
+			and repay_status in (1,2)
+		</where>
+	</update>
+	<!-- 服务管理-催缴管理-单据分配 -->
+	<select id="searchforPostLoanAllocation" parameterType="map" resultType="java.util.HashMap">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		(select bill_code from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as bill_code,
+		r.cre_type,
+		(select value_meaning from wms_sys_dict_data where value_code=r.cre_type and wms_sys_dict_id=15) as cre_type_name,
+		(select value_meaning from wms_sys_dict_data where wms_sys_dict_data_id=(select cre_loan_type from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id)) as cre_loan_type_name,
+		CONCAT(
+    	(select value_meaning from wms_sys_dict_data where value_code=r.cre_type and wms_sys_dict_id=15),
+    	'/',
+    	(select value_meaning from wms_sys_dict_data where wms_sys_dict_data_id=(select cre_loan_type from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id))
+    	) as type_cre_loan, 
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		r.protocol_type,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as
+		protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.principal,
+		r.interest,
+		date_format(r.loan_date,'%Y-%m-%d') as
+		loan_date_str,
+		r.loan_date,
+		r.loan_amount,
+		date_format(r.repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		r.repay_begin_date,
+		date_format(r.repay_end_date,'%Y-%m-%d') as
+		repay_end_date_str,
+		r.repay_end_date,
+		date_format(r.current_repay_date,'%Y-%m-%d') as
+		current_repay_date_str,
+		r.current_repay_date,
+		r.refund_limit_month,
+		r.liquidated_damages,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_type,
+		r.cur_overdue_day,
+		r.cur_late_fee,
+		r.total_overdue_period,
+		r.total_overdue_day,
+		r.total_late_fee,
+		r.total_pay_late_fee,
+		r.total_derate,
+		r.repay_status,
+		(select value_meaning from wms_sys_dict_data where wms_sys_dict_id=63 and value_code=r.repay_status) as repay_status_name,
+		date_format(r.clean_up_date,'%Y-%m-%d') as
+		clean_up_date_str,
+		r.clean_up_date,
+		r.clean_up_status,
+		r.back_interest_period,
+		r.back_ammont,
+		r.is_upload,
+		r.create_user_id,
+		r.create_user_name,
+		date_format(r.create_timestamp,'%Y-%m-%d %H:%i:%s')
+		as create_timestamp_str,
+		r.create_timestamp,
+		r.last_update_user_id,
+		date_format(r.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as
+		last_update_timestamp_str,
+		r.last_update_timestamp,
+		r.enable_flag,
+		r.salesman_name,
+		r.dunning_id,
+		r.dunning_name,
+		r.dunning_deptid,
+		date_format(r.dunning_datetime,'%Y-%m-%d %H:%i:%s') as dunning_datetime_str,
+		r.dunning_datetime,
+		(r.un_pay_principal+r.un_pay_interest) as matching_creditor, 
+		p.debtor_name,
+		p.debtor_tel,
+		r.dunning_id,
+		r.dunning_name,
+		r.dunning_deptId,
+		(case when r.repay_status=2 then (select DATE_ADD(current_repay_date,INTERVAL 1 DAY) from wms_fina_cre_period_repay where 
+        wms_fina_cre_period_pay_id=(select min(wms_fina_cre_period_pay_id) from wms_fina_cre_period_repay where ISNULL(repay_date) and wms_cre_credit_head_id=r.wms_cre_credit_head_id)) 
+        END) as default_date
+
+		from wms_fina_cre_repay r,wms_cre_appro_borrow_protocol p
+		<where>
+			r.enable_flag='1' 
+			and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id 
+			and
+			r.migration_status ='0'
+			and ((r.dunning_id is NULL  and r.dunning_name is NULL AND r.dunning_deptId IS null and r.dunning_datetime is NULL)OR r.wms_cre_credit_head_id = (SELECT wms_cre_credit_head_id from wms_post_dunning_head h where h.wms_cre_credit_head_id=r.wms_cre_credit_head_id  and h.dunning_status=3))
+			<if test="repay_status !=null">
+				and r.repay_status =#{repay_status} 
+			</if>
+			<if test="protocol_code != null">
+				and r.protocol_code like #{protocol_code}
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like #{debtor_name}
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like #{debtor_tel}
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like #{salesman_name}
+			</if>
+				<if test="dunning_name != null">
+				and r.dunning_name like #{dunning_name}
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<!-- 服务管理-贷后管理-贷后查询 -贷后分配-导出excel -->
+	<select id="getListWithoutAllocation" parameterType="map" resultType="java.util.HashMap">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		(select bill_code from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as bill_code,
+		r.cre_type,
+		(select value_meaning from wms_sys_dict_data where value_code=r.cre_type and wms_sys_dict_id=15) as cre_type_name,
+		(select value_meaning from wms_sys_dict_data where wms_sys_dict_data_id=(select cre_loan_type from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id)) as cre_loan_type_name,
+		CONCAT(
+    	(select value_meaning from wms_sys_dict_data where value_code=r.cre_type and wms_sys_dict_id=15),
+    	'/',
+    	(select value_meaning from wms_sys_dict_data where wms_sys_dict_data_id=(select cre_loan_type from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id))
+    	) as type_cre_loan, 
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		r.protocol_type,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as
+		protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.principal,
+		r.interest,
+		date_format(r.loan_date,'%Y-%m-%d') as
+		loan_date_str,
+		r.loan_date,
+		r.loan_amount,
+		date_format(r.repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		r.repay_begin_date,
+		date_format(r.repay_end_date,'%Y-%m-%d') as
+		repay_end_date_str,
+		r.repay_end_date,
+		date_format(r.current_repay_date,'%Y-%m-%d') as
+		current_repay_date_str,
+		r.current_repay_date,
+		r.refund_limit_month,
+		r.liquidated_damages,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_type,
+		r.cur_overdue_day,
+		r.cur_late_fee,
+		r.total_overdue_period,
+		r.total_overdue_day,
+		r.total_late_fee,
+		r.total_pay_late_fee,
+		r.total_derate,
+		r.repay_status,
+		(select value_meaning from wms_sys_dict_data where wms_sys_dict_id=63 and value_code=r.repay_status) as repay_status_name,
+		date_format(r.clean_up_date,'%Y-%m-%d') as
+		clean_up_date_str,
+		r.clean_up_date,
+		r.clean_up_status,
+		r.back_interest_period,
+		r.back_ammont,
+		r.is_upload,
+		r.create_user_id,
+		r.create_user_name,
+		date_format(r.create_timestamp,'%Y-%m-%d %H:%i:%s')
+		as create_timestamp_str,
+		r.create_timestamp,
+		r.last_update_user_id,
+		date_format(r.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as
+		last_update_timestamp_str,
+		r.last_update_timestamp,
+		r.enable_flag,
+		r.salesman_name,
+		r.dunning_id,
+		r.dunning_name,
+		r.dunning_deptid,
+		date_format(r.dunning_datetime,'%Y-%m-%d %H:%i:%s') as dunning_datetime_str,
+		r.dunning_datetime,
+		(r.un_pay_principal+r.un_pay_interest) as matching_creditor, 
+		p.debtor_name,
+		p.debtor_tel,
+		r.dunning_id,
+		r.dunning_name,
+		r.dunning_deptId,
+		(case when r.repay_status=2 then (select DATE_ADD(current_repay_date,INTERVAL 1 DAY) from wms_fina_cre_period_repay where 
+        wms_fina_cre_period_pay_id=(select min(wms_fina_cre_period_pay_id) from wms_fina_cre_period_repay where ISNULL(repay_date) and wms_cre_credit_head_id=r.wms_cre_credit_head_id)) 
+        END) as default_date
+
+		from wms_fina_cre_repay r,wms_cre_appro_borrow_protocol p
+		<where>
+			r.enable_flag='1' 
+			and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id 
+			and
+			r.migration_status ='0'
+				and ((r.dunning_id is NULL  and r.dunning_name is NULL AND r.dunning_deptId IS null and r.dunning_datetime is NULL)OR r.wms_cre_credit_head_id = (SELECT wms_cre_credit_head_id from wms_post_dunning_head h where h.wms_cre_credit_head_id=r.wms_cre_credit_head_id  and h.dunning_status=3))
+			<if test="repay_status !=null">
+				and r.repay_status =#{repay_status} 
+			</if>
+			<if test="protocol_code != null">
+				and r.protocol_code like #{protocol_code}
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like #{debtor_name}
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like #{debtor_tel}
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like #{salesman_name}
+			</if>
+			<if test="dunning_name != null">
+				and r.dunning_name like #{dunning_name}
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+	</select>
+	<!-- 服务管理-贷后管理-贷后查询数据数 （贷后专员-分配）-->
+	<select id="findCountforPostLoanAllocation" parameterType="map" resultType="int">
+		select count(r.wms_fina_cre_pay_id) as count
+		from wms_fina_cre_repay r,wms_cre_appro_borrow_protocol p
+		<where>
+			r.enable_flag='1' 
+			and r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id 
+			and r.migration_status ='0'
+			and ((r.dunning_id is NULL  and r.dunning_name is NULL AND r.dunning_deptId IS null and r.dunning_datetime is NULL)OR r.wms_cre_credit_head_id = (SELECT wms_cre_credit_head_id from wms_post_dunning_head h where h.wms_cre_credit_head_id=r.wms_cre_credit_head_id  and h.dunning_status=3))
+			<if test="repay_status !=null">
+				and r.repay_status =#{repay_status} 
+			</if>
+			<if test="protocol_code != null">
+				and r.protocol_code like #{protocol_code}
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like #{debtor_name}
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like #{debtor_tel}
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like #{salesman_name}
+			</if>
+			<if test="dunning_name != null">
+				and r.dunning_name like #{dunning_name}
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+		</where>
+	</select>
+	<select id="getInfo" parameterType="map" resultType="java.util.HashMap">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		(select bill_code from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as bill_code,
+		r.cre_type,
+		(select value_meaning from wms_sys_dict_data where value_code=r.cre_type and wms_sys_dict_id=15) as cre_type_name,
+		(select value_meaning from wms_sys_dict_data where wms_sys_dict_data_id=(select cre_loan_type from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id)) as cre_loan_type_name,
+		CONCAT(
+    	(select value_meaning from wms_sys_dict_data where value_code=r.cre_type and wms_sys_dict_id=15),
+    	'/',
+    	(select value_meaning from wms_sys_dict_data where wms_sys_dict_data_id=(select cre_loan_type from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id))
+    	) as type_cre_loan,
+    	(select cre_loan_type from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as cre_loan_type,
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		r.protocol_type,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as
+		protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.principal,
+		r.interest,
+		date_format(r.loan_date,'%Y-%m-%d') as
+		loan_date_str,
+		r.loan_date,
+		r.loan_amount,
+		date_format(r.repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		r.repay_begin_date,
+		date_format(r.repay_end_date,'%Y-%m-%d') as
+		repay_end_date_str,
+		r.repay_end_date,
+		date_format(date_sub(r.current_repay_date,interval -1 day),'%Y-%m-%d') as
+		current_repay_date_str,
+		r.current_repay_date,
+		r.refund_limit_month,
+		r.liquidated_damages,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_type,
+		r.cur_overdue_day,
+		r.cur_late_fee,
+		(r.total_late_fee-r.total_pay_late_fee)	as un_total_pay_late_fee,
+		r.total_overdue_period,
+		r.total_overdue_day,
+		r.total_late_fee,
+		r.total_pay_late_fee,
+		r.total_derate,
+		r.repay_status,
+		(select value_meaning from wms_sys_dict_data where wms_sys_dict_id=63 and value_code=r.repay_status)
+		as repay_status_name,
+		date_format(r.clean_up_date,'%Y-%m-%d') as
+		clean_up_date_str,
+		r.clean_up_date,
+		r.clean_up_status,
+		r.back_interest_period,
+		r.back_ammont,
+		r.is_upload,
+		r.create_user_id,
+		r.create_user_name,
+		date_format(r.create_timestamp,'%Y-%m-%d %H:%i:%s')
+		as create_timestamp_str,
+		r.create_timestamp,
+		r.last_update_user_id,
+		date_format(r.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as
+		last_update_timestamp_str,
+		r.last_update_timestamp,
+		r.enable_flag,
+		r.salesman_id,
+		r.salesman_name,
+		(SELECT l.personnel_name from pm_personnel  l,sys_post p where l.enable_flag=1 and p.enable_flag=0 and	p.post_deptid = (SELECT personnel_deptId FROM pm_personnel where personnel_id=r.salesman_id) and	p.post_number = 'TDJL' and	personnel_postId =p.post_id and	personnel_deptId =p.post_deptid) as team_manager_name,
+		(SELECT l.personnel_id from pm_personnel  l,sys_post p where l.enable_flag=1 and p.enable_flag=0 and	p.post_deptid = (SELECT personnel_deptId FROM pm_personnel where personnel_id=r.salesman_id) and	p.post_number = 'TDJL' and	personnel_postId =p.post_id and	personnel_deptId =p.post_deptid) as team_manager_id,
+		(r.un_pay_principal+r.un_pay_interest) as matching_creditor, 
+		p.debtor_name,
+		p.debtor_tel,
+		p.refund_bank,
+		p.refund_number,
+		p.protocol_date,
+		r.borrow_deadline,
+		r.dunning_id,
+		r.dunning_name,
+		r.dunning_deptid,
+		date_format(r.dunning_datetime,'%Y-%m-%d %H:%i:%s') as dunning_datetime_str,
+		r.dunning_datetime
+		from wms_fina_cre_repay r,wms_cre_appro_borrow_protocol p
+		<where>
+			r.enable_flag='1' and r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id 
+			<if test="wms_cre_credit_head_id !=null">
+				and r.wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+			</if>
+			<if test="wms_fina_cre_pay_id !=null">
+				and r.wms_fina_cre_pay_id =#{wms_fina_cre_pay_id}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 贷后专员查询自己的客户贷款单据 贷后管理 -->
+	<select id="searchforPostLoanCommissioner" parameterType="map" resultType="java.util.HashMap">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		(select bill_code from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as bill_code,
+		r.cre_type,
+		(select value_meaning from wms_sys_dict_data where value_code=r.cre_type and wms_sys_dict_id=15) as cre_type_name,
+		(select value_meaning from wms_sys_dict_data where wms_sys_dict_data_id=(select cre_loan_type from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id)) as cre_loan_type_name,
+		CONCAT(
+    	(select value_meaning from wms_sys_dict_data where value_code=r.cre_type and wms_sys_dict_id=15),
+    	'/',
+    	(select value_meaning from wms_sys_dict_data where wms_sys_dict_data_id=(select cre_loan_type from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id))
+    	) as type_cre_loan, 
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		r.protocol_type,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as
+		protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.principal,
+		r.interest,
+		date_format(r.loan_date,'%Y-%m-%d') as
+		loan_date_str,
+		r.loan_date,
+		r.loan_amount,
+		date_format(r.repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		r.repay_begin_date,
+		date_format(r.repay_end_date,'%Y-%m-%d') as
+		repay_end_date_str,
+		r.repay_end_date,
+		date_format(r.current_repay_date,'%Y-%m-%d') as
+		current_repay_date_str,
+		r.current_repay_date,
+		r.refund_limit_month,
+		r.liquidated_damages,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_type,
+		r.cur_overdue_day,
+		r.cur_late_fee,
+		r.total_overdue_period,
+		r.total_overdue_day,
+		r.total_late_fee,
+		r.total_pay_late_fee,
+		r.total_derate,
+		r.repay_status,
+		(case r.repay_status when '1' then '正常' when '2' then '逾期' when '3' then '结清' when '4' then '贷账' when '5' then '存档' when '6' then '诉讼' end) as repay_status_name,
+		date_format(r.clean_up_date,'%Y-%m-%d') as
+		clean_up_date_str,
+		r.clean_up_date,
+		r.clean_up_status,
+		r.back_interest_period,
+		r.back_ammont,
+		r.is_upload,
+		r.create_user_id,
+		r.create_user_name,
+		date_format(r.create_timestamp,'%Y-%m-%d %H:%i:%s')
+		as create_timestamp_str,
+		r.create_timestamp,
+		r.last_update_user_id,
+		date_format(r.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as
+		last_update_timestamp_str,
+		r.last_update_timestamp,
+		r.enable_flag,
+		r.salesman_name,
+		(r.un_pay_principal+r.un_pay_interest) as matching_creditor, 
+		p.debtor_name,
+		p.debtor_tel,
+
+		(case when r.repay_status=2 then (select DATE_ADD(current_repay_date,INTERVAL 1 DAY) from wms_fina_cre_period_repay where 
+        wms_fina_cre_period_pay_id=(select min(wms_fina_cre_period_pay_id) from wms_fina_cre_period_repay where ISNULL(repay_date) and wms_cre_credit_head_id=r.wms_cre_credit_head_id)) 
+    	END) as default_date,
+    	(case (select dunning_status <include refid="selectDunning"/>) 
+    	 when '0' then '驳回' 
+				 when '1' then '待电话催缴' 
+				 when '2' then '待电催审核' 
+				 when '3' then '待电催分配' 
+				 when '4' then '待上门催缴' 
+				 when '5' then '待逾期还款确认' 
+				 when '6' then '已完成' 
+				 when '7' then '呆账' 
+				 when '8' then '上门催缴'
+				 when '9' then '驳回'
+    	END) as dunning_status,
+     	(select wms_post_dunning_head_id <include refid="selectDunning2"/>) as  wms_post_dunning_head_id,
+        (select final_dunning_datetime <include refid="selectDunning"/>) as last_update_time
+    	
+    	from wms_fina_cre_repay r,wms_cre_appro_borrow_protocol p
+		
+		<where>
+			r.enable_flag='1' 
+			and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id 
+			and
+			r.migration_status ='0'
+			and
+			r.dunning_id =#{dunning_id}
+			<if test="repay_status !=null">
+				and r.repay_status =#{repay_status} 
+			</if>
+			<if test="protocol_code != null">
+				and r.protocol_code like #{protocol_code}
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like #{debtor_name}
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like #{debtor_tel}
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like #{salesman_name}
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY  ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<sql id="selectDunning">
+			from wms_post_dunning_head 
+			where 
+			wms_post_dunning_head_id= 
+			(SELECT MAX(wms_post_dunning_head_id)
+			from wms_post_dunning_head 
+			where 
+			enable_flag=1 
+			and wms_cre_credit_head_id=r.wms_cre_credit_head_id
+			and (dunning_status in(0,1,2,4,5,6,9) or dunning_status is null))
+	</sql>
+	<sql id="selectDunning2">
+			from wms_post_dunning_head 
+			where 
+			wms_post_dunning_head_id= 
+			(SELECT MAX(wms_post_dunning_head_id)
+			from wms_post_dunning_head 
+			where 
+			enable_flag=1 
+			and wms_cre_credit_head_id=r.wms_cre_credit_head_id
+			and (dunning_status in(1,2,5) or dunning_status is null))
+	</sql>
+	<!-- count num 用于电话催缴查询列表 -->
+	<select id="findCountCommissioner" parameterType="map" resultType="int">
+		select count(r.wms_fina_cre_pay_id) as count
+		from wms_fina_cre_repay r,wms_cre_appro_borrow_protocol p
+		<where>
+			r.enable_flag='1' 
+			and r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id 
+			and r.migration_status ='0'
+			and r.dunning_id =#{dunning_id} 
+			<if test="repay_status !=null">
+				and r.repay_status =#{repay_status} 
+			</if>
+			<if test="protocol_code != null">
+				and r.protocol_code like #{protocol_code}
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like #{debtor_name}
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like #{debtor_tel}
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like #{salesman_name}
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+		</where>
+	</select>
+	<!-- 查询符合条件的催缴人员-->
+	<select id="seachCount" parameterType="map" resultType="java.util.HashMap">
+		 SELECT
+			t.personnel_id,
+			t.personnel_name,
+			t.personnel_deptId
+		FROM
+			(
+				SELECT
+					l.personnel_id,
+					l.personnel_name,
+					l.personnel_deptId,
+					(
+						SELECT
+							count(r.dunning_id)
+						FROM
+							wms_fina_cre_repay r
+						WHERE
+							r.dunning_id = l.personnel_id
+					) sumval
+				FROM
+					pm_personnel l
+				WHERE
+					l.personnel_deptId = (SELECT
+		dept_id
+	FROM
+		sys_dept where dept_code like #{DEPT_CODE_KFB}) and l.enable_flag="1" ORDER BY l.personnel_id) t 		ORDER BY t.sumval   limit 0,1;
+	</select>
+	<!-- update 清空数据库贷款还款表中的 贷后专员信息 id  name  deptid-->
+	<update id="udpatenull" parameterType="WmsFinaCreRepay">
+		update wms_fina_cre_repay
+		<set>
+				 dunning_id = #{dunning_id},
+				 dunning_name = #{dunning_name},
+				 dunning_deptid = #{dunning_deptid},
+				 dunning_datetime = #{dunning_datetime}
+				
+	   </set>
+		 where 
+    				wms_fina_cre_pay_id = #{wms_fina_cre_pay_id}
+	</update>
+		<!-- 服务管理-贷后管理-贷后查询 -->
+	<select id="searchforPostLoanexcel" parameterType="map" resultType="java.util.HashMap">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		(select bill_code from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as bill_code,
+		r.cre_type,
+		(select value_meaning from wms_sys_dict_data where value_code=r.cre_type and wms_sys_dict_id=15) as cre_type_name,
+		(select value_meaning from wms_sys_dict_data where wms_sys_dict_data_id=(select cre_loan_type from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id)) as cre_loan_type_name,
+		CONCAT(
+    	(select value_meaning from wms_sys_dict_data where value_code=r.cre_type and wms_sys_dict_id=15),
+    	'/',
+    	(select value_meaning from wms_sys_dict_data where wms_sys_dict_data_id=(select cre_loan_type from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id))
+    	) as type_cre_loan, 
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		r.protocol_type,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as
+		protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.principal,
+		r.interest,
+		date_format(r.loan_date,'%Y-%m-%d') as
+		loan_date_str,
+		r.loan_date,
+		r.loan_amount,
+		date_format(r.repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		r.repay_begin_date,
+		date_format(r.repay_end_date,'%Y-%m-%d') as
+		repay_end_date_str,
+		r.repay_end_date,
+		date_format(r.current_repay_date,'%Y-%m-%d') as
+		current_repay_date_str,
+		r.current_repay_date,
+		r.refund_limit_month,
+		r.liquidated_damages,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_type,
+		r.cur_overdue_day,
+		r.cur_late_fee,
+		r.total_overdue_period,
+		r.total_overdue_day,
+		r.total_late_fee,
+		r.total_pay_late_fee,
+		r.total_derate,
+		r.repay_status,
+		(select value_meaning from wms_sys_dict_data where wms_sys_dict_id=63 and value_code=r.repay_status) as repay_status_name,
+		date_format(r.clean_up_date,'%Y-%m-%d') as
+		clean_up_date_str,
+		r.clean_up_date,
+		r.clean_up_status,
+		r.back_interest_period,
+		r.back_ammont,
+		r.is_upload,
+		r.create_user_id,
+		r.create_user_name,
+		date_format(r.create_timestamp,'%Y-%m-%d %H:%i:%s')
+		as create_timestamp_str,
+		r.create_timestamp,
+		r.last_update_user_id,
+		date_format(r.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as
+		last_update_timestamp_str,
+		r.last_update_timestamp,
+		r.enable_flag,
+		r.salesman_name,
+		r.dunning_id,
+		r.dunning_name,
+		r.dunning_deptid,
+		date_format(r.dunning_datetime,'%Y-%m-%d %H:%i:%s') as dunning_datetime_str,
+		r.dunning_datetime,
+		(r.un_pay_principal+r.un_pay_interest) as matching_creditor, 
+		p.debtor_name,
+		p.debtor_tel,
+		(case when r.repay_status=2 then (select DATE_ADD(current_repay_date,INTERVAL 1 DAY) from wms_fina_cre_period_repay where 
+        wms_fina_cre_period_pay_id=(select min(wms_fina_cre_period_pay_id) from wms_fina_cre_period_repay where ISNULL(repay_date) and wms_cre_credit_head_id=r.wms_cre_credit_head_id)) 
+        END) as default_date,
+        (case (select dunning_status from wms_post_dunning_head where wms_fina_cre_pay_id=r.wms_fina_cre_pay_id and wms_cre_credit_head_id=r.wms_cre_credit_head_id)
+        	when '1' then '待电话催缴' when '2' then '待电催审核' when '3' then '待电催分配' when '4' then '待上门催缴' when '5' then '待逾期还款确认' when '6' then '已完成' when '7' then '呆账'
+        END) as dunning_status,
+        (select final_dunning_datetime from wms_post_dunning_head where wms_cre_appro_borrow_protocol_id=r.wms_cre_appro_borrow_protocol_id) as last_update_time
+		from wms_fina_cre_repay r,wms_cre_appro_borrow_protocol p
+		<where>
+			r.enable_flag='1' 
+			and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id 
+			and
+			r.migration_status ='0'
+			and
+			r.dunning_id =#{dunning_id} 
+			<if test="repay_status !=null">
+				and r.repay_status =#{repay_status} 
+			</if>
+			<if test="protocol_code != null">
+				and r.protocol_code like #{protocol_code}
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like #{debtor_name}
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like #{debtor_tel}
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like #{salesman_name}
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+			<if test="home_dunning_status !=null">
+				and d.home_dunning_status =#{home_dunning_status}
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY last_update_time ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<!-- 新增获取信贷债权详情接口：所需字段截图如下 -->
+	<select id="getInfoforPTP" parameterType="map" resultType="java.util.HashMap">
+			select
+				r.wms_fina_cre_pay_id,
+		    	h.customer_name,
+				h.gender,
+				h.id_card,
+				h.has_married,
+				h.max_degree,
+				o.aver_income,
+				m.work_unit_full_name,
+				(SELECT value_meaning from wms_sys_dict_data where wms_sys_dict_id=m.work_unit_property) as work_unit_property_str,
+				(SELECT value_meaning from wms_sys_dict_data where wms_sys_dict_id=m.duty_of_work) as duty_of_work_str,
+				(SELECT value_meaning from wms_sys_dict_data where wms_sys_dict_id=m.comp_industry) as comp_industry_str,
+				(SELECT company_adress from wms_cre_rev_inspection_main where wms_cre_credit_head_id=h.wms_cre_credit_head_id) as company_adress_str
+			from
+				wms_fina_cre_repay r, wms_cre_rev_info_model m ,wms_cre_rev_water_model o,wms_cre_credit_line_customer_change_head h
+			WHERE
+				 r.wms_cre_credit_head_id=h.wms_cre_credit_head_id
+				and r.wms_cre_credit_head_id=m.wms_cre_credit_head_id
+				and r.wms_cre_credit_head_id=o.wms_cre_credit_head_id
+				and r.wms_cre_credit_head_id in
+				<foreach collection="idList" item="wms_cre_credit_head_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_cre_credit_head_id}
+				</foreach>
+	</select>
+	<!-- 新增获取房贷债权详情接口：所需字段截图如下 -->
+	<select id="getInfoforPTPhosue" parameterType="map" resultType="java.util.HashMap">
+select
+		r.wms_fina_cre_pay_id,
+    	h.customer_name,
+		h.gender,
+		h.id_card,
+		h.has_married,
+		h.max_degree,
+		(SELECT house_address from wms_cre_housing_check where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as house_address_str,
+		(SELECT total_floor from wms_cre_housing_check where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as total_floor_str,
+		(SELECT house_layer from wms_cre_housing_check where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as house_layer_str,
+		(SELECT house_building_area from wms_cre_housing_check where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as house_building_area_str,
+
+		(SELECT value_meaning from wms_sys_dict_data where wms_sys_dict_id=(SELECT housing_pattern from wms_cre_housing_check where wms_cre_credit_head_id=r.wms_cre_credit_head_id)) as housing_pattern_str,
+		(SELECT value_meaning from wms_sys_dict_data where wms_sys_dict_id=(SELECT decoration_Standard from wms_cre_housing_check where wms_cre_credit_head_id=r.wms_cre_credit_head_id)) as decoration_standard_str,
+		(SELECT value_meaning from wms_sys_dict_data where wms_sys_dict_id=(SELECT house_usage from wms_cre_housing_check where wms_cre_credit_head_id=r.wms_cre_credit_head_id)) as house_usage_str,
+
+		(SELECT housing_towards from wms_cre_housing_check where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as housing_towards_str,
+
+		(SELECT value_meaning from wms_sys_dict_data where wms_sys_dict_id=m.duty_of_work) as duty_of_work_str,
+		(SELECT six_amount from wms_cre_housing_assessment where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as six_amount_str,
+		(SELECT nine_amount from wms_cre_housing_assessment where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as nine_amount_str,
+		(SELECT total_amount from wms_cre_housing_assessment where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as total_amount_str
+	from
+		wms_fina_cre_repay r,wms_cre_credit_line_customer_change_head h,wms_cre_rev_info_model m 
+	WHERE   		
+		r.wms_cre_credit_head_id=h.wms_cre_credit_head_id
+		and r.wms_cre_credit_head_id=m.wms_cre_credit_head_id
+		and r.wms_cre_credit_head_id in
+		<foreach collection="idList" item="wms_cre_credit_head_id"
+				index="index" open="(" separator="," close=")">
+				#{wms_cre_credit_head_id}
+		</foreach>
+	</select>
+
+	<!-- list 用于终止合同审批列表查询 -->
+	<select id="searchforstop" parameterType="map" resultType="java.util.HashMap">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		r.cre_type,
+		(case cre_type when '1' then '信贷产品' when '2' then '房贷产品' when '3' then '车贷产品' end) as
+		cre_type_name,
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		r.protocol_type,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.principal,
+		r.interest,
+		date_format(r.loan_date,'%Y-%m-%d') as loan_date_str,
+		r.loan_date,
+		r.loan_amount,
+		date_format(r.repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		r.repay_begin_date,
+		date_format(r.repay_end_date,'%Y-%m-%d') as repay_end_date_str,
+		r.repay_end_date,
+		date_format(r.current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		r.current_repay_date,
+		r.refund_limit_month,
+		r.liquidated_damages,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_type,
+		r.cur_overdue_day,
+		r.cur_late_fee,
+		r.total_overdue_period,
+		r.total_overdue_day,
+		r.total_late_fee,
+		r.total_pay_late_fee,
+		r.total_derate,
+		r.repay_status,
+		(case repay_status when '1' then '正常' when '2' then '逾期' when '3' then '结清'
+		when '4' then '贷账' when '5' then '存档' when '6' then '诉讼' end) as
+		repay_status_name,
+		date_format(r.clean_up_date,'%Y-%m-%d') as clean_up_date_str,
+		r.clean_up_date,
+		r.clean_up_status,
+		r.back_interest_period,
+		r.back_ammont,
+		r.is_upload,
+		r.create_user_id,
+		r.create_user_name,
+		date_format(r.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		r.create_timestamp,
+		r.last_update_user_id,
+		date_format(r.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		r.last_update_timestamp,
+		r.enable_flag,
+		r.salesman_name,
+		r.dunning_name,
+		DATE_SUB(r.current_repay_date,INTERVAL -1 DAY) as damages_date_str,
+		p.debtor_name,
+		p.debtor_tel
+		
+		from wms_fina_cre_repay r,wms_cre_appro_borrow_protocol p
+		<where>
+			r.enable_flag='1' and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id 
+			and r.migration_status ='0'	
+			and (SELECT wms_fina_termination_contract_id from wms_fina_termination_contract where wms_cre_credit_head_id=r.wms_cre_credit_head_id) IS NULL		
+			<if test="protocol_code != null">
+				and r.protocol_code like #{protocol_code}
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like #{debtor_name}
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like #{debtor_tel}
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like #{salesman_name}
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+			<if test="repay_status != null">
+				and r.repay_status = #{repay_status}
+			</if>
+			<if test="repay_status == null">
+				and r.repay_status =2
+			</if>
+			<if test="damages_date_start != null and  damages_date_end != null">
+				and DATE_SUB(r.current_repay_date,INTERVAL -1 DAY)  between #{damages_date_start} and #{damages_date_end} 
+			</if>
+			<if test="damages_date_start != null and  damages_date_end == null">
+				and DATE_SUB(r.current_repay_date,INTERVAL -2 DAY)  &gt;  #{damages_date_start}
+			</if>
+			<if test="damages_date_start == null and  damages_date_end != null">
+				and DATE_SUB(r.current_repay_date,INTERVAL 0 DAY)  &lt;  #{damages_date_end} 
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<!-- count 用于终止合同审批列表查询 -->
+	<select id="findCountforstop" parameterType="map" resultType="int">
+		select count(r.wms_fina_cre_pay_id) as count
+		from wms_fina_cre_repay
+		r,wms_cre_appro_borrow_protocol p
+		<where>
+			r.enable_flag='1' and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id 
+			and r.migration_status ='0'	
+				and (SELECT wms_fina_termination_contract_id from wms_fina_termination_contract where wms_cre_credit_head_id=r.wms_cre_credit_head_id) IS NULL		
+			<if test="protocol_code != null">
+				and r.protocol_code like #{protocol_code}
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like #{debtor_name}
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like #{debtor_tel}
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like #{salesman_name}
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+			<if test="repay_status != null">
+				and r.repay_status = #{repay_status}
+			</if>
+			<if test="repay_status == null">
+				and r.repay_status =2
+			</if>
+			<if test="damages_date_start != null and  damages_date_end != null">
+				and DATE_SUB(r.current_repay_date,INTERVAL -1 DAY)  between #{damages_date_start} and #{damages_date_end} 
+			</if>
+			<if test="damages_date_start != null and  damages_date_end == null">
+				and DATE_SUB(r.current_repay_date,INTERVAL -2 DAY)  &gt;  #{damages_date_start}
+			</if>
+			<if test="damages_date_start == null and  damages_date_end != null">
+				and DATE_SUB(r.current_repay_date,INTERVAL 0 DAY)  &lt;  #{damages_date_end} 
+			</if>
+		</where>
+	</select>
+	<!-- 终止合同审批  还款基本信息 -->
+	<select id="getinfostop" parameterType="map"
+		resultType="java.util.HashMap">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.refund_limit_month,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_day,
+		r.total_derate,
+		r.cur_late_fee,
+		r.dunning_name,
+		r.dunning_id,
+		r.loan_amount,
+		r.salesman_name,
+		r.salesman_id,
+	   (SELECT personnel_name from pm_personnel pp,sys_post sp
+		where pp.personnel_id=r.salesman_id and r.salesman_id is not null
+		and pp.personnel_postID=sp.post_id and sp.post_number like 'PPH%TDJL%' and pp.personnel_deptId is not null) as  team_manager_name,
+	   (SELECT personnel_id from pm_personnel pp,sys_post sp
+		where pp.personnel_id=r.salesman_id and r.salesman_id is not null
+		and pp.personnel_postID=sp.post_id and sp.post_number like 'PPH%TDJL%' and pp.personnel_deptId is not null) as  team_manager_id,
+		
+		<!--(SELECT personnel_name FROM pm_personnel where personnel_postId=(SELECT post_id from sys_post where post_deptId=(SELECT personnel_deptId FROM pm_personnel where personnel_id=r.salesman_id) and post_number="TDJL")) as team_manager_name, -->
+		<!--(SELECT personnel_id FROM pm_personnel where personnel_postId=(SELECT post_id from sys_post where post_deptId=(SELECT personnel_deptId FROM pm_personnel where personnel_id=775) and post_number="TDJL")) as team_manager_id, -->
+		p.protocol_date,
+		p.protocol_id_year_num,
+		p.debtor_identity_id,
+		p.principal_lower,
+		p.debtor_name,
+		(un_pay_principal+un_pay_interest+cur_late_fee) as amount_owed
+		from
+		wms_cre_appro_borrow_protocol p,wms_fina_cre_repay r
+		<where>
+			p.enable_flag=1 and r.enable_flag=1
+			and p.wms_cre_credit_head_id =r.wms_cre_credit_head_id
+			and r.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			
+		</where>
+	</select>
+	<!-- list 用于终止合同确认列表查询 -->
+	<select id="searchforaffirm" parameterType="map" resultType="java.util.HashMap">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		r.cre_type,
+		(case cre_type when '1' then '信贷产品' when '2' then '房贷产品' when '3' then '车贷产品' end) as
+		cre_type_name,
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		r.protocol_type,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.principal,
+		r.interest,
+		date_format(r.loan_date,'%Y-%m-%d') as loan_date_str,
+		r.loan_date,
+		r.loan_amount,
+		date_format(r.repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		r.repay_begin_date,
+		date_format(r.repay_end_date,'%Y-%m-%d') as repay_end_date_str,
+		r.repay_end_date,
+		date_format(r.current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		r.current_repay_date,
+		r.refund_limit_month,
+		r.liquidated_damages,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_type,
+		r.cur_overdue_day,
+		r.cur_late_fee,
+		r.total_overdue_period,
+		r.total_overdue_day,
+		r.total_late_fee,
+		r.total_pay_late_fee,
+		r.total_derate,
+		r.repay_status,
+		(case repay_status when '1' then '正常' when '2' then '逾期' when '3' then '结清'
+		when '4' then '贷账' when '5' then '存档' when '6' then '诉讼' end) as
+		repay_status_name,
+		date_format(r.clean_up_date,'%Y-%m-%d') as clean_up_date_str,
+		r.clean_up_date,
+		r.clean_up_status,
+		r.back_interest_period,
+		r.back_ammont,
+		r.is_upload,
+		r.create_user_id,
+		r.create_user_name,
+		date_format(r.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		r.create_timestamp,
+		r.last_update_user_id,
+		date_format(r.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		r.last_update_timestamp,
+		r.enable_flag,
+		r.salesman_name,
+		r.dunning_name,
+		DATE_SUB(r.current_repay_date,INTERVAL -1 DAY) as damages_date_str,
+		c.wms_fina_termination_contract_id,
+		p.debtor_name,
+		p.debtor_tel
+		from wms_fina_cre_repay r,wms_cre_appro_borrow_protocol p,wms_fina_termination_contract c
+		<where>
+			r.enable_flag='1' and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id 
+			and r.migration_status ='0'	
+			and r.wms_cre_credit_head_id=c.wms_cre_credit_head_id	
+			and r.repay_status='5'	
+			and (r.clean_up_status !='4' or r.clean_up_status is NULL)
+			<if test="protocol_code != null">
+				and r.protocol_code like #{protocol_code}
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like #{debtor_name}
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like #{debtor_tel}
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like #{salesman_name}
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+			<!--<if test="repay_status != null">
+				and r.repay_status = #{repay_status}
+			</if>
+			<if test="repay_status == null">
+				and r.repay_status =2
+			</if>-->	
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<!-- count 用于终止合同确认列表查询 -->
+	<select id="findCountforaffirm" parameterType="map" resultType="int">
+		select count(r.wms_fina_cre_pay_id) as count
+		from wms_fina_cre_repay
+		r,wms_cre_appro_borrow_protocol p,wms_fina_termination_contract c
+		<where>
+			r.enable_flag='1' and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id 
+			and r.migration_status ='0'			
+			and r.wms_cre_credit_head_id=c.wms_cre_credit_head_id	
+			<if test="protocol_code != null">
+				and r.protocol_code like #{protocol_code}
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like #{debtor_name}
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like #{debtor_tel}
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like #{salesman_name}
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+			<if test="repay_status != null">
+				and r.repay_status = #{repay_status}
+			</if>
+			<if test="repay_status == null">
+				and r.repay_status =2
+			</if>
+		</where>
+	</select>
+	<!-- 贷后专员查询自己的客户贷款单据 贷后管理  上门催缴列表 -->
+	<select id="searchforPostLoanVisit" parameterType="map" resultType="java.util.HashMap">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		(select bill_code from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as bill_code,
+		r.cre_type,
+		(select value_meaning from wms_sys_dict_data where value_code=r.cre_type and wms_sys_dict_id=15) as cre_type_name,
+		(select value_meaning from wms_sys_dict_data where wms_sys_dict_data_id=(select cre_loan_type from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id)) as cre_loan_type_name,
+		CONCAT(
+    	(select value_meaning from wms_sys_dict_data where value_code=r.cre_type and wms_sys_dict_id=15),
+    	'/',
+    	(select value_meaning from wms_sys_dict_data where wms_sys_dict_data_id=(select cre_loan_type from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id))
+    	) as type_cre_loan, 
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		r.protocol_type,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as
+		protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.principal,
+		r.interest,
+		date_format(r.loan_date,'%Y-%m-%d') as
+		loan_date_str,
+		r.loan_date,
+		r.loan_amount,
+		date_format(r.repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		r.repay_begin_date,
+		date_format(r.repay_end_date,'%Y-%m-%d') as
+		repay_end_date_str,
+		r.repay_end_date,
+		date_format(r.current_repay_date,'%Y-%m-%d') as
+		current_repay_date_str,
+		r.current_repay_date,
+		r.refund_limit_month,
+		r.liquidated_damages,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_type,
+		r.cur_overdue_day,
+		r.cur_late_fee,
+		r.total_overdue_period,
+		r.total_overdue_day,
+		r.total_late_fee,
+		r.total_pay_late_fee,
+		r.total_derate,
+		r.repay_status,
+		(case r.repay_status when '1' then '正常' when '2' then '逾期' when '3'
+		then
+		'结清' when '4' then '贷账' when '5' then '存档' when '6' then '诉讼' end)
+		as
+		repay_status_name,
+		date_format(r.clean_up_date,'%Y-%m-%d') as
+		clean_up_date_str,
+		r.clean_up_date,
+		r.clean_up_status,
+		r.back_interest_period,
+		r.back_ammont,
+		r.is_upload,
+		r.create_user_id,
+		r.create_user_name,
+		date_format(r.create_timestamp,'%Y-%m-%d %H:%i:%s')
+		as create_timestamp_str,
+		r.create_timestamp,
+		r.last_update_user_id,
+		date_format(r.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as
+		last_update_timestamp_str,
+		r.last_update_timestamp,
+		r.enable_flag,
+		r.salesman_name,
+		r.dunning_name,
+		(r.un_pay_principal+r.un_pay_interest) as matching_creditor, 
+		p.debtor_name,
+		p.debtor_tel,
+		(case when r.repay_status=2 then (select DATE_ADD(current_repay_date,INTERVAL 1 DAY) from wms_fina_cre_period_repay where 
+        wms_fina_cre_period_pay_id=(select min(wms_fina_cre_period_pay_id) from wms_fina_cre_period_repay where ISNULL(repay_date) and wms_cre_credit_head_id=r.wms_cre_credit_head_id)) 
+        END) as default_date,
+        (select post_dunning_update_datetime <include refid="selectId"/>) as last_update_time,
+		(select wms_post_dunning_head_id <include refid="selectId"/>) as  wms_post_dunning_head_id,
+        (case (select home_dunning_status <include refid="selectId4"/>)when "1" then "内部催缴" when "4" then "呆账" when "2" then "外包催缴" when "3" then "法务上诉" when "1#2" then "外包催缴+法务上诉" end)as  home_dunning_status,
+        (select dunning_status <include refid="selectId"/>) as dunning_status,
+        (select visit_dunning_name <include refid="selectId"/>) as  visit_dunning_name
+		from wms_fina_cre_repay r,wms_cre_appro_borrow_protocol p
+		<where>
+			r.enable_flag='1' 
+			and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id 
+			and
+			r.migration_status ='0'
+			and (select wms_post_dunning_head_id <include refid="selectId8"/>) > 0
+			<if test="repay_status !=null">
+				and r.repay_status =#{repay_status} 
+			</if>
+			<if test="protocol_code != null">
+				and r.protocol_code like #{protocol_code}
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like #{debtor_name}
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like #{debtor_tel}
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like #{salesman_name}
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+			<if test="dunning_name != null">
+				and r.dunning_name like #{dunning_name}
+			</if>
+			<if test="home_dunning_status != null">
+				and (select home_dunning_status <include refid="selectId"/>) like #{home_dunning_status}
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY last_update_time ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	
+	</select>
+	<sql id="selectId8">
+			from wms_post_dunning_head 
+			where 
+			wms_post_dunning_head_id= 
+			(SELECT MAX(wms_post_dunning_head_id)
+			from wms_post_dunning_head 
+			where 
+			enable_flag=1 
+			and wms_cre_credit_head_id=r.wms_cre_credit_head_id
+			and home_dunning_status is NOT NULL
+			and dunning_status in (4,5,8))
+	</sql>
+	<sql id="selectId4">
+			from wms_post_dunning_head 
+			where 
+			 wms_post_dunning_head_id= 
+			(SELECT MAX(wms_post_dunning_head_id)
+			from wms_post_dunning_head 
+			where 
+			enable_flag=1 
+			and wms_cre_credit_head_id=r.wms_cre_credit_head_id
+			and home_dunning_status is NOT NULL
+			and dunning_status in (4,5,8))
+	</sql>
+		<sql id="selectId">
+			from wms_post_dunning_head 
+			where 
+			 wms_post_dunning_head_id= 
+			(SELECT MAX(wms_post_dunning_head_id)
+			from wms_post_dunning_head 
+			where 
+			enable_flag=1 
+			and wms_cre_credit_head_id=r.wms_cre_credit_head_id
+			and home_dunning_status is NOT NULL
+			and dunning_status in (5,8))
+	</sql>
+	<!-- count num 用于上门催缴查询列表 -->
+	<select id="findCountVisit" parameterType="map" resultType="int">
+		select count(r.wms_fina_cre_pay_id) as count
+		from wms_fina_cre_repay r,wms_cre_appro_borrow_protocol p
+		<where>
+			r.enable_flag='1' 
+			and r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id 
+			and r.migration_status ='0'
+			and (select wms_post_dunning_head_id <include refid="selectId8"/>) > 0
+			<if test="repay_status !=null">
+				and r.repay_status =#{repay_status} 
+			</if>
+			<if test="protocol_code != null">
+				and r.protocol_code like #{protocol_code}
+			</if>
+			<if test="debtor_name != null">
+				and p.debtor_name like #{debtor_name}
+			</if>
+			<if test="debtor_tel != null">
+				and p.debtor_tel like #{debtor_tel}
+			</if>
+			<if test="salesman_name != null">
+				and r.salesman_name like #{salesman_name}
+			</if>
+			<if test="cre_type != null">
+				and r.cre_type = #{cre_type}
+			</if>
+			<if test="dunning_name != null">
+				and r.dunning_name like #{dunning_name}
+			</if>
+			<if test="home_dunning_status != null">
+				and (select home_dunning_status <include refid="selectId"/>) like #{home_dunning_status}
+			</if>
+		</where>
+	</select>
+	<!--处理不再提供的逾期数据之外的逾期数据-->
+	<update id="updateforrepay" parameterType="map">
+		update wms_fina_cre_repay r,wms_cre_credit_head h
+  
+		SET
+		
+		r.current_repay_date=(select min(current_repay_date) from wms_fina_cre_period_repay where wms_cre_credit_head_id=r.wms_cre_credit_head_id and ISNULL(repay_date)),
+		
+		r.repay_period=(select max(repay_no) from wms_fina_cre_period_repay where wms_cre_credit_head_id=r.wms_cre_credit_head_id and !ISNULL(repay_date)),
+		
+		r.un_pay_period=(r.borrow_deadline-(select max(repay_no) from wms_fina_cre_period_repay where wms_cre_credit_head_id=r.wms_cre_credit_head_id and !ISNULL(repay_date))),
+
+		r.repay_principal=(select sum(org_repay_principal) from wms_fina_cre_period_repay where wms_cre_credit_head_id=r.wms_cre_credit_head_id and !ISNULL(repay_date)),
+		
+		r.un_pay_principal=(r.principal-(select sum(org_repay_principal) from wms_fina_cre_period_repay where wms_cre_credit_head_id=r.wms_cre_credit_head_id and !ISNULL(repay_date))),
+
+		r.repay_interest=
+		(case when h.cre_loan_type=284 then (r.repay_interest+(select sum(org_repay_interest) from wms_fina_cre_period_repay where wms_cre_credit_head_id=r.wms_cre_credit_head_id and !ISNULL(repay_date)))
+		 else (select sum(org_repay_interest) from wms_fina_cre_period_repay where wms_cre_credit_head_id=r.wms_cre_credit_head_id and !ISNULL(repay_date))
+		end),
+		
+		r.un_pay_interest=r.interest-(case when h.cre_loan_type=284 then (r.repay_interest+(select sum(org_repay_interest) from wms_fina_cre_period_repay where wms_cre_credit_head_id=r.wms_cre_credit_head_id and !ISNULL(repay_date)))
+		 else (select sum(org_repay_interest) from wms_fina_cre_period_repay where wms_cre_credit_head_id=r.wms_cre_credit_head_id and !ISNULL(repay_date))
+		end),
+		
+		r.cur_overdue_type=4,
+		r.cur_overdue_day=0,
+		r.cur_late_fee=0,
+		r.total_overdue_period=0,
+		r.total_overdue_day=0,
+		r.total_late_fee=0,
+		r.total_pay_late_fee=0,
+		r.total_derate=0,
+		r.repay_status=1,
+		r.matching_creditor=(r.un_pay_principal+r.un_pay_interest)*(select property_value from wms_sys_property where wms_sys_property_id=23)
+		
+		<where>
+		  r.wms_cre_credit_head_id=h.wms_cre_credit_head_id and r.wms_cre_credit_head_id not in 	
+				<if test="IdLists !=null">
+					<foreach collection="IdLists" item="wms_cre_credit_head_id" index="index" open="(" separator="," close=")">
+						#{wms_cre_credit_head_id}
+					</foreach>
+				</if>
+			 and r.repay_status=2 and r.cre_type=1;
+		</where>
+	</update>
+	<!--把所有复核结清要求的单据全部变成结清状态-->
+	<update id="updateforclearstatus">
+		UPDATE wms_fina_cre_repay s SET s.repay_status='3',s.clean_up_status ='1' ,s.clean_up_date=(SELECT a.repay_date from update_value a where s.wms_cre_credit_head_id=a.wms_cre_credit_head_id) where s.wms_cre_credit_head_id in (SELECT u.wms_cre_credit_head_id FROM update_value u);
+	</update>
+	<!--实现贷款单据结清数据查询-->
+	<select id="getWmsPostforClearById" parameterType="map" resultType="java.util.HashMap">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		r.cre_type,
+		(case r.cre_type when '1' then '信贷产品' when '2' then '房贷产品' end) as
+		cre_type_name,
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		r.protocol_type,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.principal,
+		r.interest,
+		date_format(r.loan_date,'%Y-%m-%d') as loan_date_str,
+		r.loan_date,
+		r.loan_amount,
+		date_format(r.repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		r.repay_begin_date,
+		date_format(r.repay_end_date,'%Y-%m-%d') as repay_end_date_str,
+		r.repay_end_date,
+		date_format(r.current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		r.current_repay_date,
+		r.refund_limit_month,
+		r.liquidated_damages,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_type,
+		r.cur_overdue_day,
+		r.cur_late_fee,
+		r.total_overdue_period,
+		r.total_overdue_day,
+		r.total_late_fee,
+		r.total_pay_late_fee,
+		r.total_derate,
+		r.repay_status,
+		(case r.repay_status when '1' then '正常' when '2' then '逾期' when '3' then
+		'结清' when '4' then '贷账' when '5' then '存档' when '6' then '诉讼' end) as
+		repay_status_name,
+		date_format(r.clean_up_date,'%Y-%m-%d') as clean_up_date_str,
+		r.clean_up_date,
+		r.clean_up_status,
+		r.back_interest_period,
+		r.back_ammont,
+		r.is_upload,
+		r.create_user_id,
+		r.create_user_name,
+		date_format(r.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		r.create_timestamp,
+		r.last_update_user_id,
+		date_format(r.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		r.last_update_timestamp,
+		r.enable_flag,
+		r.salesman_name,
+		r.dunning_name,
+		p.debtor_name,
+		p.debtor_tel,
+		p.debtor_identity_id,
+		p.debtor_address,
+		p.refund_bank,
+		p.refund_number,
+		p.refund_day
+		from wms_fina_cre_repay r,wms_cre_appro_borrow_protocol p
+		where
+			r.enable_flag='1' and
+			r.wms_cre_appro_borrow_protocol_id=p.wms_cre_appro_id and
+			r.repay_status='3' and r.wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+	</select>
+</mapper> 

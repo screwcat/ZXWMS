@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveRedeemRecordDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveRedeemRecord">
+		select
+        				wms_inve_redeem_record_id,
+        				wms_inve_transa_id,
+        				principal_amount,
+						date_format(redeem_date,'%Y-%m-%d %H:%i:%s') as redeem_date_str,
+        				redeem_date,
+        				redeem_company_reason,
+        				management_fee,
+        				create_user_id,
+						date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+        				create_timestamp,
+        				last_update_user_id,
+						date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+        				last_update_timestamp,
+        				enable_flag
+        	from
+        		wms_inve_redeem_record
+        	where
+        				wms_inve_redeem_record_id = #{wms_inve_redeem_record_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_redeem_record_id) as count
+		from wms_inve_redeem_record
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_inve_redeem_record_id,
+				wms_inve_transa_id,
+				principal_amount,
+				date_format(redeem_date,'%Y-%m-%d %H:%i:%s') as redeem_date_str,
+				redeem_date,
+				redeem_company_reason,
+				management_fee,
+				create_user_id,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from wms_inve_redeem_record
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveRedeemRecord" useGeneratedKeys="true" keyProperty="wms_inve_redeem_record_id">
+		INSERT INTO wms_inve_redeem_record
+		(
+				wms_inve_redeem_record_id,
+
+				wms_inve_transa_id,
+
+				principal_amount,
+
+				redeem_date,
+
+				redeem_company_reason,
+
+				management_fee,
+
+				create_user_id,
+
+				create_timestamp,
+
+				last_update_user_id,
+
+				last_update_timestamp,
+
+				enable_flag
+		)
+		VALUES
+		(
+				#{wms_inve_redeem_record_id},
+				#{wms_inve_transa_id},
+				#{principal_amount},
+				#{redeem_date},
+				#{redeem_company_reason},
+				#{management_fee},
+				#{create_user_id},
+				#{create_timestamp},
+				#{last_update_user_id},
+				#{last_update_timestamp},
+				#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveRedeemRecord">
+		update wms_inve_redeem_record
+		<set>
+					<if test="wms_inve_redeem_record_id != null">
+						 wms_inve_redeem_record_id = #{wms_inve_redeem_record_id},
+					</if>
+					<if test="wms_inve_transa_id != null">
+						 wms_inve_transa_id = #{wms_inve_transa_id},
+					</if>
+					<if test="principal_amount != null">
+						 principal_amount = #{principal_amount},
+					</if>
+					<if test="redeem_date != null">
+						 redeem_date = #{redeem_date},
+					</if>
+					<if test="redeem_company_reason != null">
+						 redeem_company_reason = #{redeem_company_reason},
+					</if>
+					<if test="management_fee != null">
+						 management_fee = #{management_fee},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="create_timestamp != null">
+						 create_timestamp = #{create_timestamp},
+					</if>
+					<if test="last_update_user_id != null">
+						 last_update_user_id = #{last_update_user_id},
+					</if>
+					<if test="last_update_timestamp != null">
+						 last_update_timestamp = #{last_update_timestamp},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+	   </set>
+		 where 
+    				wms_inve_redeem_record_id = #{wms_inve_redeem_record_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveRedeemRecord" resultType="WmsInveRedeemRecord">
+		select 
+				wms_inve_redeem_record_id,
+				wms_inve_transa_id,
+				principal_amount,
+				date_format(redeem_date,'%Y-%m-%d %H:%i:%s') as redeem_date_str,
+				redeem_date,
+				redeem_company_reason,
+				management_fee,
+				create_user_id,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from
+		wms_inve_redeem_record
+		<where>
+					<if test="wms_inve_redeem_record_id != null">
+						and wms_inve_redeem_record_id = #{wms_inve_redeem_record_id}
+					</if>
+					<if test="wms_inve_transa_id != null">
+						and wms_inve_transa_id = #{wms_inve_transa_id}
+					</if>
+					<if test="principal_amount != null">
+						and principal_amount = #{principal_amount}
+					</if>
+					<if test="redeem_date != null">
+						and redeem_date = #{redeem_date}
+					</if>
+					<if test="redeem_company_reason != null">
+						and redeem_company_reason = #{redeem_company_reason}
+					</if>
+					<if test="management_fee != null">
+						and management_fee = #{management_fee}
+					</if>
+					<if test="create_user_id != null">
+						and create_user_id = #{create_user_id}
+					</if>
+					<if test="create_timestamp != null">
+						and create_timestamp = #{create_timestamp}
+					</if>
+					<if test="last_update_user_id != null">
+						and last_update_user_id = #{last_update_user_id}
+					</if>
+					<if test="last_update_timestamp != null">
+						and last_update_timestamp = #{last_update_timestamp}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_inve_redeem_record_id != #{wms_inve_redeem_record_id}
+					</if>
+		</where>
+	</select>
+	
+	<!-- 批量保存ptp赎回记录信息 -->
+	<insert id="saveWmsInveRedeemRecordBatch" parameterType="java.util.List">
+		INSERT INTO wms_inve_redeem_record
+		(
+				wms_inve_transa_id,
+                principal_amount,
+                redeem_date,
+                redeem_company_reason,
+                management_fee,
+                create_user_id,
+                create_timestamp,
+                enable_flag             
+		)
+		VALUES
+		 <foreach collection="list" item="item" index="index" separator="," >  
+		 (	
+				#{item.wms_inve_transa_id},
+                #{item.principal_amount},
+                #{item.redeem_date},
+                #{item.redeem_company_reason},
+                #{item.management_fee},
+                113,               
+                NOW(),
+                1     
+		)  
+    	</foreach>
+	</insert>
+	
+	<!-- 查询出当前时间前一天的赎回记录表数据 -->
+	<select id="getWmsInveRedeemRecordLastDay" resultType="com.zx.emanage.inve.vo.WmsInveRedeemRecordVO">
+		select 
+			r.wms_inve_transa_id,
+			r.principal_amount,
+			r.redeem_date_str,
+			r.redeem_date,
+			r.redeem_company_reason,
+			r.management_fee,
+			r.create_timestamp,
+			r.enable_flag,
+			'7' as data_status,
+			t.id_card,
+			t.cus_name,
+			t.wms_inve_customer_id,
+			p.wms_inve_transa_prod_id,
+			p.wms_inve_pruduct_category_id,
+			p.category_name,
+			p.org_product_account as total_invest_amount,
+			r.principal_amount as redeem_apply_total_amount,
+		  	0 as total_due_income,
+			r.management_fee as total_management_fee,
+			(r.principal_amount - r.management_fee) as redeem_reality_total_amount,
+			t.bel_salesman_id_id,
+			(select pm.personnel_name from pm_personnel pm where pm.personnel_id = t.bel_salesman_id_id) as bel_salesman_name,
+			t.bel_salesman_dept_id,
+			'1' as is_payback,
+			0 as total_deduct_tax_point,
+			0 as total_deduct_money,
+			CASE WHEN redeem_company_reason = '1' or redeem_company_reason = '2' THEN
+				'1' 
+			ELSE
+				'4'
+			END as redeem_type,
+			p.product_interest as redeem_product_interest,
+			t.bel_salesman_id_id as salesman_id,
+			t.bel_salesman_dept_id as salesman_dept_id,
+			t.bel_salesman_id_id as create_user_id,
+			t.bel_salesman_dept_id as create_user_dept_id,
+			(SELECT pm.personnel_name FROM pm_personnel pm WHERE pm.personnel_id = t.bel_salesman_id_id) as create_user_name,
+			case 
+				when management_fee > 0 then '1'
+				else '0'
+			end as is_take_off_damages
+		from 
+		(
+			select
+					wms_inve_redeem_record_id,
+					wms_inve_transa_id,
+					principal_amount,
+					date_format(redeem_date,'%Y-%m-%d %H:%i:%s') as redeem_date_str,
+					redeem_date,
+					redeem_company_reason,
+					management_fee,
+					create_timestamp,        	
+					enable_flag
+				from
+					wms_inve_redeem_record
+				where
+					date_format(redeem_date,'%Y-%m-%d') =  CURDATE()
+		) r,wms_inve_transa t,wms_inve_transa_prod p
+		where 
+			r.wms_inve_transa_id = t.wms_inve_transa_id
+			and  t.wms_inve_transa_id = p.wms_inve_transa_id
+	</select>
+</mapper> 

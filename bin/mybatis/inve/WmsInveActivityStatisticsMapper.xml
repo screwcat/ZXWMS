@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveActivityStatisticsDao">
+
+	<select id="selectActivityStatisticsList" parameterType="map" resultType="map">
+		select * from (
+		SELECT
+		(SELECT dept_name from sys_dept sd where sd.dept_id=d.dept_pid 
+		) as first_dept,
+		d.dept_name AS
+		second_dept,
+		p.personnel_deptId ,
+		activity_statistics_id,
+		p.personnel_id,
+		p.personnel_state,
+		p.personnel_shortCode,
+		p.personnel_name,
+		all_calls,
+		sum_time,
+		calls_over_2m,
+		customer_count,
+		customer_invite_count,
+		customer_invite_percent,
+		customer_sign_bill_count,
+		customer_sign_bill_percent,
+		customer_new,
+		customer_new_invite,
+		customer_new_invite_percent,
+		customer_new_sign_bill_count,
+		customer_new_sign_bill_percent,
+		plan_count,
+		plan_done,
+		plan_done_percent,
+		plan_not_done,
+		s.backup_month
+		FROM
+		wms_inve_activity_statistics s
+		LEFT JOIN pm_personnel_maininfo_backup p ON p.personnel_id =
+		s.personnel_id
+		AND p.backup_month = #{backup_month}
+		LEFT JOIN sys_dept d ON d.dept_id = p.personnel_deptId
+		where
+		s.enable_flag =1
+		and FIND_IN_SET('27',getFatherLst(d.dept_id))> 0
+		) as f
+		where
+		1=1
+		<if test="dept_name != null and dept_name !=''">
+			and (first_dept like "%"#{dept_name}"%" or 
+			second_dept like "%"#{dept_name}"%")
+		</if>
+		<if test="personnel_name != null and personnel_name != ''">
+			and (personnel_name like "%"#{personnel_name}"%" or
+			personnel_shortCode = #{personnel_name})
+		</if>
+		<if test="personnel_state != null and personnel_state!=-1">
+			and personnel_state = #{personnel_state}
+		</if>
+		<if test="backup_month != null and backup_month != ''">
+			and f.backup_month = #{backup_month}
+		</if>
+		<!-- 数据权限处理 -->
+		and (1=2
+		<!-- 个人权限，其它人员 -->
+		<if test="salesman_id !=null">
+			or f.personnel_id = #{salesman_id}
+		</if>
+		<!-- 部门经理权限 -->
+
+		<if test="deptIds !=null">
+			or personnel_deptId in
+			<foreach collection="deptIds" item="dept_id" index="index"
+				open="(" separator="," close=")">
+				#{dept_id}
+			</foreach>
+		</if>
+
+		<if test="deptIds_menu != null and deptIds_user_id != null">
+		or	FIND_IN_SET(personnel_deptId,getMenuData(#{deptIds_user_id},#{deptIds_menu}))>0
+		</if>
+		
+		<if test="super_user !=null">
+			or 1 = #{super_user}
+		</if>
+		)
+
+		GROUP BY f.personnel_id
+	
+		order by 
+		CONVERT(first_dept USING gbk)COLLATE gbk_chinese_ci ,
+		CONVERT(second_dept USING gbk)COLLATE gbk_chinese_ci ,
+		CONVERT(personnel_name USING gbk)COLLATE gbk_chinese_ci 
+		<if test="page !=null and pagesize !=null">
+			limit #{page},#{pagesize}
+		</if>
+
+	</select>
+
+<select id="countActivityStatisticsList" parameterType="map" resultType="int">
+		select count(*) from (
+		select * from (
+		SELECT
+		(SELECT dept_name from sys_dept sd where sd.dept_id=d.dept_pid 
+		) as first_dept,
+		d.dept_name AS
+		second_dept,
+		p.personnel_deptId ,
+		activity_statistics_id,
+		p.personnel_id,
+		p.personnel_state,
+		p.personnel_shortCode,
+		p.personnel_name,
+		all_calls,
+		sum_time,
+		calls_over_2m,
+		customer_count,
+		customer_invite_count,
+		customer_invite_percent,
+		customer_sign_bill_count,
+		customer_sign_bill_percent,
+		customer_new,
+		customer_new_invite,
+		customer_new_invite_percent,
+		customer_new_sign_bill_count,
+		customer_new_sign_bill_percent,
+		plan_count,
+		plan_done,
+		plan_done_percent,
+		plan_not_done,
+		s.backup_month
+		FROM
+		wms_inve_activity_statistics s
+		LEFT JOIN pm_personnel_maininfo_backup p ON p.personnel_id =
+		s.personnel_id
+		AND p.backup_month = #{backup_month}
+		LEFT JOIN sys_dept d ON d.dept_id = p.personnel_deptId
+		where
+		s.enable_flag =1
+		and FIND_IN_SET('27',getFatherLst(d.dept_id))> 0
+		) as f
+		where
+		1=1
+		<if test="dept_name != null and dept_name !=''">
+			and (first_dept like "%"#{dept_name}"%" or 
+			second_dept like "%"#{dept_name}"%")
+		</if>
+		<if test="personnel_name != null and personnel_name != ''">
+			and (personnel_name like "%"#{personnel_name}"%" or
+			personnel_shortCode = #{personnel_name})
+		</if>
+		<if test="personnel_state != null and personnel_state!=-1">
+			and personnel_state = #{personnel_state}
+		</if>
+		<if test="backup_month != null and backup_month != ''">
+			and f.backup_month = #{backup_month}
+		</if>
+		<!-- 数据权限处理 -->
+		and (1=2
+		<!-- 个人权限，其它人员 -->
+		<if test="salesman_id !=null">
+			or f.personnel_id = #{salesman_id}
+		</if>
+		<!-- 部门经理权限 -->
+
+		<if test="deptIds !=null">
+			or personnel_deptId in
+			<foreach collection="deptIds" item="dept_id" index="index"
+				open="(" separator="," close=")">
+				#{dept_id}
+			</foreach>
+		</if>
+
+		<if test="deptIds_menu != null and deptIds_user_id != null">
+			or	FIND_IN_SET(personnel_deptId,getMenuData(#{deptIds_user_id},#{deptIds_menu}))>0
+		</if>
+
+		<if test="super_user !=null">
+			or 1 = #{super_user}
+		</if>
+		)
+
+		GROUP BY f.personnel_id
+	)as a
+
+	</select>
+
+
+
+	<select id="selectActivityStatisticsListForTeam" parameterType="map" resultType="map">
+		
+		SELECT * from(
+
+		SELECT
+		bel_department_manager_id as personnel_id,
+		bel_department_manager_dept_id as second_dept_id,
+		p.personnel_shortCode,
+		p.personnel_name,
+		p.personnel_state,
+
+		sum(substring_index(sum_time, ':', 1)) AS sum_time_H,
+		sum(subString_index(substring_index(sum_time, ':', 2),':',-1))  as sum_time_M,
+		sum(substring_index(sum_time, ':' ,- 1)) AS sum_time_S,
+		
+		(SELECT dept.dept_name from sys_dept dept where
+		dept.dept_id=d.dept_pid) as
+		first_dept,
+		d.dept_name as second_dept,
+
+		sum(all_calls) all_calls,
+		sum_time,
+		sum(calls_over_2m) calls_over_2m,
+		sum(customer_count) customer_count,
+		sum(customer_invite_count)
+		customer_invite_count,
+		customer_invite_percent,
+		sum(customer_sign_bill_count) customer_sign_bill_count,
+		customer_sign_bill_percent,
+		sum(customer_new) customer_new,
+		sum(customer_new_invite) customer_new_invite,
+		customer_new_invite_percent,
+		sum(
+		customer_new_sign_bill_count
+		)
+		customer_new_sign_bill_count,
+		customer_new_sign_bill_percent,
+		sum(plan_count) plan_count,
+		sum(plan_done) plan_done,
+		plan_done_percent,
+		sum(plan_not_done) plan_not_done,
+		s.backup_month
+		FROM
+		wms_inve_activity_statistics AS s
+		LEFT JOIN
+		pm_personnel_maininfo_backup AS p ON s.bel_department_manager_id
+		=
+		p.personnel_id and p.backup_month = #{backup_month}
+		left JOIN sys_dept
+		d on d.dept_id = s.bel_department_manager_dept_id and
+		d.dept_level = 6
+		WHERE
+		s.enable_flag = 1
+
+		AND s.backup_month = #{backup_month}
+		and
+		FIND_IN_SET('27',getFatherLst(d.dept_id))> 0
+		GROUP by
+		s.bel_department_manager_dept_id
+
+
+
+union all(
+
+			SELECT
+			s1.personnel_id,
+			second_dept_id,
+			personnel_shortCode,
+			personnel_name,
+			personnel_state,
+			sum(sum_time_M) AS sum_time_M,
+			sum(sum_time_S) AS sum_time_S,
+			sum(sum_time_H) AS sum_time_H,
+			first_dept,
+			second_dept,
+			sum(all_calls) all_calls,
+			sum_time,
+			sum(calls_over_2m) calls_over_2m,
+			sum(customer_count) customer_count,
+			sum(customer_invite_count) customer_invite_count,
+			customer_invite_percent,
+			sum(customer_sign_bill_count) customer_sign_bill_count,
+			customer_sign_bill_percent,
+			sum(customer_new) customer_new,
+			sum(customer_new_invite) customer_new_invite,
+			customer_new_invite_percent,
+			sum(
+				customer_new_sign_bill_count
+			) customer_new_sign_bill_count,
+			customer_new_sign_bill_percent,
+			sum(plan_count) plan_count,
+			sum(plan_done) plan_done,
+			plan_done_percent,
+			sum(plan_not_done) plan_not_done,
+			backup_month
+		FROM
+			(
+				SELECT
+		
+				IF (
+					bel_center_manager_id IS NULL,
+					bel_vice_general_manager_id,
+					bel_center_manager_id
+				) AS personnel_id,
+				p.personnel_deptId AS second_dept_id,
+				p.personnel_shortCode,
+				p.personnel_name,
+				p.personnel_state,
+					sum(substring_index(sum_time, ':', 1)) AS sum_time_H,
+				 sum(subString_index(substring_index(sum_time, ':', 2),':',-1))  as sum_time_M,
+					sum(substring_index(sum_time, ':' ,- 1)) AS sum_time_S,
+				(
+					SELECT
+						dept.dept_name
+					FROM
+						sys_dept dept
+					WHERE
+						dept.dept_id = d.dept_pid
+				) AS first_dept,
+				d.dept_name AS second_dept,
+				d.dept_pid AS first_dept_id,
+				sum(all_calls) all_calls,
+				sum_time,
+				sum(calls_over_2m) calls_over_2m,
+				sum(customer_count) customer_count,
+				sum(customer_invite_count) customer_invite_count,
+				customer_invite_percent,
+				sum(customer_sign_bill_count) customer_sign_bill_count,
+				customer_sign_bill_percent,
+				sum(customer_new) customer_new,
+				sum(customer_new_invite) customer_new_invite,
+				customer_new_invite_percent,
+				sum(
+					customer_new_sign_bill_count
+				) customer_new_sign_bill_count,
+				customer_new_sign_bill_percent,
+				sum(plan_count) plan_count,
+				sum(plan_done) plan_done,
+				plan_done_percent,
+				sum(plan_not_done) plan_not_done,
+				s.backup_month
+			FROM
+				wms_inve_activity_statistics AS s
+			LEFT JOIN pm_personnel_maininfo_backup AS p ON
+			IF (
+				bel_center_manager_id IS NULL,
+				bel_vice_general_manager_id,
+				bel_center_manager_id
+			) = p.personnel_id
+			AND p.backup_month = #{backup_month}
+			LEFT JOIN sys_dept d ON d.dept_id =
+			IF (
+				bel_center_manager_id IS NULL,
+				bel_vice_general_manager_dept_id,
+				bel_center_manager_dept_id
+			)
+			WHERE
+				s.enable_flag = 1
+			AND s.backup_month = #{backup_month}
+			AND s.bel_vice_general_manager_id IS NOT NULL
+			AND FIND_IN_SET(
+				'27',
+				getFatherLst (d.dept_id)
+			) > 0
+			GROUP BY
+				s.bel_center_manager_dept_id,
+				s.bel_vice_general_manager_id
+			) s1
+
+
+
+		GROUP BY
+			s1.first_dept_id,
+			s1.second_dept_id,
+			s1.personnel_id
+			)) as ff
+		where
+		1=1
+		<if test="dept_name != null and dept_name !=''">
+			and (ff.first_dept like "%"#{dept_name}"%" or
+			ff.second_dept like
+			"%"#{dept_name}"%")
+		</if>
+		<if test="personnel_name != null and personnel_name != ''">
+			and (ff.personnel_name like "%"#{personnel_name}"%" or
+			ff.personnel_shortCode = #{personnel_name})
+		</if>
+		<if test="personnel_state != null and personnel_state!=-1 ">
+			and ff.personnel_state = #{personnel_state}
+		</if>
+		<!-- 权限处理 -->
+		and (1=2
+		<if test="salesman_dept_id !=null">
+			or ff.second_dept_id = #{salesman_dept_id}
+		</if>
+		<if test="deptIds !=null">
+			or ff.second_dept_id in
+			<foreach collection="deptIds" item="dept_id" index="index"
+				open="(" separator="," close=")">
+				#{dept_id}
+			</foreach>
+		</if>
+		<if test="super_user !=null">
+			or 1 = #{super_user}
+		</if>
+		
+		<if test="deptIds_menu != null and deptIds_user_id != null">
+		or	FIND_IN_SET(ff.second_dept_id,getMenuData(#{deptIds_user_id},#{deptIds_menu}))>0
+		or ff.personnel_id = #{deptIds_user_id}
+		</if>
+		)
+		order by
+		CONVERT(first_dept USING gbk)COLLATE gbk_chinese_ci ,
+		CONVERT(second_dept USING gbk)COLLATE gbk_chinese_ci ,
+		CONVERT(personnel_name USING gbk)COLLATE gbk_chinese_ci 
+		<if test="page !=null and pagesize !=null">
+			limit #{page},#{pagesize}
+		</if>
+	</select>
+
+
+	<select id="countActivityStatisticsListForTeam" parameterType="map" resultType="int">
+		select count(*) from (
+		SELECT * from(
+		SELECT
+		bel_department_manager_id as personnel_id,
+		bel_department_manager_dept_id as second_dept_id,
+		p.personnel_shortCode,
+		p.personnel_name,
+		p.personnel_state,
+
+		sum(substring_index(sum_time, ':', 1)) AS sum_time_H,
+		sum(subString_index(substring_index(sum_time, ':', 2),':',-1))  as sum_time_M,
+		sum(substring_index(sum_time, ':' ,- 1)) AS sum_time_S,
+		(SELECT dept.dept_name from sys_dept dept where
+		dept.dept_id=d.dept_pid) as
+		first_dept,
+		d.dept_name as second_dept,
+
+		sum(all_calls) all_calls,
+		sum_time,
+		sum(calls_over_2m) calls_over_2m,
+		sum(customer_count) customer_count,
+		sum(customer_invite_count)
+		customer_invite_count,
+		customer_invite_percent,
+		sum(customer_sign_bill_count) customer_sign_bill_count,
+		customer_sign_bill_percent,
+		sum(customer_new) customer_new,
+		sum(customer_new_invite) customer_new_invite,
+		customer_new_invite_percent,
+		sum(
+		customer_new_sign_bill_count
+		)
+		customer_new_sign_bill_count,
+		customer_new_sign_bill_percent,
+		sum(plan_count) plan_count,
+		sum(plan_done) plan_done,
+		plan_done_percent,
+		sum(plan_not_done) plan_not_done,
+		s.backup_month
+		FROM
+		wms_inve_activity_statistics AS s
+		LEFT JOIN
+		pm_personnel_maininfo_backup AS p ON s.bel_department_manager_id
+		=
+		p.personnel_id and p.backup_month = #{backup_month}
+		left JOIN sys_dept
+		d on d.dept_id = s.bel_department_manager_dept_id and
+		d.dept_level = 6
+		WHERE
+		s.enable_flag = 1
+
+		AND s.backup_month = #{backup_month}
+		and
+		FIND_IN_SET('27',getFatherLst(d.dept_id))> 0
+		GROUP by
+		s.bel_department_manager_dept_id
+
+
+union all(SELECT
+			s1.personnel_id,
+			second_dept_id,
+			personnel_shortCode,
+			personnel_name,
+			personnel_state,
+			sum(sum_time_M) AS sum_time_M,
+			sum(sum_time_S) AS sum_time_S,
+			sum(sum_time_H) AS sum_time_H,
+			first_dept,
+			second_dept,
+			sum(all_calls) all_calls,
+			sum_time,
+			sum(calls_over_2m) calls_over_2m,
+			sum(customer_count) customer_count,
+			sum(customer_invite_count) customer_invite_count,
+			customer_invite_percent,
+			sum(customer_sign_bill_count) customer_sign_bill_count,
+			customer_sign_bill_percent,
+			sum(customer_new) customer_new,
+			sum(customer_new_invite) customer_new_invite,
+			customer_new_invite_percent,
+			sum(
+				customer_new_sign_bill_count
+			) customer_new_sign_bill_count,
+			customer_new_sign_bill_percent,
+			sum(plan_count) plan_count,
+			sum(plan_done) plan_done,
+			plan_done_percent,
+			sum(plan_not_done) plan_not_done,
+			backup_month
+		FROM
+			(
+				SELECT
+		
+				IF (
+					bel_center_manager_id IS NULL,
+					bel_vice_general_manager_id,
+					bel_center_manager_id
+				) AS personnel_id,
+				p.personnel_deptId AS second_dept_id,
+				p.personnel_shortCode,
+				p.personnel_name,
+				p.personnel_state,
+						sum(substring_index(sum_time, ':', 1)) AS sum_time_H,
+			sum(subString_index(substring_index(sum_time, ':', 2),':',-1))  as sum_time_M,
+			sum(substring_index(sum_time, ':' ,- 1)) AS sum_time_S,
+				(
+					SELECT
+						dept.dept_name
+					FROM
+						sys_dept dept
+					WHERE
+						dept.dept_id = d.dept_pid
+				) AS first_dept,
+				d.dept_name AS second_dept,
+				d.dept_pid AS first_dept_id,
+				sum(all_calls) all_calls,
+				sum_time,
+				sum(calls_over_2m) calls_over_2m,
+				sum(customer_count) customer_count,
+				sum(customer_invite_count) customer_invite_count,
+				customer_invite_percent,
+				sum(customer_sign_bill_count) customer_sign_bill_count,
+				customer_sign_bill_percent,
+				sum(customer_new) customer_new,
+				sum(customer_new_invite) customer_new_invite,
+				customer_new_invite_percent,
+				sum(
+					customer_new_sign_bill_count
+				) customer_new_sign_bill_count,
+				customer_new_sign_bill_percent,
+				sum(plan_count) plan_count,
+				sum(plan_done) plan_done,
+				plan_done_percent,
+				sum(plan_not_done) plan_not_done,
+				s.backup_month
+			FROM
+				wms_inve_activity_statistics AS s
+			LEFT JOIN pm_personnel_maininfo_backup AS p ON
+			IF (
+				bel_center_manager_id IS NULL,
+				bel_vice_general_manager_id,
+				bel_center_manager_id
+			) = p.personnel_id
+			AND p.backup_month = #{backup_month}
+			LEFT JOIN sys_dept d ON d.dept_id =
+			IF (
+				bel_center_manager_id IS NULL,
+				bel_vice_general_manager_dept_id,
+				bel_center_manager_dept_id
+			)
+			WHERE
+				s.enable_flag = 1
+			AND s.backup_month = #{backup_month}
+			AND s.bel_vice_general_manager_id IS NOT NULL
+			AND FIND_IN_SET(
+				'27',
+				getFatherLst (d.dept_id)
+			) > 0
+			GROUP BY
+				s.bel_center_manager_dept_id,
+				s.bel_vice_general_manager_id
+			) s1
+		GROUP BY
+			s1.first_dept_id,
+			s1.second_dept_id,
+			s1.personnel_id)) as ff
+		where
+		1=1
+		<if test="dept_name != null and dept_name !=''">
+			and (ff.first_dept like "%"#{dept_name}"%" or
+			ff.second_dept like
+			"%"#{dept_name}"%")
+		</if>
+		<if test="personnel_name != null and personnel_name != ''">
+			and (ff.personnel_name like "%"#{personnel_name}"%" or
+			ff.personnel_shortCode = #{personnel_name})
+		</if>
+		<if test="personnel_state != null and personnel_state!=-1 ">
+			and ff.personnel_state = #{personnel_state}
+		</if>
+		<!-- 权限处理 -->
+		and (1=2
+		<if test="salesman_dept_id !=null">
+			or ff.second_dept_id = #{salesman_dept_id}
+		</if>
+		<if test="deptIds !=null">
+			or ff.second_dept_id in
+			<foreach collection="deptIds" item="dept_id" index="index"
+				open="(" separator="," close=")">
+				#{dept_id}
+			</foreach>
+		</if>
+		<if test="super_user !=null">
+			or 1 = #{super_user}
+		</if>
+		<if test="deptIds_menu != null and deptIds_user_id != null">
+		or	FIND_IN_SET(ff.second_dept_id,getMenuData(#{deptIds_user_id},#{deptIds_menu}))>0
+		or ff.personnel_id = #{deptIds_user_id}
+		</if>
+		)
+		) as a
+	</select>
+
+</mapper>

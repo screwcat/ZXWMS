@@ -1,0 +1,697 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.loancheck.persist.WmsCreHousingCheckDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="Integer" resultType="WmsCreHousingCheck">
+		select
+		wms_cre_housing_check_id,
+		wms_cre_credit_head_id,
+		customer_name,
+		house_address,
+		house_building_area,
+		total_floor,
+		house_layer,
+		community_name,
+		housing_pattern,
+		building_age,
+		decoration_Standard,
+		house_usage,
+		online_fold,
+		house_transaction_price,
+		ifnull(is_active, '') as is_active,
+		rental_price,
+		house_people_review,
+		ifnull(housing_towards, '') as housing_towards,
+		ifnull(common_occupants, '') as common_occupants,
+		ifnull(residential_environ, '') as residential_environ,
+		ifnull(residential_manage, '') as residential_manage,
+		ifnull(facilities, '') as facilities,
+		remark,
+		transaction_price,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		transaction_price_caps,
+		unit_price,
+		unit_price_caps,
+		house_buy_date,
+		is_mortgage,
+		housing_category,
+		house_occupancy_rate,
+		marital_status,
+		ifnull(co_habitation, '') as co_habitation,
+		ifnull(house_cleanliness, '') as house_cleanliness,
+		house_lighting,
+		ifnull(is_facetrial, '') as is_facetrial
+		from
+		wms_cre_housing_check
+		where
+		wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cre_housing_check_id) as count
+		from
+		wms_cre_housing_check
+		<where>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		wms_cre_housing_check_id,
+		wms_cre_credit_head_id,
+		customer_name,
+		house_address,
+		house_building_area,
+		total_floor,
+		house_layer,
+		community_name,
+		housing_pattern,
+		building_age,
+		decoration_Standard,
+		house_usage,
+		online_fold,
+		house_transaction_price,
+		is_active,
+		rental_price,
+		house_people_review,
+		housing_towards,
+		common_occupants,
+		residential_environ,
+		residential_manage,
+		facilities,
+		remark,
+		transaction_price,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		transaction_price_caps,
+		unit_price,
+		unit_price_caps
+		wms_cre_housing_check
+		<where>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreHousingCheck"
+		useGeneratedKeys="true" keyProperty="wms_cre_housing_check_id">
+		INSERT INTO wms_cre_housing_check
+		(
+		wms_cre_credit_head_id,
+
+		customer_name,
+
+		house_address,
+
+		house_building_area,
+
+		total_floor,
+
+		house_layer,
+
+		community_name,
+
+		housing_pattern,
+
+		building_age,
+
+		decoration_Standard,
+
+		house_usage,
+
+		online_fold,
+
+		house_transaction_price,
+
+		is_active,
+
+		rental_price,
+
+		house_people_review,
+
+		housing_towards,
+
+		common_occupants,
+
+		residential_environ,
+
+		residential_manage,
+
+		facilities,
+
+		remark,
+
+		transaction_price,
+
+		create_user_id,
+
+		create_user_name,
+
+		create_timestamp,
+
+		last_update_user_id,
+
+		last_update_timestamp,
+
+		enable_flag,
+		
+		transaction_price_caps,
+		
+		unit_price,
+		
+		unit_price_caps,
+		
+		house_buy_date,
+		
+		is_mortgage,
+		
+		housing_category,
+		
+		house_occupancy_rate,
+		
+		co_habitation,
+		
+		house_cleanliness,
+		
+		house_lighting,
+		
+		is_facetrial,
+		
+		marital_status
+		)
+		VALUES
+		(
+		#{wms_cre_credit_head_id},
+		#{customer_name},
+		#{house_address},
+		#{house_building_area},
+		#{total_floor},
+		#{house_layer},
+		#{community_name},
+		#{housing_pattern},
+		#{building_age},
+		#{decoration_Standard},
+		#{house_usage},
+		#{online_fold},
+		#{house_transaction_price},
+		#{is_active},
+		#{rental_price},
+		#{house_people_review},
+		#{housing_towards},
+		#{common_occupants},
+		#{residential_environ},
+		#{residential_manage},
+		#{facilities},
+		#{remark},
+		#{transaction_price},
+		#{create_user_id},
+		#{create_user_name},
+		#{create_timestamp},
+		#{last_update_user_id},
+		#{last_update_timestamp},
+		#{enable_flag},
+		#{transaction_price_caps},
+		#{unit_price},
+		#{unit_price_caps},
+		#{house_buy_date},
+		#{is_mortgage},
+		#{housing_category},
+		#{house_occupancy_rate},
+		#{co_habitation},
+		#{house_cleanliness},
+		#{house_lighting},
+		#{is_facetrial},
+		#{marital_status}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreHousingCheck">
+		update wms_cre_housing_check
+		<set>
+			<if test="wms_cre_housing_check_id != null">
+				wms_cre_housing_check_id = #{wms_cre_housing_check_id},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="customer_name != null">
+				customer_name = #{customer_name},
+			</if>
+			<if test="house_address != null">
+				house_address = #{house_address},
+			</if>
+			<if test="house_building_area != null">
+				house_building_area = #{house_building_area},
+			</if>
+			<if test="total_floor != null">
+				total_floor = #{total_floor},
+			</if>
+			<if test="house_layer != null">
+				house_layer = #{house_layer},
+			</if>
+			<if test="community_name != null">
+				community_name = #{community_name},
+			</if>
+			<if test="housing_pattern != null">
+				housing_pattern = #{housing_pattern},
+			</if>
+			<if test="building_age != null">
+				building_age = #{building_age},
+			</if>
+			<if test="decoration_Standard != null">
+				decoration_Standard = #{decoration_Standard},
+			</if>
+			<if test="house_usage != null">
+				house_usage = #{house_usage},
+			</if>
+			<if test="online_fold != null">
+				online_fold = #{online_fold},
+			</if>
+			<if test="house_transaction_price != null">
+				house_transaction_price = #{house_transaction_price},
+			</if>
+			<if test="is_active != null">
+				is_active = #{is_active},
+			</if>
+			<if test="rental_price != null">
+				rental_price = #{rental_price},
+			</if>
+			<if test="house_people_review != null">
+				house_people_review = #{house_people_review},
+			</if>
+			<if test="housing_towards != null">
+				housing_towards = #{housing_towards},
+			</if>
+			<if test="common_occupants != null">
+				common_occupants = #{common_occupants},
+			</if>
+			<if test="residential_environ != null">
+				residential_environ = #{residential_environ},
+			</if>
+			<if test="residential_manage != null">
+				residential_manage = #{residential_manage},
+			</if>
+			<if test="facilities != null">
+				facilities = #{facilities},
+			</if>
+			<if test="remark != null">
+				remark = #{remark},
+			</if>
+			<if test="transaction_price != null">
+				transaction_price = #{transaction_price},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+			<if test="transaction_price_caps != null">
+				transaction_price_caps = #{transaction_price_caps},
+			</if>
+			<if test="unit_price != null">
+				unit_price = #{unit_price},
+			</if>
+			<if test="unit_price_caps != null">
+				unit_price_caps = #{unit_price_caps},
+			</if>
+			<if test="house_buy_date != null">
+				house_buy_date = #{house_buy_date},
+			</if>
+			<if test="is_mortgage != null">
+				is_mortgage = #{is_mortgage},
+			</if>
+			<if test="housing_category != null">
+				housing_category = #{housing_category},
+			</if>
+			<if test="house_occupancy_rate != null">
+				house_occupancy_rate = #{house_occupancy_rate},
+			</if>
+			<if test="co_habitation != null">
+				co_habitation = #{co_habitation},
+			</if>
+			<if test="house_cleanliness != null">
+				house_cleanliness = #{house_cleanliness},
+			</if>
+			<if test="house_lighting != null">
+				house_lighting = #{house_lighting},
+			</if>
+			<if test="is_facetrial != null">
+				is_facetrial = #{is_facetrial},
+			</if>
+			<if test="marital_status != null">
+				marital_status = #{marital_status},
+			</if>
+		</set>
+		<where>
+			<if test="wms_cre_housing_check_id != null">
+				and wms_cre_housing_check_id = #{wms_cre_housing_check_id}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+		</where>
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreHousingCheck"
+		resultType="WmsCreHousingCheck">
+		select
+		wms_cre_housing_check_id,
+		wms_cre_credit_head_id,
+		customer_name,
+		house_address,
+		house_building_area,
+		total_floor,
+		house_layer,
+		community_name,
+		housing_pattern,
+		building_age,
+		decoration_Standard,
+		house_usage,
+		online_fold,
+		house_transaction_price,
+		is_active,
+		rental_price,
+		house_people_review,
+		housing_towards,
+		common_occupants,
+		residential_environ,
+		residential_manage,
+		facilities,
+		remark,
+		transaction_price,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		transaction_price_caps,
+		unit_price,
+		unit_price_caps
+		from
+		wms_cre_housing_check
+		<where>
+			<if test="wms_cre_housing_check_id != null">
+				and wms_cre_housing_check_id = #{wms_cre_housing_check_id}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="customer_name != null">
+				and customer_name = #{customer_name}
+			</if>
+			<if test="house_address != null">
+				and house_address = #{house_address}
+			</if>
+			<if test="house_building_area != null">
+				and house_building_area = #{house_building_area}
+			</if>
+			<if test="total_floor != null">
+				and total_floor = #{total_floor}
+			</if>
+			<if test="house_layer != null">
+				and house_layer = #{house_layer}
+			</if>
+			<if test="community_name != null">
+				and community_name = #{community_name}
+			</if>
+			<if test="housing_pattern != null">
+				and housing_pattern = #{housing_pattern}
+			</if>
+			<if test="building_age != null">
+				and building_age = #{building_age}
+			</if>
+			<if test="decoration_Standard != null">
+				and decoration_Standard = #{decoration_Standard}
+			</if>
+			<if test="house_usage != null">
+				and house_usage = #{house_usage}
+			</if>
+			<if test="online_fold != null">
+				and online_fold = #{online_fold}
+			</if>
+			<if test="house_transaction_price != null">
+				and house_transaction_price = #{house_transaction_price}
+			</if>
+			<if test="is_active != null">
+				and is_active = #{is_active}
+			</if>
+			<if test="rental_price != null">
+				and rental_price = #{rental_price}
+			</if>
+			<if test="house_people_review != null">
+				and house_people_review = #{house_people_review}
+			</if>
+			<if test="housing_towards != null">
+				and housing_towards = #{housing_towards}
+			</if>
+			<if test="common_occupants != null">
+				and common_occupants = #{common_occupants}
+			</if>
+			<if test="residential_environ != null">
+				and residential_environ = #{residential_environ}
+			</if>
+			<if test="residential_manage != null">
+				and residential_manage = #{residential_manage}
+			</if>
+			<if test="facilities != null">
+				and facilities = #{facilities}
+			</if>
+			<if test="remark != null">
+				and remark = #{remark}
+			</if>
+			<if test="transaction_price != null">
+				and transaction_price = #{transaction_price}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name = #{create_user_name}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id = #{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+			<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+				and wms_cre_housing_check_id != #{wms_cre_housing_check_id}
+			</if>
+			<if test="transaction_price_caps != null">
+				transaction_price_caps = #{transaction_price_caps},
+			</if>
+			<if test="unit_price != null">
+				unit_price = #{unit_price},
+			</if>
+			<if test="unit_price_caps != null">
+				unit_price_caps = #{unit_price_caps},
+			</if>
+		</where>
+	</select>
+
+	<!--删除记录 -->
+	<delete id="deleteRecord" parameterType="Integer">
+		delete from
+		wms_cre_housing_check
+		where wms_cre_credit_head_id =
+		#{wms_cre_credit_head_id}
+	</delete>
+		<!-- 更新用户 房产完善-->
+	<update id="updateformakeup" parameterType="WmsCreHousingCheck">
+		update wms_cre_housing_check
+		<set>
+			<if test="wms_cre_housing_check_id != null">
+				wms_cre_housing_check_id = #{wms_cre_housing_check_id},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="customer_name != null">
+				customer_name = #{customer_name},
+			</if>
+			<if test="house_address != null">
+				house_address = #{house_address},
+			</if>
+			<if test="house_building_area != null">
+				house_building_area = #{house_building_area},
+			</if>
+			<if test="total_floor != null">
+				total_floor = #{total_floor},
+			</if>
+			<if test="house_layer != null">
+				house_layer = #{house_layer},
+			</if>
+			<if test="community_name != null">
+				community_name = #{community_name},
+			</if>
+			<if test="housing_pattern != null">
+				housing_pattern = #{housing_pattern},
+			</if>
+			<if test="building_age != null">
+				building_age = #{building_age},
+			</if>
+			<if test="decoration_Standard != null">
+				decoration_Standard = #{decoration_Standard},
+			</if>
+			<if test="house_usage != null">
+				house_usage = #{house_usage},
+			</if>
+			<if test="online_fold != null">
+				online_fold = #{online_fold},
+			</if>
+			<if test="house_transaction_price != null">
+				house_transaction_price = #{house_transaction_price},
+			</if>
+			<if test="is_active != null">
+				is_active = #{is_active},
+			</if>
+			<if test="rental_price != null">
+				rental_price = #{rental_price},
+			</if>
+			<if test="house_people_review != null">
+				house_people_review = #{house_people_review},
+			</if>
+			<if test="housing_towards != null">
+				housing_towards = #{housing_towards},
+			</if>
+			<if test="common_occupants != null">
+				common_occupants = #{common_occupants},
+			</if>
+			<if test="residential_environ != null">
+				residential_environ = #{residential_environ},
+			</if>
+			<if test="residential_manage != null">
+				residential_manage = #{residential_manage},
+			</if>
+			<if test="facilities != null">
+				facilities = #{facilities},
+			</if>
+			<if test="remark != null">
+				remark = #{remark},
+			</if>
+			<if test="transaction_price != null">
+				transaction_price = #{transaction_price},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+			<if test="transaction_price_caps != null">
+				transaction_price_caps = #{transaction_price_caps},
+			</if>
+			<if test="unit_price != null">
+				unit_price = #{unit_price},
+			</if>
+			<if test="unit_price_caps != null">
+				unit_price_caps = #{unit_price_caps},
+			</if>
+			<if test="house_buy_date != null">
+				house_buy_date = #{house_buy_date},
+			</if>
+			<if test="is_mortgage != null">
+				is_mortgage = #{is_mortgage},
+			</if>
+			<if test="housing_category != null">
+				housing_category = #{housing_category},
+			</if>
+			<if test="house_occupancy_rate != null">
+				house_occupancy_rate = #{house_occupancy_rate},
+			</if>
+			<if test="marital_status != null">
+				marital_status = #{marital_status},
+			</if>
+			<if test="co_habitation != null">
+				co_habitation = #{co_habitation},
+			</if>
+			<if test="house_cleanliness != null">
+				house_cleanliness = #{house_cleanliness},
+			</if>
+			<if test="house_lighting != null">
+				house_lighting = #{house_lighting},
+			</if>
+			<if test="is_facetrial != null">
+				is_facetrial = #{is_facetrial},
+			</if>
+		</set>
+		where
+		wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</update>
+		<!-- 获取表信息 -->
+	<select id="getCopyInfo" parameterType="Integer" resultType="WmsCreHousingCheck">
+		select *
+		from wms_cre_housing_check
+		where
+		wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+		and enable_flag=1
+	</select>
+</mapper> 

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.cremanage.persist.WmsCreHousingCreditConfirmDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsCreHousingCreditConfirm">
+		select
+        				wms_cre_housing_credit_confirm_id,
+        				credit_confirm_result,
+        				create_user_id,
+        				create_user_name,
+						date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+        				create_timestamp,
+        				last_update_user_id,
+						date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+        				last_update_timestamp,
+        				enable_flag,
+        				wms_cre_credit_head_id
+        	from
+        		wms_cre_housing_credit_confirm
+        	where
+        				wms_cre_housing_credit_confirm_id = #{wms_cre_housing_credit_confirm_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cre_housing_credit_confirm_id) as count
+		from wms_cre_housing_credit_confirm
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_cre_housing_credit_confirm_id,
+				credit_confirm_result,
+				create_user_id,
+				create_user_name,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag,
+				wms_cre_credit_head_id
+		from wms_cre_housing_credit_confirm
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreHousingCreditConfirm" useGeneratedKeys="true" keyProperty="wms_cre_housing_credit_confirm_id">
+		INSERT INTO wms_cre_housing_credit_confirm
+		(
+				wms_cre_housing_credit_confirm_id,
+
+				credit_confirm_result,
+
+				create_user_id,
+
+				create_user_name,
+
+				create_timestamp,
+
+				last_update_user_id,
+
+				last_update_timestamp,
+
+				enable_flag,
+
+				wms_cre_credit_head_id
+		)
+		VALUES
+		(
+				#{wms_cre_housing_credit_confirm_id},
+				#{credit_confirm_result},
+				#{create_user_id},
+				#{create_user_name},
+				#{create_timestamp},
+				#{last_update_user_id},
+				#{last_update_timestamp},
+				#{enable_flag},
+				#{wms_cre_credit_head_id}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreHousingCreditConfirm">
+		update wms_cre_housing_credit_confirm
+		<set>
+					<if test="wms_cre_housing_credit_confirm_id != null">
+						 wms_cre_housing_credit_confirm_id = #{wms_cre_housing_credit_confirm_id},
+					</if>
+					<if test="credit_confirm_result != null">
+						 credit_confirm_result = #{credit_confirm_result},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="create_user_name != null">
+						 create_user_name = #{create_user_name},
+					</if>
+					<if test="create_timestamp != null">
+						 create_timestamp = #{create_timestamp},
+					</if>
+					<if test="last_update_user_id != null">
+						 last_update_user_id = #{last_update_user_id},
+					</if>
+					<if test="last_update_timestamp != null">
+						 last_update_timestamp = #{last_update_timestamp},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						 wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+					</if>
+	   </set>
+		 where 
+    				wms_cre_housing_credit_confirm_id = #{wms_cre_housing_credit_confirm_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreHousingCreditConfirm" resultType="WmsCreHousingCreditConfirm">
+		select 
+				wms_cre_housing_credit_confirm_id,
+				credit_confirm_result,
+				create_user_id,
+				create_user_name,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag,
+				wms_cre_credit_head_id
+		from
+		wms_cre_housing_credit_confirm
+		<where>
+					<if test="wms_cre_housing_credit_confirm_id != null">
+						and wms_cre_housing_credit_confirm_id = #{wms_cre_housing_credit_confirm_id}
+					</if>
+					<if test="credit_confirm_result != null">
+						and credit_confirm_result = #{credit_confirm_result}
+					</if>
+					<if test="create_user_id != null">
+						and create_user_id = #{create_user_id}
+					</if>
+					<if test="create_user_name != null">
+						and create_user_name = #{create_user_name}
+					</if>
+					<if test="create_timestamp != null">
+						and create_timestamp = #{create_timestamp}
+					</if>
+					<if test="last_update_user_id != null">
+						and last_update_user_id = #{last_update_user_id}
+					</if>
+					<if test="last_update_timestamp != null">
+						and last_update_timestamp = #{last_update_timestamp}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_cre_housing_credit_confirm_id != #{wms_cre_housing_credit_confirm_id}
+					</if>
+		</where>
+	</select>
+	
+	<!-- 获取表信息 -->
+	<select id="getCopyInfo" parameterType="Integer" resultType="WmsCreHousingCreditConfirm">
+		select *
+		from wms_cre_housing_credit_confirm
+		where
+		wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+		and enable_flag=1
+	</select>
+</mapper> 

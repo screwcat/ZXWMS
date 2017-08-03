@@ -1,0 +1,757 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>理财管理>续期申请列表>续期申请</title>
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<style type="text/css">
+/*input_tb css*/
+.input_tb {
+	border: 1px solid #dfdfdf;
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.input_tb a {
+	color: #056aff;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.input_tb td {
+	height: 35px;
+	line-height: 25px;
+	border-bottom: 1px dashed #d5d5d5;
+	padding-top: 3px;
+}
+
+.input_tb .tr_title td {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	border-bottom: 1px solid #dfdfdf;
+}
+
+.input_tb .tr_last td {
+	border-bottom: 0;
+}
+
+.input_tb .title {
+	text-align: right;
+}
+
+.input_tb .subtitle {
+	text-align: left;
+	background-color: #d2e1fd;
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+}
+
+.input_tb .tr_btn_input td {
+	background-color: #fbfbfb;
+	/*border-top:1px solid #dbdbdb;*/
+	height: 40px;
+}
+
+.sqrqkinput {
+	width: 190px;
+}
+
+.sqrqkdiv { //
+	height: 35px;
+}
+</style>
+<script type="text/javascript">		
+	//var checkedInveTransaIDs =[];//贷款ID	
+	var wms_inve_customer_id;//客户表ID
+	var wms_inve_transa_id;
+	var redeem_date = new Date();
+	var day = redeem_date.getDate();
+	var returnRedeem = [];
+	var is_order_redeem;
+	var date_of_start;
+	var bill_type = $.query.get("bill_type");
+	var cus_name;
+	var id_card;
+	var wms_inve_transa_prod_id;
+	
+	var this_inve_trance_data;
+	var this_inve_trance_pro_data;
+	var wmsInveTransaProdJson;
+	var bankCardInfos;
+	var protocol_type;//债权协议方式类型(1表示为字纸债权,2表示电子债权)
+	var new_customer_email;//电子债权邮箱地址
+	
+	$(function() {	
+		wms_inve_transa_id = $.query.get("wms_inve_transa_id");
+		is_order_redeem = $.query.get("is_order_redeem");
+		id_card = $.query.get("id_card");
+		cus_name = $.query.get("cus_name");
+		wms_inve_transa_prod_id = $.query.get('wms_inve_transa_prod_id');
+		
+		this_inve_trance_data = globalUtil.syncGetJson('/inve/wmsinvetransainfobypk.do',{ 'wms_inve_transa_id':wms_inve_transa_id },'GET');
+	    this_inve_trance_pro_data = globalUtil.syncGetJson('/inve/wmsinvetransaprodinfobypkforjegl.do',{ 'wms_inve_transa_id':wms_inve_transa_id },'GET');
+	    
+	    //获取收益卡信息
+	    wmsInveTransaProdJson = globalUtil.syncGetJson('/inve/getinvetransaprodbyid.do',{
+	        wms_inve_transa_prod_id: wms_inve_transa_prod_id,
+	        sortname: 'sort_order', // 排序列名
+	        sortorder: 'asc' // 排序方式
+	    },'POST');
+	    
+		//判断客户收益卡信息 初始化/有值不可编辑处理
+		if (wmsInveTransaProdJson.wmsInveTransaProd.bank_of_deposit_pro != null && wmsInveTransaProdJson.wmsInveTransaProd.bank_of_deposit_city != null) {
+			init_bank_of_deposit_pro(wmsInveTransaProdJson.wmsInveTransaProd);
+		} else {
+			init_bank_of_deposit_pro();
+		}
+		
+		init_redeem_info();
+		//初始化银行卡号自动四位加空格
+		init_card_no();
+		//初始化收益卡信息
+		init_bank_card_info();
+		
+		if(wmsInveTransaProdJson!=null){
+		    initForm(wmsInveTransaProdJson);
+		}
+		if(wmsInveTransaProdJson.wmsInveTransaProd.card_owner_name==""||wmsInveTransaProdJson.wmsInveTransaProd.card_owner_name==null){
+		  	$("#card_owner_name").val(this_inve_trance_data.cus_name);
+		}
+		
+		$('#bank_of_deposit_pro').bind('change',function(){
+			getCityData1();
+		});
+		
+	});
+
+	//关闭对话框
+	function closeDialog() {
+		try{
+ 			window.parent.dialog.hide();
+ 		}catch(e){
+ 			globalUtil.closeCurrentTab();
+ 		}
+	}	
+	//关闭本页并刷新查询页面
+    function refreshAndClosePage(){   
+    	window.parent.search();
+    	window.parent.dialog.hide();
+    }
+	
+	/*
+	 * 验证续期的单据是否是预约续期并且是可拆分类产品
+	 */
+	function saveVerifyCredit()
+	{
+		var val=$('input:radio[name="is_bank_card"]:checked').val();
+		if(val == '1')
+		{
+			if($("#card_owner_name").val() == "")
+			{
+				globalUtil.errorMsg("请输入客户收益卡姓名!");
+				return;
+			}
+			if($("#card_no").val() == "")
+			{
+				globalUtil.errorMsg("请输入客户收益卡卡号!");
+				return;	
+			}
+			if($("#bank_of_deposit_pro").ligerComboBox().getValue()=="-1" || $("#bank_of_deposit_pro").ligerComboBox().getValue() == "")
+			{
+				globalUtil.errorMsg("请选择客户收益卡所属省!");
+				return;	
+			}
+			if($("#bank_of_deposit_city").ligerComboBox().getValue()=="-1" || $("#bank_of_deposit_city").ligerComboBox().getValue() == "")
+			{
+				globalUtil.errorMsg("请选择客户收益卡所属市!");
+				return;	
+			}
+			if($("#bank_of_deposit").val() == "")
+			{
+				globalUtil.errorMsg("请输入客户收益卡所属银行!");
+				return;	
+			}
+			if($("#bank_branch").val() == "")
+			{
+				globalUtil.errorMsg("请输入客户收益卡所属支行!");
+				return;	
+			}
+		}
+		
+		
+		var para = {
+				wms_inve_transa_id:wms_inve_transa_id,
+				wms_inve_transa_prod_id:wms_inve_transa_prod_id,
+				date_of_payment : $("#date_of_start").val()
+				
+		}
+		
+		//到后台验证是否是预约单据并且是可拆分类产品
+		$.post(globalUtil.getTimestampUrl("/inve/verifyRenewalBill.do"),para, function(data){
+			
+			if(data)
+			{
+				var url = globalUtil.getHtml("creditProtocolChoose.html?customer_email=" + this_inve_trance_data.customer_email);
+			    dialog = $.ligerDialog.open({
+			            url: url,
+			            title: '债权协议方式选择',
+			            width: 600,
+			            height: globalUtil.setDialogHeight(400),
+			            onHiddenOrClose: function(){
+			         	},
+			            isResize: false
+			    }); 
+			}
+			else
+			{
+				save();
+			}
+		});
+		
+		
+	}
+	
+	/**
+	 * 保存
+	 */
+	function save(){
+		//隐藏提交按钮
+		$("#tjbtn").css("display","none");
+		
+		var startDate = $("#date_of_start").val();
+		
+		var nowDate = new Date().format("yyyy-MM-dd");
+		
+		var is_order_extend = 0;
+		
+		if(startDate > nowDate){
+			is_order_extend = 1;
+		}
+		
+		var params = {
+				"wms_inve_transa_id" : wms_inve_transa_id,
+				"date_of_payment" : $("#date_of_start").val(),
+				"is_order_redeem" : is_order_redeem,
+				"is_order_extend" : is_order_extend,
+				'bill_type':bill_type,
+				'wms_inve_transa_prod_id': wms_inve_transa_prod_id,
+				'bank_branch':$("#bank_branch").val(),
+				'bank_of_deposit':$("#bank_of_deposit").val(),
+				'bank_of_deposit_pro':$("#bank_of_deposit_pro").ligerComboBox("getValue"),
+				'bank_of_deposit_city':$("#bank_of_deposit_city").ligerComboBox("getValue"),
+				'card_no':$("#card_no_copy").val(),
+				'card_owner_name':$("#card_owner_name").val(),
+				'date_of_end' : $("#date_of_end").val(),
+				'protocol_type':protocol_type,
+				'new_customer_email': new_customer_email,
+				'id_card':this_inve_trance_data.id_card,
+				'wms_inve_customer_card_id':$("#wms_inve_customer_card_id").val()
+		}
+		
+		globalUtil.addMask();
+		globalUtil.showLoading();
+		
+		$.post(globalUtil.getTimestampUrl("/inve/inveExtendSave.do"), params,
+			    function(data) {
+					if(data.length > 30)
+					{
+							globalUtil.alertMsg(data,function(){
+								refreshAndClosePage();
+							},130);
+							
+							//点击弹出窗口的右上角的X关闭窗口时释放债权 
+							$(".l-dialog-winbtn").bind('mousedown',function()
+							{          
+								refreshAndClosePage();
+							}); 
+					}else {
+			             globalUtil.errorMsg(globalErrorMsg['100012']); //保存失败
+			        }
+			      	
+			      	globalUtil.delMask();
+					globalUtil.closeLoading();
+			});	
+		
+	}
+	//初始化申请数据
+	var management_fee = [];
+	var income_day = []; 
+	var year_days=360;//初始值-具体值根据实际获取
+	var product_deadline = 0;
+	function init_redeem_info(){
+		$.getJSON(globalUtil.getTimestampUrl('/inve/wmsinvetransainfobypk4Extend.do'),
+	    		{
+	    			"wms_inve_transa_id" : wms_inve_transa_id
+	    		},
+	    		function(json) {
+	    			product_deadline = json.product_deadline;
+	    			end_of_date = json.end_of_date;
+	    			$("#date_of_start").val(json.date_of_start);
+	    			date_of_start = json.date_of_start;
+	    			//globalUtil.setFormVal("bill_info", json);
+	    			
+	    			$("#cus_name").val(json.cus_name);
+	    			$("#mobile_phone").val(json.mobile_phone);
+	    			$("#category_name").val(json.category_name);
+	    			$("#id_card").val(json.id_card);
+	    			$("#product_account").val(json.product_account);
+	    			$("#date_of_payment").val(json.date_of_payment);
+	    			$("#end_of_date").val(json.end_of_date);
+	    			$("#product_interest").val(json.product_interest);
+	    			
+	    			$("#category_name_id").val(json.category_name);
+	    			$("#product_interest_id").val(json.product_interest);
+	    			$("#product_deadline_name").val(json.product_deadline + "期");
+	    			
+	    			
+	    			$("#date_of_end").val(json.end_of_date_str);
+	    			//setEndDate();
+	    			
+	    		});
+    }
+	function setEndDate(){
+// 		if(date_of_start<=end_of_date){
+// 			globalUtil.errorMsg('续期开始时间应大于原产品的到期时间!');
+// 			$("#date_of_start").val('');
+// 			return;
+// 		}
+		var end_date = addMonths(new Date(end_of_date),product_deadline);
+		end_date.setDate(end_date.getDate() -1);
+		
+		$("#date_of_end").val(end_date.format("yyyy-MM-dd"));
+	}
+	function addMonths(date, value) {
+        date.setMonth(date.getMonth() + value);
+        return date;
+    }
+	
+	/*
+	 * 收益卡信息
+	 */
+	function change() {
+		var card = $('#card_no_copy').val();
+		card = card.replace(/\D/g, '');
+		var ncard = '';
+		for (var n = 0; n < card.length; n = n + 4) {
+			ncard += card.substring(n, n + 4) + " ";
+		}
+		$('#card_no').val(ncard.replace(/(\s*$)/g, ""));
+	}
+	/**
+	 *初始化银行卡号自动四位加空格
+	 */
+	function init_card_no() {
+		var val = $('#card_no').val();//获取用户输入
+		val = val.replace(/\D/g, '');
+		$("#card_no_copy").val(val);
+		change();
+	}
+	
+	//初始化银行卡按钮信息
+	function init_bank_card_info(){
+		var params = {
+			cus_name:this_inve_trance_data.cus_name,
+			id_card:this_inve_trance_data.id_card
+		}
+		 
+		$.post(globalUtil.getTimestampUrl("/inve/getHistoryCustomerBankInfo.do"),params, function(json,status){
+			bankCardInfos = json;
+			if(json != null || json != ""){
+				$("input[name='is_bank_card']").eq(0).removeAttr("checked","checked"); 
+				$("input[name='is_bank_card']").eq(1).attr("checked","checked");
+				
+				$("input[name='is_bank_card']").eq(0).removeAttr("checked","checked"); 
+				$("input[name='is_bank_card']").eq(1).attr("checked","checked");
+				$("#card_owner_name").attr("readonly","readonly");
+				$("#card_no").attr("readonly","readonly");
+				$.ligerui.get("bank_of_deposit_pro").set('disabled', true);
+				$.ligerui.get("bank_of_deposit_city").set('disabled', true);
+				$("#bank_of_deposit").attr("readonly","readonly");
+				$("#bank_branch").attr("readonly","readonly");
+			}else{
+				$("input[name='is_bank_card']").eq(0).attr("checked","checked");
+				$("input[name='is_bank_card']").eq(1).removeAttr("checked","checked");
+			}
+			for(var i = 0; i < json.length; i++){
+				if(wmsInveTransaProdJson.wmsInveTransaProd.card_owner_name == json[i].card_owner_name && wmsInveTransaProdJson.wmsInveTransaProd.bank_of_deposit == json[i].bank_of_deposit
+						                                                                              && wmsInveTransaProdJson.wmsInveTransaProd.bank_branch == json[i].bank_branch
+						                                                                              && wmsInveTransaProdJson.wmsInveTransaProd.bank_of_deposit_pro == json[i].bank_of_deposit_pro
+						                                                                              && wmsInveTransaProdJson.wmsInveTransaProd.bank_of_deposit_city == json[i].bank_of_deposit_city
+						                                                                              && wmsInveTransaProdJson.wmsInveTransaProd.card_no == json[i].card_no)
+				{
+					$("#bank_info").append("<option value='" + json[i].card_no +"' selected='selected'>" +json[i].bank_card_info +"</option>");	
+				}
+				else
+				{
+					$("#bank_info").append("<option value='" + json[i].card_no +"'>" +json[i].bank_card_info +"</option>");
+				}
+			}
+		},"json"); 
+	}
+	
+	//选择银行卡信息同时为收益卡信息赋值
+	function changeOption(obj){
+		var value = $('#bank_info option:selected').val();
+		
+		$("#bank_of_deposit_pro").unbind("change");
+		
+		if(obj.value != null)
+		{
+			for(var i = 0; i < bankCardInfos.length; i++){
+				if(bankCardInfos[i].card_no == value){
+					$("#card_owner_name").val(bankCardInfos[i].card_owner_name);
+					$("#card_no").val(bankCardInfos[i].card_no);
+					global_ligerui_extend.setComboxVal("bank_of_deposit_pro", bankCardInfos[i].bank_of_deposit_pro);
+					init_bank_of_deposit_city(bankCardInfos[i].bank_of_deposit_pro, true);
+					global_ligerui_extend.setComboxVal("bank_of_deposit_city", bankCardInfos[i].bank_of_deposit_city);
+					$("#bank_of_deposit").val(bankCardInfos[i].bank_of_deposit);
+					$("#bank_branch").val(bankCardInfos[i].bank_branch);
+					$("#wms_inve_customer_card_id").val(bankCardInfos[i].wms_inve_customer_card_id);
+				}
+			}
+		}
+		init_card_no();
+		
+		$('#bank_of_deposit_pro').bind('change',function(){
+			getCityData1();
+		});
+	}
+
+	//判断选择全新银行卡和已使用银行卡按钮
+	function changeRadio(obj){
+		if(obj.value == 1){
+			$("#card_owner_name").val("");
+			$("#card_no").val("");
+			global_ligerui_extend.setComboxVal("bank_of_deposit_pro", -1);
+			init_bank_of_deposit_city(-1, true);
+			global_ligerui_extend.setComboxVal("bank_of_deposit_city", -1);
+			$("#bank_of_deposit").val("");
+			$("#bank_branch").val("");
+			$("#bank_info").val("-1");
+			$("#bank_info").attr("disabled", "disabled");
+			$("#card_owner_name").removeAttr("readonly");
+			$("#card_no").removeAttr("readonly");
+			$.ligerui.get("bank_of_deposit_pro").set('disabled', false);
+			$.ligerui.get("bank_of_deposit_city").set('disabled', false);
+			$("#bank_of_deposit").removeAttr("readonly");
+			$("#bank_branch").removeAttr("readonly");
+			$("#wms_inve_customer_card_id").val("");
+		}
+		if(obj.value==2){
+			$("#bank_info").removeAttr("disabled");
+			$("#card_owner_name").attr("readonly","readonly");
+			$("#card_no").attr("readonly","readonly");
+			$.ligerui.get("bank_of_deposit_pro").set('disabled', true);
+			$.ligerui.get("bank_of_deposit_city").set('disabled', true);
+			$("#bank_of_deposit").attr("readonly","readonly");
+			$("#bank_branch").attr("readonly","readonly");
+		}
+	}
+	
+	//获取初始化值
+	function initForm(json){
+		
+		globalUtil.setFormVal("main_s", json.wmsInveTransaProd);
+		init_bank_of_deposit_city(json.wmsInveTransaProd.bank_of_deposit_pro, true);
+		global_ligerui_extend.setComboxVal("bank_of_deposit_city", json.wmsInveTransaProd.bank_of_deposit_city);
+		$("#wms_inve_customer_card_id").val(json.wmsInveTransaProd.wms_inve_customer_card_id);
+	    $("input[name=is_allopatry]").each(function(){
+	        if($(this).val()==json.wmsInveTransaProd.is_allopatry){
+	        	$(this).attr("checked","checked");
+	        }
+	    });
+	    
+	    init_card_no();
+		
+	}
+	
+	//获取省
+	function getProvinceData() {
+		return globalUtil.syncGetJson(
+				'/sysmanage/wmssysdictdatabydictidempty.do', {
+					'isEmpty' : true,
+					'wms_sys_dict_id' : '72'
+				}, 'GET');
+	}
+
+	//获取市
+	function getCityData(p_wms_sys_dict_data_id) {
+		return globalUtil.syncGetJson(
+				'/sysmanage/wmssysdictdatabydictidemptyc.do', {
+					'isEmpty' : true,
+					'wms_sys_dict_id' : '73',
+					'p_wms_sys_dict_data_id' : p_wms_sys_dict_data_id
+				}, 'GET');
+	}
+	//客户收益卡信息-初始化省
+	function init_bank_of_deposit_pro(json) {
+		var bank_of_deposit_pro_params = {
+			dest_url : '/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=72',
+			t_col_name : 'bank_of_deposit_pro',
+			valueField : 'value_code', //下拉框value对应的值，默认为id
+			textField : 'value_meaning', //下拉框text对应的值，默认为text
+			input_width : 200,
+			def_val : 'first'
+		};
+		global_ligerui_extend.initCombox("bank_of_deposit_pro", null, bank_of_deposit_pro_params);
+		if (json) {
+			//把值装载设定
+			global_ligerui_extend.syncRequestInitComboxData(json, "bank_of_deposit_pro");
+		} else {
+			global_ligerui_extend.initComboxDefVal("bank_of_deposit_pro");
+		}
+	}
+	//客户收益卡信息-当点击省的时候,加载市
+	function getCityData1() {
+		var jsondata0;
+		if (wmsInveTransaProdJson.wmsInveTransaProd.bank_of_deposit_pro != null && wmsInveTransaProdJson.wmsInveTransaProd.bank_of_deposit_city != null) {
+			jsondata0 = wmsInveTransaProdJson.wmsInveTransaProd;
+		}
+		init_bank_of_deposit_city($("#bank_of_deposit_pro_hidden").val(), jsondata0)
+	}
+	//客户收益卡信息-获取市
+	function init_bank_of_deposit_city(p_wms_sys_dict_data_id, json) {
+		var bank_of_deposit_city_params = {
+			dest_url : '/sysmanage/wmssysdictdatabydictidemptyc.do?isEmpty=true&wms_sys_dict_id=73&p_wms_sys_dict_data_id=' + p_wms_sys_dict_data_id,
+			t_col_name : 'bank_of_deposit_city',
+			valueField : 'value_code', //下拉框value对应的值，默认为id
+			textField : 'value_meaning', //下拉框text对应的值，默认为text
+			input_width : 200,//下拉框长度
+			def_val : 'first'
+		};
+		global_ligerui_extend.initCombox("bank_of_deposit_city", null, bank_of_deposit_city_params);
+
+		if (json) {
+			//把值装载设定
+			global_ligerui_extend.syncRequestInitComboxData(json, "bank_of_deposit_city");
+		} else {
+			global_ligerui_extend.initComboxDefVal("bank_of_deposit_city");
+		}
+	}
+	
+	//验证开户行输入的银行是否是邮政储蓄
+	function verifyName(obj)
+	{
+		var name = obj.value;
+		if(name.indexOf("邮政储蓄") >= 0)
+		{
+			$("#bank_of_deposit").val("");
+			$("#bank_of_deposit").focus();
+			globalUtil.errorMsg("暂不支持邮政储蓄银行卡,请更换其它银行卡");
+			return;
+		}
+	}
+</script>
+</head>
+<body>
+	<div class="pop-center overflow-au" style="top: 30px;"
+		id="redeem_apply"></div>
+	<div class="pop-center" id="bill_info">
+		<div class="pop-center overflow-au">
+			<div class="center-content" style="min-width: 550px;">
+				<div id="redeem_info" class="class_redeem">
+					<div class="center-title">客户理财信息</div>
+					<div class="center-txt clearfix"
+						style="margin-bottom: 5px; padding: 5px; border: 1px solid #BFBFBF; height: auto;">
+						<div class="float-l">
+							<div class="pop-form-title2">客户姓名：</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="cus_name" name="cus_name" readonly="readonly"
+									class="input-H4 input-read" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">手机号：</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="mobile_phone" name="mobile_phone" readonly="readonly"
+									class="input-H4 input-read" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">身份证号：</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="id_card" readonly="readonly"
+									class="input-H4 input-read" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">产品名称：</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="category_name" name="category_name" readonly="readonly"
+									class="input-H4 input-read" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">投资金额：</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="product_account" name="product_account" readonly="readonly"
+									class="input-H4 input-read" /> 万元
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2"  style="margin-left:-22px">上单时间：</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="date_of_payment" name="date_of_payment" readonly="readonly"
+									class="input-H4 input-read" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">到期时间：</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="end_of_date" name="end_of_date" readonly="readonly"
+									class="input-H4 input-read" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">年化利率：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="product_interest" id="product_interest" readonly="readonly"
+									class="input-H4 input-read" /> %
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="center-content" style="min-width: 550px;">
+				<div id="redeem_info" class="class_redeem">
+					<div class="center-title">申请信息</div>
+					<div class="center-txt clearfix"
+						style="margin-bottom: 5px; padding: 5px; border: 1px solid #BFBFBF; height: auto;">
+						<div class="float-l">
+							<div class="pop-form-title2">续期产品：</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="category_name_id" name="category_name" readonly="readonly"
+									class="input-H4 input-read" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">在此期间年化收益率：</div>
+							<div class="l-panel-search-item">
+								<input type="text" id='product_interest_id' name="product_interest" readonly="readonly"
+									class="input-H4 input-read" /> %
+							</div>
+						</div>
+						<div class="float-l clearboth">
+							<div class="pop-form-title2"><span style="color: #FF0000;">*</span>续期开始时间：</div>
+							<div class="l-panel-search-item">
+								<input id="date_of_start" type="text" readonly="readonly"/>
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">续期结束时间：</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="date_of_end" readonly="readonly"/>
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">共续期：</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="product_deadline_name" class="input-H4 input-read" readonly="readonly"/>
+							</div>
+						</div>
+<!-- 						<div class="float-l"> -->
+<!-- 							<div class="pop-form-title2">续期合同编号：</div> -->
+<!-- 							<div class="l-panel-search-item"> -->
+<!-- 								<input type="text" id="order_financial_bill_code"/> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+					</div>
+				</div>
+			</div>
+			
+			<div class="center-content" style="min-width: 550px;">
+				<div id="redeem_info" class="class_redeem">
+					<div class="center-content clearboth" style="min-width: 700px;">
+			<div class="center-title" style="margin-top: 0px;">
+			收益卡信息:
+				 <span id="bank_info_title">                
+		          		<input type="radio" name="is_bank_card" value='1' class="radio5" onchange="changeRadio(this);">全新银行卡</input>
+		           		<input type="radio" name="is_bank_card" value='2' class="radio5" onchange="changeRadio(this);">已使用银行卡</input>
+		           		&nbsp;&nbsp;&nbsp;
+		           		<select id="bank_info" onchange="changeOption(this);" style="width: 200px;"></select>
+		          </span>
+			</div>
+			<div class="center-content2 clearboth" style="min-width: 500px;">
+				<div class="l-panel-search-cond clearfix" id='main_s' style="padding-top: 2px; height: 200px;">
+					<div style="margin-left: 70px">
+						<div class="float-l" style="margin-top: 5px">
+							<div class="l-panel-search-title">
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: red;">*</span>卡主姓名:
+							</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="card_owner_name" style="width: 200px" isRequired="1" />
+							</div>
+						</div>
+						<div class="float-l" style="margin-top: 5px">
+							<div class="l-panel-search-title">
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: red;">*</span>银行卡号:
+							</div>
+							<div class="l-panel-search-item">
+								<input type="hidden" id="card_no_copy" style="width: 200px" isRequired="1" /> 
+								<input type="text" id="card_no" style="width: 200px" isRequired="1" onkeyup="init_card_no()" />
+							</div>
+						</div>
+						<div class="float-l clearboth" style="margin-top: 5px">
+							<div class="l-panel-search-title">
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<span style="color: red;">*</span>省:
+							</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="bank_of_deposit_pro" style="width: 200px" isRequired="1" />
+							</div>
+						</div>
+						<div class="float-l" style="margin-top: 5px">
+							<div class="l-panel-search-title" style="margin-right: 1px">
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<span style="color: red;">*</span>市:
+							</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="bank_of_deposit_city" style="width: 200px" isRequired="1" />
+							</div>
+						</div>
+						<div class="float-l clearboth" style="margin-top: 5px">
+							<div class="l-panel-search-title">
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<span style="color: red;">*</span>开户行:
+							</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="bank_of_deposit" style="width: 200px" isRequired="1" onchange="verifyName(this);"/>
+							</div>
+						</div>
+						<div class="float-l" style="margin-top: 5px">
+							<div class="l-panel-search-title">
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<span style="color: red;">*</span>支行:
+							</div>
+							<div class="l-panel-search-item">
+								<input type="text" id="bank_branch" style="width: 200px" isRequired="1" />
+								<input type="hidden" id="wms_inve_customer_card_id"/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="pop-footer5 clearboth" style="bottom: 1px;">
+		<input id="tjbtn" class="btn-saveT"
+			onmouseover="this.className='btn-saveT-over'"
+			onmouseout="this.className='btn-saveT'"
+			onmousedown="this.className='btn-saveT-down'" type="button"
+			style="margin-right: 7px;" onclick="saveVerifyCredit()" /> <input
+			id="cancelBtnId" class="btn-cancel"
+			onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" type="button"
+			onclick="closeDialog();" />
+	</div>
+</body>
+</html>

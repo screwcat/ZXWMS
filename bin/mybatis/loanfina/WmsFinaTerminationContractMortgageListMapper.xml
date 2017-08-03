@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.loanfina.persist.WmsFinaTerminationContractMortgageListDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsFinaTerminationContractMortgageList">
+		select
+        				wms_fina_termination_contract_mortgage_list_id,
+        				wms_fina_termination_contract_id,
+        				collateral_name,
+        				collateral_accout,
+        				collateral_estimated_value,
+        				collateral_actual_value,
+        				collateral_value,
+        				enable_flag
+        	from
+        		wms_fina_termination_contract_mortgage_list
+        	where
+        				wms_fina_termination_contract_mortgage_list_id = #{wms_fina_termination_contract_mortgage_list_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_fina_termination_contract_mortgage_list_id) as count
+		from wms_fina_termination_contract_mortgage_list
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_fina_termination_contract_mortgage_list_id,
+				wms_fina_termination_contract_id,
+				collateral_name,
+				collateral_accout,
+				collateral_estimated_value,
+				collateral_actual_value,
+				collateral_value,
+				enable_flag
+		from wms_fina_termination_contract_mortgage_list
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsFinaTerminationContractMortgageList" useGeneratedKeys="true" keyProperty="wms_fina_termination_contract_mortgage_list_id">
+		INSERT INTO wms_fina_termination_contract_mortgage_list
+		(
+				wms_fina_termination_contract_mortgage_list_id,
+
+				wms_fina_termination_contract_id,
+
+				collateral_name,
+
+				collateral_accout,
+
+				collateral_estimated_value,
+
+				collateral_actual_value,
+
+				collateral_value,
+
+				enable_flag
+		)
+		VALUES
+		(
+				#{wms_fina_termination_contract_mortgage_list_id},
+				#{wms_fina_termination_contract_id},
+				#{collateral_name},
+				#{collateral_accout},
+				#{collateral_estimated_value},
+				#{collateral_actual_value},
+				#{collateral_value},
+				#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsFinaTerminationContractMortgageList">
+		update wms_fina_termination_contract_mortgage_list
+		<set>
+					<if test="wms_fina_termination_contract_mortgage_list_id != null">
+						 wms_fina_termination_contract_mortgage_list_id = #{wms_fina_termination_contract_mortgage_list_id},
+					</if>
+					<if test="wms_fina_termination_contract_id != null">
+						 wms_fina_termination_contract_id = #{wms_fina_termination_contract_id},
+					</if>
+					<if test="collateral_name != null">
+						 collateral_name = #{collateral_name},
+					</if>
+					<if test="collateral_accout != null">
+						 collateral_accout = #{collateral_accout},
+					</if>
+					<if test="collateral_estimated_value != null">
+						 collateral_estimated_value = #{collateral_estimated_value},
+					</if>
+					<if test="collateral_actual_value != null">
+						 collateral_actual_value = #{collateral_actual_value},
+					</if>
+					<if test="collateral_value != null">
+						 collateral_value = #{collateral_value},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+	   </set>
+		 where 
+    				wms_fina_termination_contract_mortgage_list_id = #{wms_fina_termination_contract_mortgage_list_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsFinaTerminationContractMortgageList" resultType="WmsFinaTerminationContractMortgageList">
+		select 
+				wms_fina_termination_contract_mortgage_list_id,
+				wms_fina_termination_contract_id,
+				collateral_name,
+				collateral_accout,
+				collateral_estimated_value,
+				collateral_actual_value,
+				collateral_value,
+				enable_flag
+		from
+		wms_fina_termination_contract_mortgage_list
+		<where>
+					<if test="wms_fina_termination_contract_mortgage_list_id != null">
+						and wms_fina_termination_contract_mortgage_list_id = #{wms_fina_termination_contract_mortgage_list_id}
+					</if>
+					<if test="wms_fina_termination_contract_id != null">
+						and wms_fina_termination_contract_id = #{wms_fina_termination_contract_id}
+					</if>
+					<if test="collateral_name != null">
+						and collateral_name = #{collateral_name}
+					</if>
+					<if test="collateral_accout != null">
+						and collateral_accout = #{collateral_accout}
+					</if>
+					<if test="collateral_estimated_value != null">
+						and collateral_estimated_value = #{collateral_estimated_value}
+					</if>
+					<if test="collateral_actual_value != null">
+						and collateral_actual_value = #{collateral_actual_value}
+					</if>
+					<if test="collateral_value != null">
+						and collateral_value = #{collateral_value}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_fina_termination_contract_mortgage_list_id != #{wms_fina_termination_contract_mortgage_list_id}
+					</if>
+		</where>
+	</select>
+	
+		<!-- list 根据终止审批表id 查抵押物详情-->
+	<select id="searchforaffirm" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_fina_termination_contract_mortgage_list_id,
+				wms_fina_termination_contract_id,
+				collateral_name,
+				collateral_accout,
+				collateral_estimated_value,
+				collateral_actual_value,
+				collateral_value,
+				enable_flag
+		from wms_fina_termination_contract_mortgage_list
+		where
+			 wms_fina_termination_contract_id = #{wms_fina_termination_contract_id}
+	</select>
+</mapper> 

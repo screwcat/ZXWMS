@@ -1,0 +1,17 @@
+com.zx.platform.database.DatabaseBundleLife=true
+adminName=sa
+adminPassWd=202cb962ac59075b964b07152d234b70
+
+#isDebugUpload=1
+isDebugUpload=0
+#realUploadCatalog=D:\tomcat-test\webapps\upload
+realUploadCatalog=D:\tomcat-deve\webapps\upload
+
+isSaveLog=true
+
+#ajax file retrun server
+remoteServer=192.168.6.212:9080
+
+#login platform,1true(test),0false(deve)
+is_p_login=1
+ekp_login_url=http://192.168.6.208:4080

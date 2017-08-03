@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-
+
+transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<link href="../../css/ligerui-main.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<title>撤单提示</title>
+<style type="text/css">
+.td_title {
+	background: none repeat scroll 0 0 #EAF0FB;
+}
+
+.tb_input TD {
+	background: none repeat scroll 0 0 #FFFFFF;
+	padding: 3px 1px 1px 4px;
+}
+
+table td {
+	border-color: #BFBFBF;
+}
+</style>
+</head>
+<body>	
+	<div class="float-l" style="margin-top:50px">
+		<div class="pop-form-title2"><span style="color: #FF0000;">*</span>线下合同编号：</div>
+		<div class="l-panel-search-item">
+			<input type="text" name="prot_code" id="prot_code" style="width:133px"/>
+		</div>
+	</div>
+	
+	<div class="float-l">
+		<div class="pop-form-title2"><span style="color: #FF0000;">*</span>合同生效时间：</div>
+		<div class="l-panel-search-item">
+			<input id="begin_of_date" class="Wdate" type="text"
+			onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+			style="width: 133px; vertical-align: top;" />
+		</div>
+	</div>
+		
+	<div class="pop-footer5 clearboth" style="bottom: 1px;">
+		<input 
+			id="tjbtn" 
+			class="btn-saveT"
+			onmouseover="this.className='btn-saveT-over'"
+			onmouseout="this.className='btn-saveT'"
+			onmousedown="this.className='btn-saveT-down'" 
+			type="button"
+			style="margin-right: 7px;" 
+			onclick="save()" /> 
+			
+		<input
+			id="cancelBtnId" 
+			class="btn-cancel"
+			onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" 
+			type="button"
+			onclick="closeDialog()" />
+	</div>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+		var wms_inve_transa_id;//上单表主键
+		var taskId;
+		$(function(){
+			wms_inve_transa_id = $.query.get("wms_inve_transa_id");	
+			taskId = $.query.get("taskId");	
+		});
+		
+		function closeDialog(){
+			window.parent.dialog.hide();
+		}
+	
+		/*
+		 * 提交撤单或者作废原因
+		 */
+		function save()
+		{				
+			var begin_of_date = $("#begin_of_date").val();
+			var prot_code = $("#prot_code").val();
+			if($.trim(prot_code)==""){			
+				globalUtil.warnMsg('线下合同编号不能为空')
+				return false;
+			}
+		
+			if($.trim(begin_of_date)==""){			
+				globalUtil.warnMsg('合同生效时间不能为空')
+				return false;
+			}
+			var params = {
+					wms_inve_transa_id:wms_inve_transa_id,
+					begin_of_date : begin_of_date,
+					prot_code : prot_code,
+					taskId : taskId,
+					protocol_type:"2"
+			};
+		
+			globalUtil.addMask();
+			globalUtil.showLoading();
+		
+			$.post(globalUtil.getTimestampUrl('/inve/wmsInveClerkProtocolsave.do'), params, function(data){
+				if (data === 'success') {
+		            	 globalUtil.successMsg(globalErrorMsg['100002'],
+		            	 function(){            		 		
+		            		window.parent.search();
+	  		    			closeDialog();	   	  		            	
+	  		    		});	            	 
+	            }else if(data === 'date_error'){
+	            	globalUtil.errorMsg('合同生效时间不能小于支付时间');
+	            }else if(data == 'date_error_check'){
+					globalUtil.warnMsg("合同生效时间受限，请联系平台管理员");     //保存失败
+				}else if(data == 'prot_code_error'){
+					globalUtil.errorMsg("合同编号重复，请重新输入");
+				}else{
+	            	globalUtil.errorMsg(globalErrorMsg['100012']);
+	            }
+	        	globalUtil.delMask();
+				globalUtil.closeLoading();
+			});		
+		}
+	</script>
+
+</body>
+
+
+</html>

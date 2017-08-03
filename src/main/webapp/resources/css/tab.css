@@ -1,0 +1,35 @@
+
+.tb_tabs
+{
+    list-style: none;
+    width: 100%;
+    height: 21px;
+    line-height: 21px;
+    border-bottom: 1px solid #6088d3;
+}
+
+
+.tb_tabs .tab_nosel
+{
+    color: #000;
+    background: url(../images/system/titwinovertabnav.png) left bottom no-repeat;
+    height: 21px;
+    float: left;
+    padding-right: 1px;
+    cursor: pointer;
+    text-align: center;
+    width: 100px;
+}
+
+.tb_tabs .tab_sel
+{
+    color: #fff;
+    background: url(../images/system/titwinseletabnav_bg.png) left bottom no-repeat;
+    font-weight: bold;
+    height: 21px;
+    width: 100px;
+    float: left;
+    padding-right: 1px;
+    cursor: pointer;
+    text-align: center;
+}

@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>空合同打印</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+
+<style type="text/css">
+.printContract_title_level_2 {
+	text-align: right;
+	margin:10px 0 0 0 ;
+}
+
+.printContract_title {
+	text-align: center;
+}
+.printContract_table{width:90%;margin: 10px 5% 0 7%;}
+.printContract_table td{border:1px solid #D7D7D7;text-align:center;font-size:11pt}
+.printContract_table_all{border:1px solid #D7D7D7;height:600px;margin:10px 0 0 0 ;}
+.printContract_table_title{width:200px;height:25px;background:linear-gradient(-45deg,transparent 15px,#D7D7D7 0) top right;}
+.printContract_table tr td:nth-child(odd){width:20%;}
+</style>
+</head>
+<body>
+
+<body>
+	<div class="printContract_title">
+		<h1>空合同打印</h1>
+	</div>
+	<div class="printContract_title_level_2">本表提供的合同范本均为 [ 财富管理平台 ] 提供最新数据</div>
+	<div class="printContract_table_all">
+	<div class="printContract_table_title"><h3>合同范本列表</h3></div>
+	<form id="printContract_form" method="post">
+	<input type="hidden" id = "url" name="url" >
+	</form>
+		<div class="printContract_table" id="printContract_table">
+		</div>
+	</div>
+	
+<script type="text/javascript">
+	$(function(){
+		init_grid();
+	})
+
+	
+	//grid列属性
+	var columns = columns = [ {
+		display : '合同类型',
+		name : 'protocol_type',
+		width : 270,
+		minWidth : 120
+	}, {
+		display : '合同名称',
+		name : 'protocol_name',
+		width : 270,
+		minWidth : 80
+	}, {
+		display : '版本号',
+		name : 'protocol_verson',
+		width : 270,
+		minWidth : 120
+	}, {
+		display : '启用时间',
+		name : 'start_date',
+		width : 270,
+		minWidth : 120
+	}, {
+		display : '终止时间',
+		name : 'end_date',
+		width : 270,
+		minWidth : 100
+	} ,
+	 {
+		display : '操作',
+		name : 'pay_account',
+		width : 270,
+		minWidth : 100,
+		render : function(rowdata, rowindex, value) {
+			var url = rowdata.protocol_dir;
+			return "<a id="+rowdata.wms_inve_clerk_protocol_blank_id+" href='javascript:void(0);' onclick=print('"+url+"')>打印</a>"
+			
+		}
+	} 
+	];
+	
+	//初始化表格
+	function init_grid() {
+
+		grid = $("#printContract_table").ligerGrid(
+				{
+					columns : columns,
+					url : global_param.context_name
+							+ '/inve/selectPrintEmptyContractList.do',
+					rownumbers : true,
+					allowUnSelectRow : true,
+					usePager : false,
+					width : '87%',
+					height : '80%',
+					heightDiff : -4,
+					onAfterShowData : function(data) {
+					}
+				});
+	}	
+	
+// 	打印
+	function print(url){
+		$("#url").val(url);
+		var url= global_param.context_name+ "/inve/printEmptyContract.do";  
+		$("#printContract_form").attr("action",url);
+		$("#printContract_form").submit();
+	}
+	
+
+
+</script>
+</body>
+</html>

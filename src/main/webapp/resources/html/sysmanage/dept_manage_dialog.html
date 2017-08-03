@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<title>新增、修改部门</title>
+</head>
+
+<body>
+	<div class="pop-center overflow-au">
+		<div id="myform" class="pop-formDiv clearfix" style="margin: 5px;">
+			<div class="float-l">
+				<div class="pop-form-title">
+					<span class="redstar">*</span>部门名称
+				</div>
+				<div class="pop-form-item">
+					<input type="text" id="dept_name" maxlength="25" />
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="pop-footer5 clearboth" style="bottom: 1px;">
+		<input id="btnSaveId" class="btn-save"
+			onmouseover="this.className='btn-save-over'"
+			onmouseout="this.className='btn-save'"
+			onmousedown="this.className='btn-save-down'" type="button"
+			style="margin-right: 7px;" /> <input id="cancelBtnId"
+			class="btn-cancel" onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" type="button" />
+	</div>
+
+	<script type="text/javascript">
+    var dept_id;
+    var p_dept_id;
+    $(function(){
+    	dept_id = $.query.get('id');
+    	p_dept_id = $.query.get('pid');
+    	if(dept_id){
+    		$.getJSON(globalUtil.getTimestampUrl('/sysmanage/sysdeptinfobypk.do'),{
+                "id": dept_id
+            }, function(json){
+            	globalUtil.setFormVal("myform",json);
+				p_dept_id=json.p_dept_id; 
+			});
+    	}else{
+    		//donothing
+    	}
+        $("#cancelBtnId").click(function() {
+           	closePage();
+    	});
+        //保存按钮事件
+        $("#btnSaveId").click(function() {
+           	saveRecord();
+    	});
+        
+    });
+    
+    //保存掺量检测
+    function saveRecord(){
+    	var param = globalUtil.getFormParam("myform");
+    	if(!param.dept_name){
+    		globalUtil.warnMsg(globalErrorMsg['100200'],function(){
+    			$("#dept_name").focus();
+    		}); //样品编号不能为空
+    		return;
+    	}
+    	
+    	param.id = dept_id;
+    	param.p_dept_id = p_dept_id;
+    	var url = globalUtil.getTimestampUrl("/sysmanage/sysdeptsave.do");
+    	if(param.id){
+    		url = globalUtil.getTimestampUrl("/sysmanage/sysdeptupdate.do");
+    	}
+		$.post(url, param,
+        function(data) {  
+        	if (data === 'success') {
+            	 globalUtil.successMsg(globalErrorMsg['100002'],function(){
+            		 refreshAndClosePage();
+            	 });//保存成功
+             } else if(data == 'repeat'){
+                 globalUtil.errorMsg(globalErrorMsg['100201']); //codeRepeat
+             } else {
+                 globalUtil.errorMsg(globalErrorMsg['100012']); //保存失败
+             }
+        });
+    }
+   	//关闭页面
+    function closePage(){
+    	window.parent.dialog.hide();
+    }
+    
+    //关闭本页并刷新查询页面
+    function refreshAndClosePage(){
+    	window.parent.treeClear();//调用父页面方法
+    	closePage();
+    }
+	</script>
+</body>
+</html>

@@ -1,0 +1,2528 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>财富管理系统</title>
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<style type="text/css">
+/*input_tb css*/
+.input_tb {
+	border: 1px solid #d5d5d5;
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.input_tb a {
+	color: #056aff;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.input_tb td {
+	height: 35px;
+	line-height: 25px;
+	border-bottom: 1px dashed #dfdfdf;
+	padding-top: 3px;
+}
+
+.input_tb .tr_title td {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	border-bottom: 1px solid #d5d5d5;
+}
+
+.input_tb .tr_last td {
+	border-bottom: 0;
+}
+
+.input_tb .title {
+	text-align: right;
+}
+
+.input_tb .title1 {
+	text-align: right;
+	border-top: 1px solid #d5d5d5;
+}
+
+.input_tb .text1 {
+	border-top: 1px solid #d5d5d5;
+}
+
+.input_tb .subtitle {
+	text-align: left;
+	background-color: #d2e1fd;
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+}
+
+.input_tb .tr_btn_input td {
+	background-color: #fbfbfb;
+	/*border-top:1px solid #dbdbdb;*/
+	height: 40px;
+}
+textarea {
+	resize:none;
+}
+</style>
+
+<script type="text/javascript">
+    var wms_cre_credit_line_customer_change_head_id;// 贷款客户变更主键id
+    var grid, dialog, columns;
+    var cktype='';
+    $(function() {
+		$("#khinfo input[type=text]").attr({
+			"isrequired" : "1"
+		});
+		$("#gzinfo input[type=text]").attr({
+			"isrequired" : "1"
+		});
+		$("#khinfo input[type=text]").bind({
+			"change" : function() {
+				this.style.border = '';
+				//$(this).removeAttr("style.border");
+			}
+		});
+		$("#gzinfo input[type=text]").bind({
+			"change" : function() {
+				this.style.border = '';
+			}
+		});
+		//获取该用户的变更唯一id
+		wms_cre_credit_line_customer_change_head_id = $.query.get('wms_cre_credit_line_customer_change_head_id');
+		cktype = $.query.get('cktype');
+		initGrid();
+		//判断是否存在
+		if (wms_cre_credit_line_customer_change_head_id) {
+			$.getJSON(globalUtil.getTimestampUrl('/cremanage/wmscrecreditlinecustomerchangeheadinfobypk.do'),
+			{
+				"wms_cre_credit_line_customer_change_head_id" :wms_cre_credit_line_customer_change_head_id
+			},
+			function(json) {
+				//json为唯一标示的该用户变更后的信息  接下来 获取用户的个人信息  工作信息 和 房产信息
+				tjbtn.style.display='none';
+				//填充所有文本框的填充
+				globalUtil.setFormVal("khinfo", json);
+				setotherVal(json);
+				//填写用户工作信息
+				$.getJSON(
+					globalUtil.getTimestampUrl('/cremanage/wmscrecustomerchangelineworkinfowithoutpaginglist.do'),
+					{"wms_cre_credit_line_customer_change_head_id" : wms_cre_credit_line_customer_change_head_id,
+						'sortname': 'wms_cre_credit_line_customer_change_head_id', 
+						'sortorder':'ASC'},
+					function (json_work_data){
+                       //填充工作信息文本框所有内容
+					   if(json_work_data!=null&&json_work_data!=undefined&&json_work_data.Rows.length>0){
+                    	    globalUtil.setFormVal("gzinfo", json_work_data.Rows[0]);
+    				        $("select[name='work_unit_property']").val(json_work_data.Rows[0].work_unit_property);
+                        }
+				    	 //填写房产信息
+						$.getJSON(
+							globalUtil.getTimestampUrl('/cremanage/wmscrecustomerchangelinehouseinfowithoutpaginglist.do'),
+							{"wms_cre_credit_line_customer_change_head_id" : wms_cre_credit_line_customer_change_head_id,
+								'sortname': 'wms_cre_credit_line_customer_change_head_id', 
+								'sortorder':'ASC'},
+							function (json_house_data){
+								//alert(JSON.stringify(json_house_data));
+								setHouseVal(json_house_data.Rows);
+								$.getJSON(
+										globalUtil.getTimestampUrl('/cremanage/wmscrecustomerchangelinecompanywithoutpaginglist.do'),
+										{"wms_cre_credit_line_customer_change_head_id" : wms_cre_credit_line_customer_change_head_id,
+											'sortname': 'wms_cre_credit_line_customer_change_head_id', 
+											'sortorder':'ASC'},
+										function (json_company_data){
+											//alert(JSON.stringify(json_house_data));
+											setCompanyVal(json_company_data.Rows);
+											lookpage();
+										}
+									);
+							}
+						);
+				    	 
+						//车产信息
+						$.getJSON(globalUtil.getTimestampUrl('/cremanage/wmscrecustomerchangelinecarpinfowithoutpaginglist.do'),
+								{
+									"wms_cre_credit_line_customer_change_head_id" : wms_cre_credit_line_customer_change_head_id
+								},
+								function(json_car_data) {
+									if(json_car_data!=null&&json_car_data!=undefined){
+										var json_car = json_car_data.Rows;
+										setCarVal(json_car);
+									}
+								});
+					}
+				);
+			});
+		} else {
+			//Donothing
+		}
+	});
+    
+  //表格初始化
+	var grid_data={};
+	function initGrid() {
+		columns = [ {
+			display : '子女姓名',
+			name : 'child_name',
+			width : 80,
+			minWidth : 80,
+			 editor: { type: 'text',maxlength:50 }
+		}, {
+			display: '学校/工作单位名称',
+			name: 'school_work_name',
+			width: 160,
+			minWidth : 160,
+			 editor: { type: 'text',maxlength:50 }
+		}, {
+			display : '电话',
+			name : 'child_telephone',
+			width : 140,
+			minWidth : 140,
+			 editor: { type: 'text',maxlength:25 }
+		}, {
+            display: '省',
+            name: 'house_address_province',
+            width: 80,
+            minWidth: 80,
+   		 editor: { type: 'text',maxlength:25 }
+        }, {
+            display: '市',
+            name: 'house_address_city',
+            width: 80,
+            minWidth: 80,
+   		 editor: { type: 'text',maxlength:50 }
+        }, {
+            display: '区（县）',
+            name: 'house_address_district',
+            width: 80,
+            minWidth: 80,
+   		 editor: { type: 'text',maxlength:50 }
+        }, {
+            display: '更详细',
+            name: 'house_address_more',
+            width: 180,
+            minWidth: 180,
+   		 editor: { type: 'text',maxlength:125 }
+        } ];
+		var enEtFlag=false;
+		if(wms_cre_credit_line_customer_change_head_id){
+			grid_data = globalUtil.syncGetJson('/cremanage/wmscuscustomerchangechildwithoutpaginglist.do',{
+				'wms_cre_credit_line_customer_change_head_id': wms_cre_credit_line_customer_change_head_id, // 贷款id
+				'sortname': 'wms_cre_credit_line_customer_change_head_id', 
+				'sortorder':'ASC'
+		        },'POST');
+			for (var gdinx = 0; gdinx < grid_data.Rows.length; gdinx++) {
+				grid_data.Rows[gdinx].create_timestamp=numToDateStr(grid_data.Rows[gdinx].create_timestamp);
+				grid_data.Rows[gdinx].last_update_timestamp=numToDateStr(grid_data.Rows[gdinx].last_update_timestamp);
+			}
+			if(cktype!='ck'){
+				enEtFlag=true;
+			}
+		}else {
+			grid_data.Rows=[{'child_name':'','school_work_name':'','child_telephone':'','house_address_province':'','house_address_city':'','house_address_district':'','house_address_more':''}];
+			enEtFlag=true;
+		}
+		grid = $("#grid").ligerGrid({
+			data : grid_data,
+			columns : columns,
+			rownumbers : true,
+			allowUnSelectRow : true,
+			enabledEdit: enEtFlag,
+			usePager : false,
+			width : '100%',
+			height : 160,
+			heightDiff : -4,
+			parms : {
+				_filterParms : -1
+			}
+		});
+	}
+    
+     /**
+      *关闭当前页面
+     */
+	function closeDialog() {
+		window.parent.closepage();
+	}
+	/**
+	 * 提供给翻页按钮调用的方法
+	 */
+	function changeTab(id) {
+		var khinfo = document.getElementById("khinfo"); //个人资料tab
+		var gzinfo = document.getElementById("gzinfo"); //工作信息tab
+		var fcinfo1 = document.getElementById("fcinfo"); //房产信息tab
+		var ccinfo1 = document.getElementById("ccinfo"); //车产信息tab
+		var companyinfo = document.getElementById("companyinfo"); //公司信息tab
+
+		if (id == 'khinfo') {
+			khinfo.style.display = '';
+			gzinfo.style.display = 'none';
+			fcinfo1.style.display = 'none';
+			ccinfo1.style.display = 'none';
+			companyinfo.style.display = 'none';
+			
+			document.getElementById("tabbody1").className = "tabbody1";
+			document.getElementById("tabbody2").className = "tabbody2";
+			document.getElementById("tabbody3").className = "tabbody2";
+			document.getElementById("tabbody4").className = "tabbody2";
+			document.getElementById("tabbody5").className = "tabbody2";
+			
+			document.getElementById("khinfo_div").className = "tab_step tab_step101";
+			document.getElementById("gzinfo_div").className = "tab_step tab_step202";
+			document.getElementById("fcinfo_div").className = "tab_step tab_step302";
+			document.getElementById("ccinfo_div").className = "tab_step tab_step402";
+			document.getElementById("companyinfo_div").className = "tab_step tab_step502";
+			
+		} else if (id == 'gzinfo') {
+			khinfo.style.display = 'none';
+			gzinfo.style.display = '';
+			fcinfo1.style.display = 'none';
+			ccinfo1.style.display = 'none';
+			companyinfo.style.display = 'none';
+			
+			document.getElementById("tabbody1").className = "tabbody2";
+			document.getElementById("tabbody2").className = "tabbody1";
+			document.getElementById("tabbody3").className = "tabbody2";
+			document.getElementById("tabbody4").className = "tabbody2";
+			document.getElementById("tabbody5").className = "tabbody2";
+			
+			document.getElementById("khinfo_div").className = "tab_step tab_step102";
+			document.getElementById("gzinfo_div").className = "tab_step tab_step201";
+			document.getElementById("fcinfo_div").className = "tab_step tab_step302";
+			document.getElementById("ccinfo_div").className = "tab_step tab_step402";
+			document.getElementById("companyinfo_div").className = "tab_step tab_step502";
+			
+		} else if (id == 'fcinfo') {
+			document.getElementById("tabbody1").className = "tabbody2";
+			document.getElementById("tabbody2").className = "tabbody2";
+			document.getElementById("tabbody3").className = "tabbody1";
+			document.getElementById("tabbody4").className = "tabbody2";
+			document.getElementById("tabbody5").className = "tabbody2";
+			
+			document.getElementById("khinfo_div").className = "tab_step tab_step102";
+			document.getElementById("gzinfo_div").className = "tab_step tab_step202";
+			document.getElementById("fcinfo_div").className = "tab_step tab_step301";
+			document.getElementById("ccinfo_div").className = "tab_step tab_step402";
+			document.getElementById("companyinfo_div").className = "tab_step tab_step402";
+			
+			khinfo.style.display = 'none';
+			gzinfo.style.display = 'none';
+			fcinfo1.style.display = '';
+			ccinfo1.style.display = 'none';
+			companyinfo.style.display = 'none';
+			globalUtil.clearLigerTip("khinfo");
+			globalUtil.clearLigerTip("gzinfo");
+		}else if (id == 'ccinfo') {
+			
+			khinfo.style.display = 'none';
+			gzinfo.style.display = 'none';
+			fcinfo1.style.display = 'none';
+			ccinfo1.style.display = '';
+			companyinfo.style.display = 'none';
+			
+			document.getElementById("tabbody1").className = "tabbody2";
+			document.getElementById("tabbody2").className = "tabbody2";
+			document.getElementById("tabbody3").className = "tabbody2";
+			document.getElementById("tabbody4").className = "tabbody1";
+			document.getElementById("tabbody5").className = "tabbody2";
+			
+			document.getElementById("khinfo_div").className = "tab_step tab_step102";
+			document.getElementById("gzinfo_div").className = "tab_step tab_step202";
+			document.getElementById("fcinfo_div").className = "tab_step tab_step302";
+			document.getElementById("ccinfo_div").className = "tab_step tab_step401";
+			document.getElementById("companyinfo_div").className = "tab_step tab_step502";
+			
+		}  else if (id == 'companyinfo') {
+			document.getElementById("tabbody1").className = "tabbody2";
+			document.getElementById("tabbody2").className = "tabbody2";
+			document.getElementById("tabbody3").className = "tabbody2";
+			document.getElementById("tabbody4").className = "tabbody2";
+			document.getElementById("tabbody5").className = "tabbody1";
+			
+			document.getElementById("khinfo_div").className = "tab_step tab_step102";
+			document.getElementById("gzinfo_div").className = "tab_step tab_step202";
+			document.getElementById("fcinfo_div").className = "tab_step tab_step302";
+			document.getElementById("ccinfo_div").className = "tab_step tab_step402";
+			document.getElementById("companyinfo_div").className = "tab_step tab_step401";
+			
+			khinfo.style.display = 'none';
+			gzinfo.style.display = 'none';
+			fcinfo1.style.display = 'none';
+			ccinfo1.style.display = 'none';
+			companyinfo.style.display = '';
+		}
+	};
+	//填写个人资料界面
+	function setotherVal(json) {
+		/*
+		//保证当操作员点击修改的时候，如果json.has_children=="yes"说明有子女，必须要显示信息
+		if (json.has_children == "yes") {
+			document.getElementById("children").style.display = '';
+		}
+		*/
+		$("input[name='gender']").each(function() {
+			if ($(this).val() == json.gender) {
+				$(this).attr('checked', 'checked');
+				return false;
+			}
+		});
+		/*
+		$("input[name='has_children']").each(function() {
+			if ($(this).val() == json.has_children) {
+				$(this).attr('checked', 'checked');
+
+				return false;
+			}
+		});
+		*/
+		$("select[name='work_stat']").val(json.work_stat);
+		$("select[name='max_degree']").val(json.max_degree);
+		$("select[name='work_unit_property']").val(json.work_unit_property);
+		//$("select[name='has_house']").val(json.has_house);
+		$("select[name='has_married']").val(json.has_married);
+		$("select[name='resource_of_tel1']").val(json.resource_of_tel1);
+		$("select[name='resource_of_tel2']").val(json.resource_of_tel2);
+		$("select[name='is_real_name_tel1']").val(json.is_real_name_tel1);
+		$("select[name='is_real_name_tel2']").val(json.is_real_name_tel2);
+		isSM(1);
+		isSM(2);
+		var common_occupants = json.common_occupants;
+		if (common_occupants != null &&common_occupants.length && common_occupants.length > 0) {
+			var commarr = common_occupants.split(",");
+			$("input[name='common_occupants']").each(function() {
+				if (checkArr(commarr, $(this).val())) {
+					$(this).attr('checked', 'checked');
+				} else {
+					$(this).removeAttr('checked');
+				}
+			});
+		}
+		var house_stat = json.house_stat;
+		if (house_stat!=null && house_stat.length && house_stat.length > 0) {
+			var housestarr = house_stat.split(",");
+			$("input[name='house_stat']").each(function() {
+				if (checkArr(housestarr, $(this).val())) {
+					$(this).attr('checked', 'checked');
+				} else {
+					$(this).removeAttr('checked');
+				}
+			});
+		}
+
+	}
+
+
+	function checkArr(commarr, val) {
+		for (var i = 0; i < commarr.length; i++) {
+			if (val == commarr[i]) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	function getOtherVal(jsonStr, ischeck) {
+		$("input[name='gender']").each(function() {
+			if ($(this).is(':checked')) {
+				jsonStr.gender = $(this).val();
+				return false;//退出each循环
+			}
+		});
+		if (ischeck && (jsonStr.gender == '' || jsonStr.gender == null || jsonStr.gender==undefined)) {
+			return 'error';
+		}
+		/*
+		$("input[name='has_children']").each(function() {
+			if ($(this).is(':checked')) {
+				jsonStr.has_children = $(this).val();
+				return false;//退出each循环
+			}
+		});
+		if (ischeck && jsonStr.has_children == '') {
+			return 'error';
+		}
+		$("input[name='has_house']").each(function() {
+			if ($(this).is(':checked')) {
+				jsonStr.has_house = $(this).val();
+				return false;//退出each循环
+			}
+		});
+		if (ischeck && jsonStr.has_house == '') {
+			return 'error';
+		}
+		*/
+		var common_occupants = [];
+		$("input[name='common_occupants']").each(function() {
+			if ($(this).is(':checked')) {
+				common_occupants.push($(this).val());
+			}
+		});
+		jsonStr.common_occupants = common_occupants.join(",");
+		if (ischeck && jsonStr.common_occupants == '') {
+			return 'error';
+		}
+		var house_stats = [];
+		$("input[name='house_stat']").each(function() {
+			if ($(this).is(':checked')) {
+				house_stats.push($(this).val());
+			}
+		});
+		jsonStr.house_stat = house_stats.join(",");
+		if (ischeck && jsonStr.house_stat == '') {
+			return 'error';
+		}
+		jsonStr.max_degree = $("select[name='max_degree'] option:selected").val();
+		jsonStr.has_married = $("select[name='has_married'] option:selected").val();
+		
+		jsonStr.resource_of_tel1 = $("select[name='resource_of_tel1'] option:selected").val();
+		jsonStr.is_real_name_tel1 = $("select[name='is_real_name_tel1'] option:selected").val();
+		jsonStr.resource_of_tel2 = $("select[name='resource_of_tel2'] option:selected").val();
+		jsonStr.is_real_name_tel2 = $("select[name='is_real_name_tel2'] option:selected").val();
+		//jsonStr.has_house = $("select[name='has_house'] option:selected").val();
+		
+		jsonStr.work_unit_property = $("select[name='work_unit_property'] option:selected").val();
+		if (ischeck){
+			if($("select[name='max_degree'] option:selected").val() == '0') {
+				return 'error';
+			}
+			if($("select[name='has_married'] option:selected").val() == '0') {
+				return 'error';
+			}
+			/*
+			if($("select[name='has_house'] option:selected").val() == '0') {
+				return 'error';
+			}
+			*/
+			if($("#work_stat").val()!=2){
+				if($("select[name='work_unit_property'] option:selected").val() == '0') {
+					return 'error';
+				}
+			}
+			if($("select[name='resource_of_tel1'] option:selected").val() == '') {
+				return 'error';
+			}
+			if($("select[name='is_real_name_tel1'] option:selected").val() == '') {
+				return 'error';
+			}
+			if($("#mobile_telephone2").val()!='无'&&$("#mobile_telephone2").val()!='没有'){
+				if($("select[name='resource_of_tel2'] option:selected").val() == '') {
+					return 'error';
+				}
+				if($("select[name='is_real_name_tel2'] option:selected").val() == '') {
+					return 'error';
+				}
+			}
+		}
+
+	}
+	//设置房产信息
+	function setHouseVal(json_house) {
+		var length = json_house.length;
+		if (json_house && json_house.length == 0) {
+			return;
+		}
+		$("#wms_cus_customer_line_houseinfo_id ").val(json_house[0].wms_cus_customer_line_houseinfo_id);
+		$("#house_buy_date").val(json_house[0].house_buy_date);
+		$("#house_buy_money").val(json_house[0].house_buy_money);
+		$("#house_building_area").val(json_house[0].house_building_area);
+		$("#house_address_city").val(json_house[0].house_address_city);
+		$("#house_address_district").val(json_house[0].house_address_district);
+		$("#house_address_province").val(json_house[0].house_address_province);
+		$("#house_address_more").val(json_house[0].house_address_more);
+		$("#house_post_code").val(json_house[0].house_post_code);
+		$("#is_supp_house_card").val(json_house[0].is_supp_house_card);
+		$("#house_type").val(json_house[0].house_type);
+		$("#house_no").val(json_house[0].house_no);
+		$("#house_vol_no").val(json_house[0].house_vol_no);
+		$("#community_name").val(json_house[0].community_name);
+
+		for (var i = 0; i < length - 1; i++) {
+			addFcInfo(json_house[i + 1]);
+		}
+	}
+	
+	//设置车产信息
+	function setCarVal(json_car) {
+		var length = json_car.length;
+		if (json_car && json_car.length == 0) {
+			return;
+		}
+		$("#wms_cus_customer_line_carpinfo_id").val(json_car[0].wms_cus_customer_line_carpinfo_id);
+		$("#car_name").val(json_car[0].car_name);
+		$("#car_no").val(json_car[0].car_no);
+		$("#car_type").val(json_car[0].car_type);
+		$("#car_model").val(json_car[0].car_model);
+		$("#car_driving_mode").val(json_car[0].car_driving_mode);
+		$("#car_exhaust_quantity").val(json_car[0].car_exhaust_quantity);
+		$("#car_purchase_time").val(json_car[0].car_purchase_time);
+		$("#car_purchase_amount").val(json_car[0].car_purchase_amount);
+		$("#vehicle_acq_mode").val(json_car[0].vehicle_acq_mode);
+		$("#vehicle_idn_num").val(json_car[0].vehicle_idn_num);
+		$("#insurance_maturity").val(json_car[0].insurance_maturity);
+		$("#vi_type_info_name").val(json_car[0].vi_type_info_name);
+		$("#vi_type_info").val(json_car[0].vi_type_info);
+		$("#other_vi_info").val(json_car[0].other_vi_info);
+
+		for (var i = 0; i < length - 1; i++) {
+			addCcInfo(json_car[i + 1]);
+		}
+	}
+	
+	//设置公司信息
+	function setCompanyVal(json_company) {
+		var length = json_company.length;
+		if (json_company && length == 0) {
+			return;
+		}
+		$("#wms_cus_customer_line_company_id").val(json_company[0].wms_cus_customer_line_company_id);
+		$("#comp_full_name").val(json_company[0].comp_full_name);
+		$("#comp_tel").val(json_company[0].comp_tel);
+		$("#found_date").val(json_company[0].found_date);
+		$("#comp_kind").val(json_company[0].comp_kind);
+		$("#place_of_comp").val(json_company[0].place_of_comp);
+		var setcomp_industrys = json_company[0].comp_industry;
+		if (setcomp_industrys.length && setcomp_industrys.length > 0) {
+			var compindsarr = setcomp_industrys.split(",");
+			$("input[name='comp_industry']").each(function() {
+				if (checkArr(compindsarr, $(this).val())) {
+					$(this).attr('checked', 'checked');
+				} else {
+					$(this).removeAttr('checked');
+				}
+			});
+		}
+		$("#compt_address_province").val(json_company[0].compt_address_province);
+		$("#comp_address_city").val(json_company[0].comp_address_city);
+		$("#comp_address_district").val(json_company[0].comp_address_district);
+		$("#comp_address_more").val(json_company[0].comp_address_more);
+
+		for (var i = 0; i < length - 1; i++) {
+			addCompInfo(json_company[i + 1]);
+		}
+	}
+	/**
+	 * 动态添加车产信息
+	 */
+	function addCcInfo(json_car) {
+		//获取时间日期
+		var nameStr = new Date().getTime();
+		if (!json_car) {
+			json_car = {};
+		}
+		if (json_car.wms_cus_customer_line_carpinfo_id == null
+				|| json_car.wms_cus_customer_line_carpinfo_id == 'undifined'
+				|| json_car.wms_cus_customer_line_carpinfo_id == 'null') {
+			json_car.wms_cus_customer_line_carpinfo_id = '0';
+		}
+		if (json_car.car_name == null
+				|| json_car.car_name == 'undifined'
+				|| json_car.car_name == 'null') {
+			json_car.car_name = '';
+		}
+		if (json_car.car_no == null
+				|| json_car.car_no == 'undifined'
+				|| json_car.car_no == 'null') {
+			json_car.car_no = '';
+		}
+		if (json_car.car_type == null
+				|| json_car.car_type == 'undifined'
+				|| json_car.car_type == 'null') {
+			json_car.car_type = '';
+		}
+		if (json_car.car_model == null
+				|| json_car.car_model == 'undifined'
+				|| json_car.car_model == 'null') {
+			json_car.car_model = '';
+		}
+		if (json_car.car_driving_mode == null
+				|| json_car.car_driving_mode == 'undifined'
+				|| json_car.car_driving_mode == 'null') {
+			json_car.car_driving_mode = '';
+		}
+		if (json_car.car_exhaust_quantity == null
+				|| json_car.car_exhaust_quantity == 'undifined'
+				|| json_car.car_exhaust_quantity == 'null') {
+			json_car.car_exhaust_quantity = '';
+		}
+		if(json_car.car_purchase_time ==null 
+				||json_car.car_purchase_time == 'undifined'
+				||json_car.car_purchase_time=='null'){
+			json_car.car_purchase_time='';
+		}
+		if (json_car.car_purchase_amount == null
+				|| json_car.car_purchase_amount == 'undifined'
+				|| json_car.car_purchase_amount == 'null') {
+			json_car.car_purchase_amount = '';
+		}
+		if (json_car.vehicle_acq_mode == null
+				|| json_car.vehicle_acq_mode == 'undifined'
+				|| json_car.vehicle_acq_mode == 'null') {
+			json_car.vehicle_acq_mode = '';
+		}
+		if (json_car.vehicle_idn_num == null
+				|| json_car.vehicle_idn_num == 'undifined'
+				|| json_car.vehicle_idn_num == 'null') {
+			json_car.vehicle_idn_num = '';
+		}
+		if (json_car.insurance_maturity == null
+				|| json_car.insurance_maturity == 'undifined'
+				|| json_car.insurance_maturity == 'null') {
+			json_car.insurance_maturity = '';
+		}
+		if (json_car.vi_type_info_name == null
+				|| json_car.vi_type_info_name == 'undifined'
+				|| json_car.vi_type_info_name == 'null') {
+			json_car.vi_type_info_name = '';
+		}
+		if (json_car.vi_type_info == null
+				|| json_car.vi_type_info == 'undifined'
+				|| json_car.vi_type_info == 'null') {
+			json_car.vi_type_info = '';
+		}
+		if (json_car.other_vi_info == null
+				|| json_car.other_vi_info == 'undifined'
+				|| json_car.other_vi_info == 'null') {
+			json_car.other_vi_info = '';
+		}
+		var row = document.getElementById("ccinfo1").insertRow(
+				document.getElementById("ccinfo1").rows.length);
+		var title_1 = row.insertCell(0);
+		title_1.className = 'title1';
+		title_1.style.width = '10%';
+		title_1.innerHTML = '车辆名称：';
+		var text_1 = row.insertCell(1);
+		text_1.align="left";
+		text_1.className = 'text1';
+		var datestr = "<input type='hidden' class='hidden' id="+wms_cus_customer_line_carpinfo_id+" value='"+json_car.wms_cus_customer_line_carpinfo_id+"'/>"
+				+"<input type='text' style='width: 150px;' id='car_name' value='"+json_car.car_name+"' />";
+		text_1.innerHTML = datestr;
+		
+		var title_2 = row.insertCell(2);
+		title_2.className = 'title1';
+		title_2.style.width = '10%';
+		title_2.innerHTML = '车辆号码：';
+		var text_2 = row.insertCell(3);
+		text_2.align="left";
+		text_2.innerHTML = "<input type='text' style='width: 150px;' id='car_no' value='"+json_car.car_no+"' />";
+
+		var title_3 = row.insertCell(4);
+		title_3.className = 'title1';
+		title_3.style.width = '10%';
+		title_3.innerHTML = '车辆类型：';
+
+		var text_3 = row.insertCell(5);
+		text_3.align="left";
+		text_3.style.width = '20%';
+		text_3.innerHTML = "<input type='text' style='width: 150px;' id='car_type' value='"+json_car.car_type+"' />";
+		
+		var row2 = document.getElementById("ccinfo1").insertRow(
+				document.getElementById("ccinfo1").rows.length);
+		var row2_title_1 = row2.insertCell(0);
+		row2_title_1.className = 'title';
+		row2_title_1.style.width = '10%';
+		row2_title_1.innerHTML = '车辆型号：';
+		var row2_text_1 = row2.insertCell(1);
+		row2_text_1.align="left";
+		row2_text_1.innerHTML = "<input type='text' style='width: 150px;' id='car_model' value='"+json_car.car_model+"' />";
+		
+		var row2_title_2 = row2.insertCell(2);
+		row2_title_2.className = 'title';
+		row2_title_2.style.width = '10%';
+		row2_title_2.innerHTML = '驱动方式：';
+		var row2_text_2 = row2.insertCell(3);
+		row2_text_2.align="left";
+		row2_text_2.innerHTML = "<input type='text' style='width: 150px;' id='car_driving_mode' value='"+json_car.car_driving_mode+"' />";
+		
+		var row2_title_3 = row2.insertCell(4);
+		row2_title_3.className = 'title';
+		row2_title_3.style.width = '10%';
+		row2_title_3.innerHTML = '车辆排气量：';
+		var row2_text_3 = row2.insertCell(5);
+		row2_text_3.align="left";
+		row2_text_3.innerHTML = "<input type='text' style='width: 150px;' id='car_exhaust_quantity' value='"+json_car.car_exhaust_quantity+"' />";
+
+		var row3 = document.getElementById("ccinfo1").insertRow(
+				document.getElementById("ccinfo1").rows.length);
+		var row3_title_1 = row3.insertCell(0);
+		row3_title_1.className = 'title';
+		row3_title_1.style.width = '10%';
+		row3_title_1.innerHTML = '购买时间：';
+		var row3_text_1 = row3.insertCell(1);
+		row3_text_1.align="left";
+		row3_text_1.innerHTML = "<input type='text' style='width: 150px;vertical-align: top;' class='Wdate' id='car_purchase_time' onclick='WdatePicker({dateFmt:\"yyyy-MM-dd\",isShowClear:true})' value='"+json_car.car_purchase_time+"' />";
+		
+		var row3_title_2 = row3.insertCell(2);
+		row3_title_2.className = 'title';
+		row3_title_2.style.width = '10%';
+		row3_title_2.innerHTML = '购买金额：';
+		var row3_text_2 = row3.insertCell(3);
+		row3_text_2.align="left";
+		row3_text_2.innerHTML = "<input type='text' style='width: 140px;' id='car_purchase_amount' value='"+json_car.car_purchase_amount+"' />元";
+		
+		var row3_title_3 = row3.insertCell(4);
+		row3_title_3.className = 'title';
+		row3_title_3.style.width = '10%';
+		row3_title_3.innerHTML = '车辆获取方式：';
+		var row3_text_3 = row3.insertCell(5);
+		row3_text_3.align="left";
+		var vehicleAcqModeHTML = "<select name='vehicle_acq_mode' id='vehicle_acq_mode' style='width: 150px;'>";
+		vehicleAcqModeHTML += "<option value=''>请选择</option>";
+		if(json_car.vehicle_acq_mode == '1'){
+			vehicleAcqModeHTML += "<option value='1' selected=selected>一次性购买</option>";
+		}else {
+			vehicleAcqModeHTML += "<option value='1'>一次性购买</option>";
+		}
+		if(json_car.vehicle_acq_mode == '2'){
+			vehicleAcqModeHTML += "<option value='2' selected=selected>二手购买</option>";
+		}else {
+			vehicleAcqModeHTML += "<option value='2'>二手购买</option>";
+		} 
+		vehicleAcqModeHTML += "</select>";
+		row3_text_3.innerHTML = vehicleAcqModeHTML;
+		
+		var row4 = document.getElementById("ccinfo1").insertRow(
+				document.getElementById("ccinfo1").rows.length);		
+		var row4_title_1 = row4.insertCell(0);
+		row4_title_1.className = 'title';
+		row4_title_1.style.width = '10%';
+		row4_title_1.innerHTML = '车架号：';
+		var row4_text_1 = row4.insertCell(1);
+		row4_text_1.align="left";
+		row4_text_1.innerHTML = "<input type='text' style='width: 150px;' id='vehicle_idn_num' value='"+json_car.vehicle_idn_num+"' />";
+		
+		var row4_title_2 = row4.insertCell(2);
+		row4_title_2.className = 'title';
+		row4_title_2.style.width = '10%';
+		row4_title_2.innerHTML = '保险到期时间：';
+		var row4_text_2 = row4.insertCell(3);
+		row4_text_2.align="left";
+		row4_text_2.innerHTML = "<input type='text' style='width: 150px;vertical-align: top;' class='Wdate' id='insurance_maturity' onclick='WdatePicker({dateFmt:\"yyyy-MM-dd\",isShowClear:true})'  value='"+json_car.insurance_maturity+"' />";
+		 
+		var row5 = document.getElementById("ccinfo1").insertRow(
+				document.getElementById("ccinfo1").rows.length);		
+		var row5_title_1 = row5.insertCell(0);
+		row5_title_1.className = 'title';
+		row5_title_1.style.width = '10%';
+		row5_title_1.innerHTML = '车辆保险种类：';
+		var row5_text_1 = row5.insertCell(1);
+		row5_text_1.align="left";
+		row5_text_1.style.width = '90%';
+		row5_text_1.setAttribute('colspan',5);
+		row5_text_1.innerHTML = "<input type='text' style='width: 740px;' name='"+nameStr+"_name' id='vi_type_info_name' readonly='readonly'  value='"+json_car.vi_type_info_name+"' onclick='showViTypeInfo(this);' />"
+			+ "<input type='text' style='display: none;' name='"+nameStr+"' id='vi_type_info' value='"+json_car.vi_type_info+"' />";
+		
+		var row6 = document.getElementById("ccinfo1").insertRow(
+				document.getElementById("ccinfo1").rows.length);		
+		var row6_title_1 = row6.insertCell(0);
+		row6_title_1.className = 'title';
+		row6_title_1.style.width = '10%';
+		row6_title_1.innerHTML = '其它保险种类：';
+		var row6_text_1 = row6.insertCell(1);
+		row6_text_1.align="left";
+		row6_text_1.style.width = '90%';
+		row6_text_1.setAttribute('colspan',5);
+		row6_text_1.innerHTML = "<textarea style='width: 740px;height: 55px;' id='other_vi_info'>"+json_car.other_vi_info+"</textarea>"
+				+"<a class=\"btn\" style=\"display:\" onclick=\"delRowCc(this,'"+ json_car.wms_cus_customer_line_carpinfo_id
+				+ "')\" href=\"#\">删除</a>";;
+		
+	}
+	//获得房产信息
+	function getCustomerHouse(str,ischeck, json) {
+		var rows = document.getElementById("fcinfo1").rows;
+		var len = rows.length;
+		var dataArr = [];
+		var wfIt=0;
+		for (var i = 1; i < len; i += 3) {
+			var rowdata1 = rows[i].cells;
+			var rowdata2 = rows[i+1].cells;
+			var rowdata3 = rows[i + 2].cells;
+			var rowdata = {};
+		
+			rowdata.wms_cus_customer_line_houseinfo_id = rowdata1[1].childNodes[0].value;
+			rowdata.house_buy_date = rowdata1[1].childNodes[1].value;
+			rowdata.house_buy_money = rowdata1[3].childNodes[0].value;
+			rowdata.house_building_area = rowdata1[5].childNodes[0].value;
+			rowdata.house_post_code = rowdata2[1].childNodes[0].value;
+			if(rowdata2[3].childNodes[1]!=undefined){
+				rowdata.is_supp_house_card = rowdata2[3].childNodes[1].value;
+			}else {
+				rowdata.is_supp_house_card = rowdata2[3].childNodes[0].value;
+			}
+			rowdata.house_address_province = rowdata3[1].childNodes[0].value;
+			rowdata.house_address_city = rowdata3[1].childNodes[2].value;
+			rowdata.house_address_district=rowdata3[1].childNodes[4].value;
+			rowdata.house_address_more=rowdata3[1].childNodes[6].value;
+			//判断是暂存还是提交
+			if(str==1){
+				if (rowdata.house_buy_date != '' || rowdata.house_buy_money != ''
+					|| rowdata.house_building_area != ''
+					|| rowdata.house_address_city != ''
+					|| rowdata.house_address_district != ''
+					|| rowdata.house_address_province != ''
+					||rowdata.house_address_more!=''
+					||rowdata.house_post_code!=''
+					||rowdata.is_supp_house_card!='') {
+					
+						if(rowdata.house_buy_date == '' || rowdata.house_buy_money == ''
+							|| rowdata.house_building_area == ''							
+							|| rowdata.house_address_city == ''
+							|| rowdata.house_address_district == ''
+							|| rowdata.house_address_province == ''
+							||rowdata.house_address_more==''
+							||rowdata.house_post_code==''
+							||rowdata.is_supp_house_card==''){
+								return 'error';
+							}
+							
+				} else {
+					//all input text are null
+					if (ischeck && json.house_stat.indexOf("zz") != -1 ) {
+						return 'error';
+					}
+				}
+				if(rowdata.house_buy_date != '' && rowdata.house_buy_money != ''
+					&& rowdata.house_building_area != ''
+					&& rowdata.house_address_city != ''
+					&& rowdata.house_address_district != ''
+					&& rowdata.house_address_province != ''
+					&&rowdata.house_address_more!=''
+					&&rowdata.house_post_code!=''
+					&&rowdata.is_supp_house_card!=''){
+						dataArr.push(rowdata);
+				}
+			}else {
+				if (rowdata.house_buy_date != '' || rowdata.house_buy_money != ''
+					|| rowdata.house_building_area != ''
+					|| rowdata.house_address_city != ''
+					|| rowdata.house_address_district != ''
+					|| rowdata.house_address_province != ''
+					||rowdata.house_address_more!=''
+					||rowdata.house_post_code!=''
+					||rowdata.is_supp_house_card!='') {
+						dataArr.push(rowdata);
+				}
+			}
+		}
+		var data = JSON.stringify(dataArr);
+		return data;
+	}
+	//获得公司信息
+	function getCustomerCompInfo(str,ischeck, json) {
+		var rows = document.getElementById("companyinfo1").rows;
+		var len = rows.length;
+		var dataArr = [];
+		var wfIt=0;
+		for (var i = 1; i < len; i += 4) {
+			var rowdata1 = rows[i].cells;
+			var rowdata2 = rows[i+1].cells;
+			var rowdata3 = rows[i + 2].cells;
+			var rowdata4 = rows[i + 3].cells;
+			var rowdata = {};
+			if(i==1){
+				if(rowdata1[1].childNodes[1]!=undefined){
+					rowdata.wms_cus_customer_line_company_id = rowdata1[1].childNodes[1].value;
+				}else {
+					rowdata.wms_cus_customer_line_company_id = rowdata1[1].childNodes[0].value;
+				}
+			}else {
+				rowdata.wms_cus_customer_line_company_id = rowdata1[1].childNodes[0].value;
+			}
+			if(rowdata.wms_cus_customer_line_company_id==undefined){
+				rowdata.wms_cus_customer_line_company_id='';
+			}
+			if(rowdata1[1].childNodes[3]!=undefined){
+				rowdata.comp_full_name = rowdata1[1].childNodes[3].value;
+			}else {
+				rowdata.comp_full_name = rowdata1[1].childNodes[1].value;
+			}
+			rowdata.comp_tel = rowdata2[1].childNodes[0].value;
+			if(rowdata2[3].childNodes[1]!=undefined){
+				rowdata.found_date = rowdata2[3].childNodes[1].value;
+			}else {
+				rowdata.found_date = rowdata2[3].childNodes[0].value;
+			}
+			if(rowdata2[5].childNodes[1]!=undefined){
+				rowdata.comp_kind = rowdata2[5].childNodes[1].value;
+			}else {
+				rowdata.comp_kind = rowdata2[5].childNodes[0].value;
+			}
+			if(rowdata3[1].childNodes[1]!=undefined){
+				rowdata.place_of_comp = rowdata3[1].childNodes[1].value;
+			}else {
+				rowdata.place_of_comp = rowdata3[1].childNodes[0].value;
+			}
+			
+			var comp_industrys = [];
+			for(var j=1;j<rowdata3[3].childNodes.length;j+=1){
+				if(rowdata3[3].childNodes[j].checked){
+					comp_industrys.push(rowdata3[3].childNodes[j].value);
+				}
+			}
+			rowdata.comp_industry =  comp_industrys.join(',');
+			rowdata.compt_address_province = rowdata4[1].childNodes[0].value;
+			rowdata.comp_address_city = rowdata4[1].childNodes[2].value;
+			rowdata.comp_address_district=rowdata4[1].childNodes[4].value;
+			rowdata.comp_address_more=rowdata4[1].childNodes[6].value;
+			//判断是暂存还是提交
+			if(str==1){
+				if (rowdata.comp_full_name != '' || rowdata.comp_tel != ''
+					|| rowdata.found_date != ''
+					|| rowdata.comp_kind != ''
+					|| rowdata.place_of_comp != ''
+					|| rowdata.comp_industry != ''
+					||rowdata.compt_address_province!=''
+					||rowdata.comp_address_city!=''
+					||rowdata.comp_address_district!=''
+					||rowdata.comp_address_more!='') {
+					
+						if(rowdata.comp_full_name == '' || rowdata.comp_tel == ''
+							|| rowdata.found_date == ''
+							|| rowdata.comp_kind == ''
+							|| rowdata.place_of_comp == ''
+							|| rowdata.comp_industry == ''
+							||rowdata.compt_address_province==''
+							||rowdata.comp_address_city==''
+							||rowdata.comp_address_district==''
+							||rowdata.comp_address_more==''){
+								return 'error';
+							}
+							
+				}
+				if(rowdata.comp_full_name != '' && rowdata.comp_tel != ''
+					&& rowdata.found_date != ''
+						&& rowdata.comp_kind != ''
+							&& rowdata.place_of_comp != ''
+								&& rowdata.comp_industry != ''
+									&&rowdata.compt_address_province!=''
+										&&rowdata.comp_address_city!=''
+											&&rowdata.comp_address_district!=''
+												&&rowdata.comp_address_more!=''){
+						dataArr.push(rowdata);
+				}
+			}else {
+				if (rowdata.comp_full_name != '' || rowdata.comp_tel != ''
+					|| rowdata.found_date != ''
+						|| rowdata.comp_kind != ''
+						|| rowdata.place_of_comp != ''
+						|| rowdata.comp_industry != ''
+						||rowdata.compt_address_province!=''
+						||rowdata.comp_address_city!=''
+						||rowdata.comp_address_district!=''
+						||rowdata.comp_address_more!='') {
+						dataArr.push(rowdata);
+				}
+			}
+		}
+		var data = JSON.stringify(dataArr);
+		return data;
+	}
+	
+	function numToDateStr(num){
+		var numStr=(new Date(num)).format('yyyy-MM-dd hh:mm:ss')
+		return numStr;
+	}
+	/**
+	 * 动态添加房产信息
+	 */
+	 function addFcInfo(json_house) {
+			// var row=document.getElementById("table").insertRow( document.getElementById("table").rows.length-1);
+			if (!json_house) {
+				json_house = {};
+			}
+			if (json_house.house_buy_date == null
+					|| json_house.house_buy_date == 'undifined'
+					|| json_house.house_buy_date == 'null') {
+				json_house.house_buy_date = '';
+			}
+			if (json_house.house_buy_money == null
+					|| json_house.house_buy_money == 'undifined'
+					|| json_house.house_buy_money == 'null') {
+				json_house.house_buy_money = '';
+			}
+			if (json_house.house_building_area == null
+					|| json_house.house_building_area == 'undifined'
+					|| json_house.house_building_area == 'null') {
+				json_house.house_building_area = '';
+			}
+			if (json_house.house_address_city == null
+					|| json_house.house_address_city == 'undifined'
+					|| json_house.house_address_city == 'null') {
+				json_house.house_address_city = '';
+			}
+			if (json_house.house_address_district == null
+					|| json_house.house_address_district == 'undifined'
+					|| json_house.house_address_district == 'null') {
+				json_house.house_address_district = '';
+			}
+			if (json_house.house_address_province == null
+					|| json_house.house_address_province == 'undifined'
+					|| json_house.house_address_province == 'null') {
+				json_house.house_address_province = '';
+			}
+			if(json_house.house_address_more ==null 
+					||json_house.house_address_more == 'undifined'
+					||json_house.house_address_more=='null'){
+				json_house.house_address_more='';
+			}
+			if (json_house.wms_cus_customer_line_houseinfo_id == null
+					|| json_house.wms_cus_customer_line_houseinfo_id == 'undifined'
+					|| json_house.wms_cus_customer_line_houseinfo_id == 'null') {
+				json_house.wms_cus_customer_line_houseinfo_id = '0';
+			}
+			if (json_house.house_post_code == null
+					|| json_house.house_post_code == 'undifined'
+					|| json_house.house_post_code == 'null') {
+				json_house.house_post_code = '';
+			}
+			if (json_house.house_post_code == null
+					|| json_house.house_post_code == 'undifined'
+					|| json_house.house_post_code == 'null') {
+				json_house.house_post_code = '';
+			}
+			if (json_house.house_type == null
+					|| json_house.house_type == 'undifined'
+					|| json_house.house_type == 'null') {
+				json_house.house_type = '';
+			}
+			if (json_house.house_no == null
+					|| json_house.house_no == 'undifined'
+					|| json_house.house_no == 'null') {
+				json_house.house_no = '';
+			}
+			if (json_house.house_vol_no == null
+					|| json_house.house_vol_no == 'undifined'
+					|| json_house.house_vol_no == 'null') {
+				json_house.house_vol_no = '';
+			}
+			if (json_house.community_name == null
+					|| json_house.community_name == 'undifined'
+					|| json_house.community_name == 'null') {
+				json_house.community_name = '';
+			}
+			var row = document.getElementById("fcinfo1").insertRow(
+					document.getElementById("fcinfo1").rows.length);
+			var title_1 = row.insertCell(0);
+			title_1.className = 'title';
+			title_1.style.width = '10%';
+			title_1.innerHTML = '房产购买时间：';
+			var text_1 = row.insertCell(1);
+			text_1.align="left";
+			var datestr = '<input type="hidden"  class="hidden" id="wms_cus_customer_line_houseinfo_id" value="'+json_house.wms_cus_customer_line_houseinfo_id+'"/><input id="house_buy_date" value=\''
+					+ json_house.house_buy_date
+					+ '\' class="Wdate" type="text" onclick="WdatePicker({dateFmt:\'yyyy-MM-dd\',isShowClear:true})" style="width:150px; vertical-align:top;" />';
+			text_1.innerHTML = datestr;
+			
+			var title_2 = row.insertCell(2);
+			title_2.className = 'title';
+			title_2.style.width = '10%';
+			title_2.innerHTML = '房产购买金额：';
+			var text_2 = row.insertCell(3);
+			text_2.align="left";
+			text_2.innerHTML = "<input type='text' maxlength='18' isFloat='1' minVal='0' maxVal='1000000' style='width: 150px;' value='"+json_house.house_buy_money+"'/>万元";
+
+			var title_3 = row.insertCell(4);
+			title_3.className = 'title';
+			title_3.style.width = '10%';
+			title_3.innerHTML = '房产建筑面积：';
+
+			var text_3 = row.insertCell(5);
+			text_3.align="left";
+			text_3.style.width = '20%';
+			text_3.innerHTML = "<input type='text' maxlength='18' isFloat='1' minVal='0' maxVal='10000' style='width: 150px;'  value='"+json_house.house_building_area+"'/>"+"平方米";
+			
+			var row2 = document.getElementById("fcinfo1").insertRow(
+					document.getElementById("fcinfo1").rows.length);
+			var row2_title_1 = row2.insertCell(0);
+			row2_title_1.className = 'title';
+			row2_title_1.style.width = '10%';
+			row2_title_1.innerHTML = '邮政编码：';
+			var row2_text_1 = row2.insertCell(1);
+			row2_text_1.align="left";
+			row2_text_1.innerHTML = "<input type='text' style='width: 150px;' value='"+json_house.house_post_code+"'  isPostalCode='1' />";
+			
+			var row2_title_2 = row2.insertCell(2);
+			row2_title_2.className = 'title';
+			row2_title_2.style.width = '10%';
+			row2_title_2.innerHTML = '提供房证原件：';
+			var row2_text_2 = row2.insertCell(3);
+			row2_text_2.align="left";
+			var slectHouseCard='';
+			if(json_house.is_supp_house_card=='1'){
+				slectHouseCard="<select><option value=''>请选择</option><option value='1' selected=selected>是</option><option value='2'>否</option></select>";
+			}else if (json_house.is_supp_house_card=='2') {
+				slectHouseCard="<select><option value=''>请选择</option><option value='1'>是</option><option value='2' selected=selected>否</option></select>";
+			}else{
+				slectHouseCard="<select><option value=''>请选择</option><option value='1'>是</option><option value='2'>否</option></select>";
+			}
+			row2_text_2.innerHTML = slectHouseCard;
+			
+			var row2_title_3 = row2.insertCell(4);
+			row2_title_3.className = 'title';
+			row2_title_3.style.width = '10%';
+			row2_title_3.innerHTML = '房产类型：';
+			var row2_text_3 = row2.insertCell(5);
+			row2_text_3.align="left";
+			row2_text_3.innerHTML = "<input type='text' style='width: 150px;'  maxlength='50' value='"+json_house.house_type+"' />";
+
+			var row3 = document.getElementById("fcinfo1").insertRow(
+					document.getElementById("fcinfo1").rows.length);
+			var row3_title_1 = row3.insertCell(0);
+			row3_title_1.className = 'title';
+			row3_title_1.style.width = '10%';
+			row3_title_1.innerHTML = '房产证号：';
+			var row3_text_1 = row3.insertCell(1);
+			row3_text_1.align="left";
+			row3_text_1.innerHTML = "<input type='text' style='width: 150px;'  maxlength='50' value='"+json_house.house_no+"' />";
+			var row3_title_2 = row3.insertCell(2);
+			row3_title_2.className = 'title';
+			row3_title_2.style.width = '10%';
+			row3_title_2.innerHTML = '房产卷号：';
+			var row3_text_2 = row3.insertCell(3);
+			row3_text_2.align="left";
+			row3_text_2.innerHTML = "<input type='text' style='width: 150px;'  maxlength='50' value='"+json_house.house_vol_no+"' />";
+			var row3_title_3 = row3.insertCell(4);
+			row3_title_3.className = 'title';
+			row3_title_3.style.width = '10%';
+			row3_title_3.innerHTML = '小区名称：';
+			var row3_text_3 = row3.insertCell(5);
+			row3_text_3.align="left";
+			row3_text_3.innerHTML = "<input type='text' style='width: 150px;'  maxlength='100' value='"+json_house.community_name+"' />";
+			
+			
+			var row4 = document.getElementById("fcinfo1").insertRow(
+					document.getElementById("fcinfo1").rows.length);		
+			var row4_title_1 = row4.insertCell(0);
+			row4_title_1.className = 'title';
+			row4_title_1.style.width = '10%';
+			row4_title_1.innerHTML = '房产地址：';
+			
+			var row4_text_1 = row4.insertCell(1);
+			row4_text_1.align="left";
+			row4_text_1.style.width = '90%';	
+			row4_text_1.setAttribute('colspan',5);
+			row4_text_1.innerHTML = "<input type='text' style='width:120px;' value='"+json_house.house_address_province+"'/>省 <input type='text' style='width: 120px;' value='"+json_house.house_address_city+"'/>市 "
+					+ "<input type='text' style='width: 120px;' value='"+json_house.house_address_district+"'/>区（县）  "+"<input type='text' style='width:273px;' value='"+json_house.house_address_more+"'/>"+"<a class=\"btn\" style=\"display:\" name=\"scbtn\" onclick=\"delRow(this,'"
+					+ json_house.wms_cus_customer_line_houseinfo_id
+					+ "')\" href=\"#\">删除</a>";
+		}
+	var delRowId = [];
+	function delRow(obj, wms_cus_customer_line_houseinfo_id) {
+		globalUtil.clearLigerTip("fcinfo");		
+		$(obj).parent().parent().prev().find('input').ligerHideTip();
+		var index = obj.parentNode.parentNode.rowIndex;
+		document.getElementById("fcinfo1").deleteRow(index);
+		document.getElementById("fcinfo1").deleteRow(index - 1);
+		document.getElementById("fcinfo1").deleteRow(index - 2);
+		if (wms_cus_customer_line_houseinfo_id != '0') {
+			delRowId.push(wms_cus_customer_line_houseinfo_id);
+		}
+		globalVali.checkForm("fcinfo",false);
+	}
+	/**
+	 * 动态添加公司信息
+	 */
+	function addCompInfo(json_comp) {
+		// var row=document.getElementById("table").insertRow( document.getElementById("table").rows.length-1);
+		if (!json_comp) {
+			json_comp = {};
+		}
+		if (json_comp.wms_cus_customer_line_company_id == null
+				|| json_comp.wms_cus_customer_line_company_id == 'undifined'
+				|| json_comp.wms_cus_customer_line_company_id == 'null') {
+			json_comp.wms_cus_customer_line_company_id = '';
+		}
+		if (json_comp.comp_full_name == null
+				|| json_comp.comp_full_name == 'undifined'
+				|| json_comp.comp_full_name == 'null') {
+			json_comp.comp_full_name = '';
+		}
+		if (json_comp.comp_tel == null
+				|| json_comp.comp_tel == 'undifined'
+				|| json_comp.comp_tel == 'null') {
+			json_comp.comp_tel = '';
+		}
+		if (json_comp.found_date == null
+				|| json_comp.found_date == 'undifined'
+				|| json_comp.found_date == 'null') {
+			json_comp.found_date = '';
+		}
+		if (json_comp.comp_kind == null
+				|| json_comp.comp_kind == 'undifined'
+				|| json_comp.comp_kind == 'null') {
+			json_comp.comp_kind = '';
+		}
+		if (json_comp.place_of_comp == null
+				|| json_comp.place_of_comp == 'undifined'
+				|| json_comp.place_of_comp == 'null') {
+			json_comp.place_of_comp = '';
+		}
+		if (json_comp.comp_industry == null
+				|| json_comp.comp_industry == 'undifined'
+				|| json_comp.comp_industry == 'null') {
+			json_comp.comp_industry = '';
+		}
+		if (json_comp.compt_address_province == null
+				|| json_comp.compt_address_province == 'undifined'
+				|| json_comp.compt_address_province == 'null') {
+			json_comp.compt_address_province = '';
+		}
+		if (json_comp.comp_address_city == null
+				|| json_comp.comp_address_city == 'undifined'
+				|| json_comp.comp_address_city == 'null') {
+			json_comp.comp_address_city = '';
+		}
+		if (json_comp.comp_address_district == null
+				|| json_comp.comp_address_district == 'undifined'
+				|| json_comp.comp_address_district == 'null') {
+			json_comp.comp_address_district = '';
+		}
+		if(json_comp.comp_address_more ==null 
+				||json_comp.comp_address_more == 'undifined'
+				||json_comp.comp_address_more =='null'){
+			json_comp.comp_address_more='';
+		}
+		var row = document.getElementById("companyinfo1").insertRow(
+				document.getElementById("companyinfo1").rows.length);
+		var title_1 = row.insertCell(0);
+		title_1.className = 'title';
+		title_1.style.width = '10%';
+		title_1.innerHTML = '公司全称：';
+		var text_1 = row.insertCell(1);
+		text_1.align="left";
+		text_1.style.width = '20%';	
+		text_1.setAttribute('colspan',5);
+		var datestr = '<input type="hidden" id="wms_cus_customer_line_company_id" value="'+json_comp.wms_cus_customer_line_company_id+'" />'
+			+'<input id="comp_full_name" type="text" style="width: 722px; vertical-align: top;" value="'+json_comp.comp_full_name+'" />';
+		text_1.innerHTML = datestr;
+		
+		var row2 = document.getElementById("companyinfo1").insertRow(
+				document.getElementById("companyinfo1").rows.length);
+		var row2_title_1 = row2.insertCell(0);
+		row2_title_1.className = 'title';
+		row2_title_1.style.width = '10%';
+		row2_title_1.innerHTML = '单位电话：';
+		var row2_text_1 = row2.insertCell(1);
+		row2_text_1.align="left";
+		row2_text_1.style.width = '20%';
+		row2_text_1.innerHTML = '<input type="text" style="width: 150px;"id="comp_tel" value="'+json_comp.comp_tel+'" />';
+		
+		var row2_title_2 = row2.insertCell(2);
+		row2_title_2.className = 'title';
+		row2_title_2.style.width = '10%';
+		row2_title_2.innerHTML = '成立时间：';
+		var row2_text_2 = row2.insertCell(3);
+		row2_text_2.align="left";
+		row2_text_2.style.width = '20%';
+		row2_text_2.innerHTML = '<input id="found_date" class="Wdate" type="text"'
+			+'onclick=WdatePicker({dateFmt:"yyyy-MM-dd",isShowClear:true}); '
+			+'style="width: 150px; vertical-align: top;" value="'+json_comp.found_date+'" />';
+			
+		var row2_title_3 = row2.insertCell(4);
+		row2_title_3.className = 'title';
+		row2_title_3.style.width = '10%';
+		row2_title_3.innerHTML = '单位性质：';
+		var row2_text_3 = row2.insertCell(5);
+		row2_text_3.align="left";
+		row2_text_3.style.width = '20%';
+		var comp_kindinHTML='<select name="comp_kind" id="comp_kind" style="width: 135px;">';
+		comp_kindinHTML+='<option value="">请选择</option>';
+		if(json_comp.comp_kind=='gy'){
+			comp_kindinHTML+='<option value="gy" selected=selected>国营</option>';
+		}else {
+			comp_kindinHTML+='<option value="gy">国营</option>';
+		}
+		if(json_comp.comp_kind=='my'){
+			comp_kindinHTML+='<option value="my" selected=selected>民营</option>';
+		}else {
+			comp_kindinHTML+='<option value="my">民营</option>';
+		}
+		if(json_comp.comp_kind=='sy'){
+			comp_kindinHTML+='<option value="sy" selected=selected>私营</option>';
+		}else {
+			comp_kindinHTML+='<option value="sy">私营</option>';
+		}
+		if(json_comp.comp_kind=='sz'){
+			comp_kindinHTML+='<option value="sz" selected=selected>三资</option>';
+		}else {
+			comp_kindinHTML+='<option value="sz">三资</option>';
+		}
+		if(json_comp.comp_kind=='hh'){
+			comp_kindinHTML+='<option value="hh" selected=selected>合伙</option>';
+		}else {
+			comp_kindinHTML+='<option value="hh">合伙</option>';
+		}
+		if(json_comp.comp_kind=='gt'){
+			comp_kindinHTML+='<option value="gt" selected=selected>个体</option>';
+		}else {
+			comp_kindinHTML+='<option value="gt">个体</option>';
+		}
+		if(json_comp.comp_kind=='qt'){
+			comp_kindinHTML+='<option value="qt" selected=selected>其他</option>';
+		}else {
+			comp_kindinHTML+='<option value="qt">其他</option>';
+		}
+		comp_kindinHTML+='</select>';
+		row2_text_3.innerHTML = comp_kindinHTML;
+		
+		var row3 = document.getElementById("companyinfo1").insertRow(
+				document.getElementById("companyinfo1").rows.length);
+		var row3_title_1 = row3.insertCell(0);
+		row3_title_1.className = 'title';
+		row3_title_1.style.width = '10%';
+		row3_title_1.innerHTML = '经营场所：';
+		var row3_text_1 = row3.insertCell(1);
+		row3_text_1.align="left";
+		row3_text_1.style.width = '20%';
+		var pfcInHTML='<select name="place_of_comp" id="place_of_comp" style="width: 150px;">';
+		pfcInHTML+='<option value="">请选择</option>';
+		if(json_comp.place_of_comp=='zy'){
+			pfcInHTML+='<option value="zy" selected=selected>自有</option>';
+		}else {
+			pfcInHTML+='<option value="zy">自有</option>';
+		}
+		if(json_comp.place_of_comp=='zl'){
+			pfcInHTML+='<option value="zl" selected=selected>租赁</option>';
+		}else {
+			pfcInHTML+='<option value="zl">租赁</option>';
+		}
+		if(json_comp.place_of_comp=='qt'){
+			pfcInHTML+='<option value="qt" selected=selected>其他</option>';
+		}else {
+			pfcInHTML+='<option value="qt">其他</option>';
+		}
+		pfcInHTML+='</select>';
+		row3_text_1.innerHTML = pfcInHTML;
+		
+		var row3_title_2 = row3.insertCell(2);
+		row3_title_2.className = 'title';
+		row3_title_2.style.width = '10%';
+		row3_title_2.innerHTML = '所属行业：';
+		var row3_text_2 = row3.insertCell(3);
+		row3_text_2.align="left";
+		row3_text_2.style.width = '20%';
+		row3_text_2.setAttribute('colspan',3);
+		var compinsInHtml='';
+		if(json_comp.comp_industry.indexOf('ny')!=-1){
+			compinsInHtml+='<input type="checkbox" id="co1" name="comp_industry" value="ny" class="radio3" checked=checked />农业';
+		}else {
+			compinsInHtml+='<input type="checkbox" id="co1" name="comp_industry" value="ny" class="radio3" />农业';
+		}
+		if(json_comp.comp_industry.indexOf('fwy')!=-1){
+			compinsInHtml+='<input type="checkbox" id="co2" name="comp_industry" value="fwy"  class="radio3" checked=checked />服务业';
+		}else {
+			compinsInHtml+='<input type="checkbox" id="co2" name="comp_industry" value="fwy"  class="radio3" />服务业';
+		}
+		if(json_comp.comp_industry.indexOf('jtysy')!=-1){
+			compinsInHtml+='<input type="checkbox" id="co3" name="comp_industry" value="jtysy"  class="radio3" checked=checked />交通运输业'
+		}else {
+			compinsInHtml+='<input type="checkbox" id="co3" name="comp_industry" value="jtysy"  class="radio3" />交通运输业';
+		}
+		if(json_comp.comp_industry.indexOf('pflsy')!=-1){
+			compinsInHtml+='<input type="checkbox" id="co4" name="comp_industry" value="pflsy"  class="radio3" checked=checked />批发零售业';
+		}else {
+			compinsInHtml+='<input type="checkbox" id="co4" name="comp_industry" value="pflsy"  class="radio3" />批发零售业';
+		}
+		if(json_comp.comp_industry.indexOf('jzy')!=-1){
+			compinsInHtml+='<input type="checkbox" id="co5" name="comp_industry" value="jzy"  class="radio3" checked=checked />建筑业'
+		}else {
+			compinsInHtml+='<input type="checkbox" id="co5" name="comp_industry" value="jzy"  class="radio3" />建筑业'
+		}
+		if(json_comp.comp_industry.indexOf('qt')!=-1){
+			compinsInHtml+='<input type="checkbox" id="co5" name="comp_industry" value="qt"  class="radio3" checked=checked />其他';
+		}else {
+			compinsInHtml+='<input type="checkbox" id="co5" name="comp_industry" value="qt"  class="radio3" />其他';
+		}
+		row3_text_2.innerHTML = compinsInHtml;
+									
+		var row4 = document.getElementById("companyinfo1").insertRow(
+				document.getElementById("companyinfo1").rows.length);		
+		var row4_title_1 = row4.insertCell(0);
+		row4_title_1.className = 'title';
+		row4_title_1.style.width = '10%';
+		row4_title_1.innerHTML = '公司地址：';
+		
+		var row4_text_1 = row4.insertCell(1);
+		row4_text_1.align="left";
+		row4_text_1.style.width = '90%';	
+		row4_text_1.setAttribute('colspan',5);
+		row4_text_1.innerHTML = "<input type='text' style='width:120px;' value='"+json_comp.compt_address_province+"'/>省 <input type='text' style='width: 120px;' value='"+json_comp.comp_address_city+"'/>市 "
+				+ "<input type='text' style='width: 120px;' value='"+json_comp.comp_address_district+"'/>区（县）  "+"<input type='text' style='width:273px;' value='"+json_comp.comp_address_more+"'/>"+"<a class=\"btn\" style=\"display:\" name=\"scbtn\" onclick=\"delRowComp(this,'"
+				+ json_comp.wms_cus_customer_line_company_id
+				+ "')\" href=\"#\">删除</a>";
+	};
+	var delRowCompId = [];
+	function delRowComp(obj, wms_cus_customer_line_company_id) {
+		$(obj).parent().parent().prev().find('input').ligerHideTip();
+		var index = obj.parentNode.parentNode.rowIndex;
+		document.getElementById("companyinfo1").deleteRow(index);
+		document.getElementById("companyinfo1").deleteRow(index - 1);
+		document.getElementById("companyinfo1").deleteRow(index - 2);
+		document.getElementById("companyinfo1").deleteRow(index - 3);
+		if (wms_cus_customer_line_company_id != '0') {
+			delRowCompId.push(wms_cus_customer_line_company_id);
+		}
+	}
+	function lookpage() {
+		if (cktype == 'ck') {
+			//$(document.getElementsByName("scbtn")).attr({'style':'display:none'});
+			var arr = document.getElementsByName("scbtn");
+			for(var i=0;i<arr.length;i++){
+				arr[i].style.display = 'none';
+			}
+			$("input[type=text]").attr({
+				"disabled" : "disabled"
+			});
+			$("input[type=radio]").attr({
+				"disabled" : "disabled"
+			});
+			$("select").attr({
+				"disabled" : "disabled"
+			});
+			$("input[type=checkbox]").attr({
+				"disabled" : "disabled"
+			});
+			$("textarea").attr({
+				"disabled" : "disabled"
+			});
+			document.getElementById("fcinf").style.display='none';
+			document.getElementById("compinf").style.display='none';
+			document.getElementById("centertoolbar").style.display='none';
+		}
+	}
+
+	//是否实名更改
+	function isSM(tdnum){
+		if(tdnum==1){
+			var isSMVal=$("#is_real_name_tel1").val();
+			if(isSMVal==2){
+				document.getElementById("sm1td1").style.display='';
+				document.getElementById("sm2td1").style.display='';
+			}else {
+				document.getElementById("sm1td1").style.display='none';
+				document.getElementById("sm2td1").style.display='none';
+			}
+		}else if (tdnum==2) {
+			var isSMVal=$("#is_real_name_tel2").val();
+			if(isSMVal==2){
+				document.getElementById("sm1td2").style.display='';
+				document.getElementById("sm2td2").style.display='';
+			}else {
+				document.getElementById("sm1td2").style.display='none';
+				document.getElementById("sm2td2").style.display='none';
+			}
+		}
+	}
+	//检查手机号码2是不是无或没有
+	function isWuOrMY(){
+		var phoneNum2=$("#mobile_telephone2").val();
+		if(phoneNum2!=''){
+			if(phoneNum2=='无'||phoneNum2=='没有'){
+				$("#service_password2").val('');
+				$("#service_password2").attr("disabled","disabled");
+				$("#resource_of_tel2").val('');
+				$("#resource_of_tel2").attr("disabled","disabled");
+				$("#is_real_name_tel2").val('');
+				$("#is_real_name_tel2").attr("disabled","disabled");
+				$("#real_name_tel2").val('');
+				$("#real_name_tel2").attr("disabled","disabled");
+				$("#real_name_rela2").val('');
+				$("#real_name_rela2").attr("disabled","disabled");
+				document.getElementById("sm1td2").style.display='none';
+				document.getElementById("sm2td2").style.display='none';
+			}else {
+				$("#service_password2").removeAttr("disabled");
+				$("#resource_of_tel2").removeAttr("disabled");
+				$("#is_real_name_tel2").removeAttr("disabled");
+				$("#real_name_tel2").removeAttr("disabled");
+				$("#real_name_rela2").removeAttr("disabled");
+			}
+		}
+	}
+	
+	/**
+     * 动态添加车产信息
+     */
+    function addCcInfo(json_car) {
+        //获取时间日期
+        var nameStr = new Date().getTime();
+        if (!json_car) {
+            json_car = {};
+        }
+        if (json_car.wms_cus_customer_line_carpinfo_id == null
+                || json_car.wms_cus_customer_line_carpinfo_id == 'undifined'
+                || json_car.wms_cus_customer_line_carpinfo_id == 'null') {
+            json_car.wms_cus_customer_line_carpinfo_id = '0';
+        }
+        if (json_car.car_name == null
+                || json_car.car_name == 'undifined'
+                || json_car.car_name == 'null') {
+            json_car.car_name = '';
+        }
+        if (json_car.car_no == null
+                || json_car.car_no == 'undifined'
+                || json_car.car_no == 'null') {
+            json_car.car_no = '';
+        }
+        if (json_car.car_type == null
+                || json_car.car_type == 'undifined'
+                || json_car.car_type == 'null') {
+            json_car.car_type = '';
+        }
+        if (json_car.car_model == null
+                || json_car.car_model == 'undifined'
+                || json_car.car_model == 'null') {
+            json_car.car_model = '';
+        }
+        if (json_car.car_driving_mode == null
+                || json_car.car_driving_mode == 'undifined'
+                || json_car.car_driving_mode == 'null') {
+            json_car.car_driving_mode = '';
+        }
+        if (json_car.car_exhaust_quantity == null
+                || json_car.car_exhaust_quantity == 'undifined'
+                || json_car.car_exhaust_quantity == 'null') {
+            json_car.car_exhaust_quantity = '';
+        }
+        if(json_car.car_purchase_time ==null 
+                ||json_car.car_purchase_time == 'undifined'
+                ||json_car.car_purchase_time=='null'){
+            json_car.car_purchase_time='';
+        }
+        if (json_car.car_purchase_amount == null
+                || json_car.car_purchase_amount == 'undifined'
+                || json_car.car_purchase_amount == 'null') {
+            json_car.car_purchase_amount = '';
+        }
+        if (json_car.vehicle_acq_mode == null
+                || json_car.vehicle_acq_mode == 'undifined'
+                || json_car.vehicle_acq_mode == 'null') {
+            json_car.vehicle_acq_mode = '';
+        }
+        if (json_car.vehicle_idn_num == null
+                || json_car.vehicle_idn_num == 'undifined'
+                || json_car.vehicle_idn_num == 'null') {
+            json_car.vehicle_idn_num = '';
+        }
+        if (json_car.insurance_maturity == null
+                || json_car.insurance_maturity == 'undifined'
+                || json_car.insurance_maturity == 'null') {
+            json_car.insurance_maturity = '';
+        }
+        if (json_car.vi_type_info_name == null
+                || json_car.vi_type_info_name == 'undifined'
+                || json_car.vi_type_info_name == 'null') {
+            json_car.vi_type_info_name = '';
+        }
+        if (json_car.vi_type_info == null
+                || json_car.vi_type_info == 'undifined'
+                || json_car.vi_type_info == 'null') {
+            json_car.vi_type_info = '';
+        }
+        if (json_car.other_vi_info == null
+                || json_car.other_vi_info == 'undifined'
+                || json_car.other_vi_info == 'null') {
+            json_car.other_vi_info = '';
+        }
+        var row = document.getElementById("ccinfo1").insertRow(
+                document.getElementById("ccinfo1").rows.length);
+        var title_1 = row.insertCell(0);
+        title_1.className = 'title1';
+        title_1.style.width = '10%';
+        title_1.innerHTML = '车辆名称：';
+        var text_1 = row.insertCell(1);
+        text_1.align="left";
+        text_1.className = 'text1';
+        var datestr = "<input type='hidden' class='hidden' id="+wms_cus_customer_line_carpinfo_id+" value='"+json_car.wms_cus_customer_line_carpinfo_id+"'/>"
+                +"<input type='text' style='width: 150px;' id='car_name' value='"+json_car.car_name+"' />";
+        text_1.innerHTML = datestr;
+        
+        var title_2 = row.insertCell(2);
+        title_2.className = 'title1';
+        title_2.style.width = '10%';
+        title_2.innerHTML = '车辆号码：';
+        var text_2 = row.insertCell(3);
+        text_2.align="left";
+        text_2.innerHTML = "<input type='text' style='width: 150px;' id='car_no' value='"+json_car.car_no+"' />";
+
+        var title_3 = row.insertCell(4);
+        title_3.className = 'title1';
+        title_3.style.width = '10%';
+        title_3.innerHTML = '车辆类型：';
+
+        var text_3 = row.insertCell(5);
+        text_3.align="left";
+        text_3.style.width = '20%';
+        text_3.innerHTML = "<input type='text' style='width: 150px;' id='car_type' value='"+json_car.car_type+"' />";
+        
+        var row2 = document.getElementById("ccinfo1").insertRow(
+                document.getElementById("ccinfo1").rows.length);
+        var row2_title_1 = row2.insertCell(0);
+        row2_title_1.className = 'title';
+        row2_title_1.style.width = '10%';
+        row2_title_1.innerHTML = '车辆型号：';
+        var row2_text_1 = row2.insertCell(1);
+        row2_text_1.align="left";
+        row2_text_1.innerHTML = "<input type='text' style='width: 150px;' id='car_model' value='"+json_car.car_model+"' />";
+        
+        var row2_title_2 = row2.insertCell(2);
+        row2_title_2.className = 'title';
+        row2_title_2.style.width = '10%';
+        row2_title_2.innerHTML = '驱动方式：';
+        var row2_text_2 = row2.insertCell(3);
+        row2_text_2.align="left";
+        row2_text_2.innerHTML = "<input type='text' style='width: 150px;' id='car_driving_mode' value='"+json_car.car_driving_mode+"' />";
+        
+        var row2_title_3 = row2.insertCell(4);
+        row2_title_3.className = 'title';
+        row2_title_3.style.width = '10%';
+        row2_title_3.innerHTML = '车辆排气量：';
+        var row2_text_3 = row2.insertCell(5);
+        row2_text_3.align="left";
+        row2_text_3.innerHTML = "<input type='text' style='width: 150px;' id='car_exhaust_quantity' value='"+json_car.car_exhaust_quantity+"' />";
+
+        var row3 = document.getElementById("ccinfo1").insertRow(
+                document.getElementById("ccinfo1").rows.length);
+        var row3_title_1 = row3.insertCell(0);
+        row3_title_1.className = 'title';
+        row3_title_1.style.width = '10%';
+        row3_title_1.innerHTML = '购买时间：';
+        var row3_text_1 = row3.insertCell(1);
+        row3_text_1.align="left";
+        row3_text_1.innerHTML = "<input type='text' style='width: 150px;vertical-align: top;' class='Wdate' id='car_purchase_time' onclick='WdatePicker({dateFmt:\"yyyy-MM-dd\",isShowClear:true})' value='"+json_car.car_purchase_time+"' />";
+        
+        var row3_title_2 = row3.insertCell(2);
+        row3_title_2.className = 'title';
+        row3_title_2.style.width = '10%';
+        row3_title_2.innerHTML = '购买金额：';
+        var row3_text_2 = row3.insertCell(3);
+        row3_text_2.align="left";
+        row3_text_2.innerHTML = "<input type='text' style='width: 140px;' id='car_purchase_amount' value='"+json_car.car_purchase_amount+"' />元";
+        
+        var row3_title_3 = row3.insertCell(4);
+        row3_title_3.className = 'title';
+        row3_title_3.style.width = '10%';
+        row3_title_3.innerHTML = '车辆获取方式：';
+        var row3_text_3 = row3.insertCell(5);
+        row3_text_3.align="left";
+        var vehicleAcqModeHTML = "<select name='vehicle_acq_mode' id='vehicle_acq_mode' style='width: 150px;'>";
+        vehicleAcqModeHTML += "<option value=''>请选择</option>";
+        if(json_car.vehicle_acq_mode == '1'){
+            vehicleAcqModeHTML += "<option value='1' selected=selected>一次性购买</option>";
+        }else {
+            vehicleAcqModeHTML += "<option value='1'>一次性购买</option>";
+        }
+        if(json_car.vehicle_acq_mode == '2'){
+            vehicleAcqModeHTML += "<option value='2' selected=selected>二手购买</option>";
+        }else {
+            vehicleAcqModeHTML += "<option value='2'>二手购买</option>";
+        } 
+        vehicleAcqModeHTML += "</select>";
+        row3_text_3.innerHTML = vehicleAcqModeHTML;
+        
+        var row4 = document.getElementById("ccinfo1").insertRow(
+                document.getElementById("ccinfo1").rows.length);        
+        var row4_title_1 = row4.insertCell(0);
+        row4_title_1.className = 'title';
+        row4_title_1.style.width = '10%';
+        row4_title_1.innerHTML = '车架号：';
+        var row4_text_1 = row4.insertCell(1);
+        row4_text_1.align="left";
+        row4_text_1.innerHTML = "<input type='text' style='width: 150px;' id='vehicle_idn_num' value='"+json_car.vehicle_idn_num+"' />";
+        
+        var row4_title_2 = row4.insertCell(2);
+        row4_title_2.className = 'title';
+        row4_title_2.style.width = '10%';
+        row4_title_2.innerHTML = '保险到期时间：';
+        var row4_text_2 = row4.insertCell(3);
+        row4_text_2.align="left";
+        row4_text_2.innerHTML = "<input type='text' style='width: 150px;vertical-align: top;' class='Wdate' id='insurance_maturity' onclick='WdatePicker({dateFmt:\"yyyy-MM-dd\",isShowClear:true})'  value='"+json_car.insurance_maturity+"' />";
+         
+        var row5 = document.getElementById("ccinfo1").insertRow(
+                document.getElementById("ccinfo1").rows.length);        
+        var row5_title_1 = row5.insertCell(0);
+        row5_title_1.className = 'title';
+        row5_title_1.style.width = '10%';
+        row5_title_1.innerHTML = '车辆保险种类：';
+        var row5_text_1 = row5.insertCell(1);
+        row5_text_1.align="left";
+        row5_text_1.style.width = '90%';
+        row5_text_1.setAttribute('colspan',5);
+        row5_text_1.innerHTML = "<input type='text' style='width: 740px;' name='"+nameStr+"_name' id='vi_type_info_name' readonly='readonly'  value='"+json_car.vi_type_info_name+"' onclick='showViTypeInfo(this);' />"
+            + "<input type='text' style='display: none;' name='"+nameStr+"' id='vi_type_info' value='"+json_car.vi_type_info+"' />";
+        
+        var row6 = document.getElementById("ccinfo1").insertRow(
+                document.getElementById("ccinfo1").rows.length);        
+        var row6_title_1 = row6.insertCell(0);
+        row6_title_1.className = 'title';
+        row6_title_1.style.width = '10%';
+        row6_title_1.innerHTML = '其它保险种类：';
+        var row6_text_1 = row6.insertCell(1);
+        row6_text_1.align="left";
+        row6_text_1.style.width = '90%';
+        row6_text_1.setAttribute('colspan',5);
+        row6_text_1.innerHTML = "<textarea style='width: 740px;height: 55px;' id='other_vi_info'>"+json_car.other_vi_info+"</textarea>"
+                +"<a class=\"btn\" style=\"display:\" onclick=\"delRowCc(this,'"+ json_car.wms_cus_customer_line_carpinfo_id
+                + "')\" href=\"#\">删除</a>";;
+        
+    }
+	
+</script>
+</head>
+<body>
+	<div class="tab_titleT">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr valign="bottom" id='trtab1'>
+				<td class="tabbody1" id="tabbody1" onclick="changeTab('khinfo');"><div
+						align="center" id="khinfo_div" class="tab_step tab_step101">个人资料</div></td>
+				<td class="tabbody2" id="tabbody2" onclick="changeTab('gzinfo');"><div
+						align="center" id="gzinfo_div" class="tab_step tab_step202">工作信息</div></td>
+				<td class="tabbody3" id="tabbody3" onclick="changeTab('fcinfo');"><div
+						align="center" id="fcinfo_div" class="tab_step tab_step302">房产信息</div></td>
+				<td class="tabbody3" id="tabbody4" onclick="changeTab('ccinfo');"><div align="center" id="ccinfo_div" class="tab_step tab_step402">车产信息</div></td>
+				<td class="tabbody3" id="tabbody5" onclick="changeTab('companyinfo');"><div align="center"
+						id="companyinfo_div" class="tab_step tab_step502">公司信息</div></td>
+			</tr>
+		</table>
+	</div>
+	<div class="pop-center overflow-au" style="top: 30px;" id="waicengdiv">
+		<div id="khinfo" class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 25px;">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">
+								<span class="redstar">*</span>身份证号：
+							</div>
+							<div class="pop-form-item">
+								<input type="text" id="id_card" maxlength="18" isRequired="1"
+									onkeyup="checkIdCard()" />
+								<div id="idcdiv"></div>
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">
+								<span class="redstar">*</span>姓 名：
+							</div>
+							<div class="pop-form-item">
+								<input type="text" id="customer_name" maxlength="20"
+									isRequired="1" />
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">曾用名：</div>
+							<div class="pop-form-item">
+								<input type="text" id="customer_ever_name" maxlength="20" />
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">
+								<span class="redstar">*</span>出生日期：
+							</div>
+							<div class="pop-form-item">
+								<input id="birthday" class="Wdate" type="text" isRequired="1"
+									onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+									style="vertical-align: top;" onchange="checkIdAndBirth()" />
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">
+								<span class="redstar">*</span>性 别：
+							</div>
+							<div class="pop-form-item" radioIsRequired="1"
+								style="line-height: 22px;">
+								<input type="radio" name="gender" value="1" class="radio3" />男
+								<input type="radio" name="gender" value="0" class="radio3"
+									isRequired="1" />女
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">
+								<span class="redstar">*</span>最高学历：
+							</div>
+							<div class="pop-form-item">
+								<select name="max_degree" style="width: 135px;" isRequired="1">
+									<option selected="selected" value="0">请选择</option>
+									<option value="5">硕士及以上</option>
+									<option value="4">本科</option>
+									<option value="3">专科</option>
+									<option value="2">高中</option>
+									<option value="1">初中及以下</option>
+								</select>
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="float-l clearboth">
+							<div class="pop-form-title">
+								<span class="redstar">*</span>婚姻状况：
+							</div>
+							<div class="pop-form-item">
+								<select name="has_married" style="width: 135px;" isRequired="1">
+									<option selected="selected" value="0">请选择</option>
+									<option value="yh">已婚</option>
+									<option value="wh">未婚</option>
+									<option value="ly">离异</option>
+									<option value="so">丧偶</option>
+								</select>
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">
+								<span class="redstar">*</span>工作状况：
+							</div>
+							<div class="pop-form-item">
+								<select name="work_stat" id="work_stat" style="width: 135px;"
+									isRequired="1" onchange="changWordInfoStar()">
+									<option selected="selected" value="0">请选择</option>
+									<option value="1">在职</option>
+									<option value="2">离职</option>
+								</select>
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">电子邮箱：</div>
+							<div class="pop-form-item">
+								<input type="text" id="customer_email" maxlength="50"
+									isEmail="1" />
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<div class="float-l clearboth">
+							<div class="pop-form-title">
+								<span class="redstar">*</span>户籍地址：
+							</div>
+							<div class="pop-form-item">
+								<input type="text" id="province" maxlength="20" isRequired="1" />
+								省 <input type="text" id="city" maxlength="20" isRequired="1" />
+								市 <input type="text" id="district" maxlength="20" isRequired="1" />
+								区（县） <input type="text" id="address_more" maxlength="50"
+									style="width: 200px" isRequired="1" />
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<div class="float-l clearboth">
+							<div class="pop-form-title">房产状况：</div>
+							<div class="pop-form-item" style="line-height: 22px;">
+								<input type="checkbox" id="fcco1" name="house_stat" value="qkf"
+									class="radio3" />全款房 <input type="checkbox" id="fcco2"
+									name="house_stat" value="ajf" class="radio3" />按揭房 <input
+									type="checkbox" id="fcco3" name="house_stat" value="dyf"
+									class="radio3" />抵押房 <input type="checkbox" id="fcco3"
+									name="house_stat" value="qszf" class="radio3" />亲属住房 <input
+									type="checkbox" id="fcco3" name="house_stat" value="zy"
+									class="radio3" />租用
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">居住时间：</div>
+							<div class="pop-form-item">
+								<input type="text" id="residence_time" maxlength="50" /> 年
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<div class="float-l clearboth">
+							<div class="pop-form-title">
+								<span class="redstar">*</span>共同居住者：
+							</div>
+							<div class="pop-form-item" checkboxIsRequired="1"
+								style="line-height: 22px;">
+								<input type="checkbox" id="co1" name="common_occupants"
+									value="fm" class="radio3" />父母 <input type="checkbox" id="co2"
+									name="common_occupants" value="po" class="radio3" />配偶 <input
+									type="checkbox" id="co3" name="common_occupants" value="zn"
+									class="radio3" />子女 <input type="checkbox" id="co4"
+									name="common_occupants" value="py" class="radio3" />朋友 <input
+									type="checkbox" id="co5" name="common_occupants" value="dj"
+									class="radio3" />独居 <input type="checkbox" id="co6"
+									name="common_occupants" value="qt" class="radio3" />其他
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">邮政编码：</div>
+							<div class="pop-form-item">
+								<input type="text" id="post_code" maxlength="6" isPostalCode="1" />
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<div class="float-l">
+							<div class="pop-form-title">
+								<span class="redstar">*</span>现居地址：
+							</div>
+							<div class="pop-form-item">
+								<input type="text" id="current_address_province" maxlength="20"
+									isRequired="1" /> 省 <input type="text"
+									id="current_address_city" maxlength="20" isRequired="1" /> 市 <input
+									type="text" id="current_address_district" maxlength="20"
+									isRequired="1" /> 区（县） <input type="text"
+									id="current_address_more" maxlength="50" style="width: 200px"
+									isRequired="1" />
+							</div>
+
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">居住地固话：</div>
+							<div class="pop-form-item">
+								<input type="text" id="fixed_telephone" maxlength="20" />
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">持有信用卡数：</div>
+							<div class="pop-form-item">
+								<input type="text" id="cre_card_num" maxlength="20"
+									isPositiveInteger="1" minVal="0" maxVal="60000" /> 张
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">信用卡额度：</div>
+							<div class="pop-form-item">
+								<input type="text" id="credit_card_limit" maxlength="10"
+									isPositiveInteger="1" minVal="0" maxVal="100000000" /> 元
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">
+								<span class="redstar">*</span>个人月收入：
+							</div>
+							<div class="pop-form-item">
+								<input type="text" id="monthly_income" style="width: 100px"
+									maxlength="18" isFloat="1" minVal="0" maxVal="1000000"
+									isRequired="1" /> 元
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">现有贷款项：</div>
+							<div class="pop-form-item">
+								<input type="text" id="existing_loan" isPositiveInteger="1"
+									maxlength="20" minVal="0" maxVal="60000" /> 笔
+							</div>
+						</div>
+					</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">
+								<span class="redstar">*</span>手机号码1：
+							</div>
+							<div class="pop-form-item">
+								<input type="text" id="mobile_telephone1" maxlength="20"
+									isRequired="1" />
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">服务密码：</div>
+							<div class="pop-form-item">
+								<input type="text" id="service_password1" maxlength="6" />
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">手机卡来源：</div>
+							<div class="pop-form-item">
+								<select name="resource_of_tel1" id="resource_of_tel1"
+									style="width: 135px;">
+									<option selected="selected" value="">请选择</option>
+									<option value="kt">卡摊</option>
+									<option value="yyt">营业厅</option>
+									<option value="hyj">合约机</option>
+									<option value="grzr">个人转让</option>
+								</select>
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">是否实名：</div>
+							<div class="pop-form-item">
+								<select name="is_real_name_tel1" id="is_real_name_tel1"
+									style="width: 135px;" onchange="isSM(1)">
+									<option selected="selected" value="">请选择</option>
+									<option value="1">是</option>
+									<option value="2">否</option>
+								</select>
+							</div>
+						</div>
+					</td>
+					<td id="sm1td1" style="display: none">
+						<div class="float-l">
+							<div class="pop-form-title">卡主姓名：</div>
+							<div class="pop-form-item">
+								<input type="text" id="real_name_tel1" maxlength="20" />
+							</div>
+						</div>
+					</td>
+					<td id="sm2td1" style="display: none">
+						<div class="float-l">
+							<div class="pop-form-title">与其关系：</div>
+							<div class="pop-form-item">
+								<input type="text" id="real_name_rela1" maxlength="20" />
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">
+								<span class="redstar">*</span>手机号码2：
+							</div>
+							<div class="pop-form-item">
+								<input type="text" id="mobile_telephone2" maxlength="20"
+									isRequired="1" onkeyup="isWuOrMY()" onchange="isWuOrMY()" />
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">服务密码：</div>
+							<div class="pop-form-item">
+								<input type="text" id="service_password2" maxlength="6" />
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">手机卡来源：</div>
+							<div class="pop-form-item">
+								<select name="resource_of_tel2" id="resource_of_tel2"
+									style="width: 135px;">
+									<option selected="selected" value="">请选择</option>
+									<option value="kt">卡摊</option>
+									<option value="yyt">营业厅</option>
+									<option value="hyj">合约机</option>
+									<option value="grzr">个人转让</option>
+								</select>
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">是否实名：</div>
+							<div class="pop-form-item">
+								<select name="is_real_name_tel2" id="is_real_name_tel2"
+									style="width: 135px;" onchange="isSM(2)">
+									<option selected="selected" value="">请选择</option>
+									<option value="1">是</option>
+									<option value="2">否</option>
+								</select>
+							</div>
+						</div>
+					</td>
+					<td id="sm1td2" style="display: none">
+						<div class="float-l">
+							<div class="pop-form-title">卡主姓名：</div>
+							<div class="pop-form-item">
+								<input type="text" id="real_name_tel2" maxlength="20" />
+							</div>
+						</div>
+					</td>
+					<td id="sm2td2" style="display: none">
+						<div class="float-l">
+							<div class="pop-form-title">与其关系：</div>
+							<div class="pop-form-item">
+								<input type="text" id="real_name_rela2" maxlength="20" />
+							</div>
+						</div>
+					</td>
+				</tr>
+			</table>
+			<div class="center-content clearboth" style="min-width: 470px;">
+				<div class="center-title">子女信息</div>
+				<div class="center-txt" style="margin-bottom: 5px;">
+					<div id="centertoolbar" class="minwidth400"></div>
+					<div id="grid"></div>
+				</div>
+			</div>
+		</div>
+		<!-- 客户信息结束 -->
+		<div id="gzinfo" class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 25px; display: none">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td colspan="2">
+						<div class="float-l">
+							<div class="pop-form-title">
+								<span class="redstar" id="wkifstar1">*</span>工作单位全称：
+							</div>
+							<div class="pop-form-item">
+								<input type="text" id="work_unit_full_name" maxlength="50"
+									style="width: 433px" />
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="float-l  clearboth">
+							<div class="pop-form-title">
+								<span class="redstar" id="wkifstar2">*</span>单位电话：
+							</div>
+							<div class="pop-form-item">
+								<input type="text" id="work_unit_telephone" maxlength="20" />
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">
+								<span class="redstar" id="wkifstar3">*</span>进入单位时间：
+							</div>
+							<div class="pop-form-item">
+								<input id="work_unit_entry_date" class="Wdate" type="text"
+									onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+									style="vertical-align: top;" />
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">所在部门/处室：</div>
+							<div class="pop-form-item">
+								<input type="text" id="work_unit_department" maxlength="50" />
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="float-l">
+							<div class="pop-form-title">担任职务：</div>
+							<div class="pop-form-item">
+								<input type="text" id="work_unit_duty" maxlength="50" />
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<div class="float-l">
+							<div class="pop-form-title">
+								<span class="redstar" id="wkifstar6">*</span>单位性质：
+							</div>
+							<div class="pop-form-item">
+								<select name="work_unit_property" style="width: 135px;"
+									isRequired="1">
+									<option selected="selected" value="0">请选择</option>
+									<option value="gy">国营</option>
+									<option value="my">民营</option>
+									<option value="sy">私营</option>
+									<option value="sz">三资</option>
+									<option value="hh">合伙</option>
+									<option value="gt">个体</option>
+									<option value="qt">其他</option>
+								</select>
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<div class="float-l">
+							<div class="pop-form-title">
+								<span class="redstar" id="wkifstar7">*</span>工作单位地址：
+							</div>
+							<div class="pop-form-item">
+								<input type="text" id="work_unit_address_province"
+									maxlength="20" /> 省 <input type="text"
+									id="work_unit_address_city" maxlength="20" /> 市 <input
+									type="text" id="work_unit_address_district" maxlength="20" />
+								区（县） <input type="text" id="work_unit_address_more"
+									maxlength="50" style="width: 231px" />
+							</div>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<!-- 工作信息结束 -->
+		<!-- 房产信息 -->
+		<div id="fcinfo" class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 25px; display: none">
+			<table id='fcinfo1' cellspacing="1" cellpadding="1" width="100%"
+				class="input_tb">
+				<tr class="tr_title">
+					<td class="icon_note" colspan="6" align="left" id="fcinf">需要填写多个房产信息请点击新增。
+						<a href="#" onclick="addFcInfo()" class="btn" style="display:"
+						id="xzbtn">新增</a> <input type="hidden" name="scbtn" value="0" />
+					</td>
+				</tr>
+				<tr>
+					<td width="10%" class="title1">房产购买时间：</td>
+					<td width="20%" align="left" class="text1"><input
+						type="hidden" id="wms_cus_customer_line_houseinfo_id"
+						class="hidden" value="0" /><input id="house_buy_date"
+						class="Wdate" type="text"
+						onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+						style="width: 150px; vertical-align: top;" /></td>
+					<td width="10%" class="title1">房产购买金额：</td>
+					<td width="20%" align="left" class="text1"><input type="text"
+						style="width: 150px;" id="house_buy_money" maxlength="18"
+						isFloat="1" minVal="0" maxVal="1000000" />万元</td>
+					<td width="10%" class="title1">房产建筑面积：</td>
+					<td width="20%" align="left" class="text1"><input type="text"
+						style="width: 150px;" id="house_building_area" maxlength="18"
+						isFloat="1" minVal="0" maxVal="10000" />平方米</td>
+				</tr>
+				<tr>
+					<td width="10%" class="title">邮政编码：</td>
+					<td width="20%" align="left"><input type="text"
+						style="width: 150px;" id="house_post_code" isPostalCode="1" /></td>
+					<td width="10%" class="title">提供房证原件：</td>
+					<td width="20%" align="left"><select id="is_supp_house_card"
+						name='is_supp_house_card'>
+							<option value="">请选择</option>
+							<option value="1">是</option>
+							<option value="2">否</option>
+					</select></td>
+					<td width="10%" class="title">房产类型：</td>
+					<td width="20%" align="left"><input type="text"
+						style="width: 150px;" id="house_type" maxlength="50" /></td>
+				</tr>
+				<tr>
+					<td width="10%" class="title">房产证号：</td>
+					<td width="20%" align="left"><input type="text"
+						style="width: 150px;" id="house_no" maxlength="50" /></td>
+					<td width="10%" class="title">房产卷号：</td>
+					<td width="20%" align="left"><input type="text"
+						style="width: 150px;" id="house_vol_no" maxlength="50" /></td>
+					<td width="10%" class="title">小区名称：</td>
+					<td width="20%" align="left"><input type="text"
+						style="width: 150px;" id="community_name" maxlength="100" /></td>
+				</tr>
+				<tr>
+					<td width="10%" class="title">房产地址：</td>
+					<td width="90%" colspan="5" align="left"><input type="text"
+						style="width: 120px;" id="house_address_province" maxlength="20" />省
+						<input type="text" style="width: 120px;" id="house_address_city"
+						maxlength="20" />市 <input type="text" style="width: 120px;"
+						id="house_address_district" maxlength="50" />区（县） <input
+						type="text" style="width: 273px;" id="house_address_more"
+						maxlength="50" /></td>
+				</tr>
+			</table>
+
+		</div>
+		<!-- 房产信息结束 -->
+		<!-- 车产信息 -->
+		<div id="ccinfo" class="pop-formDiv clearfix" style="margin:5px;margin-top:25px;display:none" >
+			<table id='ccinfo1' cellspacing="1" cellpadding="1" width="100%" class="input_tb">
+				<tr>
+					<td width="10%" class="title1">车辆名称：</td>
+					<td width="20%" align="left" class="text1">
+						<input type="hidden" id="wms_cus_customer_line_carpinfo_id" value="0" class="hidden" />
+						<input type="text" style="width: 150px;" id="car_name" />
+					</td>
+					<td width="10%" class="title1">车辆号码：</td>
+					<td width="20%" align="left" class="text1"><input type="text" style="width: 150px;" id="car_no" /></td>
+					<td width="10%" class="title1">车辆类型：</td>
+					<td width="20%" align="left" class="text1"><input type="text" style="width: 150px;" id="car_type" /></td>
+				</tr>
+				<tr>
+					<td width="10%" class="title">车辆型号：</td>
+					<td width="20%" align="left"><input type="text" style="width: 150px;" id="car_model" /></td>
+					<td width="10%" class="title">驱动方式：</td>
+					<td width="20%" align="left">
+						<input type="text" style="width: 150px;" id="car_driving_mode" />
+					</td>
+					<td width="10%" class="title">车辆排气量：</td>
+					<td width="20%" align="left">
+						<input type="text" style="width: 150px;" id="car_exhaust_quantity" />
+					</td>
+				</tr>
+				<tr>
+					<td width="10%" class="title">购买时间：</td>
+					<td width="20%" align="left">
+						<input id="car_purchase_time" class="Wdate" type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+						style="width: 150px; vertical-align: top;" />
+					</td>
+					<td width="10%" class="title">购买金额：</td>
+					<td width="20%" align="left">
+						<input type="text" style="width: 150px;" id="car_purchase_amount" />
+					</td>
+					<td width="10%" class="title">车辆取得方式：</td>
+					<td width="20%" align="left">
+						<select name="vehicle_acq_mode" id="vehicle_acq_mode" style="width: 150px;">
+							<option value="">请选择</option>
+							<option value="1">一次性购买</option>
+							<option value="2">二手购买</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td width="10%" class="title">车架号：</td>
+					<td width="20%" align="left">
+						<input type="text" style="width: 150px;" id="vehicle_idn_num" />
+					</td>
+					<td width="10%" class="title">保险到期时间：</td>
+					<td width="20%" align="left">
+						<input id="insurance_maturity" class="Wdate" type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+						style="width: 150px; vertical-align: top;" />
+					</td>
+					<td width="10%" class="title">&nbsp;</td>
+					<td width="20%" align="left">&nbsp;</td>
+				</tr>
+				<tr>
+					<td width="10%" class="title">车辆保险种类：</td>
+					<td width="90%" colspan="5" align="left">
+						<input type="text" style="width: 740px;" name="vi_type_info_name" id="vi_type_info_name" readonly="readonly" onclick="showViTypeInfo(this);" />
+						<input type="text" style="display: none;" name="vi_type_info" id="vi_type_info" />
+					</td>
+				</tr>
+				<tr>	
+					<td width="10%" class="title">其它保险种类：</td>
+					<td width="90%" colspan="5" align="left">
+						<textarea style="width: 740px;height: 55px;" id="other_vi_info"></textarea>
+					</td>
+				</tr>
+			</table>
+		
+		</div>
+		<!-- 车产信息结束 -->
+		<!-- 公司信息开始 -->
+		<div id="companyinfo" class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 25px; display: none">
+			<table id='companyinfo1' cellspacing="1" cellpadding="1" width="100%"
+				class="input_tb">
+				<tr class="tr_title">
+					<td class="icon_note" colspan="6" align="left" id="compinf">需要填写多个公司信息请点击新增。
+						<a href="#" onclick="addCompInfo()" class="btn" style="display:"
+						id="xzbtncomp">新增</a> <input type="hidden" name="scbtncomp"
+						value="0" />
+					</td>
+				</tr>
+				<tr>
+					<td width="10%" class="title1">公司全称：</td>
+					<td width="20%" align="left" colspan="5" class="text1"><input
+						type="hidden" id="wms_cus_customer_line_company_id" value="" /> <input
+						id="comp_full_name" type="text"
+						style="width: 722px; vertical-align: top;" /></td>
+				</tr>
+				<tr>
+					<td width="10%" class="title">单位电话：</td>
+					<td width="20%" align="left"><input type="text"
+						style="width: 150px;" id="comp_tel" /></td>
+					<td width="10%" class="title">成立时间：</td>
+					<td width="20%" align="left"><input id="found_date"
+						class="Wdate" type="text"
+						onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+						style="width: 150px; vertical-align: top;" /></td>
+					<td width="10%" class="title">单位性质：</td>
+					<td width="20%" align="left"><select name="comp_kind"
+						id="comp_kind" style="width: 135px;">
+							<option value="">请选择</option>
+							<option value="gy">国营</option>
+							<option value="my">民营</option>
+							<option value="sy">私营</option>
+							<option value="sz">三资</option>
+							<option value="hh">合伙</option>
+							<option value="gt">个体</option>
+							<option value="qt">其他</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td width="10%" class="title">经营场所：</td>
+					<td width="20%" align="left"><select name="place_of_comp"
+						id="place_of_comp" style="width: 150px;">
+							<option value="">请选择</option>
+							<option value="zy">自有</option>
+							<option value="zl">租赁</option>
+							<option value="qt">其他</option>
+					</select></td>
+					<td width="10%" class="title">所属行业：</td>
+					<td width="20%" align="left" colspan="3"><input
+						type="checkbox" id="co1" name="comp_industry" value="ny"
+						class="radio3" />农业 <input type="checkbox" id="co2"
+						name="comp_industry" value="fwy" class="radio3" />服务业 <input
+						type="checkbox" id="co3" name="comp_industry" value="jtysy"
+						class="radio3" />交通运输业 <input type="checkbox" id="co4"
+						name="comp_industry" value="pflsy" class="radio3" />批发零售业 <input
+						type="checkbox" id="co5" name="comp_industry" value="jzy"
+						class="radio3" />建筑业 <input type="checkbox" id="co5"
+						name="comp_industry" value="qt" class="radio3" />其他</td>
+				</tr>
+				<tr>
+					<td width="10%" class="title">公司地址：</td>
+					<td width="90%" colspan="5" align="left"><input type="text"
+						style="width: 120px;" id="compt_address_province" maxlength="20" />省
+						<input type="text" style="width: 120px;" id="comp_address_city"
+						maxlength="20" />市 <input type="text" style="width: 120px;"
+						id="comp_address_district" maxlength="50" />区（县） <input
+						type="text" style="width: 273px;" id="comp_address_more"
+						maxlength="50" /></td>
+				</tr>
+			</table>
+		</div>
+		<!-- 公司信息结束 -->
+	</div>
+	<div class="pop-footer5 clearboth" style="bottom: 1px; height:35px;">
+		<input id="tjbtn" class="btn-saveT"
+			onmouseover="this.className='btn-saveT-over'"
+			onmouseout="this.className='btn-saveT'"
+			onmousedown="this.className='btn-saveT-down'" type="button"
+			style="margin-right: 7px;" onclick="save(1)" /> <input
+			id="cancelBtnId" class="btn-cancel"
+			onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" type="button"
+			onclick="closeDialog();" />
+	</div>
+</body>
+</html>

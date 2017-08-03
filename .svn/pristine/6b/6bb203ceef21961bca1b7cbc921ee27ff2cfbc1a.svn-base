@@ -1,0 +1,461 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script type="text/javascript" charset="utf-8"
+	src="../../js/media/js/ZeroClipboard.js"></script>
+<title>理财查询>赎回查询列表</title>
+</head>
+<!--style="overflow-y:hidden;"主要实现边框右边无滚动条  -->
+<body style="overflow-y: hidden;">
+	<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<!--查询条件-->
+			<div class="l-panel-search-cond clearfix">
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;客户姓名：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="cus_name" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;有效证件：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="id_card" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;赎回审核方式：</div>
+					<div class="l-panel-search-item">
+						<select id="is_special_approval">
+							<option value="">请选择</option>
+							<option value="0">正常</option>
+							<option value="1">特批</option>
+						</select>
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">特批领导：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="special_approval_leader_id" />
+					</div>
+				</div>
+				<div class="float-l" style="margin-left: -2px;">
+					<div class="l-panel-search-title">&nbsp;单据状态：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="data_status_name" />
+					</div>
+				</div>
+				<div class="float-l clearboth" style="margin-left: -2px">
+					<div class="l-panel-search-title">申请员[短工号]：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="create_user_name" />
+					</div>
+				</div>
+				<div class="float-l " style="margin-left: -2px">
+					<div class="l-panel-search-title">业务员[短工号]：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="salesman_name" />
+					</div>
+				</div>
+				<div class="float-l " style="margin-left: -2px">
+					<div class="l-panel-search-title">归属业务员[短工号]：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="bel_salesman_id_id" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">申请时间：</div>
+					<div class="l-panel-search-item">
+						<input id="redeem_date_begin" class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+							style="width: 133px; vertical-align: top;" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+							id="redeem_date_end" class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+							style="width: 133px; vertical-align: top;" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="centertoolbar" class="minwidth400"></div>
+	<div id="grid"></div>
+	<form action="" method="post" id="exportForm">
+		<input type="hidden" id="export_cus_name" name="cus_name" />
+		<input type="hidden" id="export_id_card" name="id_card" />
+		<input type="hidden" id="export_is_special_approval" name="is_special_approval"/>
+		<input type="hidden" id="export_special_approval_leader_id" name="special_approval_leader_id" />
+		<input type="hidden" id="export_data_status_name" name="data_status_name" />
+		<input type="hidden" id="export_create_user_name" name="create_user_name" />
+		<input type="hidden" id="export_salesman_name" name="salesman_name" />
+		<input type="hidden" id="export_bel_salesman_id_id" name="bel_salesman_id_id" />
+		<input type="hidden" id="export_redeem_date_begin" name="redeem_date_begin" />
+		<input type="hidden" id="export_redeem_date_end" name="redeem_date_end" />
+	</form>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+        var grid;
+		var toolbar;
+		var params;
+		var dialog;
+		var columns;
+		var data_statusL;
+		var rolezy;//角色
+		var rolegy;
+		var menu_id = $.query.get('menu_id');
+		var roleInfo;
+        $(function() {
+        	// 获得当前登录人角色信息
+        	var roles = globalUtil.syncGetJson('/inve/getRole.do');
+        	
+        	data_statusL=globalUtil.syncGetJson('/sysmanage/wmssysdictdatabydictidempty.do',{
+ 				'wms_sys_dict_id': 60 // 
+                 },'GET');
+        	roleInfo = globalUtil.syncGetJson('/sysmanage/searchFinancialButton.do',{
+        	},'POST');
+        	var toolbarItemData = [];
+        	initGrid();  
+            toolbarItemData.push({
+                text: '查询',
+                click:search,
+                icon: 'search'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+            if(roleInfo.rolezy != null || roleInfo.rolegy != null){
+        		rolezy = roleInfo.rolezy;
+        		rolegy = roleInfo.rolegy;
+        		if(rolezy=="lccwzy"){
+         			toolbarItemData.push({
+                         text: '作废',
+                         click: opensingleNullify,
+                         icon: 'delete'
+                     });
+                     toolbarItemData.push({
+                         line: true
+                     });
+         		}
+            }
+           
+            toolbarItemData.push({
+                text: '清空',
+                click:clear,
+                icon: 'empty'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+			if(roles.role_cwzg === '1' || roles.role_super === '1'){
+            	toolbarItemData.push({
+                	text: '财务主管导出Excel',
+                	click: exportFinancialRedeemReport,
+                	icon: 'export'
+            	});
+            	toolbarItemData.push({
+                	line: true
+            	});
+			}
+			if(roles.role_cwgyzg === '1' || roles.role_super === '1'){
+            	toolbarItemData.push({
+                	text: '财务柜员主管导出Excel',
+                	click: exportRedeemReport,
+                	icon: 'export'
+            	});
+            	toolbarItemData.push({
+                	line: true
+            	});
+			}
+          $("#centertoolbar").ligerToolBar({
+            items: toolbarItemData
+        	});
+            search();
+//             registerCsv();
+            init_data_status();
+            init_special_approval_leader();
+            registParentFun();
+        });
+        
+        function setExportFormData(){
+    		$("#export_cus_name").val($("#cus_name").val());
+    		$("#export_id_card").val($("#id_card").val());
+    		$("#export_is_special_approval").val($("#is_special_approval").val());
+    		$("#export_special_approval_leader_id").val($("#special_approval_leader_id").ligerComboBox("getValue"));
+    		$("#export_data_status_name").val($("#data_status_name").ligerComboBox("getValue"));
+    		$("#export_create_user_name").val($("#create_user_name").val());
+    		$("#export_salesman_name").val($("#salesman_name").val());
+    		$("#export_bel_salesman_id_id").val($("#bel_salesman_id_id").val());
+    		$("#export_redeem_date_begin").val($("#redeem_date_begin").val());
+    		$("#export_redeem_date_end").val($("#redeem_date_end").val());
+        }
+        
+        function exportFinancialRedeemReport(){
+        	setExportFormData();
+        	$("#exportForm").attr("action","/WMS/inve/exportFinancialRedeem.do");
+        	$("#exportForm").submit();
+        }
+        
+        function exportRedeemReport(){
+        	setExportFormData();
+        	$("#exportForm").attr("action","/WMS/inve/exportRedeem.do");
+        	$("#exportForm").submit();
+        }
+        
+        
+        var selectrow;
+        //打开撤销页面
+         function opensingleNullify(){
+        	//console.log(1);
+        	var row = grid.getSelectedRow();
+        	selectrow = row;
+        	var can_not_cancle_status = ['4','6','7'];//待修订、已完成、已终止
+         	if(row==null){
+                 globalUtil.warnMsg(globalErrorMsg['300129']);//请选择一行记录进行作废
+                 return;
+         	 }else if(can_not_cancle_status.indexOf(row.data_status)<0 && rolezy=="lccwzy"){ //理财财务主管，可以作废赎回中（非修订状态）单据
+             	var url = globalUtil.getHtml("../inve/singleNullify.html");
+               	dialog = $.ligerDialog.open({
+               	       url: url,
+               	       title: '单据作废',
+               	       width: 800,
+               	       height: globalUtil.setDialogHeight(300),
+               	       onHiddenOrClose: function(){
+               	       	//alert('关闭或隐藏都调用的事件!');
+               	   	},
+               	       isResize: false
+               		});
+              }else{
+            	  globalUtil.warnMsg(globalErrorMsg['300135']);//该单据不能作废
+                  return;
+              } 
+        }
+        //保存撤销理由
+        function tosubmitNullify(advice){
+        	var row=selectrow;
+        	var paramJson = {};
+			paramJson.businessId = selectrow.wms_inve_redeem_id;
+			paramJson.wms_inve_redeem_id = selectrow.wms_inve_redeem_id;
+			paramJson.advice=advice;
+        	$.post(globalUtil.getTimestampUrl('/inve/cancelWmsInveRedeemByCw.do'), paramJson,
+      			function(data) {
+	      			if(data == 'success') {
+	      				globalUtil.successMsg(globalErrorMsg['300132'],function(){
+	      					dialog.hide();
+	      					search();
+	      				});//作废成功
+	      			}else{
+	      				globalUtil.warnMsg(globalErrorMsg['300133']);//作废失败
+	      			}
+      		});
+        }
+        /**
+         *在菜单上注册导出事件，并定义获取的导出的excel内容 
+         */
+        function registerCsv(){
+        	var moviePath = "../../js/media/swf/copy_csv_xls_pdf.swf";
+        	var fileName = '赎回单据信息.xls';
+        	var titleJson = '';
+        	var dataJson = '';
+        	var obj = $("div[toolbarid='ToolTables_XLS_2']")[0];//获取菜单对象
+        	var getDataFun = function(){
+        		var text = {};
+        		var titleJson = {};
+        		for(var i=0;i<columns.length-1;i++){
+        			titleJson[columns[i].name] = columns[i].display;
+        		}
+        		text.title = titleJson;
+        		initParams();
+        		var json = globalUtil.syncGetJson("/inve/wmsinveredeemwithoutpaginglistforquerysh.do?sortname=redeem_date&sortorder=desc&menu_id="+menu_id,params, "POST");//同步获取需要导出的数据内容
+        		for (var i = 0; i < json.Rows.length; i++) {
+     					 for (var j = 0; j < data_statusL.length; j++) {
+     							if(data_statusL[j].value_code==json.Rows[i].data_status){
+     								json.Rows[i].data_status = data_statusL[j].value_meaning;
+     							}
+     						}
+				}
+        		text.data = json.Rows;
+        		return text;
+        	};
+        	registerXlsFlashBtn(moviePath,fileName,titleJson,dataJson,obj,getDataFun);
+        }
+        //单据状态
+    	function init_data_status(json){
+    		var data_status_params ={
+    				dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=60',
+    				t_col_name:'data_status_name',
+    				valueField:'value_code',   //下拉框value对应的值，默认为id
+    				textField:'value_meaning',    //下拉框text对应的值，默认为text
+    				input_width:133,
+    				def_val:'first'
+    				};
+    		global_ligerui_extend.initCombox("data_status_name",null,data_status_params);
+    		global_ligerui_extend.initComboxDefVal("data_status_name");
+    	}
+    	 //产品特批领导
+    	function init_special_approval_leader(json){
+    		 var category_name_params ={
+    				dest_url:'/inve/wmsinvespecialapprovalistforselect.do',
+    				t_col_name:'special_approval_leader_id',
+    				valueField:'special_approval_leader_id',   //下拉框value对应的值，默认为id
+    				textField:'special_approval_leader_name',    //下拉框text对应的值，默认为text
+    				input_width:133,
+    				def_val:'first'
+    				};
+    		global_ligerui_extend.initCombox("special_approval_leader_id",null,category_name_params);
+   		    global_ligerui_extend.initComboxDefVal("special_approval_leader_id"); 
+    	}
+        //清空所填写内容
+        function clear(){
+        	$("#create_user_name").val("");
+        	$("#salesman_name").val("");
+        	$("#cus_name").val("");
+        	$("#id_card").val("");
+        	$("#redeem_date_begin").val("");
+        	$("#redeem_date_end").val("");
+        	$("#is_special_approval").val("");
+        	$("#special_approval_leader_id").val("请选择");
+        	global_ligerui_extend.setComboxVal("special_approval_leader_id","-1");
+//         	$("#data_status_name").val("-1");
+        	global_ligerui_extend.setComboxVal("data_status_name","-1");
+        	global_ligerui_extend.setComboxVal("data_status","-1");
+        }
+        //表格初始化
+        function initGrid() {
+        	columns = [{
+                display: '单据编号',
+                name: 'bill_code',
+                width: 200,
+                minWidth: 200,
+                //添加超链接的东西
+                render: function (rowdata, rowindex, value) {
+        			return '<a href="javascript:inveInfo('+rowdata.wms_inve_redeem_id+','+rowdata.wms_inve_transa_id+',\''+rowdata.redeem_date+'\',\''+rowdata.data_status_name+'\');" style="color:#056AFF;text-decoration: none;">'+value+'</a>';
+        		}
+            },{
+           		 display: '客户姓名',
+            	 name: 'cus_name',
+            	 width: 120,
+            	 minWidth: 120
+        	},{
+           	 	 display: '有效证件',
+            	 name: 'id_card',
+             	 width: 200,
+             	 minWidth: 200
+       		},{
+           		 display: '赎回金额（元）',
+            	 name: 'redeem_apply_total_amount',
+            	 width: 120,
+            	 minWidth: 120
+        	},{
+           		 display: '实际赎回金额（元）',
+            	 name: 'redeem_reality_total_amount',
+            	 width: 120,
+            	 minWidth: 120
+        	},{
+           	 	display: '申请员',
+             	name: 'create_user_name',
+             	width: 120,
+             	minWidth: 120
+       		},{
+           	 	display: '申请时间',
+             	name: 'redeem_date',
+             	width: 120,
+             	minWidth: 120
+       		},{
+           	 	display: '业务员',
+             	name: 'salesman_name',
+             	width: 120,
+             	minWidth: 120
+       		},{
+        	   display: '单据状态',
+               name: 'data_status_name',
+               width: 120,
+               minWidth: 120 
+            },{
+           	 	 display: '流程历程',
+             	 width: 200,
+            	 minWidth: 200,
+            	 render: function (rowdata, rowindex, value) { 
+         			return '<a href="javascript:InveWorkFlowProcess('+rowdata.process_id+');" style="color:#056AFF;text-decoration: none;">'+"查看"+'</a>';
+         		}
+        	}];
+            grid = $("#grid").ligerGrid({
+        		columns: columns,
+        		url: global_param.context_name + '/inve/wmsinveredeemwithpaginglistforquerysh.do?menu_id='+menu_id,
+        		sortName: 'redeem_date', // 排序列名
+				sortOrder: 'desc', // 排序方式
+        		rownumbers: true,
+        		allowUnSelectRow: true,
+        		usePager: true,
+        		width: '100%',
+        		height: '95%',
+        		heightDiff: -4,
+        		rowAttrRender: function(rowdata, rowindex) {
+    				
+        		},
+        		parms: {
+        			_filterParms: -1
+        		}
+            });
+        }
+        //查看赎回单据详细信息
+        function inveInfo(wms_inve_redeem_id,wms_inve_transa_id,redeem_date,data_status_name){
+        	if(redeem_date>=global_param.dis_date){
+        		//新版本查看赎回详情
+        		var url = globalUtil.getHtml("redeemInfoNewVersion.html?wms_inve_redeem_id="+wms_inve_redeem_id+"&wms_inve_transa_id="+wms_inve_transa_id+"&data_status_name="+data_status_name+"&cktype=ckxq");
+        		dialog = $.ligerDialog.open({
+    		        url: url,
+    		        title: '赎回客户信息明细',
+    		        width: 1000,
+    		        height: globalUtil.setDialogHeight(800),
+    		        onHiddenOrClose: function(){
+    		    	},
+    		        isResize: false
+    	    	}); 
+        	}else{
+        		var url = globalUtil.getHtml("inve/redeemInfo.html?wms_inve_redeem_id="+wms_inve_redeem_id+"&cktype=ck");
+                globalUtil.openTab(10001, "赎回客户信息明细", url, false);
+        	}          
+        }
+        
+        //流程历程
+        function InveWorkFlowProcess(wms_inve_redeem_id){
+        	var url = globalUtil.getHtml("approvalProcess.html?wms_inve_redeem_id="+wms_inve_redeem_id);
+       		dialog=$.ligerDialog.open({
+       			url:url,
+       			title: '查看',
+		        width: 1000,
+		        height: globalUtil.setDialogHeight(500),
+		        onHiddenOrClose: function(){
+		    	},
+		        isResize: false
+       		});
+        }
+        
+        function initParams() {
+        	params = globalUtil.getFormParam("searchbar");
+        	if(params.special_approval_leader_id == '-1'){
+            	params.special_approval_leader_id = '';
+            }
+        	if(params.data_status_name == '-1'){
+        		params.data_status_name = '';
+        	}
+        	params.is_special_approval=$("#is_special_approval").val();
+        }
+        //实现数据查询
+        var search= function() {
+            initParams();
+            global_ligerui_extend.search(grid, params);
+        }
+        
+        function registParentFun(){
+        	parent.window.registFun = [];
+        	parent.window.registFun[0] = search;
+        }
+        </script>
+</body>
+</html>

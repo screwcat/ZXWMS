@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.sysmanage.persist.FlowActIdMembershipDao">
+
+	<insert id="save" parameterType="ActIdMembership">
+		INSERT INTO act_id_membership
+		(USER_ID_,GROUP_ID_)
+		VALUES
+		(
+		#{user_id_},#{group_id_});
+	</insert>
+
+	<delete id="delete">
+		delete from act_id_membership where USER_ID_ in
+		<foreach collection="array" item="item" index="index" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+</mapper> 

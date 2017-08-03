@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>公证到期设置</title>
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+</head>
+<body>
+		
+	<div class="pop-center overflow-au" style="margin: 5px; margin-top: 150px;top: 30px;margin-left: 500px">
+		<!-- 按钮区 -->
+	    <div style="bottom: 1px; height: 35px;margin-left: 60%">
+	        <!-- 同步信贷数据到还款管理 -->
+	        <a id="creditMessageToRepayWarn" class="btnType1 btnSize2" onclick="creditMessageToRepayWarn()" >同步信贷数据</a>
+	    </div>
+        <table>
+        	<tr>
+        		<td>
+        			 <input id="save" class="btn-save" 
+				        onmouseover="this.className='btn-save-over'"
+				        onmouseout="this.className='btn-save'"
+				        onmousedown="this.className='btn-save-down'" type="button"
+				        onclick="save(0)"/>  
+        		</td>
+        	</tr>       	
+        </table> 
+		<table border="2">
+			<tr style="background-color:#66B3FF" height="30px">
+				<td style="width: 50px"></td>
+				<td style="width: 300px;font-size: 20px">参数名称</td>
+				<td style="width: 300px;font-size: 20px">参数设置</td>
+			</tr>
+			<tr height="50px">
+				<td style="font-size: 20px">1</td>
+				<td>短信发送人员</td>
+				<td>
+					<input type="text" id="warn_role_name" style="width: 250px" disabled="disabled">
+					<input type="text" id="warn_role_id" style="display: none;">
+					<a href="#" onclick="showMessagePeople()">选择</a>
+				</td>
+			</tr>
+			<tr height="50px">
+				<td style="font-size: 20px">2</td>
+				<td>提醒到期时间</td>
+				<td>
+					<input type="text" id="warn_expire_days" style="width: 50px"/>天
+				</td>
+			</tr>
+			<tr height="100px">
+				<td style="font-size: 20px">3</td>
+				<td align="center">短信发送周期</td>
+				<th>
+					<input type="checkbox" name="send_message_cycle_checkbox" value="180" class="radio3" style="margin-left: 50px" onchange="changeRadio()"/>六个月
+					<input type="checkbox" name="send_message_cycle_checkbox" value="150" class="radio3" style="margin-left: 10px" onchange="changeRadio()"/>五个月
+					<input type="checkbox" name="send_message_cycle_checkbox" value="120" class="radio3" style="margin-left: 10px" onchange="changeRadio()"/>四个月
+					<br>
+					<input type="checkbox" name="send_message_cycle_checkbox" value="90" class="radio3" style="margin-left: 50px" onchange="changeRadio()"/>三个月
+					<input type="checkbox" name="send_message_cycle_checkbox" value="60" class="radio3" style="margin-left: 10px" onchange="changeRadio()"/>二个月
+					<input type="checkbox" name="send_message_cycle_checkbox" value="30" class="radio3" style="margin-left: 10px" onchange="changeRadio()"/>一个月
+					<br>
+<!-- 					分割线 -->
+					<div class="line clearboth sqrqkdiv" id="info_l3"></div>
+					<input type="radio" name="send_message_cycle_radio" value="15" class="radio3" style="margin-left: 50px" onchange="changeCheckbox()"/>半个月
+					<input type="radio" name="send_message_cycle_radio" value="7" class="radio3" style="margin-left: 10px" onchange="changeCheckbox()"/>每周
+					<input type="radio" name="send_message_cycle_radio" value="1" class="radio3" style="margin-left: 22px" onchange="changeCheckbox()"/>每天
+				</th>
+			</tr>
+			<tr height="50px">
+				<td style="font-size: 20px">4</td>
+				<td>短信发送时间</td>
+				<td>
+					<input id="send_message_time" class="Wdate" type="text"
+						onclick="WdatePicker({dateFmt:'HH:mm',isShowClear:true})"
+					style="width: 100px; vertical-align: top;" />
+				</td>
+			</tr>
+			<tr height="50px">
+				<td style="font-size: 20px">5</td>
+				<td>短信发送频次</td>
+				<td>
+					<select id="send_message_number" style="width: 50px">
+						<option>1</option>
+						<option>2</option>
+						<option>3</option>
+						<option>4</option>
+						<option>5</option>
+						<option>6</option>
+						<option>7</option>
+						<option>8</option>
+						<option>9</option>
+						<option>10</option>
+					</select>
+					次
+				</td>
+			</tr>
+			<tr height="50px">
+				<td style="font-size: 20px">6</td>
+				<td>节假日是否发送</td>
+				<td>
+					<input type="radio" name="is_holiday_send" value="1" class="radio3"/>是
+					<input type="radio" name="is_holiday_send" value="0" class="radio3" checked="checked"/>否
+				</td>
+			</tr>
+		</table>
+	</div>
+	<script type="text/javascript">
+	$(function() {
+		init_Data();
+	});
+	function init_Data(){
+		$.ajax({
+            type : "POST",
+            url : globalUtil.getTimestampUrl("/remind/getWmsCreCreditNotarySetInfo.do"),
+            traditional : true,
+            success : function(data) {
+            	//短信发送人员
+            	$("#warn_role_name").val(data.warn_role_name);
+            	$("#warn_role_id").val(data.warn_role_id);
+            	
+            	$("#warn_expire_days").val(data.warn_expire_days);
+            	var send_message_cycle_checkbox = data.send_message_cycle;
+        		if (send_message_cycle_checkbox!=null&&send_message_cycle_checkbox.length && send_message_cycle_checkbox.length > 0) {
+        			var commarr = send_message_cycle_checkbox.split(",");
+        			$("input[name='send_message_cycle_checkbox']").each(function() {
+        				if (checkArr(commarr, $(this).val())) {
+        					$(this).attr('checked', 'checked');
+        				} else {
+        					$(this).removeAttr('checked');
+        				}
+        			});
+        		}	
+        		$("input[name='send_message_cycle_radio']").each(function() {
+        			if ($(this).val() == data.send_message_cycle) {
+        				$(this).attr('checked', 'checked');
+        				return false;
+        			}
+        		});
+        		//去掉秒
+        		var hour = data.send_message_time.split(":")[0];
+        		var minute = data.send_message_time.split(":")[1];
+        		var message_time = hour+":"+minute;
+        		$("#send_message_time").val(message_time);
+        		$("#send_message_number").val(data.send_message_number);
+        		
+        		
+        		$("input[name='is_holiday_send']").each(function() {
+        			if ($(this).val() == data.is_holiday_send) {
+        				$(this).attr('checked', 'checked');
+        				return false;
+        			}
+        		});
+            }
+        });
+	}
+	//弹出选择短信发送人页面
+	function showMessagePeople(){
+		var ids = $("#warn_role_id").val();
+		var url = globalUtil.getHtml("choiceMessagePeople.html?ids="+ids);
+		dialog = $.ligerDialog.open({
+	        url: url,
+	        title: '短信发送人员',
+	        width: 700,
+	        height: globalUtil.setDialogHeight(500),
+	        onHiddenOrClose: function(){
+	    	},
+	        isResize: false
+		});
+	}
+	function setMessagePeople(valStr, nameStr){
+		$("#warn_role_id").val(valStr);
+		$("#warn_role_name").val(nameStr);
+	}	
+	function save(){
+		var days_val = $("#warn_expire_days").val();
+		if(isNaN(days_val)){
+			 globalUtil.errorMsg(globalErrorMsg['100051']);//请输入正确的天数
+			 return;
+		}else if(days_val < 30 || days_val > 180){
+			globalUtil.errorMsg(globalErrorMsg['100050']);//输入天数请大与30天,并且小于180天
+			return;
+		}
+		var jsonStr={};
+		var send_message_cycle_checkbox = [];
+		$("input[name='send_message_cycle_checkbox']").each(function() {
+			if ($(this).is(':checked')) {
+				send_message_cycle_checkbox.push($(this).val());
+			}
+		});	
+		jsonStr.send_message_cycle = send_message_cycle_checkbox.join(",");
+		
+		$("input[name='send_message_cycle_radio']").each(function() {
+			if ($(this).is(':checked')) {
+				jsonStr.send_message_cycle = $(this).val();
+				return false;//退出each循环
+			}
+		});	
+		
+		$("input[name='is_holiday_send']").each(function() {
+			if ($(this).is(':checked')) {
+				jsonStr.is_holiday_send = $(this).val();
+				return false;//退出each循环
+			}
+		});	
+		jsonStr.warn_role_name = $("#warn_role_name").val();
+		jsonStr.warn_role_id = $("#warn_role_id").val();
+		jsonStr.warn_expire_days = $("#warn_expire_days").val();
+		
+		var checkbox =  $("#send_message_cycle_checkbox").val();
+		jsonStr.send_message_time = $("#send_message_time").val()+":00";
+		jsonStr.send_message_number = $("#send_message_number").val();
+		$.ajax({
+            type : "POST",
+            url : globalUtil.getTimestampUrl("/remind/WmsCreCreditNotarySetSave.do"),
+            data : jsonStr,
+            traditional : true,
+            success : function(data) {
+			            	if (data === 'success') {
+			                    globalUtil.successMsg(globalErrorMsg['100002']);//保存成功  
+			                }else{
+			                	globalUtil.errorMsg(globalErrorMsg['100012']); //保存失败
+			                }
+                      }
+        });
+	}	
+	function changeCheckbox(){
+		var checkboxStr={};
+		var send_message_cycle_checkbox = [];
+		$("input[name='send_message_cycle_checkbox']").each(function() {
+			if ($(this).is(':checked')) {
+				send_message_cycle_checkbox.push($(this).val());
+			}
+		});	
+		$("input[name='send_message_cycle_checkbox']").each(function() {
+			$(this).attr('checked', false);
+		});	
+	}	
+	function changeRadio(){
+		var radioStr={};
+		$("input[name='send_message_cycle_radio']").each(function() {
+			if ($(this).is(':checked')) {
+				radioStr.send_message_cycle_radio = $(this).val();
+				return false;//退出each循环
+			}
+		});	
+		if(radioStr.send_message_cycle_radio != ""){
+			$("input[name='send_message_cycle_radio']").each(function() {
+				$(this).attr('checked', false);
+			});
+		}
+	}	
+	function checkArr(commarr, val) {
+		for (var i = 0; i < commarr.length; i++) {
+			if (val == commarr[i]) {
+				return true;
+			}
+		}
+		return false;
+	}
+	//获取信息放款数据同步到还款提醒
+	function creditMessageToRepayWarn(){
+		globalUtil.confirmMsg("是否同步信贷数据到还款管理？", 
+				function(yes) {
+		            if(yes) {
+		            	$.ajax({ 
+		        	        type: "POST", 
+		        	        url: global_param.context_name + "/remind/getCreditMessageToRepayWarn.do",
+		        	        async: false,
+		        	        dataType: "json",
+		        	        success: function(json) {
+
+		        	        	if (json === 'success') {
+					        		globalUtil.successMsg(globalErrorMsg['100002']);
+					        	}else if (json === 'exceptionError'){
+					        		globalUtil.errorMsg(globalErrorMsg['100012']);
+					        	}else if (json === 'listNull'){
+					        		globalUtil.warnMsg("没有数据要同步！");
+					        	}else {
+					        		globalUtil.errorMsg(globalErrorMsg['100012']);
+					        	}
+		        	        }
+		        	    });
+		            }
+	        	}
+			);
+	}
+	</script>
+</body>
+</html>

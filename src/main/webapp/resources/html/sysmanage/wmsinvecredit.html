@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>匹配数据详情</title>
+
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script language="Javascript" src="../../js/zx-all.js"> </script>
+<style>
+/*input_tb css*/
+.input_tb {
+	border: 1px solid #dfdfdf;
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.input_tb a {
+	color: #056aff;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.input_tb td {
+	height: 35px;
+	line-height: 25px;
+	border-bottom: 1px dashed #d5d5d5;
+	padding-top: 3px;
+}
+
+.input_tb .tr_title td {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	border-bottom: 1px solid #dfdfdf;
+}
+
+.input_tb .tr_last td {
+	border-bottom: 0;
+}
+
+.input_tb .title {
+	text-align: right;
+}
+
+.input_tb .subtitle {
+	text-align: left;
+	background-color: #d2e1fd;
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+}
+
+.input_tb .tr_btn_input td {
+	background-color: #fbfbfb;
+	/*border-top:1px solid #dbdbdb;*/
+	height: 40px;
+}
+</style>
+
+<script type="text/javascript">
+var grid_json = {};
+$(function(){
+	var specList = globalUtil.syncGetJson("/inve/searchSpecList.do");
+	initSpecList(specList);
+	//initGrid(grid_id,wms_inve_credit_split_spec_id);
+	//global_ligerui_extend.search(grid_divwt1, "");
+});
+
+function initGrid(grid_id,wms_inve_credit_split_spec_id,index) {
+	var columns1 = [{
+		display: '抵押包来源',
+		name: 'credit_city',
+		resizable: false,
+		width: 200,
+		minWidth: 200
+	},{
+		display: '抵押包姓名',
+		name: 'credit_name',
+		resizable: false,
+		width: 200,
+		minWidth: 200
+	},{
+		display: '身份证号',
+		name: 'credit_id_card',
+		resizable: false,
+		width: 200,
+		minWidth: 200
+	},{
+		display: '抵押金额（万元）',
+		name: 'credit_amount',
+		resizable: false,
+		width: 200,
+		minWidth: 200
+	},{
+		display: '平米数',
+		name: 'house_area',
+		resizable: false,
+		width: 200,
+		minWidth: 200
+	},{
+		display: '起始日期',
+		name: 'begin_of_date',
+		resizable: false,
+		width: 200,
+		minWidth: 200
+	},{
+		display: '终止日期',
+		name: 'end_of_date',
+		resizable: false,
+		width: 200,
+		minWidth: 200
+	},{
+		display: '额度',
+		name: 'credit_split_amount',
+		resizable: false,
+		width: 200,
+		minWidth: 200
+	}];
+	
+	grid_json[wms_inve_credit_split_spec_id] = $(grid_id).ligerGrid({ // maingrid为表格div所在id
+		columns: columns1,
+		url: global_param.context_name + '/inve/wmsinvecreditwithpaginglist.do?wms_inve_credit_split_spec_id='+wms_inve_credit_split_spec_id,
+		sortName: 'wms_inve_credit_id', // 排序列名
+		sortOrder: 'desc', // 排序方式
+		rownumbers: true,
+		usePager: true, // 是否分页支持，默认为true
+		enabledEdit: true,
+		width: '100%',
+		height:'92%',
+		heightDiff: -4,
+		parms: {
+			_filterParms: -1
+		}
+	});
+}
+//切换联系人tab页效果
+$(document).on('click', '.l-unselected-sub', function(index) {
+	$(this).removeClass('l-unselected-sub').addClass('l-selected-sub').
+	    siblings().removeClass('l-selected-sub').addClass('l-unselected-sub');
+	$("div[class='center-txt'][id!='" + $(this).attr('id') + "']").hide();
+	$("#div_out"+$(this).attr('id')).show();
+	global_ligerui_extend.search(grid_json[$(this).attr('id')], "");
+	
+});
+
+//初始化联系人tab页
+function initSpecList(specList) {
+    var liClass;
+    for(var i = 0; i < specList.length; i++) {
+    	liClass = (i == 0) ? 'l-selected-sub' : 'l-unselected-sub';
+    	var spec_id = specList[i].wms_inve_credit_split_spec_id;
+	    $('#allLinkPeopleUl').append(
+    		'<li class="' + liClass + '" id=' + spec_id + '>' +
+                '<a>' + specList[i].split_city + '</a>' +
+                '<div class="l-tab-links-item-left-sub"></div>' +
+                '<div class="l-tab-links-item-right-sub"></div>' +
+            '</li>'
+	    );
+	    //添加联系人信息
+	    var div_html = "";
+	    if(i == 0){
+	    	div_html = '<div class="center-txt" style="margin-bottom: 15px;"id="div_out'+ spec_id +'"><div id="div_in'+ spec_id +'"></div></div>';
+	    }else{
+	    	div_html = '<div class="center-txt" style="margin-bottom: 15px;display:none" id="div_out'+ spec_id +'"><div id="div_in'+ spec_id +'"></div></div>';
+	    }
+	    $('#data_div').append(div_html);
+	    initGrid("#div_in"+spec_id,spec_id,i);
+	    if(i == 0){
+	    	global_ligerui_extend.search(grid_json[spec_id], "");
+	    }
+    }
+}
+</script>
+</head>
+<body>
+		<div class="pop-center overflow-au" id="myForm">
+			<div id="divpart1" class="pop-formDiv clearfix"style="margin: 5px;">
+				<div class="l-tab-links-sub">
+                    <ul style="left: 0px;" id="allLinkPeopleUl">
+                    </ul>
+                </div>
+				<div class="center-content clearboth" style="min-width: 700px;" id="data_div">
+					<div class="center-title">
+						<font color="black">抵押包拆分明细台账</font>
+					</div>
+				</div>
+			</div>
+		</div>
+</body>
+</html>

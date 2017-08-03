@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.sysmanage.persist.SysPostDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="SysPost">
+		select
+        				post_id,
+        				post_code,
+        				post_name,
+        				post_level,
+        				post_remark,
+        				post_status,
+        				post_deptid,
+						date_format(post_createtime,'%Y-%m-%d %H:%i:%s') as post_createtime_str,
+        				post_createtime,
+        				enable_flag,
+        				create_id,
+        				create_user,
+						date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+        				create_timestamp,
+        				last_update_user,
+						date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+        				last_update_timestamp,
+        				post_number
+        	from
+        		sys_post
+        	where
+        				post_id = #{post_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(post_id) as count
+		from sys_post
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				post_id,
+				post_code,
+				post_name,
+				post_level,
+				post_remark,
+				post_status,
+				post_deptid,
+				date_format(post_createtime,'%Y-%m-%d %H:%i:%s') as post_createtime_str,
+				post_createtime,
+				enable_flag,
+				create_id,
+				create_user,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				post_number
+		from sys_post
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="SysPost" useGeneratedKeys="true" keyProperty="post_id">
+		INSERT INTO sys_post
+		(
+				post_id,
+
+				post_code,
+
+				post_name,
+
+				post_level,
+
+				post_remark,
+
+				post_status,
+
+				post_deptid,
+
+				post_createtime,
+
+				enable_flag,
+
+				create_id,
+
+				create_user,
+
+				create_timestamp,
+
+				last_update_user,
+
+				last_update_timestamp,
+
+				post_number
+		)
+		VALUES
+		(
+				#{post_id},
+				#{post_code},
+				#{post_name},
+				#{post_level},
+				#{post_remark},
+				#{post_status},
+				#{post_deptid},
+				#{post_createtime},
+				#{enable_flag},
+				#{create_id},
+				#{create_user},
+				#{create_timestamp},
+				#{last_update_user},
+				#{last_update_timestamp},
+				#{post_number}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="SysPost">
+		update sys_post
+		<set>
+					<if test="post_id != null">
+						 post_id = #{post_id},
+					</if>
+					<if test="post_code != null">
+						 post_code = #{post_code},
+					</if>
+					<if test="post_name != null">
+						 post_name = #{post_name},
+					</if>
+					<if test="post_level != null">
+						 post_level = #{post_level},
+					</if>
+					<if test="post_remark != null">
+						 post_remark = #{post_remark},
+					</if>
+					<if test="post_status != null">
+						 post_status = #{post_status},
+					</if>
+					<if test="post_deptid != null">
+						 post_deptid = #{post_deptid},
+					</if>
+					<if test="post_createtime != null">
+						 post_createtime = #{post_createtime},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+					<if test="create_id != null">
+						 create_id = #{create_id},
+					</if>
+					<if test="create_user != null">
+						 create_user = #{create_user},
+					</if>
+					<if test="create_timestamp != null">
+						 create_timestamp = #{create_timestamp},
+					</if>
+					<if test="last_update_user != null">
+						 last_update_user = #{last_update_user},
+					</if>
+					<if test="last_update_timestamp != null">
+						 last_update_timestamp = #{last_update_timestamp},
+					</if>
+					<if test="post_number != null">
+						 post_number = #{post_number},
+					</if>
+	   </set>
+		 where 
+    				post_id = #{post_id}
+	</update>
+	<select id="getListByEntity" parameterType="SysPost" resultType="SysPost">
+		select 
+				post_id,
+				post_code,
+				post_name,
+				post_level,
+				post_remark,
+				post_status,
+				post_deptid,
+				date_format(post_createtime,'%Y-%m-%d %H:%i:%s') as post_createtime_str,
+				post_createtime,
+				enable_flag,
+				create_id,
+				create_user,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				post_number
+		from
+		sys_post
+		<where>
+					<if test="post_id != null">
+						and post_id = #{post_id}
+					</if>
+					<if test="post_code != null">
+						and post_code = #{post_code}
+					</if>
+					<if test="post_name != null">
+						and post_name = #{post_name}
+					</if>
+					<if test="post_level != null">
+						and post_level = #{post_level}
+					</if>
+					<if test="post_remark != null">
+						and post_remark = #{post_remark}
+					</if>
+					<if test="post_status != null">
+						and post_status = #{post_status}
+					</if>
+					<if test="post_deptid != null">
+						and post_deptid = #{post_deptid}
+					</if>
+					<if test="post_createtime != null">
+						and post_createtime = #{post_createtime}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+					<if test="create_id != null">
+						and create_id = #{create_id}
+					</if>
+					<if test="create_user != null">
+						and create_user = #{create_user}
+					</if>
+					<if test="create_timestamp != null">
+						and create_timestamp = #{create_timestamp}
+					</if>
+					<if test="last_update_user != null">
+						and last_update_user = #{last_update_user}
+					</if>
+					<if test="last_update_timestamp != null">
+						and last_update_timestamp = #{last_update_timestamp}
+					</if>
+					<if test="post_number != null">
+						and post_number = #{post_number}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and post_id != #{post_id}
+					</if>
+		</where>
+	</select>
+	
+	<select id="getSysPostBySalesManDeptId" parameterType="int" resultType="SysPost">
+		select
+        	post_id,
+        	post_code,
+        	post_name,
+        	post_level,
+        	post_remark,
+        	post_status,
+        	post_deptid,
+			date_format(post_createtime,'%Y-%m-%d %H:%i:%s') as post_createtime_str,
+        	post_createtime,
+        	enable_flag,
+        	create_id,
+        	create_user,
+			date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+        	create_timestamp,
+        	last_update_user,
+			date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+        	last_update_timestamp,
+        	post_number
+        from
+        	sys_post
+        where
+        	post_deptid = #{post_deptid}
+	</select>
+</mapper> 

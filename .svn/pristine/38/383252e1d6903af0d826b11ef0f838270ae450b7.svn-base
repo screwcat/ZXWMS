@@ -1,0 +1,694 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>公证到期提醒</title>
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<style type="text/css">
+.float-l {
+    height: 40px;
+}
+input {
+    width: 150px;
+}
+select {
+    width: 152px;
+}
+.readonly {
+    background-color: rgb(235, 235, 228);
+}
+</style>
+</head>
+<body>
+	<div class="pop-center overflow-au" style="margin: 5px; margin-top: 5px;">
+	    <div class="center-content clearboth" style="" id="data">
+	        <div class="center-title" style="margin-top: 0px;">客户信息</div>
+		    <div class="center-content2 clearboth" style="height: 500px;">
+		        <div class="l-panel-search-cond clearfix" style="padding-top: 10px; width: 850px; margin-left: 28px;">
+			        <div class="float-l" style="margin-left: 41px">
+		                <div class="l-panel-search-title">
+		                	<span class="redstar">*</span>客户姓名：
+		                </div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="customer_name" maxlength="10" />
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 26px">
+		                <div class="l-panel-search-title">
+		                	<span class="redstar">*</span>身份证：
+		                </div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="id_card" maxlength="50" />
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 16px">
+		                <div class="l-panel-search-title">
+		                	<span class="redstar">*</span>联系电话：
+		                </div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="mobile_telephone" maxlength="11" />
+		                </div>
+		            </div>
+		            <div class="float-l clearboth" style="margin-left: 38px">
+		                <div class="l-panel-search-title">共贷人姓名：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="com_debtor_name" maxlength="50" />
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 35px;">
+		                <div class="l-panel-search-title">身份证：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="com_debtor_identity_id" maxlength="20" />
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 25px">
+		                <div class="l-panel-search-title">联系电话：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="com_debtor_tel" maxlength="11" />
+		                </div>
+		            </div>
+		            <div class="float-l clearboth" style="margin-left: 50px">
+		                <div class="l-panel-search-title">通讯地址：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="current_address_more" maxlength="50" style="width: 417px;" />
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 25px">
+		                <div class="l-panel-search-title">固定电话：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="debtor_fixed_line" maxlength="20" />
+		                </div>
+		            </div>
+		            <div class="float-l clearboth" style="margin-left: 41px">
+		                <div class="l-panel-search-title">
+		                	<span class="redstar">*</span>申请日期：
+		                </div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="appl_date" class="Wdate" 
+		                    	onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+								style="vertical-align: top;" maxlength="50" />
+		                </div>
+		            </div>
+		            <div class="float-l">
+		                <div class="l-panel-search-title">合同签订日期：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="protocol_date" class="Wdate" 
+		                    	onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+								style="vertical-align: top;" maxlength="50" />
+		                </div>
+		            </div>
+		            <div class="float-l">
+		                <div class="l-panel-search-title">终止还款日期：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="borrow_end_date" class="Wdate" 
+		                    	onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+								style="vertical-align: top;" maxlength="50" />
+		                </div>
+		            </div>
+		            <div class="float-l clearboth" style="margin-left: 62px">
+		                <div class="l-panel-search-title">合同号：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="protocol_id_year_num" maxlength="20" />
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 48px;">
+		                <div class="l-panel-search-title">产品：</div>
+		                <div class="l-panel-search-item">
+		                   <!--<input type="text" id="category_name" maxlength="10" />-->
+		                    <select id="category_name">
+		                    </select>
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 48px;">
+		                <div class="l-panel-search-title">利息：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="borrow_interest" maxlength="16"style="width: 135px;" />%
+		                </div>
+		            </div>
+		            <div class="float-l clearboth" style="margin-left: 50px">
+		                <div class="l-panel-search-title">借款金额：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="appro_limit" style="width: 135px;" maxlength="16" />元
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 27px;">
+		                <div class="l-panel-search-title">借款期限：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="borrow_deadline" style="width: 135px;" maxlength="16" />月
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 27px;">
+		                <div class="l-panel-search-title">打卡金额：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="loan_amount" maxlength="16" style="width: 135px;" />元
+		                </div>
+		            </div>
+		            <div class="float-l clearboth" style="margin-left: 61px">
+		                <div class="l-panel-search-title">平台费：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="platform_fee" maxlength="16" style="width: 135px;" />元
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 40px;">
+		                <div class="l-panel-search-title">公证费：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="notarial_fee" style="width: 135px;" maxlength="16" />元
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 27px;">
+		                <div class="l-panel-search-title">合同金额：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="principal_lower" style="width: 135px;" maxlength="16" />元
+		                </div>
+		            </div>
+		            <div class="float-l clearboth" style="margin-left: 37px">
+		                <div class="l-panel-search-title">月还款金额：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="refund_limit_month" style="width: 135px;" maxlength="16" />元
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 28px;">
+		                <div class="l-panel-search-title">开户银行：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="refund_bank" maxlength="20" />
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 24px;">
+		                <div class="l-panel-search-title">银行卡号：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="refund_number" maxlength="30" />
+		                </div>
+		            </div>
+		            <div class="float-l clearboth" style="margin-left: 48px">
+		                <div class="l-panel-search-title">已还期数：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="repay_period" maxlength="16" />
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 26px;">
+		                <div class="l-panel-search-title">还款时间：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="current_repay_date" class="Wdate" 
+		                    	onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+								style="vertical-align: top;" maxlength="50" />
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 24px;">
+		                <div class="l-panel-search-title">剩余金额：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="un_pay_principal" maxlength="16" />
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 60px;">
+		                <div class="l-panel-search-title">业务员：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="salesman_name" maxlength="10" />
+		                    <input type="hidden" id="salesman_dept_code" />
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 50px;">
+		                <div class="l-panel-search-title">工号：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="salesman_shortcode" maxlength="10" />
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 24px">
+		                <div class="l-panel-search-title">团队经理：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="team_manager_name" maxlength="10" />
+		                    <input type="hidden" id="team_manager_code" />
+		                </div>
+		            </div>
+		            <div class="float-l clearboth" style="margin-left: 36px">
+		                <div class="l-panel-search-title">所属营业部：</div>
+		                <div class="l-panel-search-item">
+		                    <select id="sales_epartment_code">
+		                    </select>
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 26px;">
+		                <div class="l-panel-search-title">业务状态：</div>
+		                <div class="l-panel-search-item">
+		                	<select id="bill_type"></select>
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 39px">
+		                <div class="l-panel-search-title">
+		                	<span class="redstar" id="cs" style="visibility: hidden">*</span>次数：
+		                </div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="the_number" maxlength="10" />
+		                </div>
+		            </div>
+		            <div class="float-l clearboth" style="margin-left: 72px; width: 100%;">
+		                <div class="l-panel-search-title">备注：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="warn_remak" maxlength="250" style="width: 687px;" />
+		                </div>
+		            </div>
+			    </div>
+		    </div>
+	        <div class="center-title" style="margin-top: 0px;">公证信息</div>
+	        <div class="center-content2 clearboth" style="min-width: 500px;">
+			    <div class="l-panel-search-cond clearfix" style="padding-top: 10px; margin-left: 40px;">
+			        <div class="float-l" style="margin-left: 5px">
+			            <div class="l-panel-search-title">
+			            	公证到期日期：
+			            </div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="end_time" class="Wdate" 
+		                    	onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+								style="vertical-align: top;" />
+		                </div>
+		            </div>
+		            <div class="float-l" style="margin-left: 25px">
+		                <div class="l-panel-search-title">到期原因：</div>
+		                <div class="l-panel-search-item">
+		                    <input type="text" id="end_reason" maxlength="20" />
+		                </div>
+		            </div>
+			    </div>
+		    </div>
+		</div>
+	</div>
+    <!-- 提交功能按钮区 -->
+    <div class="pop-footer5 clearboth" style="bottom: 1px; height: 35px" id="tb_btn">
+        <!-- 提交 -->
+        <input id="save" class="btn-saveT"
+            onmouseover="this.className='btn-saveT-over'"
+            onmouseout="this.className='btn-saveT'"
+            onmousedown="this.className='btn-saveT-down'" type="button"
+            style="margin-right: 7px;" />
+        <input id="cancel"
+            class="btn-cancel" onmouseover="this.className='btn-cancel-over'"
+            onmouseout="this.className='btn-cancel'"
+            onmousedown="this.className='btn-cancel-down'" type="button" />
+    </div>
+<script type="text/javascript">
+
+var spfcDialog;
+var flag = $.query.get('flag');//0为新增 1为修改 2为续贷
+
+jQuery(function($){ 
+    
+	var reqMap = {};
+	var url = '';
+	var wms_cre_credit_notary_warn_id;
+	var now = new Date();
+	var year = now.getFullYear();
+	var month = addZero(now.getMonth() + 1);
+	var day = addZero(now.getDate());
+	var now_time = formatDate(year, month, day);
+	
+	//初始化所属营业部
+	$.ajax({
+        url: global_param.context_name + '/sysmanage/getCityCodeWithList.do',
+        type: 'GET',
+        data: {},
+        async: false,
+        success: function(data) {
+        	$(data).each(function(i, o) {
+	        	$('#sales_epartment_code').append('<option value="' + o.storesCode + '">' + o.storesName + '</option>');
+        	});
+        }
+    });
+	
+	//银行卡号输入自动加空格
+	$('#refund_number').keyup(function() {
+		var val = $('#refund_number').val();//获取用户输入
+        val = val.replace(/\D/g, '');
+        var ncard = '';
+        for(var n = 0; n < val.length; n = n + 4) {
+            ncard += val.substring(n, n + 4) + ' ';
+        }
+        $('#refund_number').val(ncard.replace(/(\s*$)/g, ''));
+	});
+	
+	//初始化产品种类
+	init_category_name();
+	//初始化业务状态
+	globalUtil.init_select_value("bill_type", "value_code", "value_meaning", "false", "124");
+	
+	if(flag == '0') {//新增
+
+		$('#appl_date,#protocol_date').val(now_time);
+		$('#end_time').val(getAfterDaysTime(now, 365 * 2));
+		$('#category_name').val("785");
+		//还款时间：默认合同签订日期(当前时间)+1个月
+		$('#current_repay_date').val(getAfterDaysTime(now, 30));
+		url = '/creditManage/WmsCreCreditNotaryWarnSave.do';
+	} else {//修改
+		wms_cre_credit_notary_warn_id = $.query.get('wms_cre_credit_notary_warn_id');
+		reqMap.wms_cre_credit_notary_warn_id = wms_cre_credit_notary_warn_id;
+		if(flag == '2') {//续贷
+			reqMap.bill_status = null;
+			reqMap.is_cycles = '1';
+		}
+		
+		url = '/creditManage/WmsCreCreditNotaryWarnUpdate.do';
+		
+		//初始化数据
+		$.ajax({
+	        url: global_param.context_name + '/creditManage/WmsCreCreditNotaryWarnGetInfoByPK.do',
+	        type: 'POST',
+	        data: reqMap,
+	        async: false,
+	        success: function(data) {
+	        	$('#customer_name,#appl_date').attr('readonly', 'readonly').addClass('readonly').removeClass('Wdate').attr('onclick', '');
+	        	$('#data input,select').each(function() {
+            		if($(this).attr('id') in data) {
+            			$(this).val(data[$(this).attr('id')]);
+            		}
+            	});
+	        	//init_category_name(data);
+	        }
+	    });
+	}
+	
+	//业务员选择
+// 	$('#salesman_name').click(function() {
+// 		var url = globalUtil.getHtml("../creditManage/searchPersonnelForCredit.html");
+// 		spfcDialog = $.ligerDialog.open({
+// 	        url: url,
+// 	        title: '选择业务员',
+// 	        width: 1000,
+// 	        height: globalUtil.setDialogHeight(600),
+// 	        isResize: false
+// 	    });
+// 	});
+	
+	//保存
+	$('#save').click(function() {
+		
+		
+		
+		//如果不为新增，不能填0，不能为空，必须为正整数
+		if($('#bill_type').val() != 1){
+			if($('#the_number').val() == ''){
+				globalUtil.warnMsg(globalErrorMsg['1700038']);
+				return;
+			}
+			if(!globalUtil.isNum($('#the_number').val()) || $('#the_number').val() == 0){
+				globalUtil.warnMsg(globalErrorMsg['1700039']);
+				return;
+			}
+		}else{//如果为新增可以为空，不能填0，如果填了必须为正整数
+			if($('#the_number').val() != ''){
+				if(!globalUtil.isNum($('#the_number').val()) || $('#the_number').val() == 0){
+					globalUtil.warnMsg(globalErrorMsg['1700039']);
+					return;
+				}
+			}
+		}
+		
+		//客户姓名
+		if($('#customer_name').val() == '') {
+			globalUtil.warnMsg(globalErrorMsg['1700001']);
+			return;
+		}
+		//身份证
+		if($('#id_card').val() == '') {
+			globalUtil.warnMsg(globalErrorMsg['1700002']);
+			return;
+		}
+		//身份证格式校验
+		if($('#id_card').val() != '' && !globalUtil.isIdCard($('#id_card').val())) {
+			globalUtil.warnMsg(globalErrorMsg['1700008']);
+			return;
+		}
+		//联系电话
+		if($('#mobile_telephone').val() == '') {
+			globalUtil.warnMsg(globalErrorMsg['1700003']);
+			return;
+		}
+		//联系电话格式校验
+		if($('#mobile_telephone').val() != '' && !globalUtil.isPhone($('#mobile_telephone').val())) {
+			globalUtil.warnMsg(globalErrorMsg['1700009']);
+			return;
+		}
+		//共贷人身份证格式校验
+		if($('#com_debtor_identity_id').val() != '' && !globalUtil.isIdCard($('#com_debtor_identity_id').val())) {
+			globalUtil.warnMsg(globalErrorMsg['1700010']);
+			return;
+		}
+		//共贷人联系电话格式校验
+		if($('#com_debtor_tel').val() != '' && !globalUtil.isPhone($('#com_debtor_tel').val())) {
+			globalUtil.warnMsg(globalErrorMsg['1700020']);
+			return;
+		}
+		//固定电话格式校验
+		if($('#debtor_fixed_line').val() != '' && !globalUtil.isFixedTelephoneAll($('#debtor_fixed_line').val())) {
+			globalUtil.warnMsg(globalErrorMsg['1700021']);
+			return;
+		}
+		//申请日期
+		if($('#appl_date').val() == '') {
+			globalUtil.warnMsg(globalErrorMsg['1700004']);
+			return;
+		}
+		//利息格式校验
+		if($('#borrow_interest').val() != '') {
+			if(!globalUtil.isFloat($('#borrow_interest').val()) || 
+					(globalUtil.isFloat($('#borrow_interest').val()) && parseFloat($('#borrow_interest').val()) < 0)) {
+				globalUtil.warnMsg(globalErrorMsg['1700011']);
+				return;
+			}
+		}
+		//借款金额格式校验
+		if($('#appro_limit').val() != '') {
+			if(!globalUtil.isFloat($('#appro_limit').val()) ||  
+					(globalUtil.isFloat($('#appro_limit').val()) && parseFloat($('#appro_limit').val()) < 0)) {
+				globalUtil.warnMsg(globalErrorMsg['1700012']);
+				return;
+			}
+		}
+		//借款期限格式校验
+		if($('#borrow_deadline').val() != '' && !globalUtil.isNum($('#borrow_deadline').val())) {
+			globalUtil.warnMsg(globalErrorMsg['1700013']);
+			return;
+		}
+		//打卡金额格式校验
+		if($('#loan_amount').val() != '') {
+			if(!globalUtil.isFloat($('#loan_amount').val()) ||  
+					(globalUtil.isFloat($('#loan_amount').val()) && parseFloat($('#loan_amount').val()) < 0)) {
+				globalUtil.warnMsg(globalErrorMsg['1700014']);
+				return;
+			}
+		}
+		//平台费格式校验
+		if($('#platform_fee').val() != '') {
+			if(!globalUtil.isFloat($('#platform_fee').val()) || 
+					(globalUtil.isFloat($('#platform_fee').val()) && parseFloat($('#platform_fee').val()) < 0)) {
+				globalUtil.warnMsg(globalErrorMsg['1700015']);
+				return;
+			}
+		}
+		//公证费格式校验
+		if($('#notarial_fee').val() != '') {
+			if(!globalUtil.isFloat($('#notarial_fee').val()) || 
+					(globalUtil.isFloat($('#notarial_fee').val()) && parseFloat($('#notarial_fee').val()) < 0)) {
+				globalUtil.warnMsg(globalErrorMsg['1700016']);
+				return;
+			}
+		}
+		//合同金额格式校验
+		if($('#principal_lower').val() != '') {
+			if(!globalUtil.isFloat($('#principal_lower').val()) || 
+					(globalUtil.isFloat($('#principal_lower').val()) && parseFloat($('#principal_lower').val()) < 0)) {
+				globalUtil.warnMsg(globalErrorMsg['1700017']);
+				return;
+			}
+		}
+		//月还款金额格式校验
+		if($('#refund_limit_month').val() != '') {
+			if(!globalUtil.isFloat($('#refund_limit_month').val()) || 
+					(globalUtil.isFloat($('#refund_limit_month').val()) && parseFloat($('#refund_limit_month').val()) < 0)) {
+				globalUtil.warnMsg(globalErrorMsg['1700018']);
+				return;
+			}
+		}
+		//银行卡号格式校验
+		if($('#refund_number').val() != '') {
+			var card_no = $('#refund_number').val().split(' ').join('');
+			if(!globalUtil.isNum(card_no) || card_no.length < 15 || card_no.length > 19) {
+				globalUtil.warnMsg(globalErrorMsg['1700025']);
+				return;
+			}
+		}
+		//已还期数
+		if($('#repay_period').val() != '' && !globalUtil.isNum($('#repay_period').val())) {
+			globalUtil.warnMsg(globalErrorMsg['1700023']);
+			return;
+		}
+		//剩余金额
+		if($('#un_pay_principal').val() != '') {
+			if(!globalUtil.isFloat($('#un_pay_principal').val()) || 
+					(globalUtil.isFloat($('#un_pay_principal').val()) && parseFloat($('#un_pay_principal').val()) < 0)) {
+				globalUtil.warnMsg(globalErrorMsg['1700024']);
+				return;
+			}
+		}
+		//工号格式校验
+		if($('#salesman_shortcode').val() != '' && !globalUtil.isNum($('#salesman_shortcode').val())) {
+			globalUtil.warnMsg(globalErrorMsg['1700019']);
+			return;
+		}
+		
+		
+		
+		
+		
+
+		
+		
+		
+		
+		
+		
+		
+		$('#data input,select,textarea').each(function() {
+			reqMap[$(this).attr('id')] = $(this).val();
+		});
+		
+		//以下字段四舍五入保留两位小数(志刚说的)
+		//借款金额
+		reqMap.appro_limit = globalUtil.changeDecimalRoundHalfEven(reqMap.appro_limit, 2, true);
+		//打卡金额
+		reqMap.loan_amount = globalUtil.changeDecimalRoundHalfEven(reqMap.loan_amount, 2, true);
+		//平台费
+		reqMap.platform_fee = globalUtil.changeDecimalRoundHalfEven(reqMap.platform_fee, 2, true);
+		//公证费
+		reqMap.notarial_fee = globalUtil.changeDecimalRoundHalfEven(reqMap.notarial_fee, 2, true);
+		//合同金额
+		reqMap.principal_lower = globalUtil.changeDecimalRoundHalfEven(reqMap.principal_lower, 2, true);
+		//期还款金额
+		reqMap.refund_limit_month = globalUtil.changeDecimalRoundHalfEven(reqMap.refund_limit_month, 2, true);
+		//剩余金额
+		reqMap.un_pay_principal = globalUtil.changeDecimalRoundHalfEven(reqMap.un_pay_principal, 2, true);
+		
+		//部门名称
+		reqMap.sales_epartment_name = $('#sales_epartment_code option:selected').text();
+		//部门编码
+		reqMap.sales_epartment_code = $('#sales_epartment_code').val();	
+		//产品名称
+		reqMap.category_name = $('#category_name option:selected').val();
+		//利息
+	    var borrow_interest = $('#borrow_interest').val();
+	    
+		if(borrow_interest == "") {
+			reqMap.borrow_interest = 0;
+    	}
+		
+		$.ajax({
+	        url: global_param.context_name + url,
+	        type: 'POST',
+	        data: reqMap,
+	        async: false,
+	        success: function(data) {
+	        	if(data == "success") {
+	        		globalUtil.successMsg(globalErrorMsg['100002'], function() {  
+	        			window.parent.dialog.hide();
+	        			try {
+	        				if(flag == 1) {
+	        					//window.parent.is_show_now = 2;//特殊需求--传递特殊参数 后台进行特殊查询
+	        				} else if(flag != 2) {
+	        					window.parent.is_show_now = 1;//特殊需求--传递特殊参数 后台进行特殊查询
+	        				}
+		            	} catch (e) {  
+		            		
+		            	}
+		            	refreshAndClosePage();
+	                });
+	        	} else {
+	        		globalUtil.warnMsg(globalErrorMsg['100012']);
+	        	}
+	        }
+	    });
+	});
+	
+	//取消
+	$('#cancel').click(function() {
+        window.parent.dialog.hide();
+	});
+	//业务状态选择事件，除了新增，次数都为必填
+  $('#bill_type').change(function () {
+	  	//判断是否显示前面*号
+	  	if($('#bill_type').val() != 1)
+	  	{
+		  $("#cs").css("visibility","visible");
+		}
+	  	else
+		{
+	  		 $("#cs").css("visibility","hidden");
+		}
+	});
+	
+});
+
+//选择业务员回调赋值
+function getCheckedPersonnelAll(data) {
+    $("#salesman_name_all").val(data.personnel_name + '/' + data.personnel_shortcode);
+    $("#salesman_id").val(data.personnel_id);
+    $("#salesman_name").val(data.personnel_name);
+    $("#salesman_code").val(data.personnel_code);
+    $("#salesman_city_code").val(data.personnel_regionnumber);
+    $("#salesman_dept_id").val(data.personnel_deptid);
+    $("#salesman_shortcode").val(data.personnel_shortcode);
+}
+
+//补零(月 日)
+function addZero(number) {
+	return number < 10 ? '0' + number : number;
+}
+
+//年月日格式化
+function formatDate(year, month, day) {
+	return year + '-' + month + '-' + day;
+}
+
+//获取指定天数后的时间
+function getAfterDaysTime(time, afterDays) {
+	time = new Date(time);
+	var after_days_time = new Date(time.getTime() + 1000 * 60 * 60 * 24 * afterDays);
+	var after_days_year = after_days_time.getFullYear();
+	var after_days_month = addZero(after_days_time.getMonth() + 1);
+	var after_days_day = addZero(after_days_time.getDate());
+	return formatDate(after_days_year, after_days_month, after_days_day);
+}
+
+function closePage() {
+    try {
+        window.parent.dialog.hide();
+    } catch(e) {
+        globalUtil.closeCurrentTab();
+    }
+ }
+
+//关闭本页并刷新查询页面
+function refreshAndClosePage() { 
+	try{
+    window.parent.research();
+	}catch(e){
+		window.parent.search(); 
+	}
+    closePage();    
+}
+
+//初始化产品种类
+function init_category_name(json) {
+	$.ajax({
+        url: global_param.context_name + '/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=102',
+        type: 'GET',
+        data: {},
+        async: false,
+        success: function(data) {
+        	$(data).each(function(i, o) {
+	        	$('#category_name').append('<option value="' + o.value_code + '">' + o.value_meaning + '</option>');
+        	});
+        }
+    });
+}
+</script>
+</body>
+</html>

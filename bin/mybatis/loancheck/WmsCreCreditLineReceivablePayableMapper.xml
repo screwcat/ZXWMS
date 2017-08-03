@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper
+	namespace="com.zx.emanage.loancheck.persist.WmsCreCreditLineReceivablePayableDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="long"
+		resultType="WmsCreCreditLineReceivablePayable">
+		select
+		wms_cre_credit_line_receivable_payable_id,
+		receivable_payable_type,
+		customer_name,
+		prod_name,
+		account,
+		settlement_way,
+		account_period,
+		contract_no,
+		remark,
+		wms_cre_credit_head_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_cre_credit_line_receivable_payable
+		where
+		wms_cre_credit_line_receivable_payable_id = #{wms_cre_credit_line_receivable_payable_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cre_credit_line_receivable_payable_id) as count
+		from
+		wms_cre_credit_line_receivable_payable
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		wms_cre_credit_line_receivable_payable_id,
+		receivable_payable_type,
+		customer_name,
+		prod_name,
+		account,
+		settlement_way,
+		account_period,
+		contract_no,
+		remark,
+		wms_cre_credit_head_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		wms_cre_credit_line_receivable_payable
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreCreditLineReceivablePayable"
+		useGeneratedKeys="true" keyProperty="wms_cre_credit_line_receivable_payable_id">
+		INSERT INTO
+		wms_cre_credit_line_receivable_payable
+		(
+		wms_cre_credit_line_receivable_payable_id,
+
+		receivable_payable_type,
+
+		customer_name,
+
+		prod_name,
+
+		account,
+
+		settlement_way,
+
+		account_period,
+
+		contract_no,
+
+		remark,
+
+		wms_cre_credit_head_id,
+
+		create_user_id,
+
+		create_user_name,
+
+		create_timestamp,
+
+		last_update_user_id,
+
+		last_update_timestamp,
+
+		enable_flag
+		)
+		VALUES
+		(
+		#{wms_cre_credit_line_receivable_payable_id},
+		#{receivable_payable_type},
+		#{customer_name},
+		#{prod_name},
+		#{account},
+		#{settlement_way},
+		#{account_period},
+		#{contract_no},
+		#{remark},
+		#{wms_cre_credit_head_id},
+		#{create_user_id},
+		#{create_user_name},
+		#{create_timestamp},
+		#{last_update_user_id},
+		#{last_update_timestamp},
+		#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreCreditLineReceivablePayable">
+		update wms_cre_credit_line_receivable_payable
+		<set>
+			<if test="wms_cre_credit_line_receivable_payable_id != null">
+				wms_cre_credit_line_receivable_payable_id = #{wms_cre_credit_line_receivable_payable_id},
+			</if>
+			<if test="receivable_payable_type != null">
+				receivable_payable_type = #{receivable_payable_type},
+			</if>
+			<if test="customer_name != null">
+				customer_name = #{customer_name},
+			</if>
+			<if test="prod_name != null">
+				prod_name = #{prod_name},
+			</if>
+			<if test="account != null">
+				account = #{account},
+			</if>
+			<if test="settlement_way != null">
+				settlement_way = #{settlement_way},
+			</if>
+			<if test="account_period != null">
+				account_period = #{account_period},
+			</if>
+			<if test="contract_no != null">
+				contract_no = #{contract_no},
+			</if>
+			<if test="remark != null">
+				remark = #{remark},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+		</set>
+		where
+		wms_cre_credit_line_receivable_payable_id = #{wms_cre_credit_line_receivable_payable_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreCreditLineReceivablePayable"
+		resultType="WmsCreCreditLineReceivablePayable">
+		select
+		wms_cre_credit_line_receivable_payable_id,
+		receivable_payable_type,
+		customer_name,
+		prod_name,
+		account,
+		settlement_way,
+		account_period,
+		contract_no,
+		remark,
+		wms_cre_credit_head_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_cre_credit_line_receivable_payable
+		<where>
+			<if test="wms_cre_credit_line_receivable_payable_id != null">
+				and wms_cre_credit_line_receivable_payable_id =
+				#{wms_cre_credit_line_receivable_payable_id}
+			</if>
+			<if test="receivable_payable_type != null">
+				and receivable_payable_type = #{receivable_payable_type}
+			</if>
+			<if test="customer_name != null">
+				and customer_name = #{customer_name}
+			</if>
+			<if test="prod_name != null">
+				and prod_name = #{prod_name}
+			</if>
+			<if test="account != null">
+				and account = #{account}
+			</if>
+			<if test="settlement_way != null">
+				and settlement_way = #{settlement_way}
+			</if>
+			<if test="account_period != null">
+				and account_period = #{account_period}
+			</if>
+			<if test="contract_no != null">
+				and contract_no = #{contract_no}
+			</if>
+			<if test="remark != null">
+				and remark = #{remark}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name = #{create_user_name}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id = #{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+
+		</where>
+	</select>
+</mapper> 

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.loanfina.persist.WmsFinaCrePosDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsFinaCrePos">
+		select
+        				wms_fina_cre_pos_id,
+        				pos_name,
+        				pos_code,
+        				create_user_id,
+        				create_user_name,
+						date_format(create_user_datetime,'%Y-%m-%d %H:%i:%s') as create_user_datetime_str,
+        				create_user_datetime,
+        				last_update_user_id,
+        				last_update_user_name,
+						date_format(last_update_user_datetime,'%Y-%m-%d %H:%i:%s') as last_update_user_datetime_str,
+        				last_update_user_datetime,
+        				pos_bank_card,
+        				pos_bank,
+        				remark,
+        				enable_flag,
+						most_poundage,
+						sigle_poundage
+        	from
+        		wms_fina_cre_pos
+        	where
+        				wms_fina_cre_pos_id = #{wms_fina_cre_pos_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_fina_cre_pos_id) as count
+		from wms_fina_cre_pos
+		<where>
+			<if test="enable_flag != null">
+				enable_flag=#{enable_flag}
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_fina_cre_pos_id,
+				pos_name,
+				pos_code,
+				create_user_id,
+				create_user_name,
+				date_format(create_user_datetime,'%Y-%m-%d %H:%i:%s') as create_user_datetime_str,
+				create_user_datetime,
+				last_update_user_id,
+				last_update_user_name,
+				date_format(last_update_user_datetime,'%Y-%m-%d %H:%i:%s') as last_update_user_datetime_str,
+				last_update_user_datetime,
+				pos_bank_card,
+				pos_bank,
+				remark,
+				enable_flag,
+				most_poundage,
+				sigle_poundage
+		from wms_fina_cre_pos
+		<where>
+			<if test="enable_flag != null">
+				enable_flag=#{enable_flag}
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsFinaCrePos" useGeneratedKeys="true" keyProperty="wms_fina_cre_pos_id">
+		INSERT INTO wms_fina_cre_pos
+		(
+				wms_fina_cre_pos_id,
+
+				pos_name,
+
+				pos_code,
+
+				create_user_id,
+
+				create_user_name,
+
+				create_user_datetime,
+
+				last_update_user_id,
+
+				last_update_user_name,
+
+				last_update_user_datetime,
+
+				pos_bank_card,
+
+				pos_bank,
+
+				remark,
+
+				enable_flag,
+				most_poundage,
+				sigle_poundage
+		)
+		VALUES
+		(
+				#{wms_fina_cre_pos_id},
+				#{pos_name},
+				#{pos_code},
+				#{create_user_id},
+				#{create_user_name},
+				#{create_user_datetime},
+				#{last_update_user_id},
+				#{last_update_user_name},
+				#{last_update_user_datetime},
+				#{pos_bank_card},
+				#{pos_bank},
+				#{remark},
+				#{enable_flag},
+				#{most_poundage},
+				#{sigle_poundage}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsFinaCrePos">
+		update wms_fina_cre_pos
+		<set>
+					<if test="wms_fina_cre_pos_id != null">
+						 wms_fina_cre_pos_id = #{wms_fina_cre_pos_id},
+					</if>
+					<if test="pos_name != null">
+						 pos_name = #{pos_name},
+					</if>
+					<if test="pos_code != null">
+						 pos_code = #{pos_code},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="create_user_name != null">
+						 create_user_name = #{create_user_name},
+					</if>
+					<if test="create_user_datetime != null">
+						 create_user_datetime = #{create_user_datetime},
+					</if>
+					<if test="last_update_user_id != null">
+						 last_update_user_id = #{last_update_user_id},
+					</if>
+					<if test="last_update_user_name != null">
+						 last_update_user_name = #{last_update_user_name},
+					</if>
+					<if test="last_update_user_datetime != null">
+						 last_update_user_datetime = #{last_update_user_datetime},
+					</if>
+					<if test="pos_bank_card != null">
+						 pos_bank_card = #{pos_bank_card},
+					</if>
+					<if test="pos_bank != null">
+						 pos_bank = #{pos_bank},
+					</if>
+					<if test="remark != null">
+						 remark = #{remark},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+					<if test="most_poundage != null">
+						 most_poundage = #{most_poundage},
+					</if>
+					<if test="sigle_poundage != null">
+						 sigle_poundage = #{sigle_poundage},
+					</if>
+	   </set>
+		 where 
+    				wms_fina_cre_pos_id = #{wms_fina_cre_pos_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsFinaCrePos" resultType="WmsFinaCrePos">
+		select 
+				wms_fina_cre_pos_id,
+				pos_name,
+				pos_code,
+				create_user_id,
+				create_user_name,
+				date_format(create_user_datetime,'%Y-%m-%d %H:%i:%s') as create_user_datetime_str,
+				create_user_datetime,
+				last_update_user_id,
+				last_update_user_name,
+				date_format(last_update_user_datetime,'%Y-%m-%d %H:%i:%s') as last_update_user_datetime_str,
+				last_update_user_datetime,
+				pos_bank_card,
+				pos_bank,
+				remark,
+				enable_flag,
+				most_poundage,
+				sigle_poundage
+		from
+		wms_fina_cre_pos
+		<where>
+					<if test="wms_fina_cre_pos_id != null">
+						and wms_fina_cre_pos_id = #{wms_fina_cre_pos_id}
+					</if>
+					<if test="pos_name != null">
+						and pos_name = #{pos_name}
+					</if>
+					<if test="pos_code != null">
+						and pos_code = #{pos_code}
+					</if>
+					<if test="create_user_id != null">
+						and create_user_id = #{create_user_id}
+					</if>
+					<if test="create_user_name != null">
+						and create_user_name = #{create_user_name}
+					</if>
+					<if test="create_user_datetime != null">
+						and create_user_datetime = #{create_user_datetime}
+					</if>
+					<if test="last_update_user_id != null">
+						and last_update_user_id = #{last_update_user_id}
+					</if>
+					<if test="last_update_user_name != null">
+						and last_update_user_name = #{last_update_user_name}
+					</if>
+					<if test="last_update_user_datetime != null">
+						and last_update_user_datetime = #{last_update_user_datetime}
+					</if>
+					<if test="pos_bank_card != null">
+						and pos_bank_card = #{pos_bank_card}
+					</if>
+					<if test="pos_bank != null">
+						and pos_bank = #{pos_bank}
+					</if>
+					<if test="remark != null">
+						and remark = #{remark}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        		and wms_fina_cre_pos_id != #{wms_fina_cre_pos_id}
+					</if>
+					<if test="most_poundage != null">
+						and most_poundage = #{most_poundage}
+					</if>
+					<if test="sigle_poundage != null">
+						and sigle_poundage = #{sigle_poundage}
+					</if>
+		</where>
+	</select>
+</mapper> 

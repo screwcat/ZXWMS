@@ -1,0 +1,397 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="resources/images/logo_16.ico"
+	mce_href="resources/images/logo_16.ico" type="image/x-icon" rel="icon" />
+<title>财富管理系统</title>
+<style type="text/css">
+#wrap {
+	width: 996px;
+	overflow: hidden;
+	margin: 0 auto;
+}
+
+#login_div2 {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin: 0 auto;
+	width: 450px;
+	height: 200px;
+	position: absolute;
+	margin: -100px 0px 0px -200px;
+	overflow: auto;
+	z-index:1;
+}
+#back_div_ptp_online { 
+			position: absolute;
+		    top: 0%;
+		    left: 0%;
+		    width:100%;
+		    height:100%;
+		    background-color: #8FB0D1;
+		    -moz-opacity: 0.8;
+		    opacity:.80;
+		    z-index:1;
+		    filter: alpha(opacity=40);
+}
+#nav_ptp_online {
+    position:absolute;
+	width:750; 
+	height: 500px; 
+	margin:0 auto;
+	top:50%; 
+	left:50%; 
+	margin:-225px 0 0 -375px; 
+	z-index:1;
+} 
+</style>
+<link href="resources/css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="resources/css/app.css" rel="stylesheet" type="text/css" />
+<script src="resources/js/zx-all.js"></script>
+
+<link href="resources/css/index.css" type="text/css" rel="stylesheet" />
+<link href="resources/css/base.css" type="text/css" rel="stylesheet" />
+<link href="resources/css/screen.css" rel="stylesheet" type="text/css"
+	media="screen" />
+<script type="text/javascript">
+var dialog_div;
+var pressLoginStatus=true;
+$(function () {
+	$(document).keyup(function(event){		
+		if(event.keyCode ==13){
+			if($('#login_div2').css('display')!='none' && pressLoginStatus){
+				loginSys()
+			}
+		}			
+	});	
+	$('#sub_menu').mouseleave(function(){
+		$('#sub_menu').hide();
+	});
+});
+var dialog = null;
+
+
+var openDialog = function() {
+	dialog_div = $.ligerDialog.open({
+        target: $("#login_div2"),
+        title: '用户登录',
+        width: 450,
+        height: globalUtil.setDialogHeight(270),        
+        isResize: false,
+        onHiddenOrClose: function(){
+        document.getElementById('login_div2').style.display='none'; 
+        }
+    });
+}
+
+//开启ptp上线公告
+/*var openDialogOnline =function(){
+	$("#nav_ptp_online").load("resources/html/dialog-online.html");
+	$("#back_div_ptp_online").css('display','');
+	document.getElementById('login_div2').style.display='none'; 
+	
+}
+//跳转PTP网站地址
+var windowOpen =function(){
+	window.open('http://www.xrszg.com','_blank');
+}*/
+var colseDialog = function() {
+	dialog_div.hide();
+};
+
+var errormsg = function(msg){
+	pressLoginStatus = false;
+	globalUtil.addMask('1');
+	var obj = $.ligerDialog.error(msg, null, null);
+	obj.options.onHiddenOrClose = function() {
+		setTimeout(function(){
+			pressLoginStatus = true;
+		},200);		
+		globalUtil.delMask('1');
+    };
+}
+
+var loginSys = function() {
+    
+	if(globalUtil.isEmpty($('#userCode').val())){		
+		errormsg(globalErrorMsg['100110']);
+		return false;
+	}
+		
+	var account = $.trim($('#userCode').val());
+	var pwd = $.trim($('#userPasswd').val());
+	
+	$.post(globalUtil.getTimestampUrl("/login.do"),
+				 {"userCode": account, "userPasswd": pwd}, 
+				 function(data) {
+				 var ifm=document.getElementById("top_frame").contentWindow;
+    	         var ulElement = ifm.document.getElementById('ul_menu');
+    	         var loginElement = ifm.document.getElementById('ssc_login');
+    	         var logoutElement = ifm.document.getElementById('ssc_logout');
+    	         var sysInfoElement = ifm.document.getElementById('sys_info');
+				 if (data.error) {
+					 $(loginElement).css('display','block');
+					 $(logoutElement).css('display','none');
+					 $(sysInfoElement).css('display','none');					 
+					/*
+					 if (data.error === '100100') {
+						errormsg(globalErrorMsg['100100']);
+					} else if (data.error === '100101') {
+						errormsg(globalErrorMsg['100101']);
+					} else if (data.error === '100109') {
+						openDialog();
+					}*/
+					$("#error_msg").html(data.error);
+				}else {
+					$(loginElement).css('display','none');
+					$(logoutElement).css('display','block');
+					$(sysInfoElement).css('display','block');	
+					ifm.setUserMenu();
+					setUserInfo();
+					//globalUtil.resetCookieValue('cookie_username', account, 7);
+					//globalUtil.resetCookieValue('cookie_passwd', pwd, 7);
+					colseDialog();
+					ifm.openindex();
+					//当登录成功后，重新刷新页面
+					window.location.reload();
+				}
+			}
+		);
+};
+
+function checkUserInfo(){
+	if(is_login == 'true'){
+		$(window[0].document.getElementById("real_name")).html(real_name);
+	}
+}
+function setUserInfo(){
+	//获取当前登录用户名称
+    $.get(globalUtil.getTimestampUrl("/sysmanage/getcurrentuserinfo.do"),{}, 
+		function(data) {
+	    	  if(data && data.realname){
+	    		  var obj = $(window[0].document.getElementById("real_name"));
+	    		  if(obj){
+	    			  obj.html(data.realname);	    			  
+	    		  }
+	    	  }else{
+	    		  $(window[0].document.getElementById("real_name")).html('');
+	    	  }
+		});
+}
+
+function panduan(menu_id,id){
+	var ifm=document.getElementById("top_frame").contentWindow;
+	var loginElement = ifm.document.getElementById('ssc_login');
+	if($(loginElement).css('display')!='none'){
+		$(loginElement).trigger('click');
+	}else{
+		$.get(globalUtil.getTimestampUrl("/issessiontimeout.do"),
+				function(data){
+					if(data=='ok'){
+						globalUtil.confirmMsg(globalErrorMsg['100092'],
+								function(yes) {
+									if(yes){
+										$(loginElement).trigger('click');
+									}					
+						});
+					}else{
+						$.getJSON(globalUtil.getTimestampUrl("/sysmanage/getusermenuforpage.do"),
+								{
+									"menu_id" : menu_id
+								},
+								function(josn) {			
+									if(josn!=null){
+										var menu_url =getHtml(josn.menu_url,josn.menu_id);
+										document.getElementById("main_frame").src ='/WMS/resources/html/main_page.html?p_menu_id='+id+'&json_menu_id='+menu_id+'&json_menu_name='+josn.menu_name+'&json_menu_url='+menu_url+"&menu_id="+menu_id;
+									}else{
+										globalUtil.warnMsg(globalErrorMsg['100117']);	//提示信息
+									}	
+						});	
+					}		
+		});
+	}	
+}
+function logout(){
+	var ifm=document.getElementById("top_frame").contentWindow;
+    var loginElement = ifm.document.getElementById('ssc_login');
+    var logoutElement = ifm.document.getElementById('ssc_logout');
+    var sysinfoElement = ifm.document.getElementById('sys_info');
+	globalUtil.confirmMsg(globalErrorMsg['100034'],
+		    function(yes) {
+		    	if(yes){
+		    		$.get(globalUtil.getTimestampUrl("/logout.do"), 
+                       		function(data) {
+				    			$.removeCookie('cookie_username');
+				    		    $.removeCookie('cookie_passwd');
+                        	    $(loginElement).css('display','block');
+                        	    $(logoutElement).css('display','none');
+                        	    $(sysinfoElement).css('display','none');
+                        	    ifm.openindex();
+                        	    var ulElement = ifm.document.getElementById('ul_menu');
+                        	    $(ulElement).html('<li class="first current"><a href="#" onclick="openindex()">首   页</a></li><li class="back"><div class="left"></div></li>');
+                        	    openDialog();
+                    });
+		    		$('#sub_menu').hide();
+		    		$('#top_frame').contents().find('#rate_info').hide();
+		    		$('#top_frame').contents().find('#limit_info').hide();
+		    	}
+		    });
+}
+var liobj = null;//点击的菜单对象
+function resetCur(){
+	var ifm=document.getElementById("top_frame").contentWindow;
+	ifm.resetCurrent(liobj);
+}
+function loadMenu(obj,p_menu_id,index){	
+	$.getJSON(globalUtil.getTimestampUrl('/sysmanage/getusermenu.do?p_menu_id='+p_menu_id), function(data) {
+		if(globalUtil.errorHandle(data) && data[0].childrenTree!=null){
+			liobj = obj;
+			createMenu(data,p_menu_id,index);
+			//$("#layout1").ligerLayout().setLeftCollapse(true);
+		}
+	});
+}
+function createMenu(data,p_menu_id,index) {
+	$('#sub_menu').css('left','310px');
+	var dataJson = data;
+	if(dataJson == null || dataJson.length == 0){
+		return;
+	}
+	var menuList = dataJson[0].childrenTree;
+	var htmlStr = '';
+	if(menuList!= null &&　menuList[0].children!=null){
+		$.each(menuList,function(i,menu){		
+			htmlStr += '<ul class="submenuUl">';
+			var ulEle = '<li class="subLi">' + menu.text + '<br/><ul>';
+			if(menu.children){
+				$.each(menu.children,function(j,child){
+					var url = getHtml(child.url,child.id);
+					ulEle += '<li><a onclick=\''
+					+ 'openTab("' + url
+					+ '","'+child.text+'","'+child.id+'","'+''+'");' + '\'><span>' + child.text + '</span></a></li>';
+				});
+				ulEle += '</ul></li>';
+				htmlStr += ulEle + '</ul>';
+			}else{
+				ulEle += '</ul></li>';
+				htmlStr += ulEle + '</ul>';
+			}
+			
+		});
+	}else{
+		htmlStr += '<ul style="float:left; margin-left:10px;">';
+		var ulEle = '';
+		if(menuList!=null){
+			$.each(menuList,function(i,menu){
+				var url = getHtml(menu.url,menu.id);
+				ulEle += '<li><a onclick=\''
+					+ 'openTab("' + url
+					+ '","'+menu.text+'","'+menu.id+'","'+''+'");' + '\'><span>' + menu.text + '</span></a></li>';		
+			});
+			htmlStr += ulEle + '</ul>';
+		}
+	}
+	$('#sub_menu').css('left',(parseInt($('#sub_menu').css('left'))+parseInt(index)*120)+'px');
+	$('#sub_menu').html(htmlStr);
+	$('#sub_menu').show(300);
+}
+
+function getHtml(url,menuId){
+	url = $.trim(url);
+    if (url.indexOf('?') > -1) {
+        url += '&' + global_param.version.substring(1);
+    } else {
+        url  += global_param.version;
+    }
+    url = url+='&menu_id='+menuId;
+    url = url.replace(/=/g, "%3D").replace(/&/g,'%26');
+	return url;
+}
+
+function openTab(url, text, id) {
+	resetCur();
+	document.getElementById("main_frame").src ="resources/html/main_page.html?json_menu_url="+url+"&json_menu_id="+id+"&json_menu_name="+text;	
+	$('#sub_menu').hide();
+}
+
+//打开利率设置
+function openRateDialog() {
+
+	var url = globalUtil.getHtml(global_param.context_name+"/resources/html/inve/setInterestRates.html");
+	dialog = $.ligerDialog.open({
+		url : url,
+		title : '设定央行活期利率',
+		width : '350',
+		height : globalUtil.setDialogHeight(220),
+		isResize : false
+	});
+
+}
+
+//打开销售限额
+function openlimitDialog() {
+	var url = globalUtil.getHtml(global_param.context_name+"/resources/html/inve/setSalesLimit.html");
+	dialog = $.ligerDialog.open({
+		url : url,
+		title : '设定当日销售限额',
+		width : '350',
+		height : globalUtil.setDialogHeight(220),
+		isResize : false
+	});
+
+}
+
+
+function message_info(){
+	globalUtil.warnMsg("请输入正确利率");
+}
+function message_info1(){
+	globalUtil.warnMsg("请输入正确金额");
+}
+</script>
+</head>
+<body style="overflow-y: hidden">
+	<!-- PTP上线提醒标识开始 -->
+	<div id="back_div_ptp_online"  style="display: none;cursor:pointer;" onclick="windowOpen();"></div>
+	<div id="nav_ptp_online"></div>
+	<!-- PTP上线提醒标识结束 -->
+	<div id="wrap">
+		<!--头部：logo、搜索、登录-->
+		<iframe frameborder="0" id="top_frame" width="100%" height="79"
+			src="resources/html/top.html" scrolling="no"></iframe>
+		<!--头部结束-->
+		<div id="sub_menu" class="submenuDiv"
+			style="position: absolute; z-index: 9"></div>
+		<iframe frameborder="0" id="main_frame" width="100%" height="92%"
+			src="resources/html/index.html" scrolling="no"></iframe>
+	</div>
+
+	<!--登录窗口-->
+	<div id="login_div2" style="display: none" style="background:none;">
+		<div class="cotntent">
+			<table cellspacing="0" cellpadding="0" class="tb_login">
+				<tr>
+					<td class="title" width="21%">用户名</td>
+					<td><input type="text" class="lg_txt" id="userCode" /></td>
+				</tr>
+				<tr>
+					<td class="title">密&nbsp;&nbsp;&nbsp;码</td>
+					<td><input name="text" type="password" class="lg_txt"
+						id="userPasswd" /></td>
+				</tr>
+				<tr class="tr_btn">
+					<td>&nbsp;</td>
+					<td><a href="javascript:void(0);" class="lg_btn" id="lg_submit"
+						onclick="loginSys()">登录</a></td>
+				</tr>
+				<tr class="wrong_tips" align="center">
+					<td>&nbsp;</td>
+					<td align="center" ><span id='error_msg'></span></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

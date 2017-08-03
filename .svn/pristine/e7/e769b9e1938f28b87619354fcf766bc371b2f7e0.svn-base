@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.loanreview.persist.WmsCreRevInspectionFamilyDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsCreRevInspectionFamily">
+		select
+		wms_cre_rev_inspection_family_id,
+		wms_cre_credit_head_id,
+		contact_relation_type,
+		name,
+		age,
+		work_unit_full_name,
+		personal_income,
+		car_brand,
+		house_stat,
+		enable_flag
+		from
+		wms_cre_rev_inspection_family
+		where
+		wms_cre_rev_inspection_family_id = #{wms_cre_rev_inspection_family_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cre_rev_inspection_family_id) as count
+		from
+		wms_cre_rev_inspection_family
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		wms_cre_rev_inspection_family_id,
+		wms_cre_credit_head_id,
+		contact_relation_type,
+		name,
+		age,
+		work_unit_full_name,
+		personal_income,
+		car_brand,
+		house_stat,
+		enable_flag
+		from wms_cre_rev_inspection_family
+		<where>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id =#{wms_cre_credit_head_id}
+			</if>
+		</where>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreRevInspectionFamily"
+		useGeneratedKeys="true" keyProperty="wms_cre_rev_inspection_family_id">
+		INSERT INTO
+		wms_cre_rev_inspection_family
+		(
+		wms_cre_rev_inspection_family_id,
+
+		wms_cre_credit_head_id,
+
+		contact_relation_type,
+
+		name,
+
+		age,
+
+		work_unit_full_name,
+
+		personal_income,
+
+		car_brand,
+
+		house_stat,
+
+		enable_flag
+		)
+		VALUES
+		(
+		#{wms_cre_rev_inspection_family_id},
+		#{wms_cre_credit_head_id},
+		#{contact_relation_type},
+		#{name},
+		#{age},
+		#{work_unit_full_name},
+		#{personal_income},
+		#{car_brand},
+		#{house_stat},
+		#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreRevInspectionFamily">
+		update wms_cre_rev_inspection_family
+		<set>
+			<if test="wms_cre_rev_inspection_family_id != null">
+				wms_cre_rev_inspection_family_id = #{wms_cre_rev_inspection_family_id},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="contact_relation_type != null">
+				contact_relation_type = #{contact_relation_type},
+			</if>
+			<if test="name != null">
+				name = #{name},
+			</if>
+			<if test="age != null">
+				age = #{age},
+			</if>
+			<if test="work_unit_full_name != null">
+				work_unit_full_name = #{work_unit_full_name},
+			</if>
+			<if test="personal_income != null">
+				personal_income = #{personal_income},
+			</if>
+			<if test="car_brand != null">
+				car_brand = #{car_brand},
+			</if>
+			<if test="house_stat != null">
+				house_stat = #{house_stat},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+		</set>
+		where
+		wms_cre_rev_inspection_family_id = #{wms_cre_rev_inspection_family_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreRevInspectionFamily"
+		resultType="WmsCreRevInspectionFamily">
+		select
+		wms_cre_rev_inspection_family_id,
+		wms_cre_credit_head_id,
+		contact_relation_type,
+		name,
+		age,
+		work_unit_full_name,
+		personal_income,
+		car_brand,
+		house_stat,
+		enable_flag
+		from
+		wms_cre_rev_inspection_family
+		<where>
+			<if test="wms_cre_rev_inspection_family_id != null">
+				and wms_cre_rev_inspection_family_id =
+				#{wms_cre_rev_inspection_family_id}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="contact_relation_type != null">
+				and contact_relation_type = #{contact_relation_type}
+			</if>
+			<if test="name != null">
+				and name = #{name}
+			</if>
+			<if test="age != null">
+				and age = #{age}
+			</if>
+			<if test="work_unit_full_name != null">
+				and work_unit_full_name = #{work_unit_full_name}
+			</if>
+			<if test="personal_income != null">
+				and personal_income = #{personal_income}
+			</if>
+			<if test="car_brand != null">
+				and car_brand = #{car_brand}
+			</if>
+			<if test="house_stat != null">
+				and house_stat = #{house_stat}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+			<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+				and wms_cre_rev_inspection_family_id !=
+				#{wms_cre_rev_inspection_family_id}
+			</if>
+		</where>
+	</select>
+	<!-- deleteInfo -->
+	<delete id="deleteInfo" parameterType="map">
+		delete from
+		wms_cre_rev_inspection_family where wms_cre_credit_head_id =
+		#{wms_cre_credit_head_id}
+	</delete>
+
+
+</mapper> 

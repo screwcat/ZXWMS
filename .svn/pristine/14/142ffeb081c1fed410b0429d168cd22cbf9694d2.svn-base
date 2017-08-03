@@ -1,0 +1,529 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>活动量统计</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<style type="">
+td {
+	padding: 10px 0 0 0;
+}
+
+#activityStatistics_tab {
+	width: 100%;
+}
+
+.activityStatistics_lable {
+	padding-left: 100px;
+}
+
+.activityStatistics_table {
+	width: 100%;
+}
+
+.activityStatistics_body {
+	width: 100%
+}
+
+.centertoolbar {
+	margin-top: 10px;
+}
+</style>
+<script type="text/javascript">
+	//如果flag_num==1为个人活动量2为团队活动量
+	var flag_num = 1;
+	//grid所用的参数
+	var parm = {};
+	//默认月份
+	var default_month = "";
+
+	$(function() {
+		initCombobox();
+		init_parm();
+		initgrid("#activityStatistics_personnel_table");
+		$(".activityStatistics_bar").ligerToolBar({
+			items : toolbar
+		});
+	})
+
+	//初始化grid参数
+	function init_parm() {
+		var menuId = 98;//写死通过理财查询菜单配置的权限
+		parm = {
+			menu_id : menuId,
+			flag_num : flag_num,
+			backup_month : $("#statistics_month").val(),
+			personnel_name : $("#personnel_name").val(),
+			dept_name : $("#dept_name").val(),
+			personnel_state : $("#personnel_state").ligerComboBox("getValue") == 'def' ? -1: $("#personnel_state").ligerComboBox("getValue"),
+		}
+	}
+
+	//初始化员工状态和统计月份
+	function initCombobox() {
+		//初始化统计月份(值为当前月的上个月)
+		var date = new Date();
+		var old_month = date.format("yyyy-MM")
+		var month = old_month.split("-");
+		var new_month = '';
+		if (month[1] == '1' || month[1] == '01') {
+			month[1] = 12;
+			month[0] = parseInt(month[0]) - 1;
+			new_month = month[0] + "-" + month[1];
+		} else {
+			month[1] = parseInt(month[1]) - 1;
+			month[1] = month[1] < 10 ? "0" + month[1] : month[1];
+			new_month = month[0] + '-' + month[1];
+		}
+		default_month = new_month;
+		$("#statistics_month").val(new_month);
+
+		//初始化人员状态
+		$("#personnel_state").ligerComboBox({
+			width : 135,
+			data : [ {
+				text : '-请选择-',
+				id : 'def'
+			}, {
+				text : '在职',
+				id : 1
+			}, {
+				text : '试用',
+				id : 0
+			}, {
+				text : '实习',
+				id : 2
+			}, {
+				text : '兼职',
+				id : 7
+			} ],
+			value : 'def'
+		});
+
+	}
+
+	//人员状态
+	var personnel_state = [ "试用", "在职", "实习", "离职", "离退休", "异动", "", "兼职" ]
+
+	var toolbar = [];
+	toolbar.push({
+		text : '查询',
+		click : search,
+		icon : 'search'
+	});
+	toolbar.push({
+		text : '清空',
+		click : clear,
+		icon : 'empty'
+	});
+	toolbar.push({
+		text : '导出excel',
+		click : importExcel,
+		icon : 'modify'
+	});
+
+	var columns = [
+			{
+				display : '一级部门',
+				name : 'first_dept',
+				width : 100
+			},
+			{
+				display : '二级部门',
+				name : 'second_dept',
+				width : 100
+			},
+			{
+				display : '姓名及短工号',
+				name : 'personnel_name',
+				render : function(rowdata, rowindex, value) {
+					return rowdata.personnel_name + rowdata.personnel_shortCode;
+				}
+			},
+			{
+				display : '人员状态',
+				name : 'personnel_state',
+				render : function(rowdata, rowindex, value) {
+
+					return personnel_state[rowdata.personnel_state];
+				}
+			},
+
+			{
+				display : '活动量',
+				columns : [
+						{
+							display : '电话活动量',
+							columns : [
+									{
+										display : '当月外呼量',
+										name : 'all_calls',
+										render : function(rowdata, rowindex,
+												value) {
+											return activityStatistics_isnull(value+"");
+										}
+									},
+									{
+										display : '通话时长',
+										name : 'sum_time',
+										render : function(rowdata, rowindex,
+												value) {
+											if (flag_num == 2
+													&& rowdata.sum_time_M != null
+													&& rowdata.sum_time_S != null) {
+											var m = parseInt(rowdata.sum_time_M)
+											var s = parseInt(rowdata.sum_time_S)
+											m = Math.floor( m+s/60);
+											s = s%60;
+												value = m+ ":"+ s;
+											}
+											return activityStatistics_isnull(value+"");
+										}
+									},
+									{
+										display : '有效通话数',
+										name : 'calls_over_2m',
+										render : function(rowdata, rowindex,
+												value) {
+											return activityStatistics_isnull(value+"");
+										}
+									}
+
+							]
+
+						},
+						{
+							display : '客户活动总量',
+							columns : [
+									{
+										display : '客户总数量',
+										name : 'customer_count',
+										render : function(rowdata, rowindex,
+												value) {
+											return activityStatistics_isnull(value+"");
+										}
+									},
+									{
+										display : '当月邀约数量',
+										name : 'customer_invite_count',
+										render : function(rowdata, rowindex,
+												value) {
+											return activityStatistics_isnull(value+"");
+										}
+									},
+									{
+										display : '邀约率(%)',
+										name : 'customer_invite_percent',
+										render : function(rowdata, rowindex,
+												value) {
+											if (flag_num == 2) {
+												if (rowdata.customer_invite_count != null
+														&& rowdata.customer_count != null) {
+													value = rowdata.customer_invite_count
+															/ rowdata.customer_count;
+													value = (value * 100)
+															.toFixed(2);
+												}
+											}else if(value !=null&&value !=''){
+												value = (value * 100).toFixed(2);
+											}
+
+											return activityStatistics_isnull(value+"");
+										}
+
+									},
+									{
+										display : '当月签单客户数量',
+										name : 'customer_sign_bill_count',
+										render : function(rowdata, rowindex,
+												value) {
+											return activityStatistics_isnull(value+"");
+										}
+									},
+									{
+										display : '签单率(%)',
+										name : 'customer_sign_bill_percent',
+										render : function(rowdata, rowindex,
+												value) {
+
+											if (flag_num == 2) {
+												if (rowdata.customer_sign_bill_count != null
+														&& rowdata.customer_count != null) {
+													value = rowdata.customer_sign_bill_count
+															/ rowdata.customer_count;
+													value = (value * 100)
+															.toFixed(2);
+												}
+											}else if(value !=null&&value !=''){
+												value = (value * 100).toFixed(2);
+											}
+
+											return activityStatistics_isnull(value+"");
+										}
+									} ]
+						},
+						{
+							display : '当月新增客户活动量',
+							columns : [
+									{
+										display : '新增客户数量',
+										name : 'customer_new',
+										render : function(rowdata, rowindex,
+												value) {
+											return activityStatistics_isnull(value+"");
+										}
+									},
+									{
+										display : '新增客户邀约数量',
+										name : 'customer_new_invite',
+										render : function(rowdata, rowindex,
+												value) {
+											return activityStatistics_isnull(value+"");
+										}
+									},
+									{
+										display : '新增客户邀约率(%)',
+										name : 'customer_new_invite_percent',
+										render : function(rowdata, rowindex,
+												value) {
+											if (flag_num == 2) {
+												if (rowdata.customer_new_invite != null
+														&& rowdata.customer_new != null) {
+													value = rowdata.customer_new_invite/ rowdata.customer_new;
+													value = (value * 100).toFixed(2);
+												}
+											}else if(value !=null&&value !=''){
+												value = (value * 100).toFixed(2);
+											}
+
+											return activityStatistics_isnull(value+"");
+										}
+									},
+									{
+										display : '新增客户签单量',
+										name : 'customer_new_sign_bill_count',
+										render : function(rowdata, rowindex,
+												value) {
+											return activityStatistics_isnull(value+"");
+										}
+									},
+									{
+										display : '新增客户签单率(%)',
+										name : 'customer_new_sign_bill_percent',
+										render : function(rowdata, rowindex,
+												value) {
+
+											if (flag_num == 2) {
+												if (rowdata.customer_new_sign_bill_count != null
+														&& rowdata.customer_new != null) {
+													value = rowdata.customer_new_sign_bill_count/rowdata.customer_new;
+													value = (value * 100).toFixed(2);
+												}
+											}else if(value !=null&&value !=''){
+												value = (value * 100).toFixed(2);
+											}
+											return activityStatistics_isnull(value+"");
+										}
+									} ]
+						},
+						{
+							display : '计划活动量',
+							columns : [
+									{
+										display : '当月计划数',
+										name : 'plan_count',
+										render : function(rowdata, rowindex,
+												value) {
+											return activityStatistics_isnull(value+"");
+										}
+									},
+									{
+										display : '完成计划数',
+										name : 'plan_done',
+										render : function(rowdata, rowindex,
+												value) {
+											return activityStatistics_isnull(value+"");
+										}
+									},
+									{
+										display : '计划完成率(%)',
+										name : 'plan_done_percent',
+										render : function(rowdata, rowindex,
+												value) {
+											if (flag_num == 2) {
+												if (rowdata.plan_done != null
+														&& rowdata.customer_new != null) {
+													value = rowdata.plan_done
+															/ rowdata.plan_count;
+													value = (value * 100)
+															.toFixed(2);
+												}
+											}else if(value !=null&&value !=''){
+												value = (value * 100).toFixed(2);
+											}
+
+											return activityStatistics_isnull(value+"");
+										}
+									},
+									{
+										display : '未完成计划数',
+										name : 'plan_not_done',
+										align : "center",
+										render : function(rowdata, rowindex,
+												value) {
+											return activityStatistics_isnull(value+"");
+										}
+									} ]
+						} ]
+			} ];
+
+	//查询方法
+	function search() {
+		init_parm();
+// 		initgrid();
+		 global_ligerui_extend.search(grid, parm);
+
+	}
+
+	//清空方法
+	function clear() {
+		$("#statistics_month").val(default_month);
+		$("#personnel_name").val('');
+		$("#dept_name").val('');
+		$("#personnel_state").ligerComboBox("setValue", 'def');
+	}
+
+	//处理空数据
+	function activityStatistics_isnull(value) {
+		if (value == null || value == '' || value==	"undefined") {
+			return '--'
+		} else {
+			return value;
+		}
+		
+		return value;
+	}
+
+	var grid;
+	//初始化表格
+	function initgrid(id) {
+
+		grid = $(id).ligerGrid(
+				{
+					columns : columns,
+					url : global_param.context_name
+							+ '/inve/selectActivityStatisticsList.do',
+					parms : parm,
+					rownumbers : true,
+					allowUnSelectRow : true,
+					usePager : false,
+					width : '100%',
+					height : '700',
+					headerRowHeight : 45,
+					heightDiff : -4,
+					usePager : true,
+					pageSize : "15",//分页页面大小
+					pageSizeOptions : [ 15, 30, 45 ],//可指定每页页面大小
+					onAfterShowData : function(data) {
+					}
+
+				});
+
+	}
+	//切换个人活动量和团队活动量
+	function changeTab(id) {
+		var gryj = document.getElementById("gryj"); //客户基本信息
+		var tdyj = document.getElementById("tdyj"); //客户资料
+		if ("gryj" == id) {
+			//设置个人活动量样式和参数
+			$("#gryj_li").removeClass().addClass("l-selected-sub");
+			$("#tdyj_li").removeClass().addClass("l-unselect ed-sub");
+			$("#activityStatistics_personnel_table").show();
+			$("#activityStatistics_team_table").hide();
+			flag_num = 1;
+			init_parm();
+			initgrid("#activityStatistics_personnel_table");			
+		} else {
+			//设置团队活动量样式和参数
+			$("#tdyj_li").removeClass().addClass("l-selected-sub");
+			$("#gryj_li").removeClass().addClass("l-unselected-sub");
+			$("#activityStatistics_personnel_table").hide();
+			$("#activityStatistics_team_table").show();
+			flag_num = 2;
+			init_parm();
+			initgrid("#activityStatistics_team_table");
+		}
+
+	}
+	//导出报表
+	function importExcel() {
+		var val = JSON.stringify(parm);
+		$("#parameter").val(val);
+		var url = global_param.context_name
+				+ '/inve/selectActivityStatisticsImportExcel.do';
+		$("#activityStatistics_form").attr("action", url);
+		$("#activityStatistics_form").submit();
+
+	}
+</script>
+
+
+</head>
+<body>
+	<form id="activityStatistics_form" name="activityStatistics_form"
+		method="post">
+		<div>
+			<input id="parameter" name="parameter" type="hidden" />
+		</div>
+
+	</form>
+
+
+	<div class="activityStatistics_body">
+		<div>
+			<table>
+				<tr>
+					<td class="activityStatistics_lable">部门名称:</td>
+					<td><input type="text" id="dept_name" name="dept_name"></td>
+					<td class="activityStatistics_lable">员工姓名:</td>
+					<td><input type="text" id="personnel_name"
+						name="personnel_name"></td>
+					<td class="activityStatistics_lable">员工状态:</td>
+					<td><input type="text" id="personnel_state"
+						name="personnel_state"></td>
+					<td class="activityStatistics_lable ">统计月份:</td>
+					<td><input id="statistics_month" name="statistics_month"
+						class="Wdate" type="text"
+						onclick="WdatePicker({dateFmt:'yyyy-MM',isShowClear:true, maxDate:'%y-%M'})"
+						style="width: 135px; vertical-align: top;" />
+						</td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="l-tab-links-sub">
+			<ul style="left: 0px;">
+				<li id="gryj_li" class="l-selected-sub" onclick="changeTab('gryj');"><a>个人活动量</a>
+					<div class="l-tab-links-item-left-sub"></div>
+					<div class="l-tab-links-item-right-sub"></div></li>
+				<li id="tdyj_li" class="l-unselected-sub"
+					onclick="changeTab('tdyj');"><a>团队活动量</a>
+					<div class="l-tab-links-item-left-sub"></div>
+					<div class="l-tab-links-item-right-sub"></div></li>
+			</ul>
+
+		</div>
+		<div id="activityStatistics_personnel_bar"
+			class="minwidth400 activityStatistics_bar"></div>
+		<div id="activityStatistics_tab">
+
+			<div id="activityStatistics_personnel_table"
+				class="activityStatistics_table"></div>
+
+			<div id="activityStatistics_team_table"
+				class="activityStatistics_table"></div>
+		</div>
+	</div>
+</body>
+</html>

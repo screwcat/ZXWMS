@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.loanappro.persist.WmsCreApproProtocolAttachDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsCreApproProtocolAttach">
+		select
+		wms_cre_appro_protocol_attach_id,
+		wms_cre_credit_head_id,
+		wms_cre_appro_id,
+		attach_number,
+		mortgage_name,
+		buy_date,
+		house_area,
+		estimate_value,
+		mortgage_value,
+		house_type,
+		house_certificate_number,
+		house_roll_number,
+		explicit_address,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		hill_land,
+		mortgage_value_caps
+		from
+		wms_cre_appro_protocol_attach
+		where
+		wms_cre_appro_protocol_attach_id = #{wms_cre_appro_protocol_attach_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cre_appro_protocol_attach_id) as count
+		from
+		wms_cre_appro_protocol_attach
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		wms_cre_appro_protocol_attach_id,
+		wms_cre_credit_head_id,
+		attach_number,
+		mortgage_name,
+		buy_date,
+		house_area,
+		estimate_value,
+		mortgage_value,
+		house_type,
+		house_certificate_number,
+		house_roll_number,
+		explicit_address,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		hill_land,
+		mortgage_value_caps
+		from wms_cre_appro_protocol_attach
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreApproProtocolAttach"
+		useGeneratedKeys="true" keyProperty="wms_cre_appro_protocol_attach_id">
+		INSERT INTO
+		wms_cre_appro_protocol_attach
+		(
+		wms_cre_appro_protocol_attach_id,
+
+		wms_cre_credit_head_id,
+
+		wms_cre_appro_id,
+
+		attach_number,
+
+		mortgage_name,
+
+		buy_date,
+
+		house_area,
+
+		estimate_value,
+
+		mortgage_value,
+
+		house_type,
+
+		house_certificate_number,
+
+		house_roll_number,
+
+		explicit_address,
+
+		create_user_id,
+
+		create_user_name,
+
+		create_timestamp,
+
+		last_update_user_id,
+
+		last_update_timestamp,
+
+		enable_flag,
+		
+		hill_land,
+		
+		mortgage_value_caps,
+		
+		confirm_house_value
+		)
+		VALUES
+		(
+		#{wms_cre_appro_protocol_attach_id},
+		#{wms_cre_credit_head_id},
+		#{wms_cre_appro_id},
+		#{attach_number},
+		#{mortgage_name},
+		#{buy_date},
+		#{house_area},
+		#{estimate_value},
+		#{mortgage_value},
+		#{house_type},
+		#{house_certificate_number},
+		#{house_roll_number},
+		#{explicit_address},
+		#{create_user_id},
+		#{create_user_name},
+		#{create_timestamp},
+		#{last_update_user_id},
+		#{last_update_timestamp},
+		#{enable_flag},
+		#{hill_land},
+		#{mortgage_value_caps},
+		#{confirm_house_value}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreApproProtocolAttach">
+		update wms_cre_appro_protocol_attach
+		<set>
+			<if test="wms_cre_appro_protocol_attach_id != null">
+				wms_cre_appro_protocol_attach_id = #{wms_cre_appro_protocol_attach_id},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="attach_number != null">
+				attach_number = #{attach_number},
+			</if>
+			<if test="mortgage_name != null">
+				mortgage_name = #{mortgage_name},
+			</if>
+			<if test="buy_date != null">
+				buy_date = #{buy_date},
+			</if>
+			<if test="house_area != null">
+				house_area = #{house_area},
+			</if>
+			<if test="estimate_value != null">
+				estimate_value = #{estimate_value},
+			</if>
+			<if test="mortgage_value != null">
+				mortgage_value = #{mortgage_value},
+			</if>
+			<if test="house_type != null">
+				house_type = #{house_type},
+			</if>
+			<if test="house_certificate_number != null">
+				house_certificate_number = #{house_certificate_number},
+			</if>
+			<if test="house_roll_number != null">
+				house_roll_number = #{house_roll_number},
+			</if>
+			<if test="explicit_address != null">
+				explicit_address = #{explicit_address},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+		</set>
+		where
+		wms_cre_appro_protocol_attach_id = #{wms_cre_appro_protocol_attach_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreApproProtocolAttach"
+		resultType="WmsCreApproProtocolAttach">
+		select
+		wms_cre_appro_protocol_attach_id,
+		wms_cre_credit_head_id,
+		wms_cre_appro_id,
+		attach_number,
+		mortgage_name,
+		buy_date,
+		house_area,
+		estimate_value,
+		mortgage_value,
+		house_type,
+		house_certificate_number,
+		house_roll_number,
+		explicit_address,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		hill_land,
+		mortgage_value_caps
+		from
+		wms_cre_appro_protocol_attach
+		<where>
+			<if test="wms_cre_appro_protocol_attach_id != null">
+				and wms_cre_appro_protocol_attach_id =
+				#{wms_cre_appro_protocol_attach_id}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="attach_number != null">
+				and attach_number = #{attach_number}
+			</if>
+			<if test="mortgage_name != null">
+				and mortgage_name = #{mortgage_name}
+			</if>
+			<if test="buy_date != null">
+				and buy_date = #{buy_date}
+			</if>
+			<if test="house_area != null">
+				and house_area = #{house_area}
+			</if>
+			<if test="estimate_value != null">
+				and estimate_value = #{estimate_value}
+			</if>
+			<if test="mortgage_value != null">
+				and mortgage_value = #{mortgage_value}
+			</if>
+			<if test="house_type != null">
+				and house_type = #{house_type}
+			</if>
+			<if test="house_certificate_number != null">
+				and house_certificate_number = #{house_certificate_number}
+			</if>
+			<if test="house_roll_number != null">
+				and house_roll_number = #{house_roll_number}
+			</if>
+			<if test="explicit_address != null">
+				and explicit_address = #{explicit_address}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name = #{create_user_name}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id = #{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+			<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+				and wms_cre_appro_protocol_attach_id !=
+				#{wms_cre_appro_protocol_attach_id}
+			</if>
+		</where>
+	</select>
+	<!-- 根据主表id获取所有的附近信息 -->
+	<select id="searchforhouse" parameterType="int" resultType="java.util.HashMap">
+		select
+		wms_cre_appro_protocol_attach_id,
+		wms_cre_credit_head_id,
+		wms_cre_appro_id,
+		attach_number,
+		mortgage_name,
+		buy_date,
+		house_area,
+		estimate_value,
+		mortgage_value,
+		house_type,
+		house_certificate_number,
+		house_roll_number,
+		explicit_address,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		hill_land,
+		mortgage_value_caps,
+		cast(confirm_house_value as decimal(16, 2)) as confirm_house_value
+		from wms_cre_appro_protocol_attach
+		<where>
+			wms_cre_credit_head_id=#{wms_cre_credit_head_id};
+		</where>
+	</select>
+		<!-- 更新用户 -->
+	<update id="updateAttach" parameterType="WmsCreApproProtocolAttach">
+		update wms_cre_appro_protocol_attach
+		<set>
+			<if test="wms_cre_appro_protocol_attach_id != null">
+				wms_cre_appro_protocol_attach_id = #{wms_cre_appro_protocol_attach_id},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="attach_number != null">
+				attach_number = #{attach_number},
+			</if>
+			<if test="mortgage_name != null">
+				mortgage_name = #{mortgage_name},
+			</if>
+			<if test="buy_date != null">
+				buy_date = #{buy_date},
+			</if>
+			<if test="house_area != null">
+				house_area = #{house_area},
+			</if>
+			<if test="estimate_value != null">
+				estimate_value = #{estimate_value},
+			</if>
+			<if test="mortgage_value != null">
+				mortgage_value = #{mortgage_value},
+			</if>
+			<if test="house_type != null">
+				house_type = #{house_type},
+			</if>
+			<if test="house_certificate_number != null">
+				house_certificate_number = #{house_certificate_number},
+			</if>
+			<if test="house_roll_number != null">
+				house_roll_number = #{house_roll_number},
+			</if>
+			<if test="explicit_address != null">
+				explicit_address = #{explicit_address},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+			<if test="confirm_house_value != null">
+				confirm_house_value = #{confirm_house_value},
+			</if>
+		</set>
+		where
+		wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</update>
+	
+	
+	
+		<update id="updateWmsCreApproProtocolAttach" parameterType="WmsCreApproProtocolAttach">
+		update wms_cre_appro_protocol_attach
+		<set>
+			<if test="wms_cre_appro_protocol_attach_id != null">
+				wms_cre_appro_protocol_attach_id = #{wms_cre_appro_protocol_attach_id},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="attach_number != null">
+				attach_number = #{attach_number},
+			</if>
+			<if test="mortgage_name != null">
+				mortgage_name = #{mortgage_name},
+			</if>
+			<if test="buy_date != null">
+				buy_date = #{buy_date},
+			</if>
+			<if test="house_area != null">
+				house_area = #{house_area},
+			</if>
+			<if test="estimate_value != null">
+				estimate_value = #{estimate_value},
+			</if>
+			<if test="mortgage_value != null">
+				mortgage_value = #{mortgage_value},
+			</if>
+			<if test="house_type != null">
+				house_type = #{house_type},
+			</if>
+			<if test="house_certificate_number != null">
+				house_certificate_number = #{house_certificate_number},
+			</if>
+			<if test="house_roll_number != null">
+				house_roll_number = #{house_roll_number},
+			</if>
+			<if test="explicit_address != null">
+				explicit_address = #{explicit_address},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+			<if test="confirm_house_value != null">
+				confirm_house_value = #{confirm_house_value},
+			</if>
+		</set>
+		where
+		wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</update>
+</mapper> 

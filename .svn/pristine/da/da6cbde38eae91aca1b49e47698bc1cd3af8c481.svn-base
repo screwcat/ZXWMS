@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper
+	namespace="com.zx.emanage.loancheck.persist.WmsCreCreditLinePersonCreditDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="long" resultType="WmsCreCreditLinePersonCredit">
+		select
+		wms_cre_credit_line_person_credit_id,
+		person_credit_type,
+		name,
+		credit_money,
+		time_limit,
+		date_format(start_date,'%Y-%m-%d') as start_date_str,
+		start_date,
+		repayment_per_month,
+		loan_type,
+		is_mortgage,
+		is_contract,
+		is_stream,
+		wms_cre_credit_head_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_cre_credit_line_person_credit
+		where
+		wms_cre_credit_line_person_credit_id = #{wms_cre_credit_line_person_credit_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cre_credit_line_person_credit_id) as count
+		from
+		wms_cre_credit_line_person_credit
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		wms_cre_credit_line_person_credit_id,
+		person_credit_type,
+		name,
+		credit_money,
+		time_limit,
+		date_format(start_date,'%Y-%m-%d') as start_date_str,
+		start_date,
+		repayment_per_month,
+		loan_type,
+		is_mortgage,
+		is_contract,
+		is_stream,
+		wms_cre_credit_head_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		wms_cre_credit_line_person_credit
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreCreditLinePersonCredit"
+		useGeneratedKeys="true" keyProperty="wms_cre_credit_line_person_credit_id">
+		INSERT INTO
+		wms_cre_credit_line_person_credit
+		(
+		wms_cre_credit_line_person_credit_id,
+
+		person_credit_type,
+
+		name,
+
+		credit_money,
+
+		time_limit,
+
+		start_date,
+
+		repayment_per_month,
+
+		loan_type,
+
+		is_mortgage,
+
+		is_contract,
+
+		is_stream,
+
+		wms_cre_credit_head_id,
+
+		create_user_id,
+
+		create_user_name,
+
+		create_timestamp,
+
+		last_update_user_id,
+
+		last_update_timestamp,
+
+		enable_flag
+		)
+		VALUES
+		(
+		#{wms_cre_credit_line_person_credit_id},
+		#{person_credit_type},
+		#{name},
+		#{credit_money},
+		#{time_limit},
+		#{start_date},
+		#{repayment_per_month},
+		#{loan_type},
+		#{is_mortgage},
+		#{is_contract},
+		#{is_stream},
+		#{wms_cre_credit_head_id},
+		#{create_user_id},
+		#{create_user_name},
+		#{create_timestamp},
+		#{last_update_user_id},
+		#{last_update_timestamp},
+		#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreCreditLinePersonCredit">
+		update wms_cre_credit_line_person_credit
+		<set>
+			<if test="wms_cre_credit_line_person_credit_id != null">
+				wms_cre_credit_line_person_credit_id = #{wms_cre_credit_line_person_credit_id},
+			</if>
+			<if test="person_credit_type != null">
+				person_credit_type = #{person_credit_type},
+			</if>
+			<if test="name != null">
+				name = #{name},
+			</if>
+			<if test="credit_money != null">
+				credit_money = #{credit_money},
+			</if>
+			<if test="time_limit != null">
+				time_limit = #{time_limit},
+			</if>
+			<if test="start_date != null">
+				start_date = #{start_date},
+			</if>
+			<if test="repayment_per_month != null">
+				repayment_per_month = #{repayment_per_month},
+			</if>
+			<if test="loan_type != null">
+				loan_type = #{loan_type},
+			</if>
+			<if test="is_mortgage != null">
+				is_mortgage = #{is_mortgage},
+			</if>
+			<if test="is_contract != null">
+				is_contract = #{is_contract},
+			</if>
+			<if test="is_stream != null">
+				is_stream = #{is_stream},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+		</set>
+		where
+		wms_cre_credit_line_person_credit_id = #{wms_cre_credit_line_person_credit_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreCreditLinePersonCredit"
+		resultType="WmsCreCreditLinePersonCredit">
+		select
+		wms_cre_credit_line_person_credit_id,
+		person_credit_type,
+		name,
+		credit_money,
+		time_limit,
+		date_format(start_date,'%Y-%m-%d') as start_date_str,
+		start_date,
+		repayment_per_month,
+		loan_type,
+		is_mortgage,
+		is_contract,
+		is_stream,
+		wms_cre_credit_head_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_cre_credit_line_person_credit
+		<where>
+			<if test="wms_cre_credit_line_person_credit_id != null">
+				and wms_cre_credit_line_person_credit_id =
+				#{wms_cre_credit_line_person_credit_id}
+			</if>
+			<if test="person_credit_type != null">
+				and person_credit_type = #{person_credit_type}
+			</if>
+			<if test="name != null">
+				and name = #{name}
+			</if>
+			<if test="credit_money != null">
+				and credit_money = #{credit_money}
+			</if>
+			<if test="time_limit != null">
+				and time_limit = #{time_limit}
+			</if>
+			<if test="start_date != null">
+				and start_date = #{start_date}
+			</if>
+			<if test="repayment_per_month != null">
+				and repayment_per_month = #{repayment_per_month}
+			</if>
+			<if test="loan_type != null">
+				and loan_type = #{loan_type}
+			</if>
+			<if test="is_mortgage != null">
+				and is_mortgage = #{is_mortgage}
+			</if>
+			<if test="is_contract != null">
+				and is_contract = #{is_contract}
+			</if>
+			<if test="is_stream != null">
+				and is_stream = #{is_stream}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name = #{create_user_name}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id = #{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+			<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+				and wms_cre_credit_line_person_credit_id !=
+				#{wms_cre_credit_line_person_credit_id}
+			</if>
+		</where>
+	</select>
+	<select id="queryListByEntity" parameterType="WmsCreCreditLinePersonCredit"
+		resultType="WmsCreCreditLinePersonCredit">
+		select
+		wms_cre_credit_line_person_credit_id,
+		person_credit_type,
+		name,
+		credit_money,
+		time_limit,
+		date_format(start_date,'%Y-%m-%d') as start_date_str,
+		start_date,
+		repayment_per_month,
+		loan_type,
+		is_mortgage,
+		is_contract,
+		is_stream,
+		wms_cre_credit_head_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_cre_credit_line_person_credit
+		<where>
+			<if test="wms_cre_credit_line_person_credit_id != null">
+				and wms_cre_credit_line_person_credit_id =
+				#{wms_cre_credit_line_person_credit_id}
+			</if>
+			<if test="person_credit_type != null">
+				and person_credit_type = #{person_credit_type}
+			</if>
+			<if test="name != null">
+				and name = #{name}
+			</if>
+			<if test="credit_money != null">
+				and credit_money = #{credit_money}
+			</if>
+			<if test="time_limit != null">
+				and time_limit = #{time_limit}
+			</if>
+			<if test="start_date != null">
+				and start_date = #{start_date}
+			</if>
+			<if test="repayment_per_month != null">
+				and repayment_per_month = #{repayment_per_month}
+			</if>
+			<if test="loan_type != null">
+				and loan_type = #{loan_type}
+			</if>
+			<if test="is_mortgage != null">
+				and is_mortgage = #{is_mortgage}
+			</if>
+			<if test="is_contract != null">
+				and is_contract = #{is_contract}
+			</if>
+			<if test="is_stream != null">
+				and is_stream = #{is_stream}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name = #{create_user_name}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id = #{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+		</where>
+	</select>
+</mapper> 

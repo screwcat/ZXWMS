@@ -1,0 +1,295 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>变更申请</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<style>
+.changeManagement_lable {
+	padding: 10px 0 10px 150px;
+}
+
+.changeManagement_bar {
+	margin-top: 10px;
+}
+</style>
+<script type="text/javascript">
+var wms_inve_change_app_id = "";
+var parm;
+	$(function() {
+		initgrid();
+		init_combobox();
+		$("#changeManagement_bar").ligerToolBar({
+			items : toolbar
+		});
+	})
+	
+	//初始化grid参数
+	function init_parm() {
+		parm = {
+				"change_type":$("#change_type").ligerComboBox("getValue")=="def"?"":$("#change_type").ligerComboBox("getValue"),
+				"id_card" : $("#id_card").val(),
+				"create_user_name" : $("#create_user_name").val(),
+				"create_timestamp_begin" : $("#create_timestamp_begin").val(),
+				"create_timestamp_end" : $("#create_timestamp_end").val(),
+				"data_status" : $("#data_status").ligerComboBox("getValue")=="def"?"":$("#data_status").ligerComboBox("getValue"),
+				"cus_name" :$("#cus_name").val(),
+				"bill_code" :$("#old_bill_code").val()
+		}
+	}
+
+	var columns = [ {
+		display : '单据编号',
+		name : 'bill_code',
+		width : 200,
+		render : function(rowdata, rowindex, value) {
+			wms_inve_change_app_id = rowdata.wms_inve_change_app_id;
+			var url = globalUtil.getHtml("changeApplicationDetails.html?wms_inve_change_app_id="+rowdata.wms_inve_change_app_id);
+			 var html = "<a href='javascript:void(0)' id='bill" + rowdata.wms_inve_change_app_id + "' onclick=billInfo(" + rowdata.wms_inve_change_app_id + ") >"+value+"</a>"
+			return html ;
+		}
+		
+		
+	}, {
+		display : '变更类型',
+		name : 'change_type',
+		width : 200,
+		render : function(rowdata, rowindex, value) {
+			if(value==1){
+				value = "收益卡变更";
+			}
+			return value ;
+		}
+	}, {
+		display : '客户姓名',
+		name : 'cus_name',
+		width : 200
+	}, {
+		display : '有效证件',
+		name : 'id_card',
+		width : 200
+	}, {
+		display : '联系电话',
+		name : 'mobile_phone',
+		width : 200
+	}, {
+		display : '受影响理财单据',
+		name : 'transa_bill_code',
+		width : 200,
+		render : function(rowdata, rowindex, value) {
+			var html = "<div title="+value+" id=tip"+rowdata.wms_inve_change_app_id+"  style='width:180px;text-overflow:ellipsis;overflow:hidden' >"+value+"</div>";
+			return html;
+		}
+	}, {
+		display : '提交人',
+		name : 'personnel_name',
+		width : 200,
+		render : function(rowdata, rowindex, value) {
+			return value + rowdata.personnel_shortCode;
+		}
+	}, {
+		display : '提交日期',
+		name : 'create_timestamp',
+		width : 200
+
+	}, {
+		display : '单据状态',
+		name : 'data_status',
+		width : 200,
+		render : function(rowdata, rowindex, value) {
+			if(value==1){
+				value = "已完成";
+			}else if(value==2){
+				value="已终止";
+			}
+			return value ;
+		}
+		
+	} ]
+
+	var toolbar = [];
+	toolbar.push({
+		text : '新增变更',
+		click : add_changeManagement,
+		icon : 'add'
+	});
+	toolbar.push({
+		text : '查询',
+		click : search,
+		icon : 'search'
+	});
+	toolbar.push({
+		text : '清空',
+		click : clear,
+		icon : 'empty'
+		
+	});
+
+	function init_combobox() {
+		//变更类型
+		$("#change_type").ligerComboBox({
+			width : 135,
+			data : [ {
+				text : '请选择',
+				id : 'def'
+			}, {
+				text : '收益卡调整',
+				id : 1
+			} ],
+			value : 'def'
+		});
+
+		//单据状态
+		$("#data_status").ligerComboBox({
+			width : 135,
+			data : [ {
+				text : '请选择',
+				id : 'def'
+			}, {
+				text : '已完成',
+				id : 1
+			}, {
+				text : '已终止',
+				id : 2
+			} ],
+			value : 'def'
+		});
+
+	}
+
+	function initgrid(id) {
+
+		grid = $("#changeManagement_table").ligerGrid({
+			columns : columns,
+			url : global_param.context_name + '/inve/selectChangeAppList.do',
+			parms : parm,
+			rownumbers : true,
+			allowUnSelectRow : true,
+			usePager : false,
+			width : '100%',
+			height : '700',
+			heightDiff : -4,
+			usePager : true,
+			pageSize : "15",//分页页面大小
+			pageSizeOptions : [ 15, 30, 45 ],//可指定每页页面大小
+			onAfterShowData : function(data) {
+			}
+		});
+
+	}
+	//查询方法
+	function search() {
+		init_parm();
+		initgrid()
+	}
+
+	//新增变更
+	function add_changeManagement() {
+
+		var url = globalUtil.getHtml("addNewChanges.html");
+		dialog = $.ligerDialog.open({
+			url : url,
+			title : '新增变更',
+			width : '1600',
+			height : globalUtil.setDialogHeight(1000),
+			isResize : false
+		});
+
+	}
+
+	//清空方法
+    function clear(){
+    	global_ligerui_extend.setComboxVal("change_type","def");
+    	$("#cus_name").val("");
+    	$("#create_timestamp_begin").val("");
+    	$("#create_timestamp_end").val("");
+    	$("#id_card").val("");
+    	global_ligerui_extend.setComboxVal("data_status","def");
+    	$("#data_status").val("请选择");
+    	$("#create_user_name").val('');
+		$("#old_bill_code").val('');
+    }
+    
+    
+    function billInfo(id){
+    		wms_inve_change_app_id = id;
+    	  	var url = globalUtil.getHtml("changeApplicationDetails.html");
+        	dialog = $.ligerDialog.open({
+        		url : url,
+        		title : '变更详情',
+        		width : '1200',
+        		height : globalUtil.setDialogHeight(700),
+        		isResize : false
+        	});
+    }
+    
+    
+  
+</script>
+</head>
+<body>
+	<div>
+		<!--查询条件-->
+		<div class="l-panel-search-cond clearfix">
+
+			<div class="float-l">
+				<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;变更类型：</div>
+				<div class="l-panel-search-item">
+					<input type="text" id="change_type" />
+				</div>
+			</div>
+
+			<div class="float-l">
+				<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;客户姓名：</div>
+				<div class="l-panel-search-item">
+					<input type="text" id="cus_name" />
+				</div>
+			</div>
+
+			<div class="float-l">
+				<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;有效证件：</div>
+				<div class="l-panel-search-item">
+					<input type="text" id="id_card" />
+				</div>
+			</div>
+			<div class="float-l " style="margin-left: 2px">
+				<div class="l-panel-search-title">受影响理财单据：</div>
+				<div class="l-panel-search-item">
+					<input type="text" id="old_bill_code" />
+				</div>
+			</div>
+			<div class="float-l " style="margin-left: 2px">
+				<div class="l-panel-search-title">提交人[短工号]：</div>
+				<div class="l-panel-search-item">
+					<input type="text" id="create_user_name" />
+				</div>
+			</div>
+
+			<div class="float-l">
+				<div class="l-panel-search-title">提交日期：</div>
+				<div class="l-panel-search-item">
+					<input id="create_timestamp_begin" class="Wdate" type="text"
+						onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+						style="width: 133px; vertical-align: top;" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至&nbsp;&nbsp;&nbsp;
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="create_timestamp_end"
+						class="Wdate" type="text"
+						onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+						style="width: 133px; vertical-align: top;" />
+				</div>
+			</div>
+
+
+			<div class="float-l" style="margin-left:36px;">
+				<div class="l-panel-search-title">单据状态：</div>
+				<div class="l-panel-search-item">
+					<input type="text" id="data_status" />
+				</div>
+			</div>
+		</div>
+
+		<div id="changeManagement_bar" class="changeManagement_bar"></div>
+		<div class="changeManagement_table" id="changeManagement_table">
+	</div>
+</body>
+</html>

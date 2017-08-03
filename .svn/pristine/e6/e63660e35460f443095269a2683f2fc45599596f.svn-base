@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.loanappro.persist.WmsSysPropertyDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsSysProperty">
+		select
+		wms_sys_property_id,
+		property_meaning,
+		property_value,
+		date_format(update_date,'%Y-%m-%d') as update_date_str,
+		update_date,
+		property_value_caps
+		from
+		wms_sys_property
+		where
+		wms_sys_property_id = #{wms_sys_property_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_sys_property_id) as count
+		from wms_sys_property
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		wms_sys_property_id,
+		property_meaning,
+		property_value,
+		date_format(update_date,'%Y-%m-%d') as update_date_str,
+		update_date,
+		property_value_caps
+		wms_sys_property
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsSysProperty"
+		useGeneratedKeys="true" keyProperty="wms_sys_property_id">
+		INSERT INTO wms_sys_property
+		(
+		wms_sys_property_id,
+
+		property_meaning,
+
+		property_value,
+
+		update_date,
+
+		property_value_caps
+		)
+		VALUES
+		(
+		#{wms_sys_property_id},
+		#{property_meaning},
+		#{property_value},
+		#{update_date},
+		#{property_value_caps}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsSysProperty">
+		update wms_sys_property
+		<set>
+			<if test="wms_sys_property_id != null">
+				wms_sys_property_id = #{wms_sys_property_id},
+			</if>
+			<if test="property_meaning != null">
+				property_meaning = #{property_meaning},
+			</if>
+			<if test="property_value != null">
+				property_value = #{property_value},
+			</if>
+			<if test="update_date != null">
+				update_date = #{update_date},
+			</if>
+			<if test="property_value_caps != null">
+				property_value_caps = #{property_value_caps},
+			</if>
+		</set>
+		where
+		wms_sys_property_id = #{wms_sys_property_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsSysProperty"
+		resultType="WmsSysProperty">
+		select
+		wms_sys_property_id,
+		property_meaning,
+		property_value,
+		date_format(update_date,'%Y-%m-%d') as update_date_str,
+		update_date,
+		property_value_caps
+		from
+		wms_sys_property
+		<where>
+			<if test="wms_sys_property_id != null">
+				and wms_sys_property_id = #{wms_sys_property_id}
+			</if>
+			<if test="property_meaning != null">
+				and property_meaning = #{property_meaning}
+			</if>
+			<if test="property_value != null">
+				and property_value = #{property_value}
+			</if>
+			<if test="update_date != null">
+				and update_date = #{update_date}
+			</if>
+			<if test="property_value_caps != null">
+				and property_value_caps = #{property_value_caps}
+			</if>
+			<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+				and wms_sys_property_id != #{wms_sys_property_id}
+			</if>
+		</where>
+	</select>
+	<!-- list -->
+	<select id="searchforhouse" resultType="WmsSysProperty">
+		select
+		wms_sys_property_id,
+		property_meaning,
+		property_value,
+		date_format(update_date,'%Y-%m-%d') as update_date_str,
+		update_date,
+		property_value_caps
+		from wms_sys_property
+		where
+		wms_sys_property_id in
+		<foreach collection="list" index="index" item="wms_sys_property_id"
+			open="(" separator="," close=")">
+			#{wms_sys_property_id}
+		</foreach>
+	</select>
+	<select id="getforNewProtocol" parameterType="map" resultType="WmsSysProperty">
+		select
+		wms_sys_property_id,
+		property_meaning,
+		property_value,
+		date_format(update_date,'%Y-%m-%d') as update_date_str,
+		update_date,
+		property_value_caps,
+		cre_type,
+		cre_loan_type,
+		property_column,
+		region_number
+		from
+		wms_sys_property
+		where
+
+		cre_type = #{cre_type}
+		and cre_loan_type = #{cre_loan_type}
+		and region_number = #{region_number}
+	</select>
+
+	<select id="getprotocolProperty" parameterType="map" resultType="java.util.HashMap">
+	select
+			wms_sys_protocol_property_id ,
+			payment_contract_type,
+			borrow_deadline_begin,
+			borrow_deadline_end,
+			principal_caps_begin,
+			principal_caps_end,
+			borrow_interest,    
+			platform_fee,         
+			protocol_fees,       
+			enable_flag          
+		from
+			wms_sys_protocol_property
+		where
+			  enable_flag=1
+			<if test="borrow_deadline != null and borrow_deadline!=''">
+				and   #{borrow_deadline}  BETWEEN  borrow_deadline_begin and  borrow_deadline_end
+			</if>
+			<if test="credit_limit != null and credit_limit !='' ">
+				and   #{credit_limit}  BETWEEN  principal_caps_begin and  principal_caps_end
+			</if>
+			<if test="payment_contract_type != null  and payment_contract_type !=''">
+				and   payment_contract_type=#{payment_contract_type}
+			</if>
+			<if test="cre_loan_type != null  and cre_loan_type !=''">
+				and   cre_loan_type=#{cre_loan_type}
+			</if>
+	</select>
+	<!-- 贷款申请使用 -->
+	<select id="getprotocolPropertyApply" parameterType="map" resultType="java.util.HashMap">
+	select
+			wms_sys_protocol_property_id ,
+			payment_contract_type,
+			borrow_deadline_begin,
+			borrow_deadline_end,
+			principal_caps_begin,
+			principal_caps_end,
+			borrow_interest,    
+			platform_fee,         
+			protocol_fees,       
+			enable_flag,
+			regionNumber          
+		from
+			wms_sys_protocol_property
+		<where>
+		 	enable_flag=1
+			<if test="borrow_deadline != null and borrow_deadline!=''">
+				and   #{borrow_deadline}  BETWEEN  borrow_deadline_begin and  borrow_deadline_end
+			</if>
+			<if test="credit_limit != null and credit_limit !='' ">
+				and   #{credit_limit}  BETWEEN  principal_caps_begin and  principal_caps_end
+			</if>
+			<if test="payment_contract_type != null  and payment_contract_type !=''">
+				and   payment_contract_type=#{payment_contract_type}
+			</if>
+			<if test="cre_loan_type != null and cre_loan_type !=''">
+				and   cre_loan_type=#{cre_loan_type}
+			</if>
+			<if test="regionNumber != null and regionNumber !=''">
+				and FIND_IN_SET(#{regionNumber},regionNumber)
+			</if>
+		</where>
+	</select>
+	
+	
+<!-- 	查询还款方式根据产品 -->
+	<select id="getPaymentContractType" parameterType="int" resultType="String">
+		select
+			payment_contract_type
+		from
+			wms_sys_protocol_property
+		where
+		 	enable_flag=1
+		and
+			cre_loan_type = #{cre_loan_type}
+		group by 
+			payment_contract_type
+			
+	</select>
+</mapper> 

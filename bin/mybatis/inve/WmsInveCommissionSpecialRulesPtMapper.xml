@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveCommissionSpecialRulesPtDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveCommissionSpecialRulesPt">
+		select
+        				wms_inve_commission_special_rules_pt_id,
+        				wms_inve_commission_special_rules_id,
+        				personnel_id,
+        				personnel_shortcode,
+        				personnel_name,
+        				create_user_id,
+        				create_user_name,
+        				create_user_dept_id,
+						date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+        				create_timestamp,
+        				last_update_user_id,
+						date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+        				last_update_timestamp,
+        				enable_flag,
+        				wms_inve_commission_personnel_reward_id
+        	from
+        		wms_inve_commission_special_rules_pt
+        	where
+        				wms_inve_commission_special_rules_pt_id = #{wms_inve_commission_special_rules_pt_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_commission_special_rules_pt_id) as count
+		from wms_inve_commission_special_rules_pt
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_inve_commission_special_rules_pt_id,
+				wms_inve_commission_special_rules_id,
+				personnel_id,
+				personnel_shortcode,
+				personnel_name,
+				create_user_id,
+				create_user_name,
+				create_user_dept_id,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag,
+				wms_inve_commission_personnel_reward_id
+		from wms_inve_commission_special_rules_pt
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != null and sortorder != null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveCommissionSpecialRulesPt" useGeneratedKeys="true" keyProperty="wms_inve_commission_special_rules_pt_id">
+		INSERT INTO wms_inve_commission_special_rules_pt
+		(
+				wms_inve_commission_special_rules_pt_id,
+
+				wms_inve_commission_special_rules_id,
+
+				personnel_id,
+
+				personnel_shortcode,
+
+				personnel_name,
+
+				create_user_id,
+
+				create_user_name,
+
+				create_user_dept_id,
+
+				create_timestamp,
+
+				last_update_user_id,
+
+				last_update_timestamp,
+
+				enable_flag,
+
+				wms_inve_commission_personnel_reward_id
+		)
+		VALUES
+		(
+				#{wms_inve_commission_special_rules_pt_id},
+				#{wms_inve_commission_special_rules_id},
+				#{personnel_id},
+				#{personnel_shortcode},
+				#{personnel_name},
+				#{create_user_id},
+				#{create_user_name},
+				#{create_user_dept_id},
+				#{create_timestamp},
+				#{last_update_user_id},
+				#{last_update_timestamp},
+				#{enable_flag},
+				#{wms_inve_commission_personnel_reward_id}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveCommissionSpecialRulesPt">
+		update wms_inve_commission_special_rules_pt
+		<set>
+					<if test="wms_inve_commission_special_rules_pt_id != null">
+						 wms_inve_commission_special_rules_pt_id = #{wms_inve_commission_special_rules_pt_id},
+					</if>
+					<if test="wms_inve_commission_special_rules_id != null">
+						 wms_inve_commission_special_rules_id = #{wms_inve_commission_special_rules_id},
+					</if>
+					<if test="personnel_id != null">
+						 personnel_id = #{personnel_id},
+					</if>
+					<if test="personnel_shortcode != null">
+						 personnel_shortcode = #{personnel_shortcode},
+					</if>
+					<if test="personnel_name != null">
+						 personnel_name = #{personnel_name},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="create_user_name != null">
+						 create_user_name = #{create_user_name},
+					</if>
+					<if test="create_user_dept_id != null">
+						 create_user_dept_id = #{create_user_dept_id},
+					</if>
+					<if test="create_timestamp != null">
+						 create_timestamp = #{create_timestamp},
+					</if>
+					<if test="last_update_user_id != null">
+						 last_update_user_id = #{last_update_user_id},
+					</if>
+					<if test="last_update_timestamp != null">
+						 last_update_timestamp = #{last_update_timestamp},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+					<if test="wms_inve_commission_personnel_reward_id != null">
+						 wms_inve_commission_personnel_reward_id = #{wms_inve_commission_personnel_reward_id},
+					</if>
+	   </set>
+		 where 
+    				wms_inve_commission_special_rules_pt_id = #{wms_inve_commission_special_rules_pt_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveCommissionSpecialRulesPt" resultType="WmsInveCommissionSpecialRulesPt">
+		select 
+				wms_inve_commission_special_rules_pt_id,
+				wms_inve_commission_special_rules_id,
+				personnel_id,
+				personnel_shortcode,
+				personnel_name,
+				create_user_id,
+				create_user_name,
+				create_user_dept_id,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag,
+				wms_inve_commission_personnel_reward_id
+		from
+		wms_inve_commission_special_rules_pt
+		<where>
+					<if test="wms_inve_commission_special_rules_pt_id != null">
+						and wms_inve_commission_special_rules_pt_id = #{wms_inve_commission_special_rules_pt_id}
+					</if>
+					<if test="wms_inve_commission_special_rules_id != null">
+						and wms_inve_commission_special_rules_id = #{wms_inve_commission_special_rules_id}
+					</if>
+					<if test="personnel_id != null">
+						and personnel_id = #{personnel_id}
+					</if>
+					<if test="personnel_shortcode != null">
+						and personnel_shortcode = #{personnel_shortcode}
+					</if>
+					<if test="personnel_name != null">
+						and personnel_name = #{personnel_name}
+					</if>
+					<if test="create_user_id != null">
+						and create_user_id = #{create_user_id}
+					</if>
+					<if test="create_user_name != null">
+						and create_user_name = #{create_user_name}
+					</if>
+					<if test="create_user_dept_id != null">
+						and create_user_dept_id = #{create_user_dept_id}
+					</if>
+					<if test="create_timestamp != null">
+						and create_timestamp = #{create_timestamp}
+					</if>
+					<if test="last_update_user_id != null">
+						and last_update_user_id = #{last_update_user_id}
+					</if>
+					<if test="last_update_timestamp != null">
+						and last_update_timestamp = #{last_update_timestamp}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+					<if test="wms_inve_commission_personnel_reward_id != null">
+						and wms_inve_commission_personnel_reward_id = #{wms_inve_commission_personnel_reward_id}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_inve_commission_special_rules_pt_id != #{wms_inve_commission_special_rules_pt_id}
+					</if>
+		</where>
+	</select>
+	
+	<select id="getPmPersonnels" parameterType="java.util.List" resultType="WmsInveCommissionSpecialRulesPt">
+		select 
+			personnel_id,
+			personnel_shortcode,
+			personnel_name
+		from pm_personnel
+		where enable_flag='1' and personnel_id in
+		<foreach item="idItem" collection="list" open="(" separator="," close=")">
+			#{idItem}
+		</foreach>
+	</select>
+	
+	<delete id="delPecialRulesPts" parameterType="java.lang.Integer">
+		delete from wms_inve_commission_special_rules_pt
+		where wms_inve_commission_special_rules_id = #{wms_inve_commission_special_rules_id}
+	</delete>
+	
+	<!-- 批量添加收益信息 -->
+	<insert id="addBatch" parameterType="java.util.List">
+		insert into wms_inve_commission_special_rules_pt (
+			wms_inve_commission_special_rules_id,
+			personnel_id,
+			personnel_shortcode,
+			personnel_name,
+			create_user_id,
+			create_user_name,
+			create_user_dept_id,
+			create_timestamp,
+			last_update_user_id,
+			last_update_timestamp,
+			enable_flag,
+			wms_inve_commission_personnel_reward_id
+		) values
+		<foreach collection="list" item="item" index="index" separator=",">
+		(
+			#{item.wms_inve_commission_special_rules_id},
+			#{item.personnel_id},
+			#{item.personnel_shortcode},
+			#{item.personnel_name},
+			#{item.create_user_id},
+			#{item.create_user_name},
+			#{item.create_user_dept_id},
+			#{item.create_timestamp},
+			#{item.last_update_user_id},
+			#{item.last_update_timestamp},
+			#{item.enable_flag},
+			#{item.wms_inve_commission_personnel_reward_id}
+		)
+		</foreach>
+	</insert>
+	<delete id="deletePerson" parameterType="java.lang.Integer">
+		delete from wms_inve_commission_special_rules_pt
+		where wms_inve_commission_personnel_reward_id = #{wms_inve_commission_personnel_reward_id}
+	</delete>
+	
+	<!-- get entity by pk -->
+	<select id="getPersonnelsByPer" parameterType="int" resultType="WmsInveCommissionSpecialRulesPt">
+		select
+        				wms_inve_commission_special_rules_pt_id,
+        				wms_inve_commission_special_rules_id,
+        				personnel_id,
+        				personnel_shortcode,
+        				personnel_name,
+        				create_user_id,
+        				create_user_name,
+        				create_user_dept_id,
+						date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+        				create_timestamp,
+        				last_update_user_id,
+						date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+        				last_update_timestamp,
+        				enable_flag,
+        				wms_inve_commission_personnel_reward_id
+        	from
+        		wms_inve_commission_special_rules_pt
+        	where
+        				wms_inve_commission_personnel_reward_id = #{wms_inve_commission_personnel_reward_id}
+	</select>
+</mapper> 

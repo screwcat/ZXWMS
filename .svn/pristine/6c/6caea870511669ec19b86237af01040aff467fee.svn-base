@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>查看图片</title>
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+	
+	var idsArr;
+	var dataList;
+	$(function() {
+		//------------------------------------------------获取贷款主表id进行数据的显示------------------------------------
+		idsArr=$.query.get('idsArr');
+		dataList = globalUtil.syncGetJson('/cremanage/wmscrecreditlinecustomerdataattachmentwithoutpaginglistbyids.do',{
+			'wms_cre_credit_line_customer_data_attachment_ids': idsArr // 贷款id
+	        },'GET');
+		var hmlstr='';
+		for (var i = 0; i < dataList.Rows.length; i++) {
+			hmlstr+="<img src='"+global_param.upload_file_url+dataList.Rows[i].attachment_address+"' alt='' /><br> ";
+		}
+		var iTop=window.screen.availHeight;
+		
+		$("#div1").html(hmlstr);
+		
+		$("#div1 img").each(function(index,domEle){
+			if(parseFloat($(domEle).css("width").replace('px',''))>1400){
+				$(domEle).css("width",'1300px');
+			}
+		});
+	});
+</script>
+</head>
+<body>
+	<div id="div1"></div>
+</body>
+</html>

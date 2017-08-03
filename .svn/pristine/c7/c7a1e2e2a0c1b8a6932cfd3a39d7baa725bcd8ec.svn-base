@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.sysmanage.persist.SysUserDao">
+	<!-- 获取用户 -->
+	<select id="get" parameterType="Integer" resultType="SysUser">
+		select *
+		from sys_user
+		where
+		id=#{id}
+	</select>
+
+	<!-- 查询数据条数，直接返回int类型条数 -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(id) as count
+		from sys_user
+		<where>
+			enable_flag='1'
+			<if test="loginName != null">
+				and login_id=#{login_id}
+			</if>
+			<if test="name != null">
+				and user_name=#{user_name}
+			</if>
+			<if test="type != null">
+				and type=#{type}
+			</if>
+		</where>
+	</select>
+	<select id="findCount2" parameterType="map" resultType="int">
+		select count(id) as count
+		from sys_user
+		<where>
+			enable_flag='1'
+			<if test="user_code != null">
+				and user_code like '${user_code}'
+			</if>
+			<if test="user_realname != null">
+				and user_realname like '${user_realname}'
+			</if>
+		</where>
+	</select>
+
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select *
+		from
+		sys_user
+		<where>
+			enable_flag='1'
+			<if test="loginName != null">
+				and login_id=#{login_id}
+			</if>
+			<if test="name != null">
+				and user_name=#{user_name}
+			</if>
+			<if test="type != null">
+				and type=#{type}
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+
+	</select>
+
+	<!-- 查询用户 ，返回List<SysUser>对象，如果返回类型不为SysUser对象集合，需要在自己的接口中重新进行定义 -->
+	<select id="search2" parameterType="map" resultType="java.util.HashMap">
+		select *
+		from
+		sys_user
+		<where>
+			enable_flag='1'
+			<if test="user_code != null">
+				and user_code like '${user_code}'
+			</if>
+			<if test="user_realname != null">
+				and user_realname like '${user_realname}'
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+
+	</select>
+
+	<!-- 插入用户，并在用户实体对象中将主键进行赋值，返回受影响的记录条数，如果不需要返回主键，无需配置useGeneratedKeys、keyProperty项 -->
+	<insert id="save" parameterType="SysUser" useGeneratedKeys="true"
+		keyProperty="id">
+		INSERT INTO sys_user
+		(user_code ,user_passwd
+		,user_realname,last_update_timestamp)
+		VALUES
+		(
+		#{user_code},#{user_passwd},
+		#{user_realname},#{last_update_timestamp});
+	</insert>
+
+	<!-- 更新用户，返回受影响的记录条数 -->
+	<update id="update" parameterType="SysUser">
+		update tb_user
+		<set>
+			<if test="no != null">
+				no = #{no},
+			</if>
+			<if test="loginId != null">
+				login_id = #{loginId},
+			</if>
+			<if test="pwd != null">
+				pwd = #{pwd},
+			</if>
+			<if test="userName != null">
+				user_name = #{userName},
+			</if>
+			<if test="mobile != null">
+				mobile = #{mobile},
+			</if>
+			<if test="type != null">
+				type = #{type}
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<!-- 删除用户 -->
+	<delete id="delete">
+		delete from sys_user where id in
+		<foreach collection="array" item="item" index="index" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	<!-- 更新用户，返回受影响的记录条数 -->
+	<update id="updateRecordCols" parameterType="SysUser">
+		update sys_user
+		<set>
+			<if test="user_code != null">
+				user_code = #{user_code},
+			</if>
+			<if test="user_passwd != null">
+				user_passwd = #{user_passwd},
+			</if>
+			<if test="user_realname != null">
+				user_realname = #{user_realname},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+			<if test="create_user != null">
+				create_user = #{create_user}
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user != null">
+				last_update_user = #{last_update_user},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="last_update_remark != null">
+				last_update_remark = #{last_update_remark}
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	<select id="checkUser" parameterType="map" resultType="java.util.HashMap">
+		select *
+		from sys_user
+		where user_code=#{user_code}
+		and enable_flag = '1'
+		<if test="user_passwd != null">
+			and user_passwd=#{user_passwd}
+		</if>
+		<if test="user_passwd == null">
+			and user_passwd is null
+		</if>
+	</select>
+
+	<!-- 更新用户，返回受影响的记录条数 -->
+	<update id="setEnableFlagFalse" parameterType="Integer">
+		update sys_user
+		set enable_flag='0' where id=#{id}
+	</update>
+
+	<select id="getCodeNo" parameterType="map" resultType="long">
+		select
+		seq('${code}') as code;
+	</select>
+
+	<select id="getRepeatCodeNo" parameterType="map" resultType="long">
+		select seqrepeat('${code}','${org_no}') as code;
+	</select>
+	<!-- 实现根据月份初始化表单code -->
+	<select id="getRepeatCodeNoMonth" parameterType="map"
+		resultType="long">
+		select seqrepeatmonth('${code}','${org_no}') as code;
+	</select>
+</mapper> 

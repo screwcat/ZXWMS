@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>借款合同</title>
+<script language="Javascript" src="../js/zx-all.js"> </script>
+<script type="text/javascript">
+var wms_cre_credit_head_id=$.query.get('wms_cre_credit_head_id');//获取传递过来的值
+var protocol_num=$.query.get('protocol_num');//获取传递过来的值
+    $(function() {
+    	//// 打印合同版本 1为本公司合同2为房产局合同
+    	if(protocol_num==""||protocol_num=="undefined"||protocol_num==undefined){
+    		protocol_num="1";
+    	}
+       var url=global_param.context_name+"/wms/ireportpdf.pdf";
+       $('#form').attr("action",url);
+       $('#button1').click(function() {
+    	    $('#form').append('<input type="hidden" name="wms_cre_credit_head_id" value="' + wms_cre_credit_head_id + '">');
+    	    $('#form').append('<input type="hidden" name="protocol_num" value="' + protocol_num + '">');
+        	$('#form').submit();
+       });
+       $('#button1').click();
+    });
+</script>
+</head>
+<body>
+<!-- <a class="media" href="/WMS/wms/ireportpdf.dos?wms_cre_credit_head_id=4574">PDF File</a> -->
+<form action=""  method="post" id="form">
+</form>
+	<input type="button" id="button1" value="合同加载中...."/>
+</body>
+</html>

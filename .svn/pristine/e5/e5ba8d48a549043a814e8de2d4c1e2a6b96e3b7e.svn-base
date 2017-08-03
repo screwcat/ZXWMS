@@ -1,0 +1,506 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-
+transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<link href="../../css/ligerui-main.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<title>收益账单</title>
+<style type="text/css">
+/* .td_title {background: none repeat scroll 0 0 #EAF0FB;} */
+/* .tb_input TD {background: none repeat scroll 0 0 #FFFFFF;padding: 3px 1px 1px 4px;} */
+/* table td {border-color: #BFBFBF;} */
+.table-head{padding-right:17px;}
+.table-body{width:100%; height: 450px;overflow-y:scroll;overflow-x:hidden;}
+.table-head table,.table-body table{width:100%;} 
+/* .table-body table tr:nth-child(2n+1){background-color:#f2f2f2;} */
+</style>
+</head>
+<body>
+	
+	<div class="pop-center" style="width: 100%;">
+		
+		<!-- 显示客户基本信息 -->	
+		<table bgcolor="#F2F2F2" border="0" width="96%" style="border-collapse:separate; border-spacing:0px 15px;margin-top: 10px;margin-left: 20px;">
+			<tr style="margin: 10px;">
+				<td align="right" width="10%"><span style="font-size: 15px;font-weight: bold;">客户姓名：</span></td>
+				<td align="left" width="15%"><span style="font-size: 15px;font-weight: bold;" id="cus_name_info"></span></td>
+				<td width="30%">&nbsp;</td>
+				<td align="right" width="15%"><span style="font-size: 15px;font-weight: bold;">投资金额：</span></td>
+				<td align="left" width="15%"><span style="font-size: 15px;font-weight: bold;" id="product_account_info"></span></td>
+			</tr>
+			<tr  style="margin: 10px;">
+				<td align="right" width="10%"><span style="font-size: 15px;font-weight: bold;">有效证件：</span></td>
+				<td align="left" width="15%"><span style="font-size: 15px;font-weight: bold;" id="id_card_info"></span></td>
+				<td width="30%">&nbsp;</td>
+				<td align="right" width="15%"><span style="font-size: 15px;font-weight: bold;">已获收益：</span></td>
+				<td align="left" width="15%"><span style="font-size: 15px;font-weight: bold;" id="already_income_info"></span></td>
+			</tr>
+			<tr  style="margin: 10px;">
+				<td align="right" width="10%"><span style="font-size: 15px;font-weight: bold;">收益月份：</span></td>
+				<td align="left" width="15%"><span style="font-size: 15px;font-weight: bold;" id="return_date_info">全部月份</span></td>
+				<td width="30%">&nbsp;</td>
+				<td align="right" width="15%"><span style="font-size: 15px;font-weight: bold;">待获收益：</span></td>
+				<td align="left" width="15%"><span style="font-size: 15px;font-weight: bold;" id="stay_income_info"></span></td>
+			</tr>
+		</table>
+	
+		<!-- tab按钮 -->
+		<div class="l-tab-links-sub" style="margin-left: 10px;">
+			<ul style="left: 0px; ">
+				<li id="chanpintongji_li" class="l-selected-sub" onclick="changeTab('chanpintongji_li');">
+					<a>按产品统计</a>
+					<div class="l-tab-links-item-left-sub"></div>
+					<div class="l-tab-links-item-right-sub"></div>
+				</li>
+				<li id="yuefentongji_li" class="l-unselected-sub" onclick="changeTab('yuefentongji_li');">
+					<a>按月份统计</a>
+					<div class="l-tab-links-item-left-sub"></div>
+					<div class="l-tab-links-item-right-sub"></div>
+				</li>
+			</ul>
+		</div>
+		
+		<!-- 产品统计信息 -->
+		<div id="chanpintongji" style="height:300px">
+			<div id="chanpintongji_table_title"></div><!-- 表格标题 -->
+			<div id="chanpintongji_income_href_id" style="float: right;padding-right: 20px;"></div>	<!-- 切换收益情况 -->
+			<div id="chanPinTongJiGrid" style="height:300px"></div><!-- 按照产品统计的表格 -->
+		</div>
+		
+		<!-- 月份统计信息 -->
+		<div id="yuefentongji" style="display:none;height:300px;">
+			<div id="yuefentongji_table_title"><span style="font-size: 20px;font-weight: bold;">已获收益详情</span></div><!-- 表格标题 -->
+			<div id="yuefentongji_income_href_id" style="float: right;padding-right: 20px;"><a>切换至待获收益>></a></div><!-- 切换收益情况 -->
+			<div id="yueFenTongJiGrid" style="height:300px"></div><!-- 按照月份统计的表格 -->
+		</div>
+	</div>
+	
+	
+	<!-- 按钮 -->
+	<div class="pop-footer6 clearboth"> 
+		<a href="javascript:printClick();" class="btnType1 btnSize1" id="change_category_btn">打印账单</a>
+		<a href="javascript:cancelClick();" class="btnType1 btnSize1" id="change_category_btn">关闭</a>
+	</div>
+	
+	<!-- 相关js函数方法 -->
+	<script type="text/javascript">
+		
+		var ids;//上单表主键id字符串(多个以","分隔)
+		var return_date = "";//收益月份
+		
+		$(function(){
+			ids = $.query.get("ids");//上单表主键id字符串(多个以","分隔)
+			return_date = $.query.get("return_date")//获取收益月份
+			
+			initCustomerInfos();//初始化客户信息
+			initChanPinTongJiTable(1);//按照产品统计(默认查询已获收益)
+			initYueFenTongJiTable(1);//按照月份统计(默认查询已获收益)
+		});
+		
+		/*
+		 * 初始化客户信息
+		 */
+		function initCustomerInfos()
+		{
+			//定义参数列表
+			var params = {
+				ids:ids,
+				return_date:return_date
+			};
+			
+			$.ajax({
+				url : globalUtil.getTimestampUrl('/inve/getCustomerTotalBillInfos.do'),
+				data: params,
+				async:false,
+				dataType:"json",
+				success:function(data)
+				{					
+					//设置客户收益账单信息
+					$("#cus_name_info").html(data.cus_name);
+					$("#product_account_info").html("￥" + data.product_account);
+					$("#id_card_info").html(data.id_card);
+					$("#already_income_info").html("￥" + data.already_income);
+					$("#return_date_info").html(data.return_date);
+					$("#stay_income_info").html("￥" + data.stay_income);
+					
+				}
+			});
+		}
+		
+		/*
+		 * 按照产品统计(type等于1时表示已获收益, type等于2的时候表示待获收益信息列表)
+		 */
+		function initChanPinTongJiTable(type)
+		{
+			
+			//判断类别为按照产品统计并且是已获收益列表
+			if(type == "1")
+			{
+				$("#chanpintongji_income_href_id").html("<a href='javascript:initChanPinTongJiTable(2)'>切换至待获收益>></a>");
+				$("#chanpintongji_table_title").html('<span style="font-size: 20px;font-weight: bold;">已获收益详情</span>');
+				
+				//定义参数列表
+				var params = {
+					ids:ids,
+					return_date:return_date,
+					type:1
+				};
+				
+				$.ajax({
+					url : globalUtil.getTimestampUrl('/inve/getCategoryTotalBillInfos.do'),
+					data: params,
+					async:false,
+					dataType:"json",
+					success:function(data)
+					{
+						var tableStr = "";//定义表格字符串
+						//设置表格的title
+						tableStr += '<div style="width: 100%;">';
+						tableStr += '<div class="table-head">';
+						tableStr += '<table cellpadding="0" cellspacing="0" border="1" width="100%">';
+						tableStr += '<colgroup><col style="width: 80px;" /><col /></colgroup>';
+						tableStr += '<thead>';
+						tableStr += '<tr style="background-color:#676B73;">';
+						tableStr += '<td width="25%" algin="center"><font color="#ffffff" size="3">所投产品信息</font></td>';
+						tableStr += '<td width="12%" algin="center"><font color="#ffffff" size="3">收益月份</font></td>';
+						tableStr += '<td width="12%" algin="center"><font color="#ffffff" size="3">收益类型</font></td>';
+						tableStr += '<td width="15%" algin="center"><font color="#ffffff" size="3">收益金额</font></td>';
+						tableStr += '<td width="20%" algin="center"><font color="#ffffff" size="3">客户收益卡</font></td>';
+						tableStr += '<td width="20%" algin="center"><font color="#ffffff" size="3">实际收益日期</font></td>';
+						tableStr += '</tr>';
+						tableStr += '</thead>';
+						tableStr += '</table>';
+						tableStr += '</div>';
+						
+						setChanPinTongJiTable(tableStr, data);
+					}
+				});
+			}
+			else
+			{
+				
+				$("#chanpintongji_income_href_id").html("<a href='javascript:initChanPinTongJiTable(1)'>切换至已获收益>></a>");
+				$("#chanpintongji_table_title").html('<span style="font-size: 20px;font-weight: bold;">待获收益详情</span>');
+				
+				//定义参数列表
+				var params = {
+					ids:ids,
+					return_date:return_date,
+					type:2
+				};
+				
+				$.ajax({
+					url : globalUtil.getTimestampUrl('/inve/getCategoryTotalBillInfos.do'),
+					data: params,
+					async:false,
+					dataType:"json",
+					success:function(data)
+					{
+						var tableStr = "";//定义表格字符串
+						//设置表格的title
+						tableStr += '<div style="width: 100%;">';
+						tableStr += '<div class="table-head">';
+						tableStr += '<table cellpadding="0" cellspacing="0" border="1" width="100%">';
+						tableStr += '<colgroup><col style="width: 80px;" /><col /></colgroup>';
+						tableStr += '<thead>';
+						tableStr += '<tr style="background-color:#676B73;">';
+						tableStr += '<td width="25%" algin="center"><font color="#ffffff" size="3">所投产品信息</font></td>';
+						tableStr += '<td width="12%" algin="center"><font color="#ffffff" size="3">收益月份</font></td>';
+						tableStr += '<td width="12%" algin="center"><font color="#ffffff" size="3">收益类型</font></td>';
+						tableStr += '<td width="15%" algin="center"><font color="#ffffff" size="3">预计收益金额</font></td>';
+						tableStr += '<td width="20%" algin="center"><font color="#ffffff" size="3">预计客户收益卡</font></td>';
+						tableStr += '<td width="20%" algin="center"><font color="#ffffff" size="3">实际收益日期</font></td>';
+						tableStr += '</tr>';
+						
+						tableStr += '</thead>';
+						tableStr += '</table>';
+						tableStr += '</div>';
+						
+						setChanPinTongJiTable(tableStr, data);
+					}
+				});
+			}
+		}
+		
+		/*
+		 * 设置按照产品统计的表格信息
+		 */
+		function setChanPinTongJiTable(tableStr, data)
+		{
+			tableStr += '<div class="table-body">';
+			tableStr += '<table cellpadding="0" cellspacing="0" border="1" width="100%">';
+			tableStr += '<colgroup><col style="width: 80px;" /><col /></colgroup>';
+			tableStr += '<tbody>';
+			
+			var idArray = ids.split(",");//将得到的字符串分隔成数组
+			
+			//循环遍历得到的上单表主键数组,并且根据数组中的id
+			for(var i = 0; i < idArray.length; i++)
+			{
+				//遍历结果集合,判断上单表主键是否相同
+				for(var j = 0; j < data.length; j++)
+				{
+					var id = idArray[i];//获取传入该页面的上单表主键
+					var firstTitleName = "";//定义所投产品信息名称
+					
+					//判断上单表主键是否相同
+					if(id == data[j].wms_inve_transa_id)
+					{
+						var lis = data[j].data;//获取对应单据的list集合
+						var len = lis.length;//获取数据的数量
+						var count = data[j].count;//获取统计的数量
+						
+						//判断数据集合是否为空
+						if(lis != null && lis.length > 0)
+						{
+							
+							for(var k = 0; k < lis.length; k++)
+							{
+								tableStr += '<tr>';
+								if(k == 0)
+								{
+									firstTitleName = lis[k].sigend_info;
+									tableStr += '<td width="25%" algin="center" rowspan='+len+'>'+lis[k].sigend_info+'</td>';
+								}
+								tableStr += '<td width="12%" algin="center">'+lis[k].return_date+'</td>';
+								tableStr += '<td width="12%" algin="center">'+lis[k].income_type+'</td>';
+								tableStr += '<td width="15%" algin="center">'+lis[k].payable_basic_income+'</td>';
+								tableStr += '<td width="20%" algin="center">'+lis[k].income_card+'</td>';
+								if(lis[k].act_return_date == null || lis[k].act_return_date == "" || lis[k].act_return_date==undefined)
+								{
+									tableStr += '<td width="20%" algin="center">&nbsp;</td>';
+								}
+								else
+								{
+									tableStr += '<td width="20%" algin="center">'+lis[k].act_return_date+'</td>';
+								}
+								tableStr += '</tr>';
+							}
+							
+							//设置统计行
+							tableStr += '<tr style="background-color:#D7D7D7;">';
+							tableStr += '<td width="25%" algin="center"><font size="2"><b>'+firstTitleName+'合计</b></font></td>';
+							tableStr += '<td width="12%" algin="center">&nbsp;</td>';
+							tableStr += '<td width="12%" algin="center">&nbsp;</td>';
+							tableStr += '<td width="15%" algin="center"><font size="2"><b>'+count+'</b></font></td>';
+							tableStr += '<td width="20%" algin="center">&nbsp;</td>';
+							tableStr += '<td width="20%" algin="center">&nbsp;</td>';
+							tableStr += '</tr>';
+						}
+					}
+				}
+			}
+			tableStr += '</tbody>';
+			tableStr += '</table>';
+			tableStr += '</div>';
+			tableStr += '</div>';
+			
+			$("#chanPinTongJiGrid").html(tableStr);
+		}
+		
+		/*
+		 * 按照月份统计(type等于1时表示已获收益, type等于2的时候表示待获收益信息列表)
+		 */
+		function initYueFenTongJiTable(type)
+		{
+			//判断类别为按照产品统计并且是已获收益列表
+			if(type == "1")
+			{
+				$("#yuefentongji_income_href_id").html("<a href='javascript:initYueFenTongJiTable(2)'>切换至待获收益>></a>");
+				$("#yuefentongji_table_title").html('<span style="font-size: 20px;font-weight: bold;">已获收益详情</span>');
+				
+				//定义参数列表
+				var params = {
+					return_date:return_date,
+					ids:ids,
+					type:1
+				};
+				
+				$.ajax({
+					url : globalUtil.getTimestampUrl('/inve/getYueFenTotalBillInfos.do'),
+					data: params,
+					async:false,
+					dataType:"json",
+					success:function(data)
+					{
+						var tableStr = "";//定义表格字符串
+						//设置表格的title
+						tableStr += '<div style="width: 100%;">';
+						tableStr += '<div class="table-head">';
+						tableStr += '<table cellpadding="0" cellspacing="0" border="1" width="100%">';
+						tableStr += '<colgroup><col style="width: 80px;" /><col /></colgroup>';
+						tableStr += '<thead>';
+						tableStr += '<tr style="background-color:#676B73;">';
+						tableStr += '<td width="12%" algin="center"><font color="#ffffff" size="3">收益月份</font></td>';
+						tableStr += '<td width="25%" algin="center"><font color="#ffffff" size="3">所投产品信息</font></td>';
+						tableStr += '<td width="12%" algin="center"><font color="#ffffff" size="3">收益类型</font></td>';
+						tableStr += '<td width="15%" algin="center"><font color="#ffffff" size="3">收益金额</font></td>';
+						tableStr += '<td width="20%" algin="center"><font color="#ffffff" size="3">客户收益卡</font></td>';
+						tableStr += '<td width="20%" algin="center"><font color="#ffffff" size="3">实际收益日期</font></td>';
+						tableStr += '</tr>';
+						tableStr += '</thead>';
+						tableStr += '</table>';
+						tableStr += '</div>';
+						
+						setYueFenTongJiTable(tableStr, data);
+					}
+				});
+			}
+			else
+			{
+				
+				$("#yuefentongji_income_href_id").html("<a href='javascript:initYueFenTongJiTable(1)'>切换至已获收益>></a>");
+				$("#yuefentongji_table_title").html('<span style="font-size: 20px;font-weight: bold;">待获收益详情</span>');
+				
+				//定义参数列表
+				var params = {
+					return_date:return_date,
+					ids:ids,
+					type:2
+				};
+				
+				$.ajax({
+					url : globalUtil.getTimestampUrl('/inve/getYueFenTotalBillInfos.do'),
+					data: params,
+					async:false,
+					dataType:"json",
+					success:function(data)
+					{
+						var tableStr = "";//定义表格字符串
+						//设置表格的title
+						tableStr += '<div style="width: 100%;">';
+						tableStr += '<div class="table-head">';
+						tableStr += '<table cellpadding="0" cellspacing="0" border="1" width="100%">';
+						tableStr += '<colgroup><col style="width: 80px;" /><col /></colgroup>';
+						tableStr += '<thead>';
+						tableStr += '<tr style="background-color:#676B73;">';
+						tableStr += '<td width="12%" algin="center"><font color="#ffffff" size="3">收益月份</font></td>';
+						tableStr += '<td width="25%" algin="center"><font color="#ffffff" size="3">所投产品信息</font></td>';
+						tableStr += '<td width="12%" algin="center"><font color="#ffffff" size="3">收益类型</font></td>';
+						tableStr += '<td width="15%" algin="center"><font color="#ffffff" size="3">预计收益金额</font></td>';
+						tableStr += '<td width="20%" algin="center"><font color="#ffffff" size="3">预计客户收益卡</font></td>';
+						tableStr += '<td width="20%" algin="center"><font color="#ffffff" size="3">实际收益日期</font></td>';
+						tableStr += '</tr>';
+						tableStr += '</thead>';
+						tableStr += '</table>';
+						tableStr += '</div>';
+						
+						setYueFenTongJiTable(tableStr, data);
+					}
+				});
+			}
+		}
+		
+		/*
+		 * 设置按照月份统计的表格信息
+		 */
+		function setYueFenTongJiTable(tableStr, data)
+		{
+			tableStr += '<div class="table-body">';
+			tableStr += '<table cellpadding="0" cellspacing="0" border="1" width="100%">';
+			tableStr += '<colgroup><col style="width: 80px;" /><col /></colgroup>';
+			tableStr += '<tbody>';
+			
+			if(data.length > 0)
+			{
+				//遍历得到的结果集合
+				for(var i = 0; i < data.length; i++)
+				{
+					var firstTitleName = "";//定义表格第一个列的标题
+					var count = data[i].count;//获取根据月份统计的收益总和
+					var list = data[i].data;//获取数据集合
+					var return_date = data[i].return_date;//获取收益月份
+					
+					//遍历数据集合
+		 			for(var k = 0; k < list.length; k++)
+		 			{
+		 				tableStr += '<tr>';
+		 				if(k == 0)
+		 				{
+		 					firstTitleName = return_date;
+		 					tableStr += '<td width="12%" algin="center" rowspan='+list.length+'>'+return_date+'</td>';
+		 				}
+		 				tableStr += '<td width="25%" algin="center">'+list[k].sigend_info+'</td>';
+		 				tableStr += '<td width="12%" algin="center">'+list[k].income_type+'</td>';
+		 				tableStr += '<td width="15%" algin="center">'+list[k].payable_basic_income+'</td>';
+		 				tableStr += '<td width="20%" algin="center">'+list[k].income_card+'</td>';
+		 				if(list[k].act_return_date == null || list[k].act_return_date == "" || list[k].act_return_date==undefined)
+						{
+							tableStr += '<td width="20%" algin="center">&nbsp;</td>';
+						}
+						else
+						{
+							tableStr += '<td width="20%" algin="center">'+list[k].act_return_date+'</td>';
+						}
+		 				tableStr += '</tr>';
+		 			}
+					
+		 			//设置统计行
+		 			tableStr += '<tr style="background-color:#D7D7D7;">';
+		 			tableStr += '<td width="12%" algin="center"><font size="2"><b>'+firstTitleName+'</b></font></td>';
+		 			tableStr += '<td width="25%" algin="center">&nbsp;</td>';
+		 			tableStr += '<td width="12%" algin="center">&nbsp;</td>';
+		 			tableStr += '<td width="15%" algin="center"><font size="2"><b>'+count+'</b></font></td>';
+		 			tableStr += '<td width="20%" algin="center">&nbsp;</td>';
+		 			tableStr += '<td width="20%" algin="center">&nbsp;</td>';
+		 			tableStr += '</tr>';
+				}
+			}
+			
+			tableStr += '</tbody>';
+			tableStr += '</table>';
+			tableStr += '</div>';
+			tableStr += '</div>';
+			
+			$("#yueFenTongJiGrid").html(tableStr);
+		}
+		
+		/*
+		 * 切换tab函数
+		 */
+		function changeTab(id){
+    		var gryj = document.getElementById("chanpintongji"); //客户基本信息
+    		var tdyj = document.getElementById("yuefentongji"); //客户资料
+    		
+    		if("chanpintongji_li"==id){
+    			$("#chanpintongji_li").removeClass().addClass("l-selected-sub");
+    			$("#yuefentongji_li").removeClass().addClass("l-unselect ed-sub");
+    			gryj.style.display = '';
+    			tdyj.style.display = 'none';
+    			
+    		}else{
+    			$("#yuefentongji_li").removeClass().addClass("l-selected-sub");
+    			$("#chanpintongji_li").removeClass().addClass("l-unselected-sub");
+    			gryj.style.display = 'none';
+    			tdyj.style.display = '';
+    			
+    		}
+    	}
+		
+		/*
+		 * 打印账单
+		 */
+		function printClick()
+		{
+			
+ 			window.open("printIncomeBillPreview.html?ids="+ids+"&return_date="+return_date+"&url=printCustomerIncomeBillpdf.pdf");
+		}
+		
+		/*
+		 * 关闭收益账单信息窗口
+		 */
+		function cancelClick()
+		{
+			window.parent.dialog.hide();
+		}
+		
+		
+	</script>
+
+</body>
+
+
+</html>

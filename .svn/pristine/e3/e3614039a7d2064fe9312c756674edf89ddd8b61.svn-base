@@ -1,0 +1,594 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveCommionRecordCoeffDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveCommionRecordCoeff">
+		select
+        				wms_inve_commion_record_coeff_id,
+        				statics_month,
+        				dept_id,
+        				team_staff_num,
+        				salesman_id,
+        				personnel_postid,
+        				team_comm_coeff,
+        				team_comm_mon,
+        				general_manager_coeff,
+        				finance_manager_coeff,
+        				team_comm_mon_modify,
+						date_format(general_manager_datetime,'%Y-%m-%d %H:%i:%s') as general_manager_datetime_str,
+        				general_manager_datetime,
+						date_format(finance_manager_datetime,'%Y-%m-%d %H:%i:%s') as finance_manager_datetime_str,
+        				finance_manager_datetime,
+						date_format(create_datetime,'%Y-%m-%d %H:%i:%s') as create_datetime_str,
+        				create_datetime,
+        				general_manager_id,
+        				finance_manager_id
+        	from
+        		wms_inve_commion_record_coeff
+        	where
+        				wms_inve_commion_record_coeff_id = #{wms_inve_commion_record_coeff_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_commion_record_coeff_id) as count
+		from wms_inve_commion_record_coeff
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_inve_commion_record_coeff_id,
+				statics_month,
+				dept_id,
+				team_staff_num,
+				salesman_id,
+				personnel_postid,
+				team_comm_coeff,
+				team_comm_mon,
+				general_manager_coeff,
+				finance_manager_coeff,
+				team_comm_mon_modify,
+				date_format(general_manager_datetime,'%Y-%m-%d %H:%i:%s') as general_manager_datetime_str,
+				general_manager_datetime,
+				date_format(finance_manager_datetime,'%Y-%m-%d %H:%i:%s') as finance_manager_datetime_str,
+				finance_manager_datetime,
+				date_format(create_datetime,'%Y-%m-%d %H:%i:%s') as create_datetime_str,
+				create_datetime,
+				general_manager_id,
+				finance_manager_id
+		from wms_inve_commion_record_coeff
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveCommionRecordCoeff" useGeneratedKeys="true" keyProperty="wms_inve_commion_record_coeff_id">
+		INSERT INTO wms_inve_commion_record_coeff
+		(
+				wms_inve_commion_record_coeff_id,
+
+				statics_month,
+
+				dept_id,
+
+				team_staff_num,
+
+				salesman_id,
+
+				personnel_postid,
+
+				team_comm_coeff,
+
+				team_comm_mon,
+
+				general_manager_coeff,
+
+				finance_manager_coeff,
+
+				team_comm_mon_modify,
+
+				general_manager_datetime,
+
+				finance_manager_datetime,
+
+				create_datetime,
+
+				general_manager_id,
+
+				finance_manager_id
+		)
+		VALUES
+		(
+				#{wms_inve_commion_record_coeff_id},
+				#{statics_month},
+				#{dept_id},
+				#{team_staff_num},
+				#{salesman_id},
+				#{personnel_postid},
+				#{team_comm_coeff},
+				#{team_comm_mon},
+				#{general_manager_coeff},
+				#{finance_manager_coeff},
+				#{team_comm_mon_modify},
+				#{general_manager_datetime},
+				#{finance_manager_datetime},
+				#{create_datetime},
+				#{general_manager_id},
+				#{finance_manager_id}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveCommionRecordCoeff">
+		update wms_inve_commion_record_coeff
+		<set>
+					<if test="wms_inve_commion_record_coeff_id != null">
+						 wms_inve_commion_record_coeff_id = #{wms_inve_commion_record_coeff_id},
+					</if>
+					<if test="statics_month != null">
+						 statics_month = #{statics_month},
+					</if>
+					<if test="dept_id != null">
+						 dept_id = #{dept_id},
+					</if>
+					<if test="team_staff_num != null">
+						 team_staff_num = #{team_staff_num},
+					</if>
+					<if test="salesman_id != null">
+						 salesman_id = #{salesman_id},
+					</if>
+					<if test="personnel_postid != null">
+						 personnel_postid = #{personnel_postid},
+					</if>
+					<if test="team_comm_coeff != null">
+						 team_comm_coeff = #{team_comm_coeff},
+					</if>
+					<if test="team_comm_mon != null">
+						 team_comm_mon = #{team_comm_mon},
+					</if>
+					<if test="general_manager_coeff != null">
+						 general_manager_coeff = #{general_manager_coeff},
+					</if>
+					<if test="finance_manager_coeff != null">
+						 finance_manager_coeff = #{finance_manager_coeff},
+					</if>
+					<if test="team_comm_mon_modify != null">
+						 team_comm_mon_modify = #{team_comm_mon_modify},
+					</if>
+					<if test="general_manager_datetime != null">
+						 general_manager_datetime = #{general_manager_datetime},
+					</if>
+					<if test="finance_manager_datetime != null">
+						 finance_manager_datetime = #{finance_manager_datetime},
+					</if>
+					<if test="create_datetime != null">
+						 create_datetime = #{create_datetime},
+					</if>
+					<if test="general_manager_id != null">
+						 general_manager_id = #{general_manager_id},
+					</if>
+					<if test="finance_manager_id != null">
+						 finance_manager_id = #{finance_manager_id},
+					</if>
+	   </set>
+		 where 
+    				wms_inve_commion_record_coeff_id = #{wms_inve_commion_record_coeff_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveCommionRecordCoeff" resultType="WmsInveCommionRecordCoeff">
+		select 
+				wms_inve_commion_record_coeff_id,
+				statics_month,
+				dept_id,
+				team_staff_num,
+				salesman_id,
+				personnel_postid,
+				team_comm_coeff,
+				team_comm_mon,
+				general_manager_coeff,
+				finance_manager_coeff,
+				team_comm_mon_modify,
+				date_format(general_manager_datetime,'%Y-%m-%d %H:%i:%s') as general_manager_datetime_str,
+				general_manager_datetime,
+				date_format(finance_manager_datetime,'%Y-%m-%d %H:%i:%s') as finance_manager_datetime_str,
+				finance_manager_datetime,
+				date_format(create_datetime,'%Y-%m-%d %H:%i:%s') as create_datetime_str,
+				create_datetime,
+				general_manager_id,
+				finance_manager_id
+		from
+		wms_inve_commion_record_coeff
+		<where>
+					<if test="wms_inve_commion_record_coeff_id != null">
+						and wms_inve_commion_record_coeff_id = #{wms_inve_commion_record_coeff_id}
+					</if>
+					<if test="statics_month != null">
+						and statics_month = #{statics_month}
+					</if>
+					<if test="dept_id != null">
+						and dept_id = #{dept_id}
+					</if>
+					<if test="team_staff_num != null">
+						and team_staff_num = #{team_staff_num}
+					</if>
+					<if test="salesman_id != null">
+						and salesman_id = #{salesman_id}
+					</if>
+					<if test="personnel_postid != null">
+						and personnel_postid = #{personnel_postid}
+					</if>
+					<if test="team_comm_coeff != null">
+						and team_comm_coeff = #{team_comm_coeff}
+					</if>
+					<if test="team_comm_mon != null">
+						and team_comm_mon = #{team_comm_mon}
+					</if>
+					<if test="general_manager_coeff != null">
+						and general_manager_coeff = #{general_manager_coeff}
+					</if>
+					<if test="finance_manager_coeff != null">
+						and finance_manager_coeff = #{finance_manager_coeff}
+					</if>
+					<if test="team_comm_mon_modify != null">
+						and team_comm_mon_modify = #{team_comm_mon_modify}
+					</if>
+					<if test="general_manager_datetime != null">
+						and general_manager_datetime = #{general_manager_datetime}
+					</if>
+					<if test="finance_manager_datetime != null">
+						and finance_manager_datetime = #{finance_manager_datetime}
+					</if>
+					<if test="create_datetime != null">
+						and create_datetime = #{create_datetime}
+					</if>
+					<if test="general_manager_id != null">
+						and general_manager_id = #{general_manager_id}
+					</if>
+					<if test="finance_manager_id != null">
+						and finance_manager_id = #{finance_manager_id}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_inve_commion_record_coeff_id != #{wms_inve_commion_record_coeff_id}
+					</if>
+		</where>
+	</select>
+	
+	<select id="getCommionOfMonthListWithoutPaingByMonth" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			crc.wms_inve_commion_record_coeff_id,
+			crc.statics_month,
+			crc.dept_id,
+			d.dept_name,
+			pd.dept_name as p_dept_name,
+			pm.personnel_name,
+			pm.personnel_shortCode,
+			p.post_name,
+			crc.team_staff_num,
+			crc.salesman_id,
+			crc.personnel_postId,
+			crc.team_comm_coeff,
+			CONCAT(crc.team_comm_mon, '') as team_comm_mon,
+			CONCAT(crc.general_manager_coeff, '') as general_manager_coeff,
+			CONCAT(crc.finance_manager_coeff, '') as finance_manager_coeff,
+			crc.team_comm_mon_modify,
+			TRUNCATE(crc.team_add_mon/10000,2) as team_add_mon,
+			TRUNCATE(crc.team_add_mon_per/10000,2) as team_add_mon_per,
+			(select TRUNCATE(x.team_sea_clear_add_all/10000,2) from wms_personnel_achievement_his_seasta x where x.statics_season=#{lastSeaNum} and x.dept_id = crc.dept_id) as team_sea_clear_add,
+			case crc.dept_id when 418 then 1000 else (SELECT CASE x.dept_id WHEN 418 THEN 1000 ELSE TRUNCATE (x.team_stock_all / 10000, 2) END FROM wms_personnel_achievement_his x WHERE x.statics_month = #{check_stamonth} AND x.personnel_id = crc.salesman_id AND x.dept_id = crc.dept_id) end  AS team_stock_all,
+			ifnull((select case x.score_sign when 'F' then '未通过' when 'P' then '通过' when 'N' then '不参与考试' when 'L' then '请假' else '' end from exam_score x where x.exam_month=crc.statics_month and  x.personnel_id=crc.salesman_id and x.personnel_deptid=crc.dept_id and x.exam_type='B'),'--') as score_sign
+		FROM
+			wms_inve_commion_record_coeff crc, sys_dept d, sys_dept pd, pm_personnel pm, sys_post p
+		WHERE
+		  crc.dept_id = d.dept_id
+	      AND d.dept_pid = pd.dept_id
+		  AND pm.personnel_id = crc.salesman_id
+		  AND p.post_id = crc.personnel_postId
+		  AND crc.statics_month = #{month}
+		  ORDER BY pd.dept_id,d.dept_id
+	</select>
+	
+	<select id="getCommionListWithoutPaingByMonth" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			crc.wms_inve_commion_record_coeff_id,
+			crc.statics_month,
+			crc.dept_id,
+			d.dept_name,
+			pd.dept_name as p_dept_name,
+			pm.personnel_name,
+			pm.personnel_shortCode,
+			p.post_name,
+			crc.team_staff_num,
+			crc.salesman_id,
+			crc.personnel_postId,
+			crc.team_comm_coeff,
+			crc.team_comm_mon,
+			crc.general_manager_coeff,
+			crc.finance_manager_coeff,
+			crc.team_comm_mon_modify,
+			crc.team_add_mon,
+			crc.team_add_mon_per
+		FROM
+			wms_inve_commion_record_coeff crc, sys_dept d, sys_dept pd, pm_personnel pm, sys_post p
+		WHERE
+		  crc.dept_id = d.dept_id
+	      AND d.dept_pid = pd.dept_id
+		  AND pm.personnel_id = crc.salesman_id
+		  AND p.post_id = crc.personnel_postId
+		  <if test="month != null and month !=''">
+		  	AND crc.statics_month = #{month}
+		 </if>
+		  ORDER BY pd.dept_id,d.dept_id
+	</select>
+	
+	<update id="updateCommissionPerformanceWithVerifyAdjust" parameterType="map">
+		UPDATE wms_inve_commission_performance_his t
+		SET t.team_comm_coeff = #{comm_coeff },
+		 t.team_comm_mon = ROUND(
+			ifnull(t.investredemp_amount_plus,t.investredemp_amount) * t.team_comm_coeff * t.commission_days / #{month_of_days},2)
+		WHERE
+			t.statics_month = #{month }
+		AND t.wms_inve_comm_rate_id_team not like 'sr_%'
+		<if test="dept_id != null">
+		AND t.dept_id = #{dept_id }
+		</if>
+		AND t.team_personnel_id = #{personnel_id};
+	</update>
+	
+	<update id="updateOldCommHisWithVerifyAdjust">
+			UPDATE wms_inve_old_comm_his t1,
+				   (
+						SELECT
+							w1.wms_inve_transa_id,
+							w2.is_team_comm_coeff_can_change
+						FROM
+							wms_inve_transa w1,
+							wms_inve_old_comm_base_data w2
+						WHERE
+						(
+								w1.wms_inve_transa_id = w2.wms_inve_transa_id
+							OR 
+								w1.old_wms_inve_transa_id = w2.wms_inve_transa_id
+						)
+					) t2
+			SET t1.team_comm_coeff = 
+			    CASE WHEN t2.is_team_comm_coeff_can_change = 1 
+				     THEN #{comm_coeff}
+				     ELSE t1.team_comm_coeff
+				END,
+				t1.old_team_comm_mon = 
+				CASE WHEN t2.is_team_comm_coeff_can_change = 1 
+				     THEN 
+				              CASE WHEN t1.inve_type = 1 
+					               THEN ROUND(t1.product_account * #{comm_coeff} * t1.commission_days / DATE_FORMAT(LAST_DAY(CONCAT(#{month}, '-', '01')),'%d'),2)
+								   ELSE ROUND(t1.redeem_amount * t1.commission_days / DATE_FORMAT(LAST_DAY(CONCAT(#{month},'-','01')),'%d') * #{comm_coeff},2)
+							  END
+									
+					 ELSE 
+					          CASE WHEN t1.inve_type = 1 
+					               THEN ROUND(t1.product_account * t1.team_comm_coeff * t1.commission_days / DATE_FORMAT(LAST_DAY(CONCAT(#{month}, '-', '01')),'%d'),2)
+					               ELSE ROUND(t1.redeem_amount * t1.commission_days / DATE_FORMAT(LAST_DAY(CONCAT(#{month},'-','01')),'%d') * t1.team_comm_coeff,2)
+					          END
+										
+			    END
+			WHERE t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			AND t1.statics_month=#{month}
+			AND t1.department_manager_id = (SELECT getOldCommDeptManager(#{personnel_id}))
+			AND t1.salesman_dept_id = #{dept_id}
+	</update>
+	
+	<update id="updateCommionRecordWithVerifyAdjust" parameterType="map">
+		UPDATE wms_inve_commion_record t,
+		 (
+			SELECT
+				t1.team_personnel_id,
+				t1.team_personnel_dept_id,
+				t1.team_comm_coeff,
+				sum(t1.team_comm_mon) AS sum_team_comm_mon
+			FROM
+				wms_inve_commission_performance_his t1
+			WHERE
+				t1.statics_month = #{month }
+			<if test="personnelIdList != null">
+			AND t1.team_personnel_id IN 
+				<foreach collection="personnelIdList" item="personnel_id"
+					index="index" open="(" separator="," close=")">
+					#{personnel_id}
+				</foreach>
+			</if>
+			GROUP BY
+				t1.team_personnel_id
+		) t2
+		SET t.team_comm_coeff = t2.team_comm_coeff,
+		 t.team_comm_mon = sum_team_comm_mon
+		WHERE
+			t.salesman_id = t2.team_personnel_id
+		AND t.dept_id = t2.team_personnel_dept_id
+		AND t.statics_month = #{month }
+	</update>
+	
+	<update id="updateOldCommionRecordWithVerifyAdjust" parameterType="map">
+		UPDATE wms_inve_commion_record
+		SET old_team_comm_mon = (
+			SELECT
+				SUM(old_team_comm_mon)
+			FROM
+				wms_inve_old_comm_his
+			WHERE
+				statics_month = #{month }
+			AND department_manager_id = (SELECT getOldCommDeptManager(#{personnel_id}))
+			AND salesman_dept_id = #{dept_id}
+		  GROUP BY salesman_dept_id
+		)
+		WHERE salesman_id = #{personnel_id}
+		AND dept_id = #{dept_id}
+		AND statics_month = #{month}
+	</update>
+	
+	<update id="updateSpecialOldCommData" parameterType="map">
+		UPDATE wms_inve_old_comm_base_data_special_his t1,
+		(
+				SELECT
+			        wms_inve_old_comm_base_data_special_his_id,
+			        department_manager_id,
+			        salesman_id,
+			        product_account_desc,
+					product_account,
+	                team_comm_coeff,
+	            	old_team_comm_mon,
+	            	commission_days,
+	            	statics_time,
+	            	statics_month,
+	            	is_team_comm_coeff_can_change
+				FROM 
+					wms_inve_old_comm_base_data_special_his
+				WHERE
+					department_manager_id = #{personnel_id}
+				AND
+					statics_month = #{month }
+		) t2
+		SET t1.team_comm_coeff=
+		    CASE WHEN t2.is_team_comm_coeff_can_change = 1
+		         THEN #{comm_coeff}
+		         ELSE t2.team_comm_coeff
+		    END
+		    ,
+		    t1.old_team_comm_mon = 
+		    CASE WHEN t2.is_team_comm_coeff_can_change = 1
+		         THEN round((t2.product_account * #{comm_coeff} * t2.commission_days / DATE_FORMAT(LAST_DAY(CONCAT(#{month },'-','01')),'%d')),2)
+		         ELSE t2.old_team_comm_mon
+		    END
+		WHERE
+			t1.wms_inve_old_comm_base_data_special_his_id = t2.wms_inve_old_comm_base_data_special_his_id
+		AND
+			t1.statics_month = #{month }
+		AND
+			t1.department_manager_id =  #{personnel_id}
+		AND
+			(SELECT personnel_deptId FROM pm_personnel WHERE personnel_id =  #{personnel_id} AND enable_flag = 1) = #{dept_id}	
+		
+	</update>
+	
+	<update id="updateSpecialCommionRecord" parameterType="map">
+		update wms_inve_commion_record t1
+		SET t1.adjust_amount = (
+			SELECT
+				sum(t2.old_team_comm_mon)
+			FROM
+				wms_inve_old_comm_base_data_special_his t2,
+				pm_personnel t3
+			WHERE
+				t2.department_manager_id = t3.personnel_id
+			AND t2.statics_month = #{month }	
+			AND t1.salesman_id = t2.department_manager_id
+			AND t3.personnel_deptid = t1.dept_id
+		)
+		WHERE
+			t1.salesman_id = #{personnel_id}
+		and t1.dept_id = #{dept_id}
+		and t1.statics_month=#{month }	
+	</update>
+	
+	<update id="updateCommionRecordCoeffWithVerfyAdjust" parameterType="map">
+		UPDATE wms_inve_commion_record_coeff t,
+		 (
+			SELECT
+				t1.team_personnel_id,
+				t1.team_personnel_dept_id,
+				sum(t1.team_comm_mon) AS sum_team_comm_mon
+			FROM
+				wms_inve_commission_performance_his t1
+			WHERE
+				t1.statics_month = #{month }
+			<if test="personnelIdList != null">
+			AND t1.team_personnel_id IN 
+				<foreach collection="personnelIdList" item="personnel_id"
+					index="index" open="(" separator="," close=")">
+					#{personnel_id}
+				</foreach>
+			</if>
+			GROUP BY
+				t1.team_personnel_id
+		) t2
+		SET
+		 t.team_comm_mon_modify = sum_team_comm_mon
+		WHERE
+			t.salesman_id = t2.team_personnel_id
+		AND t.dept_id = t2.team_personnel_dept_id
+		AND t.statics_month = #{month }
+	</update>
+	
+	<update id="updateCommionRecordWithAdjustAmountSetZieo" parameterType="map">
+		UPDATE wms_inve_commion_record t1,
+      		  (
+		        SELECT
+				   IFNULL(SUM(comm_account),0) AS comm_account,
+				   salesman_id
+		        FROM
+			       wms_inve_commission_shareholder_his
+		        WHERE
+		 	       statics_month = #{month}
+		        GROUP BY salesman_id  
+	          ) t2
+        SET
+      	   t1.adjust_amount = 0
+        WHERE
+	       t1.salesman_id = t2.salesman_id
+        AND 
+           t1.statics_month = #{month}
+	</update>
+	
+	<update id="updateCommRecordAdjustAmountReappearCalculation" parameterType="map">
+		UPDATE wms_inve_commion_record t1,
+		 (
+			SELECT
+				b.wms_inve_commion_record_id,
+				IFNULL(a.comm_account, 0) + IFNULL(b.adjust_amount, 0) AS old_team_comm_mon
+			FROM
+				(
+					SELECT
+						IFNULL(SUM(comm_account), 0) AS comm_account,
+						salesman_id
+					FROM
+						wms_inve_commission_shareholder_his
+					WHERE
+						statics_month = #{month}
+					GROUP BY
+						salesman_id
+				) a,
+				(
+					SELECT
+						wms_inve_commion_record_id,
+						salesman_id,
+						IFNULL(SUM(adjust_amount), 0) AS adjust_amount
+					FROM
+						wms_inve_commion_record
+					WHERE
+						statics_month = #{month}
+					GROUP BY
+						salesman_id
+				) b
+			WHERE
+				a.salesman_id = b.salesman_id
+		) t2
+		SET t1.adjust_amount = t2.old_team_comm_mon
+		WHERE
+			t1.wms_inve_commion_record_id = t2.wms_inve_commion_record_id
+		AND t1.statics_month = #{month}
+	</update>
+</mapper> 

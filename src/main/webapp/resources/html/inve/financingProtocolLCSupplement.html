@@ -1,0 +1,1301 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>财富管理系统</title>
+<link href="../../css/borrowprotocol.css" rel="stylesheet"
+	type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<link href="../../css/screen_borrow.css" rel="stylesheet"
+	type="text/css" />
+<link href="../../css/print_borrow.css" rel="stylesheet" type="text/css" />
+<link href="../../../resources/images/logo_16.ico"
+	mce_href="../../../resources/images/logo_16.ico" type="image/x-icon" rel="icon" />
+<script type="text/javascript">
+var wms_inve_transa_protocol_id="";
+var wms_inve_transa_id="";
+var wms_inve_transa_prod_id="";
+var product_account="";
+var wms_inve_redeem_id="";
+var isCk="";
+var flag =$.query.get("flag");
+var judge = $.query.get("judge");
+var headid = $.query.get("headid");
+var taskId = $.query.get("taskId");
+  $(function()  {
+	     wms_inve_transa_protocol_id =$.query.get("wms_inve_transa_protocol_id");
+	     wms_inve_transa_id  =  $.query.get('wms_inve_transa_id');
+	     wms_inve_transa_prod_id  =  $.query.get('wms_inve_transa_prod_id');
+	     isCk  =  $.query.get('isCk');//获取是否是查看页面
+	     var category_interest_pay_method  =  $.query.get('category_interest_pay_method');//category_interest_pay_method 付息方式:  1 月付  2 年付 
+	     if(category_interest_pay_method=="2"){//
+				$("#yjzqsyl").text("年");
+		 }
+	     var jsonForSys = globalUtil.syncGetJson("/inve/wmsinvetransafindforlc.do?wms_inve_transa_id="+wms_inve_transa_id);//同步获取数据内容
+		 	jsonForSys.product_account_caps=globalUtil.convertCurrency(jsonForSys.product_account);
+			jsonForSys.product_account1=jsonForSys.product_account;
+			jsonForSys.b_name1=jsonForSys.b_name;
+			jsonForSys.b_name2=jsonForSys.b_name;
+			jsonForSys.b_name3=jsonForSys.b_name;
+			jsonForSys.b_name4=jsonForSys.b_name;
+			jsonForSys.b_name5=jsonForSys.b_name;
+			jsonForSys.b_name6=jsonForSys.b_name;
+			jsonForSys.b_name7=jsonForSys.b_name;
+			jsonForSys.a_name1=jsonForSys.a_name;
+			product_account=jsonForSys.product_account_lower;	
+			if(isCk!="isCk"){
+				$('#money_sum').text(jsonForSys.product_account);
+			}
+			//初始化赋值
+			globalUtil.setFormValByid("zrxy", jsonForSys);	
+		    if(isCk=="isCk"){
+		     	//获取协议详细信息
+		       var jsonWmsInveTransaPro=globalUtil.syncGetJson("/inve/getWmsInveTransaPro.do?wms_inve_transa_protocol_id="+wms_inve_transa_protocol_id);
+				$('#prot_code').val(jsonWmsInveTransaPro.prot_code);
+				$('#product_account_lower').val(jsonWmsInveTransaPro.product_account_lower);
+				$('#money_sum').text(jsonWmsInveTransaPro.product_account_lower);
+				$('#product_account_caps').val(globalUtil.convertCurrency(jsonWmsInveTransaPro.product_account));
+  		    	/*var json = globalUtil.syncGetJson("/inve/wmsinvetransamatchgetMapForLc.do?wms_inve_transa_prod_id="+wms_inve_transa_prod_id+"&wms_inve_redeem_id="+jsonWmsInveTransaPro.wms_inve_redeem_id);//同步获取需要导出的数据内容
+				$('#money_sum').text(json[json.length-1].money_sum);
+				$('#product_account').val(json[json.length-1].money_sum);
+				$('#product_account1').val(json[json.length-1].money_sum);
+				$('#product_account_caps').val(globalUtil.convertCurrency(json[json.length-1].money_sum));
+				//初始化赋值
+				addMatching(json);
+				add_page(json);
+				setonly();*/
+				//根据协议id去查询对应的债权
+			    $.getJSON(globalUtil.getTimestampUrl('/inve/getwmsinvetransamatchgetMapbyprotocolid.do'),////初始化数据
+						{
+							"wms_inve_transa_protocol_id": wms_inve_transa_protocol_id
+						},
+						function(jsonForSys) {
+							//初始化赋值
+							addMatching(jsonForSys);
+							add_page(jsonForSys);
+							setonly();//设置只读
+				});
+		    }else{
+		      	if(judge == "bddy"){//如果judge不为空则为债权变动
+		    		//【债权变动】在打印协议前显示债权信息列表预览
+				    $.getJSON(globalUtil.getTimestampUrl('/inve/wmsinvetransamatchgetMapForHeadid.do'),////初始化数据
+							{
+								"wms_inve_debt_head_id": headid
+							},
+							function(jsonForSys) {
+								//初始化赋值
+								addMatching(jsonForSys);
+								add_page(jsonForSys);
+								setonly();//设置只读
+					});
+		    	}else{
+			    	//实现理财上单后，匹配协议后，在进行协议打印显示债权信息
+				    $.getJSON(globalUtil.getTimestampUrl('/inve/wmsinvetransamatchgetMapForLc.do'),////初始化数据
+							{
+								"wms_inve_transa_prod_id": wms_inve_transa_prod_id
+							},
+							function(jsonForSys) {
+								//初始化赋值
+								addMatching(jsonForSys);
+								add_page(jsonForSys);
+								setonly();
+					});
+		    	}
+		    } 
+	 	});
+function addMatching(jsonForSys){
+		for(var i=0;i<jsonForSys.length;i++){
+			 if(i==7){
+				 return;
+			 }
+			 var num_val=i+1;
+			 var name_val=jsonForSys[i].credit_name;
+			 var id_val=jsonForSys[i].credit_id_card;
+			 var money_val=jsonForSys[i].assign_account;
+			 var arrvalue=jsonForSys[i].date_of_assign;
+		         var year = arrvalue.substring(0, 4);
+		         var month = arrvalue.substring(5, 7);
+		         var day = arrvalue.substring(8, 10);
+			 var date_val=year+'/'+month+'/'+day;
+			 var start_date_val=jsonForSys[i].repay_begin_date;
+			 var end_date_val=jsonForSys[i].repay_end_date;
+			 var lucre_val=jsonForSys[i].product_interest_month;
+			 var add_num= '<tr class=\'c1\' style=\'mso-yfti-irow:1;height:10.65pt\'><td width=40 valign=top style=\'width:29.65pt;border:solid black 1.0pt;border-top:none;mso-border-top-alt:solid black .2pt;mso-border-alt:solid black .2pt;padding:0cm 1.4pt 0cm 2.4pt;height:10.65pt\'><p class=1 style=\'text-indent:0cm;mso-char-indent-count:0\'><span style=\'font-size:6.5pt;font-family:宋体\'>'+num_val+'</span></p></td>';
+			 //var add_name= '<td  id='+name_val+num_val+' width=67 valign=top style=\'width:50.0pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:solid black .5pt;mso-border-left-alt:solid black .5pt;mso-border-alt:solid black .5pt;padding:0cm 5.4pt 0cm 5.4pt;height:18.65pt\'><p class=1 style=\'text-indent:0cm;mso-char-indent-count:0\'><span lang=EN-USstyle=\'font-size:6.5pt;font-family:宋体\'>'+name_val+'<o:p></o:p></span></p></td>'; 
+			 var add_name='<td width=67 valign=top style=\'width:61.55pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:solid black .5pt;mso-border-left-alt:solid black .5pt;mso-border-alt:solid black .5pt;padding:0cm 5.4pt 0cm 5.4pt;height:8.65pt\'><p class=1 style=\'text-indent:0cm;mso-char-indent-count:0\'><span lang=EN-USstyle=\'font-size:6.5pt;font-family:宋体\'></span><span style=\'font-size:6.5pt;font-family:宋体\'>'+name_val+'<span lang=EN-US><o:p></o:p></span></span></p></td>';
+			 //var add_id= '<td id='+id_val+num_val+' width=99 valign=top style=\'width:74.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:solid black .5pt;mso-border-left-alt:solid black .5pt;mso-border-alt:solid black .5pt;padding:0cm 5.4pt 0cm 5.4pt;height:18.65pt\'><p class=1 style=\'text-indent:0cm;mso-char-indent-count:0\'><span lang=EN-USstyle=\'font-size:6.5pt;font-family:宋体\'>'+id_val+'<o:p></o:p></span></p></td>';
+			 var add_id='<td width=99 valign=top style=\'width:61.55pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:solid black .5pt;mso-border-left-alt:solid black .5pt;mso-border-alt:solid black .5pt;padding:0cm 5.4pt 0cm 5.4pt;height:8.65pt\'><p class=1 style=\'text-indent:0cm;mso-char-indent-count:0\'><span lang=EN-USstyle=\'font-size:6.5pt;font-family:宋体\'></span><span style=\'font-size:6.5pt;font-family:宋体\'>'+id_val+'<span lang=EN-US><o:p></o:p></span></span></p></td>';
+			 // var add_money='<td id='+money_val+num_val+' width=82 valign=top style=\'width:61.55pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:solid black .5pt;mso-border-left-alt:solid black .5pt;mso-border-alt:solid black .5pt;padding:0cm 5.4pt 0cm 5.4pt;height:18.65pt\'><p class=1 style=\'text-indent:0cm;mso-char-indent-count:0\'><span lang=EN-USstyle=\'font-size:6.5pt;font-family:宋体\'></span><span style=\'font-size:6.5pt;font-family:宋体\'>'+money_val+'<span lang=EN-US><o:p></o:p></span></span></p></td>';
+			 var add_money='<td width=82 valign=top style=\'width:61.55pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:solid black .5pt;mso-border-left-alt:solid black .5pt;mso-border-alt:solid black .5pt;padding:0cm 5.4pt 0cm 5.4pt;height:8.65pt\'><p class=1 style=\'text-indent:0cm;mso-char-indent-count:0\'><span lang=EN-USstyle=\'font-size:6.5pt;font-family:宋体\'></span><span style=\'font-size:6.5pt;font-family:宋体\'>'+money_val+'<span lang=EN-US><o:p></o:p></span></span></p></td>';
+			 //var add_date='<td id='+date_val+num_val+' width=77 valign=top style=\'width:57.8pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:solid black .5pt;mso-border-left-alt:solid black .5pt;mso-border-alt:solid black .5pt;padding:0cm 5.4pt 0cm 5.4pt;height:18.65pt\'><p class=1 style=\'text-indent:0cm;mso-char-indent-count:0\'><span lang=EN-USstyle=\'font-size:6.5pt;font-family:宋体\'>'+date_val+'<o:p></o:p></span></p></td>';
+			 var add_date='<td width=83 valign=top style=\'width:61.55pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:solid black .5pt;mso-border-left-alt:solid black .5pt;mso-border-alt:solid black .5pt;padding:0cm 5.4pt 0cm 5.4pt;height:8.65pt\'><p class=1 style=\'text-indent:0cm;mso-char-indent-count:0\'><span lang=EN-USstyle=\'font-size:6.5pt;font-family:宋体\'></span><span style=\'font-size:6.5pt;font-family:宋体\'>'+date_val+'<span lang=EN-US><o:p></o:p></span></span></p></td>';
+			 // var add_start_date='<td id='+start_date_val+num_val+' width=76 valign=top style=\'width:56.85pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:solid black .5pt;mso-border-left-alt:solid black .5pt;mso-border-alt:solid black .5pt;padding:0cm 5.4pt 0cm 5.4pt;height:18.65pt\'><p class=1 style=\'text-indent:0cm;mso-char-indent-count:0\'><span lang=EN-USstyle=\'font-size:6.5pt;font-family:宋体\'>'+start_date_val+'<o:p></o:p></span></p></td>';
+			 var add_start_date='<td width=83 valign=top style=\'width:80pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:solid black .5pt;mso-border-left-alt:solid black .5pt;mso-border-alt:solid black .5pt;padding:0cm 5.4pt 0cm 5.4pt;height:8.65pt\'><p class=1 style=\'text-indent:0cm;mso-char-indent-count:0\'><span lang=EN-USstyle=\'font-size:6.5pt;font-family:宋体\'></span><span style=\'font-size:6.5pt;font-family:宋体\'>'+start_date_val+'<span lang=EN-US><o:p></o:p></span></span></p></td>';
+			 // var add_end_date='<td id='+lucre_val+num_val+' width=83 valign=top style=\'width:62.55pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:solid black .5pt;mso-border-left-alt:solid black .5pt;mso-border-alt:solid black .5pt;padding:0cm 5.4pt 0cm 5.4pt;height:18.65pt\'><p class=1 style=\'text-indent:0cm;mso-char-indent-count:0\'><span lang=EN-USstyle=\'font-size:6.5pt;font-family:宋体\'>'+end_date_val+'<o:p></o:p></span></p></td>';
+			 var add_end_date='<td valign=top style=\'width:80.0pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:solid black .5pt;mso-border-left-alt:solid black .5pt;mso-border-alt:solid black .5pt;padding:0cm 5.4pt 0cm 5.4pt;height:8.65pt\'><p class=1 style=\'text-indent:0cm;mso-char-indent-count:0\'><span lang=EN-USstyle=\'font-size:6.5pt;font-family:宋体\'></span><span style=\'font-size:6.5pt;font-family:宋体\'>'+end_date_val+'<span lang=EN-US><o:p></o:p></span></span></p></td>';
+			 var add_lucre='<td  valign=top style=\'border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:solid black .5pt;mso-border-left-alt:solid black .5pt;mso-border-alt:solid black .5pt;padding:0cm 5.4pt 0cm 5.4pt;height:8.65pt\'><p class=1 style=\'text-indent:0cm;mso-char-indent-count:0\'><span lang=EN-USstyle=\'font-size:6.5pt;font-family:宋体\'></span><span style=\'font-size:6.5pt;font-family:宋体\'>'+lucre_val+'%<span lang=EN-US><o:p></o:p></span></span></p></td></tr>';
+			 // var add_lucre='<td id='+lucre_val+num_val+' width=109 valign=top style=\'width:82.1pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:solid black .5pt;mso-border-left-alt:solid black .5pt;mso-border-alt:solid black .5pt;padding:0cm 5.4pt 0cm 5.4pt;height:18.65pt\'><p class=1 style=\'text-indent:0cm;mso-char-indent-count:0\'><span lang=EN-USstyle='+'font-size:6.5pt;font-family:宋体'+'>'+lucre_val+'%<o:p></o:p></span></p></td></tr>';
+			 var add_val=add_num+add_name+add_id+add_money+add_date+add_start_date+add_end_date+add_lucre;
+			 var com=$('.c1:last');
+			 com.after(add_val);
+			
+		}
+	}
+  
+  function add_page(jsonForSys){
+	  var comnum=jsonForSys.length;
+	  if(comnum>7){
+		  comnum=7;
+	  }
+	  var pagenum=20;//每页显示最小条数
+		var max=22;//每页显示最大条数
+		var number=1;//分页页码
+		var sum=0;//当前页的条数
+		var loop=30;
+		for(var i=0;i<loop;i++){
+			var num="#"+i; //通过id获取对象
+			var val=parseInt($(num).attr("name")|0);
+			if(i==1){
+				sum=sum+val+comnum*1+13;//累加条数	
+			}else{
+				sum=sum+val;
+			}
+			if(sum>=pagenum){//如果累加条数大于最小条数
+				var roll=0; //设置当前id的条数
+				number=number+1;
+				if(sum>=max){//如果累加条数大于最大条数
+					i=i-1;
+					num="#"+i;
+					var val1=$(num);//获取达到最大条数的当前id的对象
+					roll=parseInt($(num).attr("name")|0);//获取当前条数
+				}else{
+					var val1=$(num);	
+				}
+				//var sub=max-(sum-roll);//根据条数确定是否添加空行
+				//setnbsp(sub,val1);
+				var pageStr ='<p class=borrow_page align=center style=\'text-align:center;line-height:150%\'><b style=\'mso-bidi-font-weight:normal\'><span style=\'font-size:8.0pt;line-height:150%;mso-hansi-font-family:宋体\'>备注：非本债权人持本债权无效<span lang=EN-US><o:p></o:p></span></span></b></p>';
+				pageStr += '</div>';
+				pageStr += '<div class="page"></div>';
+				pageStr += '<div  class="page2">';
+				val1.append(pageStr);
+				sum=0;
+			}
+			if(i==loop-2){
+				var val2=$(num);
+				var val1=$('#28');	
+				var sub=max-sum;//根据条数确定是否添加空行
+				setnbsp(sub,val2);
+				var pageStr ='<p class=borrow_page align=center style=\'text-align:center;line-height:150%\'><b style=\'mso-bidi-font-weight:normal\'><span style=\'font-size:8.0pt;line-height:150%;mso-hansi-font-family:宋体\'>备注：非本债权人持本债权无效<span lang=EN-US><o:p></o:p></span></span></b></p>';
+			//	pageStr +='</div>';
+				val1.after(pageStr);
+				sum=0;
+			}
+		}
+		function setnbsp(sub,val1){
+			var subnum=parseInt(sub);
+			for(var j=0;j<subnum;j++ ){ 
+				val1.append('<p class=borrow_page align=center style=\'text-align:center;line-height:150%\'><b style=\'mso-bidi-font-weight:normal\'><span style=\'font-size:8.0pt;line-height:150%;mso-hansi-font-family:宋体\'>&nbsp;<span lang=EN-US><o:p></o:p></span></span></b></p>');	
+			}
+		}
+  }
+  function setonly(){
+	//设置编号只读
+	$('#prot_code').attr("readonly",true);
+	//设置甲方姓名只读
+	$('#a_name').attr("readonly",true);
+	//设置甲方身份证号只读
+	$('#a_id_card').attr("readonly",true);
+	//设置上单金额（小写）只读
+	$('#product_account').attr("readonly",true);
+	//设置支付日期只读
+	$('#date_of_payment').attr("readonly",true);
+	//设置甲方开户银行只读
+	$('#a_bank').attr("readonly",true);
+	//设置甲方账号只读
+	$('#a_number').attr("readonly",true);
+	//设置乙方姓名只读
+	$('#b_name').attr("readonly",true);
+	//设置乙方身份证号只读
+	$('#b_id_card').attr("readonly",true);
+	//设置产品名称只读
+	$('#category_name').attr("readonly",true);
+	//设置理财期限只读
+	$('#product_deadline').attr("readonly",true);
+	//设置协议签署地只读
+	$('#sign_place').attr("readonly",true);
+	//设置乙方资料只读
+	$('#b_data').attr("readonly",true);
+	//设置协议签署地只读
+	$('#sign_place').attr("readonly",true);
+	//设置协议有效期只读
+	$('#end_of_date').attr("readonly",true);
+	//设置金额大写只读
+	$('#product_account_caps').attr("readonly",true);
+	//设置金额小写只读
+	$('#product_account1').attr("readonly",true);
+	//设置甲方只读
+	$('#a_name1').attr("readonly",true);
+	//设置乙方只读
+	$('#b_name2').attr("readonly",true);
+	//设置乙方只读
+	$('#b_name1').attr("readonly",true);
+	//设置乙方只读
+	$('#b_name3').attr("readonly",true);
+	//设置乙方只读
+	$('#b_name4').attr("readonly",true);
+	//设置乙方只读
+	$('#b_name5').attr("readonly",true);
+	//设置乙方只读
+	$('#b_name6').attr("readonly",true);
+	//设置乙方只读
+	$('#b_name7').attr("readonly",true);
+	//设置地址只读
+	$('#contact_address').attr("readonly",true);
+	//设置邮编只读
+	$('#post_code').attr("readonly",true);
+	//设置邮编只读
+	$('#product_account').attr("readonly",true);
+	//设置邮编只读
+	$('#product_deadline').attr("readonly",true);
+  }
+  //实现债权协议打印以及保存
+  function save(){
+	 if(isCk=="isCk")
+	 {
+		$("#dybtn").hide();
+		$(".borrow_page").show();
+		document.execCommand("print");
+		$("#dybtn").show();
+		$(".borrow_page").hide();
+		return;			
+	 }
+	 var jsonStr = globalUtil.getFormParam('zrxy');
+		  jsonStr.wms_inve_transa_id=wms_inve_transa_id;
+		  jsonStr.wms_inve_transa_prod_id=wms_inve_transa_prod_id;
+		  jsonStr.product_account=product_account;
+		  jsonStr.xqxy= $.query.get('xqxy');//续期协议表id
+		  jsonStr.headid = headid;
+		  jsonStr.taskId = taskId;
+		  jsonStr.flag = flag;//协议变更
+		  var url = "";
+		  if(judge == "bddy"){//如果judge不为空则为债权变动
+			 url = "/inve/wmsinvedebtheaddyxysave.do";
+		  }
+		  else{
+			  url = "/inve/wmsinvetransaprotocolsave.do";
+		  }
+	  $.post(globalUtil.getTimestampUrl(url),jsonStr, function(data) {   
+		  if (data === 'success') 
+		  {
+			 globalUtil.successMsg(globalErrorMsg['100002'],function() 
+					 {
+							$("#dybtn").hide();
+	 					   	$(".borrow_page").show();
+	 						document.execCommand("print");
+	 						   //$("#dybtn").show();
+	 						$(".borrow_page").hide(); 
+	 						if(flag == "agreementPrint") {
+								window.opener.agreementPrint();
+							}
+							});//保存成功
+						//刷新原有agreePrintList.html页面
+						window.opener.search();
+						
+			}
+		    else if (data === 'exist') 
+		    {
+			   globalUtil.errorMsg(globalErrorMsg['900127']); //名称重复！
+			} 
+		    else 
+		    {
+			   globalUtil.errorMsg(globalErrorMsg['100012']); //保存失败
+			}
+		});
+	}
+  </script>
+</head>
+<body bgcolor=white lang=ZH-CN
+	style='tab-interval: 21.0pt; text-justify-trim: punctuation'>
+	<div id="zrxy" class="pop-formDiv clearfix"
+		style="margin: 5px; margin-top: 25px;">
+			<div style="display: none" ><input id="end_of_date" class="text" type="text"
+				style="text-align: center" /> <input type="text" size="8" id="b_name"/></div>
+		<div class=Section1 style='layout-grid: 15.6pt;' name="zy1">
+			<p class=MsoNormal>
+				<b style='mso-bidi-font-weight: normal'><span lang=EN-US><span
+						style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</span></span></b><b style='mso-bidi-font-weight: normal'><span
+					style='font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>辽宁卓信投资管理有限公司</span><span
+					lang=EN-US><o:p></o:p></span></b>
+			</p>
+			<p class=MsoNormal align=center
+				style='text-align: center; tab-stops: 210.0pt'>
+				<b><span lang=EN-US
+					style='font-size: 22.0pt; font-family: 黑体; mso-bidi-font-family: 黑体'><o:p>&nbsp;</o:p></span></b>
+			</p>
+
+			<p class=MsoNormal align=center
+				style='text-align: center; tab-stops: 210.0pt'>
+				<b><span
+					style='font-size: 22.0pt; font-family: 黑体; mso-bidi-font-family: 黑体'>个人出借咨询与服务补充协议<span
+						lang=EN-US><o:p></o:p></span></span></b>
+			</p>
+			<p class=borrow_page align=center style='text-align:center;line-height:150%'>
+				<b style='mso-bidi-font-weight:normal'>
+				<span style='font-size:8.0pt;line-height:150%;mso-hansi-font-family:宋体'>（协议版本Z1.3）<span lang=EN-US><o:p></o:p></span></span></b>
+			</p>
+			<p class=MsoNormal
+				style='margin-top: 15.6pt; mso-para-margin-top: 1.0gd; line-height: 25.0pt; mso-line-height-rule: exactly'>
+				<span
+					style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'>甲方：<input
+					type="text" size="6" class="text1" id="b_name" onkeyup="" /><span
+					lang=EN-US><br></span>乙方：辽宁卓信投资管理有限公司<span lang=EN-US><o:p></o:p></span></span>
+			</p>
+
+			<p class=MsoNormal
+				style='line-height: 25.0pt; mso-line-height-rule: exactly'>
+				<span
+					style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'>在原有合同的基础上补充说明如下：<span
+					lang=EN-US><o:p></o:p></span></span>
+			</p>
+
+			<p class=MsoNormal
+				style='line-height: 25.0pt; mso-line-height-rule: exactly'>
+				<span
+					style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'>一、额外收益说明<span
+					lang=EN-US><o:p></o:p></span></span>
+			</p>
+
+			<p class=MsoNormal
+				style='margin-left: 0cm; text-indent: 0cm; line-height: 25.0pt; mso-line-height-rule: exactly; mso-list: l0 level1 lfo1'>
+				<![if !supportLists]>
+				<span lang=EN-US
+					style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'><span
+					style='mso-list: Ignore'></span></span>
+				<![endif]>
+				<span
+					style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'>卓月宝1号每满六个月时，当月收益增加1.5%；<span
+					lang=EN-US></span><span lang=EN-US><span
+						style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp; </span>
+					<o:p></o:p></span></span>
+			</p>
+			<p class=MsoNormal
+				style='line-height: 25.0pt; mso-line-height-rule: exactly'>
+				<span
+					style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'>二、提前赎回说明<span
+					lang=EN-US><o:p></o:p></span></span>
+			</p>
+
+			<p class=MsoNormal
+				style='margin-left: 0cm; text-indent: 0cm; line-height: 25.0pt; mso-line-height-rule: exactly; mso-list: l0 level1 lfo1'>
+				<![if !supportLists]>
+				<span lang=EN-US
+					style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'><span
+					style='mso-list: Ignore'></span></span>
+				<![endif]>
+				<span
+					style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'>出借期限内原则上不可赎回，如因特殊情况甲方要求提前赎回的，须提出书面申请，并按以下规定办理。<span
+					lang=EN-US></span><span lang=EN-US><span
+						style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp; </span>
+					<o:p></o:p></span></span>
+			</p>
+			
+		<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0
+					width=633
+					style='border-collapse: collapse; mso-table-layout-alt: fixed; border: none; mso-border-alt: solid black .5pt; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt; mso-border-insideh: .5pt solid black; mso-border-insidev: .5pt solid black'>
+					<tr align="center" style='mso-yfti-irow: 0; mso-yfti-firstrow: yes; text-align: center;'>
+						<td  valign=middle	style='width: 273.4pt; border: solid black 1.0pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt'>
+								<p class=1 align=center
+									style='text-align: center; text-indent: 0cm; mso-char-indent-count: 0'>
+									<span style='font-size: 9.0pt; font-family: 宋体'><span
+										lang=EN-US><o:p></o:p></span></span>
+								</p>
+						</td>
+						<td  width=60  valign=middle
+								style='width: 273.4pt; border: solid black 1.0pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt'>
+								<p class=1 align=center
+									style='text-align: center; text-indent: a0cm; mso-char-indent-count: 0'>
+									<span style='font-size: 9.0pt; font-family: 宋体'>理财期限<span
+										lang=EN-US><o:p></o:p></span></span>
+								</p>
+						</td>
+						<td   valign=middle
+								style='width: 273.4pt; border: solid black 1.0pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt'>
+								<p class=1 align=center
+									style='text-align: center; text-indent: 0cm; mso-char-indent-count: 0'>
+									<span style='font-size: 9.0pt; font-family: 宋体'>提前赎回<span
+										lang=EN-US><o:p></o:p></span></span>
+								</p>
+						</td>
+						<td  valign=middle
+							style='width: 273.4pt; border: solid black 1.0pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt'>
+							<p class=1 align=center
+								style='text-align: center; text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>服务费<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td  width=60 valign=middle
+							style='width: 201.5pt; border: solid black 1.0pt; border-left: none; mso-border-left-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt'>
+							<p class=1 align=center
+								style='text-align: center; text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>年化收益<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+					</tr>
+					<tr style='mso-yfti-irow: 1; text-align: center;height: 22.9pt' >
+						<td width=40 valign=middle rowspan=3  
+							style='width: 29.65pt;text-align: center; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt;text-align: center; font-family: 宋体'>卓月宝<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=40 valign=middle rowspan=3 text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; text-align: center;font-family: 宋体'>3-12个月<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=40 valign=middle text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; text-align: center;font-family: 宋体'>1-30天期间<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=40 valign=middle text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size:9.0pt;text-align: center; font-family: 宋体'>3%<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=40 valign=middle rowspan=3 text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; text-align: center; font-family: 宋体'>不变<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+					</tr>
+					<tr style='mso-yfti-irow: 1;text-align: center; height: 22.9pt'>
+						<td width=40 valign=middle text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>31-60天期间<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=40 valign=middle text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>2%<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+					</tr>
+					<tr style='mso-yfti-irow: 1; text-align: center;height: 22.9pt'>
+						<td width=40 valign=middle text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>61-90天期间<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=40 valign=top text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>1%<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+					</tr>
+					<tr style='mso-yfti-irow: 1; text-align: center;height: 22.9pt'>
+						<td width=40 valign=middle rowspan=4 text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>卓年宝<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=40 valign=middle rowspan=4 text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>12-24个月<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=40 valign=middle text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>1-180天期间<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=40 valign=middle rowspan=4 text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>3%<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=40 valign=middle text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>8%<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+					</tr>
+					<tr style='mso-yfti-irow: 1; text-align: center;height: 22.9pt'>
+			
+						<td width=40 valign=top text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>181-365天期间<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=40 valign=top text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>10%<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+					</tr>
+					<tr style='mso-yfti-irow: 1;text-align: center; height: 22.9pt'>
+						<td width=40 valign=top text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>366-540天期间<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=40 valign=top text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>10%<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+					</tr>
+					<tr  style='mso-yfti-irow: 1;text-align: center; height: 22.9pt'>
+						<td width=40 valign=top text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>541-720天期间<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=40 valign=top text-align: center;
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>10%<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+					</tr>
+			</table>
+			<!--  <p  align=center style='text-align:center;line-height:10%'>
+				<span style='font-size:3.0pt;line-height:10%;mso-hansi-font-family:宋体'>Add:辽宁省沈阳市沈河区青年大街1号市府恒隆广场办公楼1座15F  TEL:400 000 2555  Web:www.zxptp.com<span lang=EN-US></span></span>
+			</p>-->
+		</div>
+		<div class="page"  name="zy1"></div>
+		<div class="page2" name="zy1">
+			<p class=MsoNormal
+				style='line-height: 25.0pt; mso-line-height-rule: exactly'>
+				<span
+					style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'>三、到期未赎回说明<span
+					lang=EN-US><o:p></o:p></span></span>
+			</p>
+
+			<p class=MsoNormal
+				style='margin-left: 0cm; text-indent: 0cm; line-height: 25.0pt; mso-line-height-rule: exactly; mso-list: l0 level1 lfo1'>
+				<![if !supportLists]>
+				<span lang=EN-US
+					style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'><span
+					style='mso-list: Ignore'></span></span>
+				<![endif]>
+				<span
+					style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'>当甲方在出借期满后10个工作日内办理赎回业务，超期天数的收益将按照年化收益率8%来计算；如10个工作日内未能办理赎回业务则视为自到期日起继续购买原出借产品（默认继续购买原出借产品的，提前赎回将按照本协议第二条的规定收取服务费并调整收益率）。<span
+					lang=EN-US></span><span lang=EN-US><span
+						style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp; </span>
+					<o:p></o:p></span></span>
+			</p>
+			<p class=MsoNormal
+				style='line-height: 25.0pt; mso-line-height-rule: exactly'>
+				<span lang=EN-US
+					style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'><span
+					style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</span>
+				<o:p></o:p></span>
+			</p>
+
+
+			<p class=MsoNormal
+				style='line-height: 25.0pt; mso-line-height-rule: exactly'>
+				<span
+					style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'>特此补充说明。<span
+					lang=EN-US><o:p></o:p></span></span>
+			</p>
+
+			<p class=MsoNormal
+				style='line-height: 25.0pt; mso-line-height-rule: exactly'>
+				<span lang=EN-US
+					style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'><o:p>&nbsp;</o:p></span>
+			</p>
+
+			<p class=MsoNormal
+				style='line-height: 25.0pt; mso-line-height-rule: exactly'>
+				<span
+					style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'>甲方（签字）：<span
+					lang=EN-US><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</span></span>乙方（盖章）：<span lang=EN-US><o:p></o:p></span></span>
+			</p>
+			  
+			<p class=MsoNormal
+				style='line-height: 25.0pt; mso-line-height-rule: exactly'>
+				<span style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'>
+				<span lang=EN-US><span style='mso-spacerun: yes'>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</span></span>法定代表人（签字）：<span lang=EN-US><o:p></o:p></span></span>
+			</p>
+			
+			<p class=MsoNormal
+				style='line-height: 25.0pt; mso-line-height-rule: exactly'>
+				<span
+					style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'>联系电话：<span
+					lang=EN-US><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</span></span>联系电话：<span lang=EN-US><o:p></o:p></span></span>
+			</p>
+
+			<p class=MsoNormal
+				style='line-height: 25.0pt; mso-line-height-rule: exactly'>
+				<span lang=EN-US
+					style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'><span
+					style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</span></span><span
+					style='font-size: 14.0pt; font-family: 宋体; mso-bidi-font-family: 宋体'>年<span
+					lang=EN-US><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;
+					</span></span>月<span lang=EN-US><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;
+					</span></span>日<span lang=EN-US><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</span><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+						style='mso-spacerun: yes'>&nbsp;&nbsp;</span></span>年<span lang=EN-US><span
+						style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp; </span></span>月<span
+					lang=EN-US><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;
+					</span></span>日<span lang=EN-US><o:p></o:p></span></span>
+			</p>
+				<p class=borrow_page align=center
+					style='text-align: center; line-height: 150%'>
+					<b style='mso-bidi-font-weight: normal'><span
+						style='font-size: 10.0pt; line-height: 150%; mso-hansi-font-family: 宋体'>&nbsp;<span
+							lang=EN-US><o:p></o:p></span></span></b>
+				</p>
+					<p class=borrow_page align=center
+					style='text-align: center; line-height: 150%'>
+					<b style='mso-bidi-font-weight: normal'><span
+						style='font-size: 10.0pt; line-height: 150%; mso-hansi-font-family: 宋体'>&nbsp;<span
+							lang=EN-US><o:p></o:p></span></span></b>
+				</p>
+					<p class=borrow_page align=center
+					style='text-align: center; line-height: 150%'>
+					<b style='mso-bidi-font-weight: normal'><span
+						style='font-size: 10.0pt; line-height: 150%; mso-hansi-font-family: 宋体'>&nbsp;<span
+							lang=EN-US><o:p></o:p></span></span></b>
+				</p>
+					<p class=borrow_page align=center
+					style='text-align: center; line-height: 150%'>
+					<b style='mso-bidi-font-weight: normal'><span
+						style='font-size: 10.0pt; line-height: 150%; mso-hansi-font-family: 宋体'>&nbsp;<span
+							lang=EN-US><o:p></o:p></span></span></b>
+				</p>
+					<p class=borrow_page align=center
+					style='text-align: center; line-height: 150%'>
+					<b style='mso-bidi-font-weight: normal'><span
+						style='font-size: 10.0pt; line-height: 150%; mso-hansi-font-family: 宋体'>&nbsp;<span
+							lang=EN-US><o:p></o:p></span></span></b>
+				</p>
+					<p class=borrow_page align=center
+					style='text-align: center; line-height: 150%'>
+					<b style='mso-bidi-font-weight: normal'><span
+						style='font-size: 10.0pt; line-height: 150%; mso-hansi-font-family: 宋体'>&nbsp;<span
+							lang=EN-US><o:p></o:p></span></span></b>
+				</p>
+					<p class=borrow_page align=center
+					style='text-align: center; line-height: 150%'>
+					<b style='mso-bidi-font-weight: normal'><span
+						style='font-size: 10.0pt; line-height: 150%; mso-hansi-font-family: 宋体'>&nbsp;<span
+							lang=EN-US><o:p></o:p></span></span></b>
+				</p>
+					<p class=borrow_page align=center
+					style='text-align: center; line-height: 150%'>
+					<b style='mso-bidi-font-weight: normal'><span
+						style='font-size: 10.0pt; line-height: 150%; mso-hansi-font-family: 宋体'>&nbsp;<span
+							lang=EN-US><o:p></o:p></span></span></b>
+				</p>
+					<p class=borrow_page align=center
+					style='text-align: center; line-height: 150%'>
+					<b style='mso-bidi-font-weight: normal'><span
+						style='font-size: 10.0pt; line-height: 150%; mso-hansi-font-family: 宋体'>&nbsp;<span
+							lang=EN-US><o:p></o:p></span></span></b>
+				</p>
+					<p class=borrow_page align=center
+					style='text-align: center; line-height: 150%'>
+					<b style='mso-bidi-font-weight: normal'><span
+						style='font-size: 10.0pt; line-height: 150%; mso-hansi-font-family: 宋体'>&nbsp;<span
+							lang=EN-US><o:p></o:p></span></span></b>
+				</p>
+					<p class=borrow_page align=center
+					style='text-align: center; line-height: 150%'>
+					<b style='mso-bidi-font-weight: normal'><span
+						style='font-size: 10.0pt; line-height: 150%; mso-hansi-font-family: 宋体'>&nbsp;<span
+							lang=EN-US><o:p></o:p></span></span></b>
+				</p>	<p class=borrow_page align=center
+					style='text-align: center; line-height: 150%'>
+					<b style='mso-bidi-font-weight: normal'><span
+						style='font-size: 10.0pt; line-height: 150%; mso-hansi-font-family: 宋体'>&nbsp;<span
+							lang=EN-US><o:p></o:p></span></span></b>
+				</p>
+			<!-- <p  align=center style='text-align:center;line-height:10%'>
+				<span style='font-size:3.0pt;line-height:10%;mso-hansi-font-family:宋体'>Add:辽宁省沈阳市沈河区青年大街1号市府恒隆广场办公楼1座15F  TEL:400 000 2555  Web:www.zxptp.com</span>
+			</p>-->
+		</div>
+		<div class="page" name="zy1"></div>
+		<div class="page2" >
+
+			<p class=MsoNormal>
+				<span style='font-size: 11.0pt; font-family: 宋体'><span
+					style='mso-spacerun: yes'></span>邮编：<span lang=EN-US><input
+						type="text" size="5" class="text2" id="post_code" /><span
+						style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</span></span>卓信投资服务平台竭诚为您服务<span lang=EN-US><o:p></o:p></span></span>
+			</p>
+
+			<p class=MsoNormal>
+				<span style='font-size: 11.0pt; font-family: 宋体'>地址：<span
+					lang=EN-US></span><span lang=EN-US><input type="text"
+						size="30" class="text2" id="contact_address" /><span
+						style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</span></span>咨询热线：<span lang=EN-US>024-22916707<o:p></o:p></span></span>
+			</p>
+
+			<p class=MsoNormal>
+				<span lang=EN-US style='font-size: 11.0pt; font-family: 宋体'><input
+					type="text" size="6" class="text2" id="b_name3" onkeyup="" /></span><span
+					style='font-size: 11.0pt; font-family: 宋体'>女士<span
+					lang=EN-US>/</span>先生<span lang=EN-US><span
+						style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</span></span>亲启&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;转让编号：<b
+					style='mso-bidi-font-weight: normal'><span lang=EN-US><input
+							type="text" size="15" class="text1" id="prot_code" onkeyup="" />
+						<o:p></o:p></span></b></span>
+			</p>
+
+			<p class=MsoNormal>
+				<span style='font-size: 11.0pt; font-family: 宋体'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;资金出借及回收方式：<span
+					lang=EN-US>ZX</span><span lang=EN-US><input type="text"
+						size="6" class="text1" id="category_name" onkeyup="" />(<span
+						lang=EN-US><input type="text" size="2" class="text1"
+							id="product_deadline" onkeyup="" /></span>)<span lang=EN-US><o:p></o:p></span></span>
+			</p>
+
+			<p class=MsoNormal>
+				<span lang=EN-US style='font-size: 11.0pt; font-family: 宋体'><o:p>&nbsp;</o:p></span>
+			</p>
+
+			<p class=MsoNormal align=center style='text-align: center'>
+				<![if !vml]>
+				<![endif]>
+				<b style='mso-bidi-font-weight: normal'><span
+					style='font-size: 14.0pt; font-family: 宋体'>债权转让及受让协议<span
+						lang=EN-US><o:p></o:p></span></span></b>
+			</p>
+
+			<p class=MsoNormal align=center style='text-align: center'>
+				<span lang=EN-US style='font-size: 14.0pt; font-family: 宋体'><o:p>&nbsp;</o:p></span>
+			</p>
+
+			<p class=1>
+				<span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>甲方</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>(</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>原债权人</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>):</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'><input
+					type="text" size="8" class="text1" id="a_name" onkeyup="" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;乙方</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>(</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>债权受让人</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>):<input
+					type="text" size="8" class="text1" id="b_name2" onkeyup="" />
+				<o:p></o:p></span>
+			</p>
+
+			<p class=1>
+				<span
+					style='mso-bidi-font-size: 17.95pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>身份证</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>(</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>护照</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>)</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>号码</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>:<input
+					type="text" size="21" class="text1" id="a_id_card" onkeyup="" /><span
+					style='mso-spacerun: yes'>&nbsp;&nbsp; </span></span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>身份证</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>(</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>护照</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>)</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>号码</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>:<input
+					type="text" size="21" class="text1" id="b_id_card" onkeyup="" /></span>
+			</p>
+
+
+			<p class=1>
+				<span
+					style='mso-bidi-font-size: 17.95pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>甲乙双方经过友好协商，在平等、自愿的基础上达成如下协议，以资信守：</span><span
+					lang=EN-US style='mso-bidi-font-size: 17.95pt'><o:p></o:p></span>
+			</p>
+
+			<p class=1
+				style='margin-left: 18.0pt; text-indent: 0cm; mso-char-indent-count: 0'>
+				<span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>一、截止本协议签署日前，甲方享有对第三方债务人的债权价款</span><b
+					style='mso-bidi-font-weight: normal'><span lang=EN-US
+					style='mso-bidi-font-size: 10.5pt'><input type="text"
+						size="9" class="text1" id="product_account" /></span></b><b
+					style='mso-bidi-font-weight: normal'><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'></span></b><b
+					style='mso-bidi-font-weight: normal'><span lang=EN-US
+					style='mso-bidi-font-size: 10.5pt'></span></b><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>元</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>(</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>债权列表附后</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>)</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>。转让债权明细:</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<!--<p class=1 style='margin-left:18.0pt;text-indent:0cm;mso-char-indent-count:
+0'><span style='mso-bidi-font-size:10.5pt;font-family:宋体;mso-ascii-font-family:
+Calibri;mso-hansi-font-family:Calibri'>转让债权明细</span><span lang=EN-US
+style='mso-bidi-font-size:10.5pt'>:<o:p></o:p></span></p>-->
+			<div align=center>
+
+				<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0
+					width=633
+					style='border-collapse: collapse; mso-table-layout-alt: fixed; border: none; mso-border-alt: solid black .5pt; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt; mso-border-insideh: .5pt solid black; mso-border-insidev: .5pt solid black'>
+					<tr style='mso-yfti-irow: 0; mso-yfti-firstrow: yes'>
+						<td width=365 colspan=5 valign=top
+							style='width: 273.4pt; border: solid black 1.0pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt'>
+							<p class=1 align=center
+								style='text-align: center; text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>债权基本信息<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=269 colspan=3 valign=top
+							style='width: 201.5pt; border: solid black 1.0pt; border-left: none; mso-border-left-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt'>
+							<p class=1 align=center
+								style='text-align: center; text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 9.0pt; font-family: 宋体'>理想回收情况下的债权收益信息<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+					</tr>
+					<tr id="add_val0" class='c1'
+						style='mso-yfti-irow: 1; height: 22.9pt'>
+						<td width=40 valign=top
+							style='width: 29.65pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 7.5pt; font-family: 宋体'>序号<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=67 valign=top
+							style='width: 50.0pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; mso-border-top-alt: solid black .5pt; mso-border-left-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 7.5pt; font-family: 宋体'>借款人姓名<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=99 valign=top
+							style='width: 74.4pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; mso-border-top-alt: solid black .5pt; mso-border-left-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 7.5pt; font-family: 宋体'>借</span><span
+									style='font-size: 7.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>款人身</span><span
+									style='font-size: 7.5pt; font-family: 宋体'>份证号码<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=82 valign=top
+							style='width: 61.55pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; mso-border-top-alt: solid black .5pt; mso-border-left-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 7.5pt; font-family: 宋体'>本次转让额度<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=77 valign=top
+							style='width: 57.8pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; mso-border-top-alt: solid black .5pt; mso-border-left-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 7.5pt; font-family: 宋体'>债权转让日期<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=76 valign=top
+							style='width: 56.85pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; mso-border-top-alt: solid black .5pt; mso-border-left-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 7.5pt; font-family: 宋体'>起始还款日期<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td width=83 valign=top
+							style='width: 81pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; mso-border-top-alt: solid black .5pt; mso-border-left-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 7.5pt; font-family: 宋体'>终止还款日期<span
+									lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+						<td valign=top
+							style='border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; mso-border-top-alt: solid black .5pt; mso-border-left-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 22.9pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 7.5pt; font-family: 宋体'>预计债权收益率<span
+									lang=EN-US></span>(<span id="yjzqsyl">月</span>)<span lang=EN-US><o:p></o:p></span></span>
+							</p>
+						</td>
+					</tr>
+					<tr style='mso-yfti-irow: 3; mso-yfti-lastrow: yes; height: 16.0pt'>
+						<td width=205 colspan=3 valign=top
+							style='width: 154.05pt; border: solid black 1.0pt; border-top: none; mso-border-top-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 16.0pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span style='font-size: 7.5pt; font-family: 宋体'>总和</span><span
+									lang=EN-US style='font-size: 6.5pt; font-family: 宋体'><o:p></o:p></span>
+							</p>
+						</td>
+						<td width=82 valign=top
+							style='width: 61.55pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; mso-border-top-alt: solid black .5pt; mso-border-left-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 16.0pt'>
+							<p class=1 align=center
+								style='text-align: center; text-indent: 0cm; mso-char-indent-count: 0'>
+								<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+									style='font-size: 6.5pt; font-family: 宋体'></span></b><b
+									style='mso-bidi-font-weight: normal'><span
+									style='font-size: 6.5pt; font-family: 宋体'><span
+										id="money_sum" lang=EN-US></span><span lang=EN-US><o:p></o:p></span></span></b>
+							</p>
+						</td>
+						<td width=77 valign=top
+							style='width: 57.8pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; mso-border-top-alt: solid black .5pt; mso-border-left-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 16.0pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span lang=EN-US style='font-size: 6.5pt; font-family: 宋体'><o:p>&nbsp;</o:p></span>
+							</p>
+						</td>
+						<td width=76 valign=top
+							style='width: 56.85pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; mso-border-top-alt: solid black .5pt; mso-border-left-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 16.0pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span lang=EN-US style='font-size: 6.5pt; font-family: 宋体'><o:p>&nbsp;</o:p></span>
+							</p>
+						</td>
+						<td width=83 valign=top
+							style='width: 62.55pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; mso-border-top-alt: solid black .5pt; mso-border-left-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 16.0pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span lang=EN-US style='font-size: 6.5pt; font-family: 宋体'><o:p>&nbsp;</o:p></span>
+							</p>
+						</td>
+						<td width=109 valign=top
+							style='width: 82.1pt; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; mso-border-top-alt: solid black .5pt; mso-border-left-alt: solid black .5pt; mso-border-alt: solid black .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 16.0pt'>
+							<p class=1 style='text-indent: 0cm; mso-char-indent-count: 0'>
+								<span lang=EN-US style='font-size: 6.5pt; font-family: 宋体'><o:p>&nbsp;</o:p></span>
+							</p>
+						</td>
+					</tr>
+				</table>
+
+			</div>
+			<p id="0" name="0"></p>
+			<p id="1" name="1" class=1
+				style='margin-left: 36.0pt; text-indent: -18.0pt; mso-char-indent-count: 0; mso-list: l0 level1 lfo1'>
+				<![if !supportLists]>
+				<span lang=EN-US
+					style='mso-bidi-font-size: 10.5pt; mso-bidi-font-family: 宋体'><span
+					style='mso-list: Ignore'>二、<span
+						style='font: 7.0pt "Times New Roman"'>&nbsp; </span></span></span>
+				<![endif]>
+				<span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>甲方同意以上债权转让给乙方，乙方同意受让。</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'></span>
+			</p>
+
+			<p id="2" name="1" class=1
+				style='margin-left: 18.0pt; text-indent: 0cm; mso-char-indent-count: 0'>
+				<span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>三、债权转让价款及支付方式：</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'></span>
+			</p>
+
+			<p id="3" name="1.5" class=1
+				style='margin-left: 17.95pt; mso-para-margin-left: 1.71gd'>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'>3.1</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>转让价款</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>:</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>乙方向甲方支付人民币</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>(</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>大写</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>)</span><b
+					style='mso-bidi-font-weight: normal'><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'><input
+						type="text" size="20" class="text1" id="product_account_caps" /></span></b><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'></span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><span
+					style='mso-spacerun: yes'>&nbsp; </span>(</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>人民币小写</span><b
+					style='mso-bidi-font-weight: normal'><span lang=EN-US
+					style='mso-bidi-font-size: 10.5pt'><input type="text"
+						size="10" class="text1" id="product_account1" /></span></b><span lang=EN-US
+					style='mso-bidi-font-size: 10.5pt'>)</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>元作为上述债权转让的对价。</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<p id="4" name="1.5" class=1
+				style='margin-left: 17.95pt; mso-para-margin-left: 1.71gd'>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'>3.2</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>支付方式</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>:</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>本协议签署后</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>,<b
+					style='mso-bidi-font-weight: normal'><input
+						id="date_of_payment" class="text1" type="text"
+						style="text-align: center" /></b></span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>日内乙方向甲方指定账户支付转让价款。</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<p id="5" name="1" class=1
+				style='margin-left: 18.0pt; text-indent: 0cm; mso-char-indent-count: 0'>
+				<span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>甲方指定账户户名</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>(</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>与甲方姓名一致</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>):</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'><input
+					type="text" size="10" class="text1" id="a_name1" /></span><span lang=EN-US
+					style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<p id="6" name="1" class=1
+				style='margin-left: 18.0pt; text-indent: 0cm; mso-char-indent-count: 0'>
+				<span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>开户银行</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>(</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>具体到支行</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>):</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'><input
+					type="text" size="35" class="text1" id="a_bank" /></span><span lang=EN-US
+					style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<p id="7" name="1" class=1
+				style='margin-left: 18.0pt; text-indent: 0cm; mso-char-indent-count: 0'>
+				<span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>账&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>:<input
+					type="text" size="30" class="text1" id="a_number" />
+				<o:p></o:p></span>
+			</p>
+
+			<p id="8" name="1" class=1
+				style='margin-left: 18.0pt; text-indent: 0cm; mso-char-indent-count: 0'>
+				<span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>四、陈述保证和承诺</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<p id="9" name="1" class=1
+				style='margin-left: 17.95pt; mso-para-margin-left: 1.71gd; text-indent: 15.75pt; mso-char-indent-count: 1.5'>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'>4.1</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>甲方承诺并保证：</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<p id="10" name="1" class=1
+				style='margin-left: 17.95pt; mso-para-margin-left: 1.71gd; text-indent: 15.75pt; mso-char-indent-count: 1.5'>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'>4.1.1</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>其有权实施本协议项下的债权转让并能够独立承担民事责任；</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<p id="11" name="1.5" class=1
+				style='margin-left: 17.95pt; mso-para-margin-left: 1.71gd; text-indent: 15.75pt; mso-char-indent-count: 1.5'>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'>4.1.2</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>其转让的债权系甲方与第三方签订的《借款协议》所发生借贷关系而形成的合法、有效的债权。</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<p id="12" name="1" class=1
+				style='margin-left: 17.95pt; mso-para-margin-left: 1.71gd; text-indent: 15.75pt; mso-char-indent-count: 1.5'>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'>4.2</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>乙方承诺并保证：</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<p id="13" name="1" class=1
+				style='margin-left: 17.95pt; mso-para-margin-left: 1.71gd; text-indent: 15.75pt; mso-char-indent-count: 1.5'>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'>4.2.1</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>其有权受让本协议项下的债权并能独立承担民事责任；</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<p id="14" name="1.5" class=1
+				style='margin-left: 17.95pt; mso-para-margin-left: 1.71gd; text-indent: 15.75pt; mso-char-indent-count: 1.5'>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'>4.2.2</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>其按照甲方与第三方所签订的《借款协议》约定的到期债权数额和还款期限实现债权。</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+
+			<p id="15" name="1" class=1
+				style='margin-left: 18.0pt; text-indent: 0cm; mso-char-indent-count: 0'>
+				<span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>五、违约责任</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<p id="16" name="2.5" class=1
+				style='margin-left: 17.95pt; mso-para-margin-left: 1.71gd; text-indent: 15.75pt; mso-char-indent-count: 1.5'>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'>5.1</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>双方同意，如果一方违反其在本协议中所有陈述、保证、承诺或任何其他义务，致使其他方遭受或发生损害、损失等责任，违约方须向守约方赔偿守约方因此遭受的一切经济损失。</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+
+			<p id="17" name="1" class=1
+				style='margin-left: 18.0pt; text-indent: 0cm; mso-char-indent-count: 0'>
+				<span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>六、其他规定</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<p id="18" name="1" class=1
+				style='margin-left: 17.95pt; mso-para-margin-left: 1.71gd; text-indent: 15.75pt; mso-char-indent-count: 1.5'>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'>6.1</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>双方同意辽宁卓信投资管理有限公司作为本协议签订的见证人。</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+
+			<p id="19" name="2.5" class=1
+				style='margin-left: 17.95pt; mso-para-margin-left: 1.71gd; text-indent: 15.75pt; mso-char-indent-count: 1.5'>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'>6.2</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>乙方同意委托辽宁卓信投资管理有限公司对其受让债权进行信用咨询和管理服务。乙方与辽宁卓信投资管理有限公司另行签订《信用咨询与管理服务协议》。</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<p id="20" name="1" class=1
+				style='margin-left: 17.95pt; mso-para-margin-left: 1.71gd; text-indent: 15.75pt; mso-char-indent-count: 1.5'>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'>6.3</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>对本协议所作的任何修改及补充，必须采用书面形式签署。</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<p id="21" name="1.5" class=1
+				style='margin-left: 17.95pt; mso-para-margin-left: 1.71gd; text-indent: 15.75pt; mso-char-indent-count: 1.5'>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'>6.4</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>在本协议履行过程中发生的纠纷，双方应友好协商解决；协商不成的，任何一方均有权向本协议签订地人民法院起诉。</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<p id="22" name="1.5" class=1
+				style='margin-left: 17.95pt; mso-para-margin-left: 1.71gd; text-indent: 15.75pt; mso-char-indent-count: 1.5'>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'>6.5</span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>转让人声明：债权转让自债权转让款到账之日起生效。债权转让生效后，署有本人签名的本文件即代表受让人对上述债权的所有权。</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<p id="23" name="1" class=MsoNormal>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p>&nbsp;</o:p></span>
+			</p>
+
+			<p id="24" name="1" class=MsoNormal>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p>&nbsp;</o:p></span>
+			</p>
+
+			<p class=1
+				style='margin-left: 17.95pt; mso-para-margin-left: 1.71gd; text-indent: 15.75pt; mso-char-indent-count: 1.5'>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'></span><span
+					style='mso-bidi-font-size: 10.5pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>本人特此签章证明：转让人：赵燕国&nbsp;&nbsp;&nbsp;证明人：辽宁卓信投资管理有限公司</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<p id="25" name="1" class=MsoNormal>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p>&nbsp;</o:p></span>
+			</p>
+
+
+
+			<p id="26" name="1" class=MsoNormal>
+				<span
+					style='mso-bidi-font-size: 17.95pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;签章</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'>:<span
+					style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</span></span><span
+					style='mso-bidi-font-size: 17.95pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>签章：</span><span
+					lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span>
+			</p>
+
+			<p id="27" name="1" class=MsoNormal>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p>&nbsp;</o:p></span>
+			</p>
+			<p class=MsoNormal>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p>&nbsp;</o:p></span>
+			</p>
+
+			<p class=MsoNormal>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p>&nbsp;</o:p></span>
+			</p>
+
+			<p class=MsoNormal>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p>&nbsp;</o:p></span>
+			</p>
+
+			<p class=MsoNormal>
+				<span lang=EN-US style='mso-bidi-font-size: 10.5pt'><o:p>&nbsp;</o:p></span>
+			</p>
+
+
+
+
+			<p id="28" name="1" class=MsoNormal
+				style='text-indent: 280.85pt; mso-char-indent-count: 33.0'>
+				<b style='mso-bidi-font-weight: normal'><span
+					style='mso-bidi-font-size: 17.95pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-hansi-font-family: Calibri'>日期：
+						&nbsp;&nbsp;&nbsp;年 &nbsp;&nbsp;&nbsp;月 &nbsp;&nbsp;&nbsp;日</span></b><b
+					style='mso-bidi-font-weight: normal'><span lang=EN-US
+					style='mso-bidi-font-size: 10.5pt'><o:p></o:p></span></b>
+			</p>
+
+			<p class=MsoNormal style='tab-stops: 95.85pt'>
+				<span lang=EN-US style='font-size: 9.0pt; font-family: 宋体'><span
+					style='mso-tab-count: 1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</span>
+				<o:p></o:p></span>
+			</p>
+		</div>
+	</div>
+
+	<div class="HTprint" style="float: right;">
+		<input id="dybtn" class="btn-printB"
+			onmouseover="this.className='btn-printB-over'"
+			onmouseout="this.className='btn-printB'"
+			onmousedown="this.className='btn-printB-down'" type="button"
+			onclick="save()" />
+	</div>
+
+</body>
+</html>

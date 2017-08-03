@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<title>用户管理</title>
+</head>
+<body>
+	<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<!--查询条件-->
+			<div class="l-panel-search-cond clearfix">
+				<div class="float-l">
+					<div class="l-panel-search-title">用户账户</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="user_code" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">姓名</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="user_realname" />
+					</div>
+				</div>
+			</div>
+			<div id="searchbutton" class="l-panel-search-btn">
+				<input id="btn-search" class="btn-search"
+					onmouseover="this.className='btn-search-over'"
+					onmouseout="this.className='btn-search'"
+					onmousedown="this.className='btn-search-down'" type="button"
+					onclick="search();this.blur()" />
+			</div>
+		</div>
+	</div>
+	<div id="centertoolbar" class="minwidth400"></div>
+	<div id="grid"></div>
+	<!-- 工具条和grid初始化 -->
+
+	<script type="text/javascript">
+        var grid;
+		var toolbar;
+		var params;
+		var dialog;
+        $(function() {
+        	initGrid();
+			//表头工具栏
+	        var urlStr = "/sysmanage/sysusersave.do#/sysmanage/sysuserupdate.do#/sysmanage/sysuserdelete.do";
+	        // 根据后台的权限控制，返回可见的列表按钮，里面保存工具栏按钮对象
+	        var toolbarItemData = [];
+	        var strs = new Array();
+	        // 此处使用同步方法，按照得到的按钮权限来控制工具栏按钮的显示
+	        $.ajax({
+            type: "POST",
+            url: globalUtil.getTimestampUrl("/sysmanage/gettoolbar.do"),
+            data: "urlStr=" + urlStr,
+            async: false,
+            dataType: 'json',
+            success: function(json) {
+                strs = json.split("#");
+                if (strs[0] != null && strs[0] == 1) {
+                    toolbarItemData.push({
+                        text: '新增',
+                        click: add,
+                        icon: 'add'
+                    });
+                    toolbarItemData.push({
+                        line: true
+                    });
+                }
+                if (strs[1] != null && strs[1] == 1) {
+                    toolbarItemData.push({
+                        text: '修改',
+                        click: modify,
+                        icon: 'modify'
+                    });
+                    toolbarItemData.push({
+                        line: true
+                    });
+                }
+                if (strs[2] != null && strs[2] == 1) {
+                    toolbarItemData.push({
+                        text: '删除',
+                        click: del,
+                        icon: 'delete'
+                    });
+                    toolbarItemData.push({
+                        line: true
+                    });
+                }
+
+            }
+        });
+        $("#centertoolbar").ligerToolBar({
+            items: toolbarItemData
+        });
+           // init_dept_combox();
+        });
+        function init_dept_combox(){
+	    	var dept_params ={
+	   			dest_url: '/sysmanage/sysdeptgetcomboxlist.do?isAll=true&sortname=id',
+	   			valueField:'id',
+	   			textField:'text',
+	      		def_val: 'first'
+	        };
+	        global_ligerui_extend.initTreeCombox("dept_id", null, dept_params);
+	        global_ligerui_extend.syncInitComboxDefVal("dept_id");
+	        search();
+    	}
+        function del(){
+        	var row = grid.getSelectedRow();
+		    if (row == null || row.length == 0 || row.length > 1) {
+            	globalUtil.warnMsg(globalErrorMsg['100001']);//请选择一行记录进行修改
+                return;
+			}
+		    globalUtil.confirmMsg(globalErrorMsg['100016'],
+			function(yes) {
+				if (yes) {
+                    $.post(global_param.context_name + "/sysmanage/sysuserdelete.do", {
+           				"id": row.id
+           			},
+           			function(data) {
+                       if (data === 'success') {
+                     	   globalUtil.successMsg(globalErrorMsg['100005']);
+                     	   search();
+                       } else if (data === 'fkerror') {
+                    	   globalUtil.successMsg(globalErrorMsg['100501']);
+                       } else {
+                           globalUtil.errorMsg(globalErrorMsg['100015']); //删除失败
+                       }
+           			});
+				}
+			});
+        }
+        
+        function modify(){
+        	var row = grid.getSelectedRow();
+		    if (row == null || row.length == 0 || row.length > 1) {
+            	globalUtil.warnMsg(globalErrorMsg['100000']);//请选择一行记录进行修改
+                return;
+			}
+		    var url = globalUtil.getHtml("user_manage_dialog.html?id="+row.id);
+        	dialog = $.ligerDialog.open({
+		        url: url,
+		        title: '修改用户',
+		        width: 600,
+		        height: globalUtil.setDialogHeight(250),
+		        onHiddenOrClose: function(){
+		    	},
+		        isResize: false
+	    	});
+        }
+        function add(){
+        	var url = globalUtil.getHtml("user_manage_dialog.html");
+        	dialog = $.ligerDialog.open({
+		        url: url,
+		        title: '新增用户',
+		        width: 600,
+		        height: globalUtil.setDialogHeight(250),
+		        onHiddenOrClose: function(){
+		    	},
+		        isResize: false
+	    	});
+        }
+        //表格初始化
+        function initGrid() {
+        	var columns = [{
+                display: '用户账户',
+                name: 'user_code',
+                width: 220,
+                minWidth: 220
+            }, {
+                display: '姓名',
+                name: 'user_realname',
+                width: 220,
+                minWidth: 220
+            }];
+        	
+            grid = $("#grid").ligerGrid({
+        		columns: columns,
+        		url: global_param.context_name + '/sysmanage/sysuserwithpaginglist.do',
+        		sortName: 'id', // 排序列名
+				sortOrder: 'asc', // 排序方式
+        		rownumbers: true,
+        		allowUnSelectRow: true,
+        		usePager: true,
+        		width: '100%',
+        		height: '100%',
+        		heightDiff: -4,
+        		parms: {
+        			_filterParms: -1
+        		}
+            });
+        }
+        
+        function initParams() {
+        	params = globalUtil.getFormParam("searchbar");
+        }
+        
+        function search() {
+            initParams();
+            global_ligerui_extend.search(grid, params);
+        }
+        </script>
+</body>
+</html>

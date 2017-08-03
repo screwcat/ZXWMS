@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveSpecialApprovalDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveSpecialApproval">
+		select
+		special_approval_leader_id,
+		special_approval_leader_name,
+		special_approval_leader_phone,
+		special_approval_leader_shortcode,
+		special_approval_leader_pmid,
+		enable_flag,
+		def_asc,
+		top_function
+		from
+		wms_inve_special_approval
+		where
+		special_approval_leader_id = #{special_approval_leader_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(special_approval_leader_id) as count
+		from
+		wms_inve_special_approval
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		special_approval_leader_id,
+		special_approval_leader_name,
+		special_approval_leader_phone,
+		special_approval_leader_shortcode,
+		special_approval_leader_pmid,
+		enable_flag,
+		def_asc,
+		top_function
+		from wms_inve_special_approval
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveSpecialApproval"
+		useGeneratedKeys="true" keyProperty="special_approval_leader_id">
+		INSERT INTO
+		wms_inve_special_approval
+		(
+		special_approval_leader_id,
+
+		special_approval_leader_name,
+
+		special_approval_leader_phone,
+		
+		special_approval_leader_shortcode,
+		
+		special_approval_leader_pmid,
+		
+		enable_flag,
+		
+		def_asc,
+		
+		top_function
+		)
+		VALUES
+		(
+		#{special_approval_leader_id},
+		#{special_approval_leader_name},
+		#{special_approval_leader_phone}
+		#{special_approval_leader_shortcode},
+		#{special_approval_leader_pmid},
+		#{enable_flag},
+		#{def_asc},
+		#{top_function}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveSpecialApproval">
+		update wms_inve_special_approval
+		<set>
+			<if test="special_approval_leader_id != null">
+				special_approval_leader_id = #{special_approval_leader_id},
+			</if>
+			<if test="special_approval_leader_name != null">
+				special_approval_leader_name = #{special_approval_leader_name},
+			</if>
+			<if test="special_approval_leader_phone != null">
+				special_approval_leader_phone = #{special_approval_leader_phone},
+			</if>
+			<if test="special_approval_leader_shortcode != null">
+				special_approval_leader_shortcode = #{special_approval_leader_shortcode},
+			</if>
+				<if test="special_approval_leader_pmid != null">
+				special_approval_leader_pmid = #{special_approval_leader_pmid},
+			</if>
+				<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+				<if test="def_asc != null">
+				def_asc = #{def_asc},
+			</if>
+			<if test="top_function != null">
+				top_function = #{top_function},
+			</if>
+			
+		</set>
+		where
+		special_approval_leader_id = #{special_approval_leader_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveSpecialApproval"
+		resultType="WmsInveSpecialApproval">
+		select
+		special_approval_leader_id,
+		special_approval_leader_name,
+		special_approval_leader_phone,
+		special_approval_leader_shortcode,
+		special_approval_leader_pmid,
+		enable_flag,
+		def_asc,
+		top_function
+		from
+		wms_inve_special_approval
+		<where>
+			<if test="special_approval_leader_id != null">
+				and special_approval_leader_id = #{special_approval_leader_id}
+			</if>
+			<if test="special_approval_leader_name != null">
+				and special_approval_leader_name = #{special_approval_leader_name}
+			</if>
+			<if test="special_approval_leader_phone != null">
+				and special_approval_leader_phone = #{special_approval_leader_phone}
+			</if>
+			<if test="special_approval_leader_shortcode != null">
+				and special_approval_leader_shortcode = #{special_approval_leader_shortcode}
+			</if>
+			<if test="special_approval_leader_pmid != null">
+				and special_approval_leader_pmid = #{special_approval_leader_pmid}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+			<if test="def_asc != null">
+				and def_asc = #{def_asc}
+			</if>
+			<if test="top_function != null">
+				and top_function = #{top_function}
+			</if>
+			
+			<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+				and special_approval_leader_id != #{special_approval_leader_id}
+			</if>
+		</where>
+	</select>
+
+	<select id="getAllInveSpecialapprova" resultType="WmsInveSpecialApproval">
+		select
+		special_approval_leader_id,
+		special_approval_leader_name,
+		special_approval_leader_phone,
+		special_approval_leader_shortcode,
+		special_approval_leader_pmid,
+		enable_flag,
+		def_asc,
+		top_function
+		from
+		wms_inve_special_approval
+		where
+		def_asc='0'
+		and enable_flag=1
+	</select>
+</mapper> 

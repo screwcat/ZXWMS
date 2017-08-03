@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.creditRightManager.persist.WmsInveAutoCreditPackageDao">
+<!-- 查询列表信息 -->
+<select id="selectAutoCreditPackageInfo" parameterType="com.zx.emanage.creditRightManager.vo.WmsInveAutoCreditPackageVO" resultType="map">
+	SELECT 
+	wms_inve_credit_package_set_id,
+	cre_pkg_code,
+	cre_per_name,
+	protocol_id_year_num,
+	cre_per_card_id,
+	truncate(cre_pledge_mon/10000,2) as cre_pledge_mon,	
+	truncate(house_size,2) as house_size,
+	crepg_start_date,
+	crepg_end_date,
+	rele_per_id,
+	rele_per_name,
+	(select t.region_name from wms_inve_clerk_region t where t.region_number=wms_inve_credit_package_set.loca_num and t.enable_flag='1') as loca_num_name,
+	loca_num,
+	date_format(create_timestamp,'%Y-%m-%d %T') as create_timestamp,
+	case 
+		when cre_type =0 and crepg_end_date &lt;  date_format(now(),'%Y-%m-%d')   then '超期'
+		when cre_type = 0 or cre_type is null  then '--'
+		when cre_type = 4 then '可拆分抵押类债权'
+		when cre_type = 2 then '房产抵押类债权'
+		when cre_type = 5 then 'PTP抵押类债权'
+		end as cre_type_name,
+	cre_type,
+	if(cre_type =0 and  crepg_end_date &lt;  date_format(now(),'%Y-%m-%d'),6,0)  as  isExceedTimeLimit	,
+	case 
+		when cre_type =0 and crepg_end_date  &lt; date_format(now(),'%Y-%m-%d')   then 5
+		when cre_type = 0 then 1
+		when cre_type = 4 then 4
+		when cre_type = 2 then 3
+		when cre_type = 5 then 2
+		end 
+	 as cre_type_sort,
+		
+		
+		
+	enable_flag
+	FROM
+	wms_inve_credit_package_set 
+	where 
+	enable_flag =1
+	
+	<if test="roleFlag !=null and roleFlag==0 ">
+	and ( cre_type = 0 or cre_type = 5 )	
+	</if>
+	
+	<if test="roleFlag !=null and roleFlag==1 ">
+	and (  cre_type in (0,4,2) )	
+	</if>
+	
+	
+	
+	<if test="cre_pledge_mon_before !=null and cre_pledge_mon_before !='' ">
+	and cre_pledge_mon &gt;= (#{cre_pledge_mon_before}*10000)
+	</if>
+	<if test="cre_pledge_mon_after !=null and cre_pledge_mon_after !='' ">
+	and cre_pledge_mon &lt;= (#{cre_pledge_mon_after}*10000)
+	</if>
+	
+	<if test="begin_timestamp_1 !=null and begin_timestamp_1 !='' ">
+	and crepg_start_date &gt;= #{begin_timestamp_1}
+	</if>
+	<if test="begin_timestamp_2 !=null and begin_timestamp_2 !='' ">
+	and crepg_start_date &lt;= #{begin_timestamp_2}
+	</if>
+	
+	<if test="end_timestamp_1 !=null and end_timestamp_1 !='' ">
+	and crepg_end_date &gt;= #{end_timestamp_1}
+	</if>
+	<if test="end_timestamp_2 !=null and end_timestamp_2 !='' ">
+	and crepg_end_date &lt;= #{end_timestamp_2}
+	</if>
+	
+	<if test="cre_type !=null and cre_type!=-1 ">
+
+	
+	<if test="cre_type ==6 ">
+	and crepg_end_date &lt;  date_format(now(),'%Y-%m-%d') and cre_type = 0
+	</if>
+	
+	<if test="cre_type !=6 ">
+		and cre_type = #{cre_type}
+	</if>
+	<if test="cre_type !=6 and cre_type ==0 ">
+		and crepg_end_date &gt;=  date_format(now(),'%Y-%m-%d')
+	</if >
+		
+	</if>
+	
+	
+	<if test="cre_per_name !=null and cre_per_name !='' ">
+	and cre_per_name like   CONCAT('%',#{cre_per_name },'%')
+	</if>
+	
+	<if test="protocol_id_year_num !=null and protocol_id_year_num !='' ">
+	and protocol_id_year_num like  CONCAT('%',#{protocol_id_year_num },'%')
+	</if>
+	
+	<if test="cre_per_card_id !=null and cre_per_card_id !='' ">
+	and cre_per_card_id like  CONCAT('%',#{cre_per_card_id },'%')
+	</if>
+	
+	<if test="rele_per_id !=null ">
+	and rele_per_id = #{rele_per_id}
+	</if>
+	
+	<if test="loca_num !=null ">
+	and loca_num = #{loca_num}
+	</if>
+	
+	<if test=" cre_type != -1">
+	order by ${sortname} ${sortorder}
+	</if>
+	
+	<if test=" cre_type == -1">
+	order by cre_type_sort asc,cre_pkg_code asc
+	</if>
+	
+	<if test="offset != null and pagesize !=null and exportFlag !=1">
+		LIMIT ${offset} , ${pagesize}
+	</if>
+	
+	
+</select>
+
+ <!-- 查询列表信息数量（分页） -->
+	<select id="countAutoCreditPackageInfo" parameterType="com.zx.emanage.creditRightManager.vo.WmsInveAutoCreditPackageVO" resultType="java.lang.Integer">
+	 SELECT 
+	count(wms_inve_credit_package_set_id)
+	FROM
+	wms_inve_credit_package_set 
+	where 
+	enable_flag =1
+	
+	<if test="roleFlag !=null and roleFlag==0 ">
+	and ( cre_type in (0,5) )	
+	</if>
+	
+	<if test="roleFlag !=null and roleFlag==1 ">
+	and (  cre_type in (0,4,2) )	
+	</if>
+	
+	
+	
+	<if test="cre_pledge_mon_before !=null and cre_pledge_mon_before !='' ">
+	and cre_pledge_mon &gt;= (#{cre_pledge_mon_before}*10000)
+	</if>
+	<if test="cre_pledge_mon_after !=null and cre_pledge_mon_after !='' ">
+	and cre_pledge_mon &lt;= (#{cre_pledge_mon_after}*10000)
+	</if>
+	
+	<if test="begin_timestamp_1 !=null and begin_timestamp_1 !='' ">
+	and crepg_start_date &gt;= #{begin_timestamp_1}
+	</if>
+	<if test="begin_timestamp_2 !=null and begin_timestamp_2 !='' ">
+	and crepg_start_date &lt;= #{begin_timestamp_2}
+	</if>
+	
+	<if test="end_timestamp_1 !=null and end_timestamp_1 !='' ">
+	and crepg_end_date &gt;= #{end_timestamp_1} 
+	</if>
+	<if test="end_timestamp_2 !=null and end_timestamp_2 !='' ">
+	and crepg_end_date &lt;= #{end_timestamp_2}
+	</if>
+	
+	<if test="cre_type !=null and cre_type !=-1 ">
+
+	
+	<if test="cre_type ==6 ">
+	and crepg_end_date &lt;  date_format(now(),'%Y-%m-%d')  and cre_type = 0
+	</if>
+	
+	<if test="cre_type !=6 ">
+		and cre_type = #{cre_type}
+	</if>
+	<if test="cre_type !=6 and cre_type ==0 ">
+		and crepg_end_date &gt;=  date_format(now(),'%Y-%m-%d')
+	</if >
+	</if>
+	
+	
+	<if test="cre_per_name !=null and cre_per_name !='' ">
+	and cre_per_name like   CONCAT('%',#{cre_per_name },'%')
+	</if>
+	
+	<if test="protocol_id_year_num !=null and protocol_id_year_num !='' ">
+	and protocol_id_year_num like  CONCAT('%',#{protocol_id_year_num },'%')
+	</if>
+	
+	<if test="cre_per_card_id !=null and cre_per_card_id !='' ">
+	and cre_per_card_id like  CONCAT('%',#{cre_per_card_id },'%')
+	</if>
+	
+	<if test="rele_per_id !=null ">
+	and rele_per_id = #{rele_per_id}
+	</if>
+	
+	<if test="loca_num !=null ">
+	and loca_num = #{loca_num}
+	</if>
+	
+
+	</select>
+
+
+		<insert id="saveAutoCreditPackageType" parameterType="map">
+		insert into wms_inve_credit_package
+		(
+			cre_pkg_code,
+			cre_type,
+			cre_per_name,
+			protocol_id_year_num,
+			cre_per_card_id,
+			cre_pledge_mon,
+			house_size,
+			crepg_start_date,
+			crepg_end_date,
+			rele_per_id,
+			rele_per_name,
+			loca_num,
+			crepackage_state,
+			create_user_id,
+			create_timestamp,
+			enable_flag
+		)
+<!-- 		values -->
+		<foreach collection="listData" item="item" index="index" separator="UNION ALL"  > 
+				select 
+				#{item.cre_pkg_code},
+				#{numFlag},
+				#{item.cre_per_name},
+				#{item.protocol_id_year_num},
+				#{item.cre_per_card_id},
+				floor(#{item.cre_pledge_mon})*10000,
+				#{item.house_size},
+				#{item.crepg_start_date},
+				#{item.crepg_end_date},
+				#{item.rele_per_id},
+				(select personnel_name from wms_inve_clerk_company_creditor where wms_inve_clerk_company_creditor_id=#{item.rele_per_id}),
+				#{item.loca_num},
+				'0',
+				#{create_user_id},
+				now(),
+				1
+				from dual
+		</foreach>
+		</insert>
+		<update id="updateAutoCreditPackageType" parameterType="map">
+				update wms_inve_credit_package_set
+				set 
+				cre_type = #{numFlag},
+				last_update_timestamp  = now(),
+				last_update_user_id = #{last_update_user_id}
+				
+				where 
+				wms_inve_credit_package_set_id in 
+				(
+				<foreach collection="listData" item="item" index="index" separator=","  > 
+				
+					#{item.wms_inve_credit_package_set_id}
+				</foreach>
+		)
+		
+		</update>
+
+		<insert id="saveNotSetCreditPackageInfo" parameterType="map">
+		insert into wms_inve_credit_package_set
+			(
+				cre_pkg_code,
+				cre_type,
+				cre_per_name,
+				protocol_id_year_num,
+				cre_per_card_id,
+				cre_pledge_mon,
+				house_size,
+				crepg_start_date,
+				crepg_end_date,
+				rele_per_id,
+				rele_per_name,
+				loca_num,
+				create_user_id,
+				create_timestamp,
+				enable_flag
+			)
+			values(
+				CONCAT('DYB',getClerkProcCode('WMS_INVE_CREDIT_CODE_NEW')),
+				0,
+				#{cre_per_name},
+				#{protocol_id_year_num},
+				#{cre_per_card_id},
+				#{cre_pledge_mon},
+				#{house_size},
+				#{crepg_start_date},
+				#{crepg_end_date},
+				#{rele_per_id},
+				#{rele_per_name},
+				#{loca_num},
+				#{create_user_id},
+				now(),
+				1
+				)
+		</insert>
+<!-- 		验证他项人 -->
+		<select id="selectClerkCompanyInfo" resultType="map" parameterType="map">
+			select personnel_name,wms_inve_clerk_company_creditor_id from wms_inve_clerk_company_creditor where (personnel_id_card =#{rele_per_id_card} or company_code = #{rele_per_id_card}) and creditor_type = 2 and enable_flag =1;
+		</select>
+<!-- 		验证合同编号 -->
+		<select id="selectProtocolInfo" resultType="java.lang.Integer" parameterType="java.lang.String">
+			SELECT COUNT(wms_inve_credit_package_set_id) from wms_inve_credit_package_set where enable_flag =1 and  protocol_id_year_num = #{protocol_id_year_num} 
+		</select>
+
+		<insert id="saveAutoCreditPackageLog" parameterType="map">
+			insert into 
+			wms_inve_credit_log
+			(
+			log_text,
+			log_type,
+			create_user_id,
+			create_timestamp,
+			enable_flag
+			)
+			values
+			(
+			#{log_text},
+			#{log_type},
+			#{create_user_id},
+			now(),
+			1
+			)
+		
+		</insert>
+	
+		
+		<update id="updateCreditPackageType" parameterType="map">
+				update wms_inve_credit_package
+				set 
+				cre_type = #{numFlag},
+				last_update_timestamp  = now(),
+				last_update_user_id = #{last_update_user_id}
+				where 
+				enable_flag =1
+				and 
+				cre_pkg_code in 
+				(
+				<foreach collection="list1" item="item" index="index" separator=","  > 
+					#{item.cre_pkg_code}
+				</foreach>
+				)
+		</update>
+	
+		<update id="updateCreditPackageLimit" parameterType="java.lang.String" >
+		update 	wms_inve_credit_limit set enable_flag=0 where enable_flag=1
+		</update>
+
+</mapper>

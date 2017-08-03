@@ -1,0 +1,489 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>信息审批人</title>
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script language="Javascript" src="../../js/zx-all.js"> </script>
+</head>
+<body>
+	<div class="tab_titleT">
+		<!--查询条件  begin-->
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr valign="bottom" id='trtab1'>
+				<td class="tabbody1" id="tabbody1" onclick="changeTab('grxxinfo');"
+					tabname='mytab' style="width: 35%"><div align="center">个人信息</div></td>
+				<td class="tabbody2" id="tabbody2" onclick="changeTab('qyxxinfo');"
+					tabname='mytab' style="width: 35%"><div align="center">企业信息</div></td>
+				<td class="tabbody3" id="tabbody3" onclick="changeTab('imxxinfo');"
+					tabname='mytab' style="width: 30%"><div align="center">重要数据</div></td>
+			</tr>
+		</table>
+	</div>
+	<div class="pop-center overflow-au" style="top: 30px;" id="grxxinfo">
+	</div>
+	<div class="pop-center overflow-au" style="top: 30px; display: none"
+		id="qyxxinfo"></div>
+	<div class="pop-center overflow-au" style="top: 30px; display: none"
+		id="imxxinfo">
+		<div class="pop-formDiv clearfix"
+			style="margin: 5px; margin-top: 5px;">
+			<!--工作重要数据  -->
+			<div align="left">
+				&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: red;">注</span>:本Tab页仅填写主贷人相关数据，其他共同贷款人信息勿填写！
+			</div>
+			<div class="center-content clearboth" style="min-width: 500px;"
+				id="work_data">
+				<div class="center-title3 position-re" style="margin-bottom: 10px">
+					工作信息(<span style="color: red;">*为必填项</span>)
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				<div class="center-txt"
+					style="margin-bottom: 5px; height: 100px; padding: 5px; border: 1px solid #BFBFBF;">
+					<div class="float-l">
+						<div class="pop-form-title">单位名称：</div>
+						<div class="pop-form-item">
+							<input type="text" id="work_unit_full_name"
+								name="work_unit_full_name" style="width: 390px;" />
+						</div>
+						<div class="pop-form-title">
+							<span style="color: red;">*</span>单位性质：
+						</div>
+						<div class="pop-form-item">
+							<input type="text" id="work_unit_property"
+								name="work_unit_property" />
+						</div>
+					</div>
+					<div class="float-l clearboth">
+						<div class="pop-form-title">
+							<span style="color: red;">*</span>所属行业：
+						</div>
+						<div class="pop-form-item">
+							<input type="text" id="comp_industry" name="comp_industry" />
+						</div>
+						<div class="pop-form-title">
+							<span style="color: red;">*</span>工作年限：
+						</div>
+						<div class="pop-form-item">
+							<input type="text" id="work_year" name="work_year" />
+						</div>
+						<div class="pop-form-title">
+							<span style="color: red;">*</span>工作岗位：
+						</div>
+						<div class="pop-form-item">
+							<input type="text" id="duty_of_work" name="duty_of_work" />
+						</div>
+					</div>
+					<div class="float-l clearboth">
+						<div class="pop-form-title">
+							<span style="color: red;">*</span>涉及行业时间：
+						</div>
+						<div class="pop-form-item">
+							<input type="text" id="comp_industry_year"
+								name="comp_industry_year" />
+						</div>
+						<div class="pop-form-title">单位电话：</div>
+						<div class="pop-form-item">
+							<input type="text" id="unit_tel" name="unit_tel" />
+						</div>
+						<div class="pop-form-title">年总收入：</div>
+						<div class="pop-form-item">
+							<input type="text" id="annual_income" name="annual_income" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 提交功能按钮区 -->
+	<div class="pop-footer5 clearboth" style="bottom: 1px;">
+		<input id="zcbtn" class="btn-saveZ"
+			onmouseover="this.className='btn-saveZ-over'"
+			onmouseout="this.className='btn-saveZ'"
+			onmousedown="this.className='btn-saveZ-down'" type="button"
+			style="margin-right: 7px;" onclick="save('','',0)" /> <input
+			id="tjbtn" class="btn-saveT"
+			onmouseover="this.className='btn-saveT-over'"
+			onmouseout="this.className='btn-saveT'"
+			onmousedown="this.className='btn-saveT-down'" type="button"
+			style="margin-right: 7px;" onclick="sp()" /> <input id="cancelBtnId"
+			class="btn-cancel" onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" type="button"
+			onclick="closeDialog();" />
+	</div>
+	<script type="text/javascript">
+     //获取主表单ID
+     var wms_cre_credit_head_id =$.query.get('wms_cre_credit_head_id');
+     var hkey = $.query.get('hkey');
+     //获取流程taskId
+     var taskId =$.query.get('taskId');
+ 	 var cktype=$.query.get("cktype");//是否为只读页面
+     //获取贷款人数量
+     var count;
+     //贷款人信息
+     var dkrArr = [];
+    $(function (){
+    	initSubTab();
+    	if(cktype=='ck') {	//当是只读页面时
+			$('#zcbtn').css('display','none');//隐藏保存按钮
+			$('#tjbtn').css('display','none');//隐藏保存按钮
+			initForm(cktype);
+			setReadOnly();
+		}else{
+			initForm();
+		}
+    });
+    /**初始化子选项卡*/
+    function initSubTab(){
+    	$.getJSON(globalUtil.getTimestampUrl('/loanreview/wmscrecreditlinecustomerchangeheadlistwithoutpaging.do'),
+    			{
+    				"wms_cre_credit_head_id" : wms_cre_credit_head_id
+    			},function(json_data){
+    				count = json_data.count;
+    				var cktypeStr = cktype=='ck'? '?cktype=ck&' : '?';
+					dkrArr.push(json_data.major);
+					if(hkey=='hk'){
+						tab.initTabSub("grxxinfo", 540, 1);
+					}else{
+						tab.initTabSub("grxxinfo", 780, 1);
+					}
+					
+			    	tab.addSubTab("主贷人","infoPersionPage.html"+cktypeStr+"wms_cre_credit_head_id="+wms_cre_credit_head_id+"&wms_cre_credit_line_customer_change_head_id="+json_data.major.wms_cre_credit_line_customer_change_head_id,"20000");
+			    	$.each(json_data.notMajor,function(i,item){
+						dkrArr.push(item);
+						tab.addSubTab(item.customer_name,"infoPersionPage.html"+cktypeStr+"wms_cre_credit_head_id="+wms_cre_credit_head_id+"&wms_cre_credit_line_customer_change_head_id="+item.wms_cre_credit_line_customer_change_head_id,20000+parseInt(i+1));
+					});
+			    	tab.tabObj.selectTabItem("20000");//使第一个标签页处于选定状态
+			    	if(hkey=='hk'){
+			    		tab.initTabSub("qyxxinfo", 540, 1);
+			    	}else{
+			    		tab.initTabSub("qyxxinfo", 780, 1);
+			    	}
+			    	
+			    	tab.addSubTab("主贷人","infoEnterprisePage.html"+cktypeStr+"wms_cre_credit_head_id="+wms_cre_credit_head_id+"&wms_cre_credit_line_customer_change_head_id="+json_data.major.wms_cre_credit_line_customer_change_head_id,"30000");
+			    	$.each(json_data.notMajor,function(i,item){
+						tab.addSubTab(item.customer_name,"infoEnterprisePage.html"+cktypeStr+"wms_cre_credit_head_id="+wms_cre_credit_head_id+"&wms_cre_credit_line_customer_change_head_id="+item.wms_cre_credit_line_customer_change_head_id,30000+parseInt(i+1));
+					});
+			    	tab.tabObj.selectTabItem("30000");//使第一个标签页处于选定状态
+    			});
+    }
+    /**保存审核意见*/
+	function sp(){
+    	//需要先判断重要信息是否全部选择
+    	if($("#work_unit_property").val()=='请选择' || 
+				$("#comp_industry").val()=='请选择' || 
+				$("#work_year").val()=='请选择' || 
+				$("#duty_of_work").val()=='请选择' || 
+				$("#comp_industry_year").val()=='请选择'){
+    		$("#tabbody3").trigger('click');
+			errorMsg(globalErrorMsg['400113']);
+			return;
+    	}else{
+    		var url = globalUtil.getHtml("infosapprove.html?approvalType=3&wms_cre_credit_head_id="+wms_cre_credit_head_id);
+    		dialog=$.ligerDialog.open({
+    			url:url,
+    			title: '审批',
+    	        width: 850,
+    	        height: globalUtil.setDialogHeight(500),
+    	        onHiddenOrClose: function(){
+    	    	},
+    	        isResize: false
+    		});  
+		}
+	}
+	/**保存所有信息操作*/
+	function save(pass,advice,flag){
+		var paramJson = {};
+		paramJson.pass = pass;
+		paramJson.advice = advice;
+		var grInfoArr= [];		
+		for(i=0;i<count;i++){
+			var ifm=document.getElementById(20000+parseInt(i)).contentWindow;
+			var dkrJson = ifm.getFromValues();
+			dkrJson.wms_cre_credit_line_customer_change_head_id = ''+dkrArr[i].wms_cre_credit_line_customer_change_head_id;
+			grInfoArr.push(dkrJson);		
+		}
+		paramJson.grInfo = JSON.stringify(grInfoArr);
+		var qyInfoArr = [];
+		for(i=0;i<count;i++){
+			var ifm=document.getElementById(30000+parseInt(i)).contentWindow;
+			var dkrJson2 = ifm.getFromValues();
+			dkrJson2.wms_cre_credit_line_customer_change_head_id = ''+dkrArr[i].wms_cre_credit_line_customer_change_head_id;
+			qyInfoArr.push(dkrJson2);		
+		}
+		paramJson.qyInfo = JSON.stringify(qyInfoArr);
+		var workdataArr=[];
+		workdataArr.push(getFromValues());
+		paramJson.InfoImData=JSON.stringify(workdataArr);
+		//---------------------------------------------------------------------------------------
+		$.post(globalUtil.getTimestampUrl("/loanreview/wmscrerevinfomainsave.do?wms_cre_credit_head_id="+wms_cre_credit_head_id+"&taskId="+taskId+"&flag="+flag), paramJson,
+		        function(data) {
+		        	if (data === 'success') {
+		            	 globalUtil.successMsg(globalErrorMsg['100002'],
+		            		function(){            		 		
+		                		refreshAndClosePage();
+		            	 });//保存成功	
+		        	}else if(data === 'temOK'){//暂存成功
+		        		 globalUtil.successMsg(globalErrorMsg['100032'],
+				            		function(){            		 		
+				                		refreshAndClosePage();
+				            	 });//保存成功	
+		        	}else if(data === 'supply'){
+		        		globalUtil.errorMsg(globalErrorMsg['100040'],
+			            		function(){            		 		
+			                		refreshAndClosePage();
+			            	 });//该单据已经退件
+		            }else {
+		                globalUtil.errorMsg(globalErrorMsg['100012']); //保存失败
+		            }
+		});
+	}
+	//获取表单中所有数据组合成一个JSON对象
+	function getFromValues(){
+			var  reslutJson={};//获取重要数据工作信息总体Json对象
+			reslutJson.workData=globalUtil.getFormParam("work_data");
+			return reslutJson;			
+	}
+	//查看信息
+	function initForm(cktype){
+		var url =globalUtil.getTimestampUrl('/loanreview/wmscrerevinfomodelinfobyfk.do')
+		$.getJSON(url,
+				{
+					"wms_cre_credit_head_id":wms_cre_credit_head_id
+				},function(json){
+					if(json!=null){
+						//公司名称
+						$("#work_unit_full_name").val(json.work_unit_full_name);
+						//单位性质
+						init_work_unit_property(json);
+						//所属行业
+						init_comp_industry(json);
+						//工作年限
+						init_work_year(json);
+						//工作岗位
+						init_duty_of_work(json);
+						//涉及行业时间
+						init_comp_industry_year(json);
+						//年总收入
+						init_annual_income(json);
+						//单位电话
+						$("#unit_tel").val(json.unit_tel);
+						//使下拉框不可编辑
+						if(cktype=='ck'){
+							//单位性质
+							global_ligerui_extend.disabledCombox("work_unit_property");
+							//所属行业
+							global_ligerui_extend.disabledCombox("comp_industry");
+							//工作年限
+							global_ligerui_extend.disabledCombox("work_year");
+							//工作岗位
+							global_ligerui_extend.disabledCombox("duty_of_work");
+							//涉及行业时间
+							global_ligerui_extend.disabledCombox("comp_industry_year");
+							//年总收入
+							global_ligerui_extend.disabledCombox("annual_income");
+						}
+					}else{
+						//单位性质
+						init_work_unit_property();
+						//所属行业
+						init_comp_industry();
+						//工作年限
+						init_work_year();
+						//工作岗位
+						init_duty_of_work();
+						//涉及行业时间
+						init_comp_industry_year();
+						//年总收入
+						init_annual_income();
+						//使下拉框不可编辑
+						if(cktype=='ck'){
+							//单位性质
+							global_ligerui_extend.disabledCombox("work_unit_property");
+							//所属行业
+							global_ligerui_extend.disabledCombox("comp_industry");
+							//工作年限
+							global_ligerui_extend.disabledCombox("work_year");
+							//工作岗位
+							global_ligerui_extend.disabledCombox("duty_of_work");
+							//涉及行业时间
+							global_ligerui_extend.disabledCombox("comp_industry_year");
+							//年总收入
+							global_ligerui_extend.disabledCombox("annual_income");
+						}
+					}
+					
+				});
+	}
+	 //单位性质
+	function init_work_unit_property(json){
+		var work_unit_property_params ={
+				dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=29 ',
+				t_col_name:'work_unit_property',
+				valueField:'wms_sys_dict_data_id',   //下拉框value对应的值，默认为id
+				textField:'value_meaning',    //下拉框text对应的值，默认为text
+				def_val:'first'
+				};
+		global_ligerui_extend.initCombox("work_unit_property",null,work_unit_property_params);
+		if(json){
+			//把值装载设定
+			global_ligerui_extend.syncRequestInitComboxData(json,"work_unit_property");
+		}else{			
+		    global_ligerui_extend.initComboxDefVal("work_unit_property");
+		}
+	}
+	//所属行业
+	function init_comp_industry(json){
+		var comp_industry_params ={
+				dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=30 ',
+				t_col_name:'comp_industry',
+				valueField:'wms_sys_dict_data_id',   //下拉框value对应的值，默认为id
+				textField:'value_meaning',    //下拉框text对应的值，默认为text
+				def_val:'first'
+				};
+		global_ligerui_extend.initCombox("comp_industry",null,comp_industry_params);
+		if(json){
+			//把值装载设定
+			global_ligerui_extend.syncRequestInitComboxData(json,"comp_industry");
+		}else{			
+		    global_ligerui_extend.initComboxDefVal("comp_industry");
+		}
+	}
+	//工作年限
+	function init_work_year(json){
+		var work_year_params ={
+				dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=31 ',
+				t_col_name:'work_year',
+				valueField:'wms_sys_dict_data_id',   //下拉框value对应的值，默认为id
+				textField:'value_meaning',    //下拉框text对应的值，默认为text
+				def_val:'first'
+				};
+		global_ligerui_extend.initCombox("work_year",null,work_year_params);
+		if(json){
+			//把值装载设定
+			global_ligerui_extend.syncRequestInitComboxData(json,"work_year");
+		}else{			
+		    global_ligerui_extend.initComboxDefVal("work_year");
+		}
+	}
+	//工作岗位
+	function init_duty_of_work(json){
+		var duty_of_work_params ={
+				dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=32 ',
+				t_col_name:'duty_of_work',
+				valueField:'wms_sys_dict_data_id',   //下拉框value对应的值，默认为id
+				textField:'value_meaning',    //下拉框text对应的值，默认为text
+				def_val:'first'
+				};
+		global_ligerui_extend.initCombox("duty_of_work",null,duty_of_work_params);
+		if(json){
+			//把值装载设定
+			global_ligerui_extend.syncRequestInitComboxData(json,"duty_of_work");
+		}else{			
+		    global_ligerui_extend.initComboxDefVal("duty_of_work");
+		}
+	}
+	//涉及时间
+	function init_comp_industry_year(json){
+		var comp_industry_year_params ={
+				dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=33 ',
+				t_col_name:'comp_industry_year',
+				valueField:'wms_sys_dict_data_id',   //下拉框value对应的值，默认为id
+				textField:'value_meaning',    //下拉框text对应的值，默认为text
+				def_val:'first'
+				};
+		global_ligerui_extend.initCombox("comp_industry_year",null,comp_industry_year_params);
+		if(json){
+			//把值装载设定
+			global_ligerui_extend.syncRequestInitComboxData(json,"comp_industry_year");
+		}else{			
+		    global_ligerui_extend.initComboxDefVal("comp_industry_year");
+		}
+	}
+	//年总收入
+	function init_annual_income(json){
+		var annual_income_params ={
+				dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=34 ',
+				t_col_name:'annual_income',
+				valueField:'wms_sys_dict_data_id',   //下拉框value对应的值，默认为id
+				textField:'value_meaning',    //下拉框text对应的值，默认为text
+				def_val:'first'
+				};
+		global_ligerui_extend.initCombox("annual_income",null,annual_income_params);
+		if(json){
+			//把值装载设定
+			global_ligerui_extend.syncRequestInitComboxData(json,"annual_income");
+		}else{			
+		    global_ligerui_extend.initComboxDefVal("annual_income");
+		}
+	}
+	//--------------------------------------------------设置为只读模式------------------------------------------
+	function setReadOnly(){
+		$("input[type=text]").attr({
+			"disabled" : "disabled"
+		});
+		$("input[type=checkbox]").attr({
+			"disabled" : "disabled"
+		});
+		$("select").attr({
+			"disabled" : "disabled"
+		});
+	}
+	//------------------------------------------------------------------------------------------------------------
+	//弹出错误提示框
+	function errorMsg(msg){
+		globalUtil.addMask('1');
+		var obj = $.ligerDialog.error(msg, null, null);
+		obj.options.onHiddenOrClose = function() {
+			globalUtil.delMask('1');
+	    };
+	}
+	
+    //-------------------------------------------------------关闭窗口----------------------------------------------/
+     function closeDialog() {
+    	try{
+ 			window.parent.dialog.hide();
+ 		}catch(e){
+ 			globalUtil.closeCurrentTab();
+ 		}
+    }
+ 
+   //关闭本页并刷新查询页面
+     function refreshAndClosePage(){   
+     	window.parent.search();
+     	window.parent.dialog.hide();
+     }
+	/**页面切换*/
+	function changeTab(id) {
+		var grxxinfo = document.getElementById("grxxinfo"); //个人信息
+		var qyxxinfo = document.getElementById("qyxxinfo"); //企业信息
+		if (id == 'grxxinfo') {
+			document.getElementById("tabbody1").className = "tabbody1";
+			document.getElementById("tabbody2").className = "tabbody2";
+			document.getElementById("tabbody3").className = "tabbody2";
+			grxxinfo.style.display = '';
+			qyxxinfo.style.display = 'none';	
+			imxxinfo.style.display = 'none';
+		} else if (id == 'qyxxinfo') {
+			document.getElementById("tabbody1").className = "tabbody2";
+			document.getElementById("tabbody2").className = "tabbody1";
+			document.getElementById("tabbody3").className = "tabbody2";
+			grxxinfo.style.display = 'none';
+			qyxxinfo.style.display = '';
+			imxxinfo.style.display = 'none';
+		}else if(id == 'imxxinfo'){
+			document.getElementById("tabbody1").className = "tabbody2";
+			document.getElementById("tabbody2").className = "tabbody2";
+			document.getElementById("tabbody3").className = "tabbody1";
+			grxxinfo.style.display = 'none';
+			qyxxinfo.style.display = 'none';
+			imxxinfo.style.display = '';
+		}
+	}
+	
+</script>
+</body>
+</html>

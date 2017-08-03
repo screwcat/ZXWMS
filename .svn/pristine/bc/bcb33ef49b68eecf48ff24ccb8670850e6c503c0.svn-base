@@ -1,0 +1,3175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.remind.persist.WmsCreCreditNotaryWarnDao">
+    <!-- get entity by pk -->
+    <select id="get" parameterType="int" resultType="WmsCreCreditNotaryWarn">
+        select
+            wms_cre_credit_notary_warn_id,
+            bill_code,
+            bill_status,
+            end_time,
+            end_reason,
+            end_day_number,
+            appl_date,
+            customer_name,
+            id_card,
+            current_address_more,
+            mobile_telephone,
+            com_debtor_name,
+            com_debtor_identity_id,
+            com_debtor_tel,
+            debtor_fixed_line,
+            protocol_date,
+            borrow_end_date,
+            protocol_id_year_num,
+            category_name,
+            IFNULL(REPLACE(FORMAT(borrow_interest, 2), ',', ''), '') AS borrow_interest,
+            IFNULL(REPLACE(FORMAT(appro_limit, 2), ',', ''), '') AS appro_limit,
+            borrow_deadline,
+            IFNULL(REPLACE(FORMAT(loan_amount, 2), ',', ''), '') AS loan_amount,
+            platform_fee,
+            notarial_fee,
+            IFNULL(REPLACE(FORMAT(principal_lower, 2), ',', ''), '') AS principal_lower,
+            IFNULL(REPLACE(FORMAT(refund_limit_month, 2), ',', ''), '') AS refund_limit_month,
+            salesman_name,
+            salesman_shortcode,
+            salesman_dept_code,
+            team_manager_name,
+            team_manager_code,
+            sales_epartment_code,
+            sales_epartment_name,
+            create_user_id,
+            create_user_name,
+            create_timestamp,
+            last_update_user_id,
+            last_update_timestamp,
+            enable_flag,
+            warn_remak,
+            alreadyse_send_message_number,
+            is_weekend_not_remind,
+            data_sources,
+            is_cycles,
+            clean_up_date,
+            clean_up_info,
+            refund_bank,
+            refund_number,
+            refund_name,
+            repay_period,
+            un_pay_principal,
+            cre_type,
+            send_message_number,
+            send_message_time,
+            repay_status,
+            wms_cre_credit_head_id,
+            current_repay_date,
+            send_message_date,
+            bill_type,
+            the_number
+         from wms_cre_credit_notary_warn
+        where wms_cre_credit_notary_warn_id = #{wms_cre_credit_notary_warn_id}
+    </select>
+<select id="getAll" parameterType="int" resultType="java.util.HashMap">
+        select
+            wms_cre_credit_notary_warn_id,
+            bill_code,
+            bill_status,
+            end_time,
+            end_reason,
+            end_day_number,
+            appl_date,
+            customer_name as debtor_name,
+            id_card as debtor_identity_id ,
+            current_address_more,
+            mobile_telephone as debtor_tel,
+            com_debtor_name,
+            com_debtor_identity_id,
+            com_debtor_tel,
+            debtor_fixed_line,
+            protocol_date,
+            borrow_end_date,
+            protocol_id_year_num,
+            category_name,
+            IFNULL(REPLACE(FORMAT(borrow_interest, 2), ',', ''), '') AS borrow_interest,
+            IFNULL(REPLACE(FORMAT(appro_limit, 0), ',', ''), '') AS appro_limit,
+            borrow_deadline,
+            IFNULL(REPLACE(FORMAT(loan_amount, 0), ',', ''), '') AS loan_amount,
+            platform_fee,
+            notarial_fee,
+            IFNULL(REPLACE(FORMAT(principal_lower, 0), ',', ''), '') AS principal_lower,
+            IFNULL(REPLACE(FORMAT(refund_limit_month, 0), ',', ''), '') AS refund_limit_month,
+            salesman_name,
+            salesman_shortcode,
+            salesman_dept_code,
+            team_manager_name,
+            team_manager_code,
+            sales_epartment_code,
+            sales_epartment_name,
+            create_user_id,
+            create_user_name,
+            create_timestamp,
+            last_update_user_id,
+            last_update_timestamp,
+            enable_flag,
+            warn_remak,
+            alreadyse_send_message_number,
+            is_weekend_not_remind,
+            data_sources,
+            is_cycles,
+            clean_up_date,
+            clean_up_info,
+            refund_bank,
+            REPLACE(refund_number, ' ', '') as refund_number,
+            refund_name,
+            repay_period,
+            un_pay_principal,
+            cre_type,
+            send_message_number,
+            send_message_time,
+            repay_status,
+            wms_cre_credit_head_id,
+            current_repay_date,
+            send_message_date,
+            bill_type,
+            ifnull(the_number, '') as the_number,
+            bill_code_group,
+            group_date
+         from wms_cre_credit_notary_warn
+        where wms_cre_credit_notary_warn_id = #{wms_cre_credit_notary_warn_id}
+    </select>
+    <!-- count num -->
+    <select id="findCount" parameterType="map" resultType="int">
+        select count(wms_cre_credit_notary_warn_id) as count
+          from wms_cre_credit_notary_warn
+        <where>
+            <if test="paramname != null">
+                <!-- and columnName = #{columnName} -->
+            </if>
+        </where>
+    </select>
+
+    <!-- list -->
+    <select id="search" parameterType="map" resultType="java.util.HashMap">
+        select
+            wms_cre_credit_notary_warn_id,
+            bill_code,
+            bill_status,
+            end_time,
+            end_reason,
+            end_day_number,
+            appl_date,
+            customer_name,
+            id_card,
+            current_address_more,
+            mobile_telephone,
+            com_debtor_name,
+            com_debtor_identity_id,
+            com_debtor_tel,
+            debtor_fixed_line,
+            protocol_date,
+            borrow_end_date,
+            protocol_id_year_num,
+            category_name,
+            borrow_interest,
+            appro_limit,
+            borrow_deadline,
+            loan_amount,
+            platform_fee,
+            notarial_fee,
+            principal_lower,
+            refund_limit_month,
+            salesman_name,
+            salesman_shortcode,
+            salesman_dept_code,
+            team_manager_name,
+            team_manager_code,
+            sales_epartment_code,
+            sales_epartment_name,
+            create_user_id,
+            create_user_name,
+            create_timestamp,
+            last_update_user_id,
+            last_update_timestamp,
+            enable_flag,
+            warn_remak,
+            alreadyse_send_message_number,
+            is_weekend_not_remind,
+            data_sources,
+            is_cycles,
+            clean_up_date,
+            clean_up_info,
+            refund_bank,
+            refund_number,
+            refund_name,
+            repay_period,
+            un_pay_principal,
+            cre_type,
+            send_message_number,
+            send_message_time,
+            repay_status,
+            wms_cre_credit_head_id,
+            current_repay_date,
+            send_message_date,
+            bill_type,
+            the_number
+        from wms_cre_credit_notary_warn
+        <where>
+            <if test="paramname != null">
+                <!-- and columnName = #{columnName} -->
+            </if>
+        </where>
+        <if test="sortname != null and sortorder != null">
+            ORDER BY ${sortname} ${sortorder}
+        </if>
+        <if test="offset != null and pagesize != null">
+            LIMIT ${offset}, ${pagesize}
+        </if>
+    </select>
+
+    <!-- save -->
+    <insert id="save" parameterType="WmsCreCreditNotaryWarn" useGeneratedKeys="true" keyProperty="wms_cre_credit_notary_warn_id">
+        INSERT INTO wms_cre_credit_notary_warn (
+            wms_cre_credit_notary_warn_id,
+            bill_code,
+            bill_status,
+            end_time,
+            end_reason,
+            end_day_number,
+            appl_date,
+            customer_name,
+            id_card,
+            current_address_more,
+            mobile_telephone,
+            com_debtor_name,
+            com_debtor_identity_id,
+            com_debtor_tel,
+            debtor_fixed_line,
+            protocol_date,
+            borrow_end_date,
+            protocol_id_year_num,
+            category_name,
+            borrow_interest,
+            appro_limit,
+            borrow_deadline,
+            loan_amount,
+            platform_fee,
+            notarial_fee,
+            principal_lower,
+            refund_limit_month,
+            salesman_name,
+            salesman_shortcode,
+            salesman_dept_code,
+            team_manager_name,
+            team_manager_code,
+            sales_epartment_code,
+            sales_epartment_name,
+            create_user_id,
+            create_user_name,
+            create_timestamp,
+            last_update_user_id,
+            last_update_timestamp,
+            enable_flag,
+            warn_remak,
+            alreadyse_send_message_number,
+            is_weekend_not_remind,
+            data_sources,
+            is_cycles,
+            clean_up_date,
+            clean_up_info,
+            refund_bank,
+            refund_number,
+            refund_name,
+            repay_period,
+            un_pay_principal,
+            cre_type,
+            send_message_number,
+            send_message_time,
+            repay_status,
+            wms_cre_credit_head_id,
+            current_repay_date,
+            send_message_date,
+            bill_type,
+            the_number,
+            bill_code_group,
+            group_date,
+            salesman_id,
+            salesman_dept_id,
+            sales_epartment_id,
+            city,
+            salesman_own_dept_id,
+            salesman_own_dept_code,
+            salesman_city_code
+
+        )
+        VALUES(
+            #{wms_cre_credit_notary_warn_id},
+            #{bill_code},
+            #{bill_status},
+            #{end_time},
+            #{end_reason},
+            #{end_day_number},
+            #{appl_date},
+            #{customer_name},
+            #{id_card},
+            #{current_address_more},
+            #{mobile_telephone},
+            #{com_debtor_name},
+            #{com_debtor_identity_id},
+            #{com_debtor_tel},
+            #{debtor_fixed_line},
+            #{protocol_date},
+            #{borrow_end_date},
+            #{protocol_id_year_num},
+            #{category_name},
+            #{borrow_interest},
+            #{appro_limit},
+            #{borrow_deadline},
+            #{loan_amount},
+            #{platform_fee},
+            #{notarial_fee},
+            #{principal_lower},
+            #{refund_limit_month},
+            #{salesman_name},
+            #{salesman_shortcode},
+            #{salesman_dept_code},
+            #{team_manager_name},
+            #{team_manager_code},
+            #{sales_epartment_code},
+            #{sales_epartment_name},
+            #{create_user_id},
+            #{create_user_name},
+            #{create_timestamp},
+            #{last_update_user_id},
+            #{last_update_timestamp},
+            #{enable_flag},
+            #{warn_remak},
+            #{alreadyse_send_message_number},
+            #{is_weekend_not_remind},
+            #{data_sources},
+            #{is_cycles},
+            #{clean_up_date},
+            #{clean_up_info},
+            #{refund_bank},
+            #{refund_number},
+            #{refund_name},
+            #{repay_period},
+            #{un_pay_principal},
+            #{cre_type},
+            #{send_message_number},
+            #{send_message_time},
+            #{repay_status},
+            #{wms_cre_credit_head_id},
+            #{current_repay_date},
+            #{send_message_date},
+            #{bill_type},
+            #{the_number},
+            #{bill_code_group},
+            #{group_date},
+            #{salesman_id},
+            #{salesman_dept_id},
+            #{sales_epartment_id},
+            #{city},
+            #{salesman_own_dept_id},
+            #{salesman_own_dept_code},
+            #{salesman_city_code} 
+        )
+    </insert>
+
+    <!-- update -->
+    <update id="update" parameterType="WmsCreCreditNotaryWarn">
+        update wms_cre_credit_notary_warn
+        <set>
+            <if test="wms_cre_credit_notary_warn_id != null">
+                wms_cre_credit_notary_warn_id = #{wms_cre_credit_notary_warn_id},
+            </if>
+            <if test="bill_code != null">
+                bill_code = #{bill_code},
+            </if>
+            <if test="bill_status != null">
+                bill_status = #{bill_status},
+            </if>
+            <if test="end_time != null">
+                end_time = #{end_time},
+            </if>
+            <if test="end_reason != null">
+                end_reason = #{end_reason},
+            </if>
+            <if test="end_day_number != null">
+                end_day_number = #{end_day_number},
+            </if>
+            <if test="appl_date != null">
+                appl_date = #{appl_date},
+            </if>
+            <if test="customer_name != null">
+                customer_name = #{customer_name},
+            </if>
+            <if test="id_card != null">
+                id_card = #{id_card},
+            </if>
+            <if test="current_address_more != null">
+                current_address_more = #{current_address_more},
+            </if>
+            <if test="mobile_telephone != null">
+                mobile_telephone = #{mobile_telephone},
+            </if>
+            <if test="com_debtor_name != null">
+                com_debtor_name = #{com_debtor_name},
+            </if>
+            <if test="com_debtor_identity_id != null">
+                com_debtor_identity_id = #{com_debtor_identity_id},
+            </if>
+            <if test="com_debtor_tel != null">
+                com_debtor_tel = #{com_debtor_tel},
+            </if>
+            <if test="debtor_fixed_line != null">
+                debtor_fixed_line = #{debtor_fixed_line},
+            </if>
+            <if test="protocol_date != null">
+                protocol_date = #{protocol_date},
+            </if>
+            <if test="borrow_end_date != null">
+                borrow_end_date = #{borrow_end_date},
+            </if>
+            <if test="protocol_id_year_num != null">
+                protocol_id_year_num = #{protocol_id_year_num},
+            </if>
+            <if test="category_name != null">
+                category_name = #{category_name},
+            </if>
+            <if test="borrow_interest != null">
+                borrow_interest = #{borrow_interest},
+            </if>
+            <if test="appro_limit != null">
+                appro_limit = #{appro_limit},
+            </if>
+            <if test="borrow_deadline != null">
+                borrow_deadline = #{borrow_deadline},
+            </if>
+            <if test="loan_amount != null">
+                loan_amount = #{loan_amount},
+            </if>
+            <if test="platform_fee != null">
+                platform_fee = #{platform_fee},
+            </if>
+            <if test="notarial_fee != null">
+                notarial_fee = #{notarial_fee},
+            </if>
+            <if test="principal_lower != null">
+                principal_lower = #{principal_lower},
+            </if>
+            <if test="refund_limit_month != null">
+                refund_limit_month = #{refund_limit_month},
+            </if>
+            <if test="salesman_name != null">
+                salesman_name = #{salesman_name},
+            </if>
+            <if test="salesman_shortcode != null">
+                salesman_shortcode = #{salesman_shortcode},
+            </if>
+            <if test="salesman_dept_code != null">
+                salesman_dept_code = #{salesman_dept_code},
+            </if>
+            <if test="team_manager_name != null">
+                team_manager_name = #{team_manager_name},
+            </if>
+            <if test="team_manager_code != null">
+                team_manager_code = #{team_manager_code},
+            </if>
+            <if test="sales_epartment_code != null">
+                sales_epartment_code = #{sales_epartment_code},
+            </if>
+            <if test="sales_epartment_name != null">
+                sales_epartment_name = #{sales_epartment_name},
+            </if>
+            <if test="create_user_id != null">
+                create_user_id = #{create_user_id},
+            </if>
+            <if test="create_user_name != null">
+                create_user_name = #{create_user_name},
+            </if>
+            <if test="create_timestamp != null">
+                create_timestamp = #{create_timestamp},
+            </if>
+            <if test="last_update_user_id != null">
+                last_update_user_id = #{last_update_user_id},
+            </if>
+            <if test="last_update_timestamp != null">
+                last_update_timestamp = #{last_update_timestamp},
+            </if>
+            <if test="enable_flag != null">
+                enable_flag = #{enable_flag},
+            </if>
+            <if test="warn_remak != null">
+                warn_remak = #{warn_remak},
+            </if>
+            <if test="alreadyse_send_message_number != null">
+                alreadyse_send_message_number = #{alreadyse_send_message_number},
+            </if>
+            <if test="is_weekend_not_remind != null">
+                is_weekend_not_remind = #{is_weekend_not_remind},
+            </if>
+            <if test="data_sources != null">
+                data_sources = #{data_sources},
+            </if>
+            <if test="is_cycles != null">
+                is_cycles = #{is_cycles},
+            </if>
+            <if test="clean_up_date != null">
+                clean_up_date = #{clean_up_date},
+            </if>
+            <if test="clean_up_info != null">
+                clean_up_info = #{clean_up_info},
+            </if>
+            <if test="refund_bank != null">
+                refund_bank = #{refund_bank},
+            </if>
+            <if test="refund_number != null">
+                refund_number = #{refund_number},
+            </if>
+            <if test="refund_name != null">
+                refund_name = #{refund_name},
+            </if>
+            <if test="repay_period != null">
+                repay_period = #{repay_period},
+            </if>
+            <if test="un_pay_principal != null">
+                un_pay_principal = #{un_pay_principal},
+            </if>
+            <if test="cre_type != null">
+                cre_type = #{cre_type},
+            </if>
+            <if test="send_message_number != null">
+                send_message_number = #{send_message_number},
+            </if>
+            <if test="send_message_time != null">
+                send_message_time = #{send_message_time},
+            </if>
+            <if test="repay_status != null">
+                repay_status = #{repay_status},
+            </if>
+             <if test="wms_cre_credit_head_id != null">
+                wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+            </if>
+             <if test="current_repay_date != null">
+                current_repay_date = #{current_repay_date},
+            </if>
+            <if test="send_message_date != null">
+                send_message_date = #{send_message_date},
+            </if>
+            <if test="bill_type != null">
+                bill_type = #{bill_type},
+            </if>
+            <if test="the_number != null">
+                the_number = #{the_number},
+            </if>
+             <if test="bill_code_group != null">
+                bill_code_group = #{bill_code_group},
+            </if>
+               <if test="group_date != null">
+                group_date = #{group_date},
+            </if>
+        </set>
+        <where>
+            wms_cre_credit_notary_warn_id = #{wms_cre_credit_notary_warn_id}
+        </where>
+    </update>
+
+    <!-- getListByEntity -->
+    <select id="getListByEntity" parameterType="WmsCreCreditNotaryWarn" resultType="WmsCreCreditNotaryWarn">
+        select
+            wms_cre_credit_notary_warn_id,
+            bill_code,
+            bill_status,
+            end_time,
+            end_reason,
+            end_day_number,
+            appl_date,
+            customer_name,
+            id_card,
+            current_address_more,
+            mobile_telephone,
+            com_debtor_name,
+            com_debtor_identity_id,
+            com_debtor_tel,
+            debtor_fixed_line,
+            protocol_date,
+            borrow_end_date,
+            protocol_id_year_num,
+            category_name,
+            borrow_interest,
+            appro_limit,
+            borrow_deadline,
+            loan_amount,
+            platform_fee,
+            notarial_fee,
+            principal_lower,
+            refund_limit_month,
+            salesman_name,
+            salesman_shortcode,
+            salesman_dept_code,
+            team_manager_name,
+            team_manager_code,
+            sales_epartment_code,
+            sales_epartment_name,
+            create_user_id,
+            create_user_name,
+            create_timestamp,
+            last_update_user_id,
+            last_update_timestamp,
+            enable_flag,
+            warn_remak,
+            alreadyse_send_message_number,
+            is_weekend_not_remind,
+            data_sources,
+            is_cycles,
+            clean_up_date,
+            clean_up_info,
+            refund_bank,
+            refund_number,
+            refund_name,
+            repay_period,
+            un_pay_principal,
+            cre_type,
+            send_message_number,
+            send_message_time,
+            repay_status,
+            wms_cre_credit_head_id,
+            current_repay_date,
+            send_message_date,
+            bill_type,
+            the_number
+        from wms_cre_credit_notary_warn
+        <where>
+            <if test="wms_cre_credit_notary_warn_id != null">
+                and wms_cre_credit_notary_warn_id = #{wms_cre_credit_notary_warn_id}
+            </if>
+            <if test="bill_code != null">
+                and bill_code = #{bill_code}
+            </if>
+            <if test="bill_status != null">
+                and bill_status = #{bill_status}
+            </if>
+            <if test="end_time != null">
+                and end_time = #{end_time}
+            </if>
+            <if test="end_reason != null">
+                and end_reason = #{end_reason}
+            </if>
+            <if test="end_day_number != null">
+                and end_day_number = #{end_day_number}
+            </if>
+            <if test="appl_date != null">
+                and appl_date = #{appl_date}
+            </if>
+            <if test="customer_name != null">
+                and customer_name = #{customer_name}
+            </if>
+            <if test="id_card != null">
+                and id_card = #{id_card}
+            </if>
+            <if test="current_address_more != null">
+                and current_address_more = #{current_address_more}
+            </if>
+            <if test="mobile_telephone != null">
+                and mobile_telephone = #{mobile_telephone}
+            </if>
+            <if test="com_debtor_name != null">
+                and com_debtor_name = #{com_debtor_name}
+            </if>
+            <if test="com_debtor_identity_id != null">
+                and com_debtor_identity_id = #{com_debtor_identity_id}
+            </if>
+            <if test="com_debtor_tel != null">
+                and com_debtor_tel = #{com_debtor_tel}
+            </if>
+            <if test="debtor_fixed_line != null">
+                and debtor_fixed_line = #{debtor_fixed_line}
+            </if>
+            <if test="protocol_date != null">
+                and protocol_date = #{protocol_date}
+            </if>
+            <if test="borrow_end_date != null">
+                and borrow_end_date = #{borrow_end_date}
+            </if>
+            <if test="protocol_id_year_num != null">
+                and protocol_id_year_num = #{protocol_id_year_num}
+            </if>
+            <if test="category_name != null">
+                and category_name = #{category_name}
+            </if>
+            <if test="borrow_interest != null">
+                and borrow_interest = #{borrow_interest}
+            </if>
+            <if test="appro_limit != null">
+                and appro_limit = #{appro_limit}
+            </if>
+            <if test="borrow_deadline != null">
+                and borrow_deadline = #{borrow_deadline}
+            </if>
+            <if test="loan_amount != null">
+                and loan_amount = #{loan_amount}
+            </if>
+            <if test="platform_fee != null">
+                and platform_fee = #{platform_fee}
+            </if>
+            <if test="notarial_fee != null">
+                and notarial_fee = #{notarial_fee}
+            </if>
+            <if test="principal_lower != null">
+                and principal_lower = #{principal_lower}
+            </if>
+            <if test="refund_limit_month != null">
+                and refund_limit_month = #{refund_limit_month}
+            </if>
+            <if test="salesman_name != null">
+                and salesman_name = #{salesman_name}
+            </if>
+            <if test="salesman_shortcode != null">
+                and salesman_shortcode = #{salesman_shortcode}
+            </if>
+            <if test="salesman_dept_code != null">
+                and salesman_dept_code = #{salesman_dept_code}
+            </if>
+            <if test="team_manager_name != null">
+                and team_manager_name = #{team_manager_name}
+            </if>
+            <if test="team_manager_code != null">
+                and team_manager_code = #{team_manager_code}
+            </if>
+            <if test="sales_epartment_code != null">
+                and sales_epartment_code = #{sales_epartment_code}
+            </if>
+            <if test="sales_epartment_name != null">
+                and sales_epartment_name = #{sales_epartment_name}
+            </if>
+            <if test="create_user_id != null">
+                and create_user_id = #{create_user_id}
+            </if>
+            <if test="create_user_name != null">
+                and create_user_name = #{create_user_name}
+            </if>
+            <if test="create_timestamp != null">
+                and create_timestamp = #{create_timestamp}
+            </if>
+            <if test="last_update_user_id != null">
+                and last_update_user_id = #{last_update_user_id}
+            </if>
+            <if test="last_update_timestamp != null">
+                and last_update_timestamp = #{last_update_timestamp}
+            </if>
+            <if test="enable_flag != null">
+                and enable_flag = #{enable_flag}
+            </if>
+            <if test="warn_remak != null">
+                and warn_remak = #{warn_remak}
+            </if>
+            <if test="alreadyse_send_message_number != null">
+                and alreadyse_send_message_number = #{alreadyse_send_message_number}
+            </if>
+            <if test="is_weekend_not_remind != null">
+                and is_weekend_not_remind = #{is_weekend_not_remind}
+            </if>
+            <if test="data_sources != null">
+                and data_sources = #{data_sources}
+            </if>
+            <if test="is_cycles != null">
+                and is_cycles = #{is_cycles}
+            </if>
+            <if test="clean_up_date != null">
+                and clean_up_date = #{clean_up_date}
+            </if>
+            <if test="clean_up_info != null">
+                and clean_up_info = #{clean_up_info}
+            </if>
+            <if test="wms_cre_credit_head_id != null">
+                and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+            </if>
+            <if test="current_repay_date != null">
+                and current_repay_date = #{current_repay_date}
+            </if>
+            <if test="send_message_date != null">
+                and send_message_date = #{send_message_date}
+            </if>
+            <if test="bill_type != null">
+                and bill_type = #{bill_type}
+            </if>
+            <if test="the_number != null">
+                and the_number = #{the_number}
+            </if>
+        </where>
+    </select>
+    
+    <!-- 查询公证到期提醒列表(带分页：使用sql片段) -->
+    <select id="searchVNotaryWarnList" parameterType="map" resultType="map">
+    	<include refid="query_notary_warn_notar"></include>  
+    	<where>
+    		wa.enable_flag = 1
+    		and wa.cre_type = 2
+    	    <if test="bill_code != null">
+                and (wa.bill_code like #{bill_code} or wa.bill_code_group like #{bill_code})
+            </if>
+            <if test="salesman_name_str != null">
+                and (wa.salesman_name like '${salesman_name_str}' or wa.salesman_shortcode like '${salesman_name_str}')
+            </if>
+            <if test="appl_date_begin != null">
+                and wa.appl_date &gt;= #{appl_date_begin}
+            </if>
+            <if test="appl_date_end != null">
+                and wa.appl_date &lt;= #{appl_date_end}
+            </if>
+            <if test="customer_name != null">
+                and wa.customer_name like '${customer_name}'
+            </if>
+            <if test="mobile_telephone != null">
+                and wa.mobile_telephone like '${mobile_telephone}'
+            </if>
+            <if test="end_time_begin != null">
+                and wa.appl_date &gt;= #{end_time_begin}
+            </if>
+            <if test="end_time_end != null">
+                and wa.appl_date &lt;= #{end_time_end}
+            </if>
+            <if test="bill_status != null">
+                and <include refid="query_notary_warn_bill_status"></include>  = #{bill_status}
+            </if>
+            <if test="bill_status_ne != null">
+                and <include refid="query_notary_warn_bill_status"></include> != #{bill_status_ne}
+            </if>
+            <if test="sales_epartment_name != null">
+                and d.dept_id = #{sales_epartment_name}
+            </if>
+            <!-- 权限控制 -->
+			<if test="childrendept != null">
+				and (FIND_IN_SET(d.dept_id, #{childrendept}) > 0)
+			</if>
+    	</where>
+    	<if test="sortname != null and sortorder != null and is_show_now != 1 and is_show_now != 2 ">
+			order by ${sortname} ${sortorder}
+		</if>
+		<if test="sortname != null and sortorder != null and is_show_now == 1">
+			order by  date_format(wa.create_timestamp,'%Y-%m-%d') =CURRENT_DATE() DESC , create_timestamp desc
+		</if>
+		<if test="sortname != null and sortorder != null and is_show_now == 2">
+			order by  date_format(wa.last_update_timestamp,'%Y-%m-%d') =CURRENT_DATE() DESC , create_timestamp desc
+		</if>
+		<if test="offset != null and pagesize != null">
+			limit ${offset}, ${pagesize}
+		</if>
+    </select>
+    
+    <!-- 查询公证到期查询列表(带分页：使用sql片段) -->
+    <select id="searchVNotaryWarnCount" parameterType="map" resultType="int">
+    	<include refid="query_notary_warn_notar_total"></include> 
+    	<where>
+    		wa.enable_flag = 1
+    		and wa.cre_type = 2
+    	    <if test="bill_code != null">
+                and (wa.bill_code like #{bill_code} or wa.bill_code_group like #{bill_code})
+            </if>
+            <if test="salesman_name_str != null">
+                and (wa.salesman_name like '${salesman_name_str}' or wa.salesman_shortcode like '${salesman_name_str}')
+            </if>
+            <if test="appl_date_begin != null">
+                and wa.appl_date &gt;= #{appl_date_begin}
+            </if>
+            <if test="appl_date_end != null">
+                and wa.appl_date &lt;= #{appl_date_end}
+            </if>
+            <if test="customer_name != null">
+                and wa.customer_name like '${customer_name}'
+            </if>
+            <if test="mobile_telephone != null">
+                and wa.mobile_telephone like '${mobile_telephone}'
+            </if>
+            <if test="end_time_begin != null">
+                and wa.appl_date &gt;= #{end_time_begin}
+            </if>
+            <if test="end_time_end != null">
+                and wa.appl_date &lt;= #{end_time_end}
+            </if>
+            <if test="bill_status != null">
+                and <include refid="query_notary_warn_bill_status"></include> = #{bill_status}
+            </if>
+            <if test="bill_status_ne != null">
+                and <include refid="query_notary_warn_bill_status"></include> != #{bill_status_ne}
+            </if>
+            <if test="sales_epartment_name != null">
+                and d.dept_id = #{sales_epartment_name}
+            </if>
+            <!-- 权限控制 -->
+			<if test="childrendept != null">
+				and (FIND_IN_SET(d.dept_id, #{childrendept}) > 0)
+			</if>
+    	</where>
+    </select>
+
+	<!-- 单据编号生成 -->
+	<select id="getBillCodeForNotaryWarn" parameterType="map" resultType="String">
+        select CONCAT('FD', DATE_FORMAT(#{appl_date}, '%Y%m%d'), 
+       (select LPAD(count(wms_cre_credit_notary_warn_id) + 1, 5, 0) 
+          from wms_cre_credit_notary_warn 
+         where appl_date = #{appl_date}))
+	</select>
+	
+	<update id="deleteInfo" parameterType="int">
+	    update
+	    	wms_cre_credit_notary_warn
+	    set
+	    	enable_flag=0
+	    where
+	    	wms_cre_credit_notary_warn_id=#{wms_cre_credit_notary_warn_id}
+	</update>
+	
+	<!-- 查询还款列表(带分页：使用sql片段) -->
+    <select id="searchRepaymentList" parameterType="map" resultType="map">
+    	<include refid="query_notary_warn_repay"></include>  
+    	<where>
+    		wa.enable_flag = 1
+    	    <if test="bill_code != null">
+               and (wa.bill_code like #{bill_code} or wa.bill_code_group like #{bill_code})
+            </if>
+            <if test="salesman_name_str != null">
+                and (wa.salesman_name like '${salesman_name_str}' or wa.salesman_shortcode like '${salesman_name_str}')
+            </if>
+            <if test="appl_date_begin != null">
+                and wa.appl_date &gt;= #{appl_date_begin}
+            </if>
+            <if test="appl_date_end != null">
+                and wa.appl_date &lt;= #{appl_date_end}
+            </if>
+            <if test="customer_name != null">
+                and wa.customer_name like '${customer_name}'
+            </if>
+            <if test="mobile_telephone != null">
+                and wa.mobile_telephone like '${mobile_telephone}'
+            </if>
+            <if test="end_time_begin != null">
+                and wa.appl_date &gt;= #{end_time_begin}
+            </if>
+            <if test="end_time_end != null">
+                and wa.appl_date &lt;= #{end_time_end}
+            </if>
+            <if test="bill_status != null">
+                and wa.bill_status = #{bill_status}
+            </if>
+            <if test="bill_status_ne != null">
+                and wa.bill_status != #{bill_status_ne}
+            </if>
+            <if test="current_repay_date != null">
+                and wa.current_repay_date = #{current_repay_date}
+            </if>
+<!--             还款提醒查询日期包含当前天、前一个月的本天、后一天、后两天 -->
+            <if test="current_repay_date_reminder != null">
+                and (wa.current_repay_date in (date_format(date_sub(#{current_repay_date_reminder}, interval 1 month), '%y-%m-%d'), 
+										    date_format(date_add(date_sub(#{current_repay_date_reminder}, interval 1 month), interval 1 day), '%y-%m-%d'), 
+											date_format(date_add(date_sub(#{current_repay_date_reminder}, interval 1 month), interval 2 day), '%y-%m-%d'),
+										    #{current_repay_date_reminder})
+				)
+				
+            </if>
+            <if test="category_id != null">
+                and wa.category_name = #{category_id}
+            </if>
+<!--             权限控制 -->
+			<if test="childrendept != null">
+				and (FIND_IN_SET(d.dept_id, #{childrendept}) > 0)
+			</if>
+			<if test="bill_status_arr != null">
+				and wa.bill_status in ${bill_status_arr}
+			</if>
+			<if test="repay_status != null">
+                and wa.repay_status = #{repay_status}
+            </if>
+            <if test="repay_status_arr != null">
+                and wa.repay_status in ${repay_status_arr}
+            </if>
+            <if test="sales_epartment_name != null">
+                and d.dept_id = #{sales_epartment_name}
+            </if>
+    	</where>
+    	<if test="sortname != null and sortorder != null">
+			order by ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize != null">
+			limit ${offset}, ${pagesize}
+		</if>
+    </select>
+    
+    <!-- 查询还款列表数量(带分页：使用sql片段) -->
+    <select id="searchRepaymentCount" parameterType="map" resultType="int">
+    	<include refid="query_notary_warn_repay_total"></include>  
+    	<where>
+    		wa.enable_flag = 1
+    	    <if test="bill_code != null">
+                and (wa.bill_code like #{bill_code} or wa.bill_code_group like #{bill_code})
+            </if>
+            <if test="salesman_name_str != null">
+                and (wa.salesman_name like '${salesman_name_str}' or wa.salesman_shortcode like '${salesman_name_str}')
+            </if>
+            <if test="appl_date_begin != null">
+                and wa.appl_date &gt;= #{appl_date_begin}
+            </if>
+            <if test="appl_date_end != null">
+                and wa.appl_date &lt;= #{appl_date_end}
+            </if>
+            <if test="customer_name != null">
+                and wa.customer_name like '${customer_name}'
+            </if>
+            <if test="mobile_telephone != null">
+                and wa.mobile_telephone like '${mobile_telephone}'
+            </if>
+            <if test="end_time_begin != null">
+                and wa.appl_date &gt;= #{end_time_begin}
+            </if>
+            <if test="end_time_end != null">
+                and wa.appl_date &lt;= #{end_time_end}
+            </if>
+            <if test="bill_status != null">
+                and wa.bill_status = #{bill_status}
+            </if>
+            <if test="bill_status_ne != null">
+                and wa.bill_status != #{bill_status_ne}
+            </if>
+            <if test="current_repay_date != null">
+                and wa.current_repay_date = #{current_repay_date}
+            </if>
+            <!-- 还款提醒查询日期包含当前天、前一个月的本天、后一天、后两天 -->
+            <if test="current_repay_date_reminder != null">
+                and (wa.current_repay_date in (date_format(date_sub(#{current_repay_date_reminder}, interval 1 month), '%y-%m-%d'), 
+										    date_format(date_add(date_sub(#{current_repay_date_reminder}, interval 1 month), interval 1 day), '%y-%m-%d'), 
+											date_format(date_add(date_sub(#{current_repay_date_reminder}, interval 1 month), interval 2 day), '%y-%m-%d'),
+										    #{current_repay_date_reminder})
+				)
+            </if>
+            <if test="bill_status_arr != null">
+				and wa.bill_status in ${bill_status_arr}
+			</if>
+			<if test="category_id != null">
+                and wa.category_name = #{category_id}
+            </if>
+            <if test="repay_status != null">
+                and wa.repay_status = #{repay_status}
+            </if>
+            <if test="repay_status_arr != null">
+                and wa.repay_status in ${repay_status_arr}
+            </if>
+            <!-- 权限控制 -->
+			<if test="childrendept != null">
+				and (FIND_IN_SET(d.dept_id, #{childrendept}) > 0)
+			</if>
+    	</where>
+    </select>
+    
+    <!-- 查询还款确认列表(带分页：使用视图) -->
+    <select id="searchRepaymentConfirmationList" parameterType="map" resultType="map">
+    	<include refid="query_notary_warn_repay"></include>  
+    	<where>
+    		wa.enable_flag = 1
+    	    <if test="bill_code != null">
+                and (wa.bill_code like #{bill_code} or wa.bill_code_group like #{bill_code})
+            </if>
+            <if test="salesman_name_str != null">
+                and (wa.salesman_name like '${salesman_name_str}' or wa.salesman_shortcode like '${salesman_name_str}')
+            </if>
+            <if test="appl_date_begin != null">
+                and wa.appl_date &gt;= #{appl_date_begin}
+            </if>
+            <if test="appl_date_end != null">
+                and wa.appl_date &lt;= #{appl_date_end}
+            </if>
+            <if test="customer_name != null">
+                and wa.customer_name like '${customer_name}'
+            </if>
+            <if test="mobile_telephone != null">
+                and wa.mobile_telephone like '${mobile_telephone}'
+            </if>
+            <if test="end_time_begin != null">
+                and wa.appl_date &gt;= #{end_time_begin}
+            </if>
+            <if test="end_time_end != null">
+                and wa.appl_date &lt;= #{end_time_end}
+            </if>
+            <if test="bill_status != null">
+                and wa.bill_status = #{bill_status}
+            </if>
+            <if test="bill_status_ne != null">
+                and wa.bill_status != #{bill_status_ne}
+            </if>
+            <if test="current_repay_date != null">
+                and wa.current_repay_date = #{current_repay_date}
+            </if>
+<!--             还款提醒查询日期包含当前天、前一个月的本天、后一天、后两天 -->
+            <if test="current_repay_date_reminder != null">
+<!--                 and (current_repay_date in (date_format(date_sub(#{current_repay_date_reminder}, interval 1 month), '%y-%m-%d'),  -->
+<!-- 										    date_format(date_add(date_sub(#{current_repay_date_reminder}, interval 1 month), interval 1 day), '%y-%m-%d'),  -->
+<!-- 											date_format(date_add(date_sub(#{current_repay_date_reminder}, interval 1 month), interval 2 day), '%y-%m-%d'), -->
+<!-- 										    #{current_repay_date_reminder}) -->
+<!-- 				) -->
+<!-- 				还款确认只查当天 -->
+				and wa.current_repay_date = #{current_repay_date_reminder}
+				
+            </if>
+            <if test="category_id != null">
+                and wa.category_name = #{category_id}
+            </if>
+<!--             权限控制 -->
+			<if test="childrendept != null">
+				and (FIND_IN_SET(d.dept_id, #{childrendept}) > 0)
+			</if>
+			<if test="bill_status_arr != null">
+				and wa.bill_status in ${bill_status_arr}
+			</if>
+			<if test="repay_status != null">
+                and wa.repay_status = #{repay_status}
+            </if>
+            <if test="repay_status_arr != null">
+                and wa.repay_status in ${repay_status_arr}
+            </if>
+    	</where>
+    	<if test="sortname != null and sortorder != null">
+			order by ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize != null">
+			limit ${offset}, ${pagesize}
+		</if>
+    </select>
+      <!-- 查询还款确认列表数量(带分页：使用视图) -->
+    <select id="searchRepaymentConfirmationCount" parameterType="map" resultType="int">
+    	<include refid="query_notary_warn_repay_total"></include>  
+    	<where>
+    		wa.enable_flag = 1
+    	    <if test="bill_code != null">
+                and (wa.bill_code like #{bill_code} or wa.bill_code_group like #{bill_code})
+            </if>
+            <if test="salesman_name_str != null">
+                and (wa.salesman_name like '${salesman_name_str}' or wa.salesman_shortcode like '${salesman_name_str}')
+            </if>
+            <if test="appl_date_begin != null">
+                and wa.appl_date &gt;= #{appl_date_begin}
+            </if>
+            <if test="appl_date_end != null">
+                and wa.appl_date &lt;= #{appl_date_end}
+            </if>
+            <if test="customer_name != null">
+                and wa.customer_name like '${customer_name}'
+            </if>
+            <if test="mobile_telephone != null">
+                and wa.mobile_telephone like '${mobile_telephone}'
+            </if>
+            <if test="end_time_begin != null">
+                and wa.appl_date &gt;= #{end_time_begin}
+            </if>
+            <if test="end_time_end != null">
+                and wa.appl_date &lt;= #{end_time_end}
+            </if>
+            <if test="bill_status != null">
+                and wa.bill_status = #{bill_status}
+            </if>
+            <if test="bill_status_ne != null">
+                and wa.bill_status != #{bill_status_ne}
+            </if>
+            <if test="current_repay_date != null">
+                and wa.current_repay_date = #{current_repay_date}
+            </if>
+          <!--             还款提醒查询日期包含当前天、前一个月的本天、后一天、后两天 -->
+            <if test="current_repay_date_reminder != null">
+<!--                 and (current_repay_date in (date_format(date_sub(#{current_repay_date_reminder}, interval 1 month), '%y-%m-%d'),  -->
+<!-- 										    date_format(date_add(date_sub(#{current_repay_date_reminder}, interval 1 month), interval 1 day), '%y-%m-%d'),  -->
+<!-- 											date_format(date_add(date_sub(#{current_repay_date_reminder}, interval 1 month), interval 2 day), '%y-%m-%d'), -->
+<!-- 										    #{current_repay_date_reminder}) -->
+<!-- 				) -->
+<!-- 				还款确认只查当天 -->
+				and wa.current_repay_date = #{current_repay_date_reminder}
+            </if>
+            <if test="bill_status_arr != null">
+				and wa.bill_status in ${bill_status_arr}
+			</if>
+			<if test="category_id != null">
+                and wa.category_name = #{category_id}
+            </if>
+            <if test="repay_status != null">
+                and wa.repay_status = #{repay_status}
+            </if>
+            <if test="repay_status_arr != null">
+                and wa.repay_status in ${repay_status_arr}
+            </if>
+            <!-- 权限控制 -->
+			<if test="childrendept != null">
+				and (FIND_IN_SET(d.dept_id, #{childrendept}) > 0)
+			</if>
+    	</where>
+    </select>
+    
+    
+     <!-- 查询生日提醒列表(带分页：使用视图) -->
+    <select id="searchBirthdayVNotaryWarnList" parameterType="map" resultType="map">
+    	<include refid="query_notary_warn_repay"></include>  
+    	<where>
+    		wa.enable_flag = 1
+    	    <if test="bill_code != null">
+                and wa.bill_code like '${bill_code}'
+            </if>
+            <if test="salesman_name_str != null">
+                and (wa.salesman_name like '${salesman_name_str}' or wa.salesman_shortcode like '${salesman_name_str}')
+            </if>
+            <if test="customer_name != null">
+                and wa.customer_name like '${customer_name}'
+            </if>
+            <if test="mobile_telephone != null">
+                and (wa.mobile_telephone like '${mobile_telephone}' or wa.com_debtor_tel like '${mobile_telephone}' or  wa.send_message_number like '${mobile_telephone}')
+            </if>
+            <if test="birthday_date != null">
+                and  date_format(<include refid="query_notary_warn_birthday_date"></include>,'%m-%d')= #{birthday_date}
+              
+            </if>
+            <if test="repay_status_ne != null">
+                and find_in_set(wa.repay_status,#{repay_status_ne})>0
+            </if>
+            <if test="repay_status != null">
+                and wa.repay_status=#{repay_status}
+            </if>
+             <if test="category_name != null">
+                and wa.category_name = #{category_name}
+            </if>
+            <!-- 权限控制 -->
+			<if test="childrendept != null">
+				and (FIND_IN_SET(d.dept_id, #{childrendept}) > 0)
+			</if>
+    	</where>
+    	<if test="sortname != null and sortorder != null">
+			order by ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize != null">
+			limit ${offset}, ${pagesize}
+		</if>
+    </select>
+        <!-- 查询生日提醒列表数量(带分页：使用视图) -->
+    <select id="searchBirthdayVNotaryWarnCount" parameterType="map" resultType="int">
+    	<include refid="query_notary_warn_repay_total"></include>  
+    	<where>
+    		wa.enable_flag = 1
+    	    <if test="bill_code != null">
+                and wa.bill_code like '${bill_code}'
+            </if>
+            <if test="salesman_name_str != null">
+                and (wa.salesman_name like '${salesman_name_str}' or wa.salesman_shortcode like '${salesman_name_str}')
+            </if>
+            <if test="customer_name != null">
+                and wa.customer_name like '${customer_name}'
+            </if>
+            <if test="mobile_telephone != null">
+                and (wa.mobile_telephone like '${mobile_telephone}' or wa.com_debtor_tel like '${mobile_telephone}' or  wa.send_message_number like '${mobile_telephone}')
+            </if>
+            <if test="birthday_date != null">
+                and date_format(<include refid="query_notary_warn_birthday_date"></include>,'%m-%d')= #{birthday_date}
+            </if>
+            <if test="repay_status_ne != null">
+                and find_in_set(wa.repay_status,#{repay_status_ne})>0
+            </if>
+            <if test="repay_status != null">
+                and wa.repay_status=#{repay_status}
+            </if>
+             <if test="category_name != null">
+                and wa.category_name = #{category_name}
+            </if>
+            <!-- 权限控制 -->
+			<if test="childrendept != null">
+				and (FIND_IN_SET(d.dept_id, #{childrendept}) > 0)
+			</if>
+    	</where>
+    </select>
+    
+	     <!-- 获取信息放款数据同步到还款提醒模块 baisong -->
+    <select id="getCreditMessageToRepayWarn" parameterType="map" resultType="WmsCreCreditNotaryWarn">
+       SELECT
+       	  h.wms_cre_credit_head_id,
+       	  h.bill_code,
+       	  h.cre_type,
+		  date_format( h.create_timestamp ,'%Y-%m-%d')  AS appl_date, <!-- 申请时间-->
+		  h.cre_loan_type as category_name, <!-- 产品名称-->
+		  (case  h.cre_type when '1' THEN  h.visa_limit*10000  when '2' then  h.appro_limit*10000 end ) as appro_limit, <!-- 面签金额-->
+		  "1" as bill_status,
+		  h.salesman_shortcode as salesman_shortcode, <!-- 业务员短工号-->
+		  h.salesman_name as salesman_name, <!-- 业务员姓名  -->
+		  (SELECT personnel_id from pm_personnel where personnel_shortCode =h.salesman_shortcode) as salesman_id,
+		  h.city as city,<!-- 业务员城市-->
+		  h.salesman_dept_id as salesman_own_dept_id,<!-- 业务员所在部门id-->
+		  (SELECT dept_code from sys_dept where dept_id=h.salesman_dept_id) as salesman_own_dept_code,<!-- 业务员所在部门code-->
+		  h.salesman_city_code as salesman_city_code,<!-- 业务员所在城市编码-->
+		  d.dept_id as salesman_dept_id,<!-- 业务员团队id-->
+		  d.dept_code as salesman_dept_code,<!-- 业务员团队code-->
+		  (SELECT personnel_name from pm_personnel where personnel_id=d.dept_personId) as team_manager_name,
+		  (SELECT personnel_shortCode from pm_personnel where personnel_id=d.dept_personId) as team_manager_code,
+		  (case d.dept_level when "6" then (SELECT dept_id from sys_dept where dept_id=d.dept_pid) when "5" then dept_code end) as sales_epartment_id,
+		  (case d.dept_level when "6" then (SELECT dept_code from sys_dept where dept_id=d.dept_pid) when "5" then dept_code end) as sales_epartment_code,
+		  (case d.dept_level when "6" then (SELECT dept_name from sys_dept where dept_id=d.dept_pid) when "5" then dept_name end) as sales_epartment_name,
+		  c.customer_name as customer_name, <!-- 客户姓名  -->
+		  c.id_card as id_card, <!-- 客户身份证号码  -->
+		  c.mobile_telephone1 as mobile_telephone, <!-- 客户手机号码  -->
+		  c.fixed_telephone as debtor_fixed_line, <!-- 固定电话  -->
+		  c.address_more as current_address_more, <!-- 客户通讯地址  -->
+		  c1.customer_name as com_debtor_name, <!-- 共带人姓名  -->
+		  c1.id_card as com_debtor_identity_id, <!-- 共带人身份证号码  -->
+		  c1.mobile_telephone1 as com_debtor_tel, <!-- 共带人手机号  -->
+		  IFNULL(p.protocol_date,r.protocol_creat_date) as protocol_date, <!-- 合同签订日期  -->
+		  IFNULL(p.borrow_end_date,r.repay_end_date)as borrow_end_date, <!-- 合同结束日期  -->
+		  p.protocol_id_year_num as protocol_id_year_num, <!-- 合同编号  -->
+		  IFNULL(p.borrow_interest,r.borrow_interest) as borrow_interest, <!--利率  -->
+		  IFNULL(p.borrow_deadline,r.borrow_deadline) as borrow_deadline, <!-- 期数  -->
+		  p.principal_lower as principal_lower, <!-- 合同金额  -->
+		  IFNULL(p.refund_limit_month ,r.refund_limit_month ) as refund_limit_month, <!-- 期还款金额  -->
+		  p.refund_bank , <!--银行  -->
+		  p.refund_number, <!-- 卡号  -->
+		  p.refund_name, <!--姓名  -->
+		  a.notarial_fee as  notarial_fee, <!-- 公证费  -->
+		  a.platform_fee as  platform_fee, <!-- 平台费  -->
+		  a.loan_amount as loan_amount, <!-- 打卡金额  -->
+		  <!-- r.current_repay_date,还款日期  因需求要求如果日期为31号变为30号 -->
+		  (case when DAY(r.current_repay_date)=31 then DATE_SUB(current_repay_date,INTERVAL  1 day) else r.current_repay_date end )as current_repay_date,
+		  r.repay_period, <!-- 已还期数  -->
+		  r.un_pay_principal, <!-- 未还金额  -->
+		  r.repay_status,  <!-- 还款状态 -->
+		  h.enable_flag,
+		  #{create_user_id} as create_user_id,
+		  #{create_user_name} as create_user_name,
+		  now() as create_timestamp,
+		  #{create_user_id} as last_update_user_id,
+		  now() as last_update_timestamp,
+		  (case #{wms_cre_credit_head_id} when '' then '手动批量导入' else '自动导入' end) as warn_remak,
+		  (case #{wms_cre_credit_head_id} when '' then '10' else '11' end) as data_sources,
+		  g.group_date,
+		  g.bill_code_group
+		  
+		FROM
+			wms_cre_credit_head h
+		LEFT JOIN wms_cre_credit_line_customer_change_head  c on  c.enable_flag=1 and h.wms_cre_credit_head_id=c.wms_cre_credit_head_id and c.is_major=1
+		LEFT JOIN (SELECT 
+									c.wms_cre_credit_head_id,
+									c.customer_name ,
+									c.id_card ,
+									c.mobile_telephone1,
+									c.fixed_telephone
+								FROM
+									wms_cre_credit_line_customer_change_head c
+								WHERE 
+								 enable_flag = 1 and c.is_major!=1 
+								GROUP BY wms_cre_credit_head_id)  c1 on  h.wms_cre_credit_head_id=c1.wms_cre_credit_head_id 
+		LEFT JOIN wms_cre_appro_borrow_protocol p on h.wms_cre_credit_head_id=p.wms_cre_credit_head_id  and p.enable_flag=1
+		LEFT JOIN wms_fina_cre_loan_app a on h.wms_cre_credit_head_id=a.wms_cre_credit_head_id and a.enable_flag=1
+		LEFT JOIN wms_fina_cre_repay r on h.wms_cre_credit_head_id=r.wms_cre_credit_head_id and a.enable_flag=1
+		LEFT JOIN sys_dept d on d.dept_id=h.salesman_dept_id
+		LEFT JOIN wms_cre_credit_group g on h.wms_cre_credit_group_id=g.wms_cre_credit_group_id and g.enable_flag=1
+		<where>
+	    	h.enable_flag = 1
+	    	<!-- 信贷：0 草稿 1待复核 2待贷前审核 3待终审 4待面签  5面签通过7  6待放款 7已完成 9终止 10 待签约 11已签约 12 复核退回 13 补件中 14 待审批 15 待复议修订 -->
+			and h.enable_flag=1 and h.cre_type=#{cre_type} 
+			and h.wms_cre_credit_head_id NOT in(SELECT wms_cre_credit_head_id from wms_cre_credit_notary_warn where wms_cre_credit_head_id is not NULL and enable_flag=1  GROUP BY wms_cre_credit_head_id)
+         <if test="wms_cre_credit_head_id != null">
+            and h.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+         </if>
+          <if test="bill_status != null">
+              and h.bill_status =#{bill_status} 
+         </if>
+         </where>
+    </select>
+	<!-- save -->
+	<insert id="saveBatch" parameterType="java.util.List">
+		INSERT INTO wms_cre_credit_notary_warn
+		(
+            wms_cre_credit_notary_warn_id,
+            bill_code,
+            bill_status,
+            end_time,
+            end_reason,
+            end_day_number,
+            appl_date,
+            customer_name,
+            id_card,
+            current_address_more,
+            mobile_telephone,
+            com_debtor_name,
+            com_debtor_identity_id,
+            com_debtor_tel,
+            debtor_fixed_line,
+            protocol_date,
+            borrow_end_date,
+            protocol_id_year_num,
+            category_name,
+            borrow_interest,
+            appro_limit,
+            borrow_deadline,
+            loan_amount,
+            platform_fee,
+            notarial_fee,
+            principal_lower,
+            refund_limit_month,
+            salesman_name,
+            salesman_shortcode,
+            salesman_dept_code,
+            team_manager_name,
+            team_manager_code,
+            sales_epartment_code,
+            sales_epartment_name,
+            create_user_id,
+            create_user_name,
+            create_timestamp,
+            last_update_user_id,
+            last_update_timestamp,
+            enable_flag,
+            warn_remak,
+            alreadyse_send_message_number,
+            is_weekend_not_remind,
+            data_sources,
+            is_cycles,
+            clean_up_date,
+            clean_up_info,
+            refund_bank,
+            refund_number,
+            refund_name,
+            repay_period,
+            un_pay_principal,
+            cre_type,
+            send_message_number,
+            send_message_time,
+            repay_status,
+            wms_cre_credit_head_id,
+            current_repay_date,
+            send_message_date,
+            group_date,
+            bill_code_group,
+            salesman_id,
+            city,
+            salesman_own_dept_id,
+            salesman_own_dept_code,
+            salesman_city_code,
+            salesman_dept_id,
+            sales_epartment_id
+            
+		)
+		VALUES
+		 <foreach collection="list" item="item" index="index" separator="," >  
+		 (	
+				#{item.wms_cre_credit_notary_warn_id},
+                #{item.bill_code},
+                #{item.bill_status},
+                #{item.end_time},
+                #{item.end_reason},
+                #{item.end_day_number},
+                #{item.appl_date},
+                #{item.customer_name},
+                #{item.id_card},
+                #{item.current_address_more},
+                #{item.mobile_telephone},
+                #{item.com_debtor_name}	,	
+				#{item.com_debtor_identity_id},	
+				#{item.com_debtor_tel},	
+				#{item.debtor_fixed_line},		
+				#{item.protocol_date},		
+				#{item.borrow_end_date},		
+				#{item.protocol_id_year_num},		
+				#{item.category_name},		
+				#{item.borrow_interest},		
+				#{item.appro_limit},	
+				#{item.borrow_deadline},	
+				#{item.loan_amount},	
+				#{item.platform_fee},		
+				#{item.notarial_fee},		
+				#{item.principal_lower},		
+				#{item.refund_limit_month},		
+				#{item.salesman_name},		
+				#{item.salesman_shortcode},
+				#{item.salesman_dept_code},	
+				#{item.team_manager_name},	
+				#{item.team_manager_code},	
+				#{item.sales_epartment_code},	
+				#{item.sales_epartment_name},	
+				#{item.create_user_id},
+				#{item.create_user_name},	
+				#{item.create_timestamp},	
+				#{item.last_update_user_id},	
+				#{item.last_update_timestamp},	
+				#{item.enable_flag},	
+				#{item.warn_remak},
+				#{item.alreadyse_send_message_number},	
+				#{item.is_weekend_not_remind},	
+				#{item.data_sources},	
+				#{item.is_cycles},
+				#{item.clean_up_date},	
+				#{item.clean_up_info},
+				#{item.refund_bank},
+				#{item.refund_number},
+				#{item.refund_name},
+				#{item.repay_period},
+				#{item.un_pay_principal},
+				#{item.cre_type},
+				#{item.send_message_number},
+				#{item.send_message_time},
+				#{item.repay_status},
+				#{item.wms_cre_credit_head_id},
+				#{item.current_repay_date},
+				#{item.send_message_date},
+				#{item.group_date}, 
+				#{item.bill_code_group},
+	            #{item.salesman_id},
+	            #{item.city},
+	            #{item.salesman_own_dept_id},
+	            #{item.salesman_own_dept_code},
+	            #{item.salesman_city_code},
+	            #{item.salesman_dept_id},
+	            #{item.sales_epartment_id} 
+		)  
+    	</foreach>
+	</insert>
+	
+	
+	<!-- 贷款数据查询(带分页：使用视图) -->
+    <select id="searchloansSearchList" parameterType="map" resultType="map">
+    	<include refid="query_notary_warn_repay"></include>  
+    	<where>
+    		wa.enable_flag = 1
+    	    <if test="bill_code != null">
+                and (wa.bill_code like #{bill_code} or wa.bill_code_group like #{bill_code})
+            </if>
+            <if test="salesman_name_str != null">
+                and (wa.salesman_name like '${salesman_name_str}' or wa.salesman_shortcode like '${salesman_name_str}')
+            </if>
+            <if test="appl_date_begin != null">
+                and wa.appl_date &gt;= #{appl_date_begin}
+            </if>
+            <if test="appl_date_end != null">
+                and wa.appl_date &lt;= #{appl_date_end}
+            </if>
+            <if test="customer_name != null">
+                and wa.customer_name like '${customer_name}'
+            </if>
+            <if test="customer_name_all != null">
+                and (wa.customer_name like '${customer_name_all}' or wa.com_debtor_name like '${customer_name_all}')
+            </if>
+            <if test="mobile_telephone != null">
+                and wa.mobile_telephone like '${mobile_telephone}'
+            </if>
+            <if test="end_time_begin != null">
+                and wa.appl_date &gt;= #{end_time_begin}
+            </if>
+            <if test="end_time_end != null">
+                and wa.appl_date &lt;= #{end_time_end}
+            </if>
+            <if test="bill_status != null">
+                and wa.bill_status = #{bill_status}
+            </if>
+            <if test="bill_status_ne != null">
+                and wa.bill_status != #{bill_status_ne}
+            </if>
+            <if test="current_repay_date != null">
+                and wa.current_repay_date = #{current_repay_date}
+            </if>
+            <!-- 还款提醒查询日期包含当前天、前一个月的本天、后一天、后两天 -->
+            <if test="current_repay_date_reminder != null">
+                and (wa.current_repay_date in (date_format(date_sub(#{current_repay_date_reminder}, interval 1 month), '%y-%m-%d'), 
+										    date_format(date_add(date_sub(#{current_repay_date_reminder}, interval 1 month), interval 1 day), '%y-%m-%d'), 
+											date_format(date_add(date_sub(#{current_repay_date_reminder}, interval 1 month), interval 2 day), '%y-%m-%d'),
+										    #{current_repay_date_reminder})
+				)
+            </if>
+            <if test="category_id != null">
+                 and FIND_IN_SET(category_name ,REPLACE(REPLACE(#{category_id},'-1;',''),';',','))
+            </if>
+            <!-- 权限控制 -->
+			<if test="childrendept != null">
+				and (FIND_IN_SET(d.dept_id, #{childrendept}) > 0)
+			</if>
+			<if test="bill_status_arr != null">
+				and wa.bill_status in ${bill_status_arr}
+			</if>
+			<if test="repay_status != null">
+                and FIND_IN_SET(wa.repay_status ,REPLACE(#{repay_status},';',','))
+            </if>
+            <if test="repay_status_arr != null">
+                and wa.repay_status in ${repay_status_arr}
+            </if>
+            <if test="id_card != null">
+                and wa.id_card like '${id_card}'
+            </if>
+            <if test="id_card_all != null">
+                and (wa.id_card like '${id_card_all}' or wa.com_debtor_identity_id like '${id_card_all}')
+            </if>
+            <if test="team_manager_name != null">
+              <!--   and team_manager_name like '${team_manager_name}' -->
+               	and FIND_IN_SET(wa.team_manager_name ,#{team_manager_name})
+            </if>
+            <if test="appro_limit_str != null">
+                and CAST(wa.appro_limit  AS DECIMAL) &gt;=  CAST(#{appro_limit_str}  AS DECIMAL)
+            </if>
+            <if test="appro_limit_end != null">
+                and  CAST(wa.appro_limit  AS DECIMAL) &lt;=  CAST(#{appro_limit_end}  AS DECIMAL)
+            </if>
+            <if test="sales_epartment_name != null">
+                and FIND_IN_SET(d.dept_id ,REPLACE(#{sales_epartment_name},';',','))
+            </if>
+            <if test="protocol_date_begin != null">
+                and wa.protocol_date &gt;= #{protocol_date_begin}
+            </if>
+            <if test="protocol_date_end != null">
+                and wa.protocol_date &lt;= #{protocol_date_end}
+            </if>
+            <if test="borrow_end_date_begin != null">
+                and wa.borrow_end_date &gt;= #{borrow_end_date_begin}
+            </if>
+            <if test="borrow_end_date_end != null">
+                and wa.borrow_end_date &lt;= #{borrow_end_date_end}
+            </if>
+          
+            <if test="refund_limit_month_str != null">
+                and CAST(wa.refund_limit_month  AS DECIMAL) &gt;=  CAST(#{refund_limit_month_str}  AS DECIMAL)
+            </if>
+            <if test="refund_limit_month_end != null">
+                and  CAST(wa.refund_limit_month  AS DECIMAL) &lt;=  CAST(#{refund_limit_month_end}  AS DECIMAL)
+            </if>
+            <if test="loan_amount_str != null">
+                and CAST(wa.loan_amount  AS DECIMAL) &gt;=  CAST(#{loan_amount_str}  AS DECIMAL)
+            </if>
+            <if test="loan_amount_end != null">
+                and  CAST(wa.loan_amount  AS DECIMAL) &lt;=  CAST(#{loan_amount_end}  AS DECIMAL)
+            </if>
+            <if test="borrow_deadline != null">
+                and wa.borrow_deadline = #{borrow_deadline}
+            </if>
+            <if test="protocol_id_year_num != null">
+                and wa.protocol_id_year_num like #{protocol_id_year_num}
+            </if>
+            <if test="the_number != null">
+                and wa.the_number = #{the_number}
+            </if>
+            <if test="bill_type != null">
+                and FIND_IN_SET(wa.bill_type ,REPLACE(#{bill_type},';',','))
+            </if>
+            <if test="principal_lower_str != null">
+                and CAST(wa.principal_lower  AS DECIMAL) &gt;=  CAST(#{principal_lower_str}  AS DECIMAL)
+            </if>
+            <if test="principal_lower_end != null">
+                and  CAST(wa.principal_lower  AS DECIMAL) &lt;=  CAST(#{principal_lower_end}  AS DECIMAL)
+            </if>
+    	</where>
+    	<if test="sortname != null and sortorder != null">
+			order by ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize != null">
+			limit ${offset}, ${pagesize}
+		</if>
+    </select>
+    
+    
+     <!-- 贷款数据查询列表数量(使用视图) -->
+    <select id="searchloansSearchCount" parameterType="map" resultType="int">
+    	<include refid="query_notary_warn_repay_total"></include>  
+    	<where>
+    		wa.enable_flag = 1
+    	    <if test="bill_code != null">
+                and (wa.bill_code like #{bill_code} or wa.bill_code_group like #{bill_code})
+            </if>
+            <if test="salesman_name_str != null">
+                and (wa.salesman_name like '${salesman_name_str}' or wa.salesman_shortcode like '${salesman_name_str}')
+            </if>
+            <if test="appl_date_begin != null">
+                and wa.appl_date &gt;= #{appl_date_begin}
+            </if>
+            <if test="appl_date_end != null">
+                and wa.appl_date &lt;= #{appl_date_end}
+            </if>
+            <if test="customer_name != null">
+                and wa.customer_name like '${customer_name}'
+            </if>
+            <if test="customer_name_all != null">
+                and (wa.customer_name like '${customer_name_all}' or wa.com_debtor_name like '${customer_name_all}')
+            </if>
+            <if test="mobile_telephone != null">
+                and wa.mobile_telephone like '${mobile_telephone}'
+            </if>
+            <if test="end_time_begin != null">
+                and wa.appl_date &gt;= #{end_time_begin}
+            </if>
+            <if test="end_time_end != null">
+                and wa.appl_date &lt;= #{end_time_end}
+            </if>
+            <if test="bill_status != null">
+                and wa.bill_status = #{bill_status}
+            </if>
+            <if test="bill_status_ne != null">
+                and wa.bill_status != #{bill_status_ne}
+            </if>
+            <if test="current_repay_date != null">
+                and wa.current_repay_date = #{current_repay_date}
+            </if>
+            <!-- 还款提醒查询日期包含当前天、前一个月的本天、后一天、后两天 -->
+            <if test="current_repay_date_reminder != null">
+                and (wa.current_repay_date in (date_format(date_sub(#{current_repay_date_reminder}, interval 1 month), '%y-%m-%d'), 
+										    date_format(date_add(date_sub(#{current_repay_date_reminder}, interval 1 month), interval 1 day), '%y-%m-%d'), 
+											date_format(date_add(date_sub(#{current_repay_date_reminder}, interval 1 month), interval 2 day), '%y-%m-%d'),
+										    #{current_repay_date_reminder})
+				)
+            </if>
+            <if test="category_id != null">
+                 and FIND_IN_SET(wa.category_name ,REPLACE(REPLACE(#{category_id},'-1;',''),';',','))
+            </if>
+            <!-- 权限控制 -->
+			<if test="childrendept != null">
+				and (FIND_IN_SET(d.dept_id, #{childrendept}) > 0)
+			</if>
+			<if test="bill_status_arr != null">
+				and wa.bill_status in ${bill_status_arr}
+			</if>
+			<if test="repay_status != null">
+                and FIND_IN_SET(wa.repay_status ,REPLACE(#{repay_status},';',','))
+            </if>
+            <if test="repay_status_arr != null">
+                and wa.repay_status in ${repay_status_arr}
+            </if>
+            <if test="id_card != null">
+                and wa.id_card like '${id_card}'
+            </if>
+            <if test="id_card_all != null">
+                and (wa.id_card like '${id_card_all}' or wa.com_debtor_identity_id like '${id_card_all}')
+            </if>
+            <if test="team_manager_name != null">
+              <!--   and team_manager_name like '${team_manager_name}' -->
+               	and FIND_IN_SET(wa.team_manager_name ,#{team_manager_name})
+            </if>
+            <if test="appro_limit_str != null">
+                and CAST(wa.appro_limit  AS DECIMAL) &gt;=  CAST(#{appro_limit_str}  AS DECIMAL)
+            </if>
+            <if test="appro_limit_end != null">
+                and  CAST(wa.appro_limit  AS DECIMAL) &lt;=  CAST(#{appro_limit_end}  AS DECIMAL)
+            </if>
+            <if test="sales_epartment_name != null">
+                and FIND_IN_SET(d.dept_id ,REPLACE(#{sales_epartment_name},';',','))
+            </if>
+            <if test="protocol_date_begin != null">
+                and wa.protocol_date &gt;= #{protocol_date_begin}
+            </if>
+            <if test="protocol_date_end != null">
+                and wa.protocol_date &lt;= #{protocol_date_end}
+            </if>
+            <if test="borrow_end_date_begin != null">
+                and wa.borrow_end_date &gt;= #{borrow_end_date_begin}
+            </if>
+            <if test="borrow_end_date_end != null">
+                and wa.borrow_end_date &lt;= #{borrow_end_date_end}
+            </if>
+          
+            <if test="refund_limit_month_str != null">
+                and CAST(wa.refund_limit_month  AS DECIMAL) &gt;=  CAST(#{refund_limit_month_str}  AS DECIMAL)
+            </if>
+            <if test="refund_limit_month_end != null">
+                and  CAST(wa.refund_limit_month  AS DECIMAL) &lt;=  CAST(#{refund_limit_month_end}  AS DECIMAL)
+            </if>
+            <if test="loan_amount_str != null">
+                and CAST(wa.loan_amount  AS DECIMAL) &gt;=  CAST(#{loan_amount_str}  AS DECIMAL)
+            </if>
+            <if test="loan_amount_end != null">
+                and  CAST(wa.loan_amount  AS DECIMAL) &lt;=  CAST(#{loan_amount_end}  AS DECIMAL)
+            </if>
+            <if test="borrow_deadline != null">
+                and wa.borrow_deadline = #{borrow_deadline}
+            </if>
+            <if test="protocol_id_year_num != null">
+                and wa.protocol_id_year_num like #{protocol_id_year_num}
+            </if>
+            <if test="the_number != null">
+                and wa.the_number = #{the_number}
+            </if>
+            <if test="bill_type != null">
+                and FIND_IN_SET(wa.bill_type ,REPLACE(#{bill_type},';',','))
+            </if>
+            <if test="principal_lower_str != null">
+                and CAST(wa.principal_lower  AS DECIMAL) &gt;=  CAST(#{principal_lower_str}  AS DECIMAL)
+            </if>
+            <if test="principal_lower_end != null">
+                and  CAST(wa.principal_lower  AS DECIMAL) &lt;=  CAST(#{principal_lower_end}  AS DECIMAL)
+            </if>
+    	</where>
+    </select>
+    <!-- get entity by pk -->
+    <select id="getTeamManagerName" parameterType="map" resultType="java.util.HashMap">
+       	select DISTINCT(team_manager_name) from v_notary_warn <where> enable_flag=1 and team_manager_name is not null and team_manager_name !=""
+    	    <if test="team_manager_name != null">
+              	and team_manager_name like '${team_manager_name}'
+            </if>
+    	</where>
+    </select>
+    <!-- get entity by pk -->
+    <select id="getList" parameterType="map" resultType="WmsCreCreditNotaryWarn">
+        select
+  			*
+         from wms_cre_credit_notary_warn
+        <where>
+	        <if test="list != null">
+		        wms_cre_credit_notary_warn_id in
+		        (<foreach collection="list" item="item" index="index" separator="," > 
+		       		 #{item} 
+		        </foreach>)
+	        </if>
+        </where>
+    </select>
+    <!-- get entity by pk -->
+    <select id="getGroupALlList" parameterType="map" resultType="java.util.HashMap">
+        select
+  			t1.wms_cre_credit_notary_warn_id,
+  			t2.payment_contract_type
+         from wms_cre_credit_notary_warn t1
+         left join wms_sys_protocol_property t2 on t1.category_name=t2.cre_loan_type 
+        <where>
+		     bill_code_group =#{bill_code_group}
+	        and t2.payment_contract_type=1
+	        and t1.enable_flag=1
+	        and t2.enable_flag=1
+	        group by t2.payment_contract_type
+        </where>
+    </select>
+<!--     这个方法暂时作废    合同列表查询 -->
+   <!--  <select id="getAgreeInfoListForZQa" parameterType="map" resultType="java.util.HashMap">
+        select
+        	wms_cre_credit_notary_warn_id,
+            bill_code,
+            bill_status,
+            end_time,
+            end_reason,
+            end_day_number,
+            appl_date,
+            customer_name,
+            id_card,
+            current_address_more,
+            mobile_telephone,
+            com_debtor_name,
+            com_debtor_identity_id,
+            com_debtor_tel,
+            debtor_fixed_line,
+            protocol_date,
+            borrow_end_date,
+            protocol_id_year_num,
+            category_name,
+            IFNULL(REPLACE(FORMAT(borrow_interest, 2), ',', ''), '') AS borrow_interest,
+            IFNULL(REPLACE(FORMAT(appro_limit, 2), ',', ''), '') AS appro_limit,
+            borrow_deadline,
+            IFNULL(REPLACE(FORMAT(loan_amount, 2), ',', ''), '') AS loan_amount,
+            platform_fee,
+            notarial_fee,
+            IFNULL(REPLACE(FORMAT(principal_lower, 2), ',', ''), '') AS principal_lower,
+            IFNULL(REPLACE(FORMAT(refund_limit_month, 2), ',', ''), '') AS refund_limit_month,
+            salesman_name,
+            salesman_shortcode,
+            (select substring_index(substring_index(value_meaning,"省",-1),'市',1)  from wms_sys_dict_data d,pm_personnel p
+		where
+			d.wms_sys_dict_id = 25
+			and d.value_code=p.personnel_regionNumber
+			and p.personnel_shortCode = salesman_shortcode)as city,
+            CONCAT(salesman_name,"/",salesman_shortcode) as salesman_name_str,
+            salesman_dept_code,
+			(select dept_id from sys_dept where dept_code = salesman_dept_code)as dept_id,
+            team_manager_name,
+            team_manager_code,
+            sales_epartment_code,
+            (select dept_id from sys_dept where dept_code = sales_epartment_name)as sales_dept_id,
+            sales_epartment_name,
+            create_user_id,
+            create_user_name,
+            create_timestamp,
+            date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+            last_update_user_id,
+            last_update_timestamp,
+            enable_flag,
+            warn_remak,
+            alreadyse_send_message_number,
+            is_weekend_not_remind,
+            data_sources,
+            is_cycles,
+            clean_up_date,
+            clean_up_info,
+            refund_bank,
+            refund_number,
+            refund_name,
+            repay_period,
+            un_pay_principal,
+            cre_type,
+            send_message_number,
+            send_message_time,
+            repay_status,
+            (select value_meaning from wms_sys_dict_data where value_code = repay_status
+				and wms_sys_dict_id = 122)as repay_status_name,
+            wms_cre_credit_head_id,
+            current_repay_date,
+            send_message_date,
+            bill_type,
+           
+			ifnull((select value_meaning from wms_sys_dict_data where value_code = bill_type
+				and wms_sys_dict_id = 124), '新增') as bill_type_name,
+            the_number,
+            bill_code_group,
+            group_date,
+            (select bill_code from wms_cre_credit_service_type where wms_cre_credit_notary_warn_id = wms_cre_credit_notary_warn_id)
+            as bill_code_original,
+            bill_code_group
+         from 
+         	wms_cre_credit_notary_warn
+        <where>
+             权限控制
+			<if test="childrendept != null">
+				and ((FIND_IN_SET(dept_id, #{childrendept}) > 0) or (FIND_IN_SET(sales_dept_id, #{childrendept}) > 0))
+			</if>
+            <if test="bill_code != null">
+				and (bill_code like #{bill_code} OR bill_code_group LIKE #{bill_code})
+			</if>
+            <if test="create_timestamp_begin != null">
+				and date_format(create_timestamp,'%Y-%m-%d') &gt;= #{create_timestamp_begin}
+			</if>
+			<if test="create_timestamp_end != null">
+				and date_format(create_timestamp,'%Y-%m-%d') &lt;= #{create_timestamp_end}
+			</if>
+			<if test="salesman_name!=null or salesman_shortcode !=null">
+				and (salesman_name like#{salesman_name} or
+				salesman_shortcode like #{salesman_shortcode})
+			</if>
+			<if test="id_card!=null">
+				and id_card like #{id_card}
+			</if>
+			<if test="customer_name != null">
+				and customer_name like #{customer_name}
+			</if>
+			
+			<if test="bill_type != null and bill_type == 2">
+				and repay_status in (1,2,4,5,7)
+				and bill_type = '02'
+			</if>
+			<if test="bill_type != null and bill_type == 3">
+				and repay_status = 3
+				and bill_type = '03'
+			</if>
+			<if test="repay_status != null and repay_status != -1">
+				and repay_status = #{repay_status}
+			</if>
+        </where>
+        <if test="sortname != null and sortorder != null">
+			order by ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize != null">
+			limit ${offset}, ${pagesize}
+		</if>
+     </select> -->
+    
+    
+        <select id="getAgreeInfoListForZQ" parameterType="map" resultType="java.util.HashMap">
+      SELECT * FROM (
+		select 
+			t1.wms_cre_credit_head_id,
+			t3.old_wms_cre_credit_notary_warn_id as wms_cre_credit_notary_warn_id,
+			t3.old_wms_cre_credit_head_id,
+			t1.bill_code,
+			t1.cre_type,
+			t1.bill_status,
+			t1.create_timestamp,
+			date_format(t1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+			t2.customer_name,
+			IFNULL(t2.id_card,t7.debtor_identity_id) as id_card,
+			IFNULL(REPLACE(FORMAT(t1.appro_limit, 0), ',', ''), '') AS appro_limit,
+			t1.salesman_shortcode,
+			CONCAT(t1.salesman_name,"/",t1.salesman_shortcode) as salesman_name_str,
+			t1.city,
+			t1.bill_type,
+			ifnull((select value_meaning from wms_sys_dict_data where value_code = t1.bill_type
+				and wms_sys_dict_id = 124), '新增') as bill_type_name,
+			t3.the_number  as the_number,
+			t3.bill_code  as bill_code_original,
+			t1.is_guarantee,
+			t1.salesman_dept_id as dept_id,
+			'' as sales_dept_id,
+			'' as repay_status,
+			'' AS repay_status_name,
+			'' as bill_code_group
+			from wms_cre_credit_head
+					t1,wms_cre_credit_line_customer_change_head t2
+			left join wms_cre_credit_service_type t3 on t2.wms_cre_credit_head_id=t3.wms_cre_credit_head_id and t3.enable_flag=1
+			LEFT JOIN wms_cre_appro_borrow_protocol t7 ON t7.wms_cre_credit_head_id = t2.wms_cre_credit_head_id
+			AND t7.enable_flag = 1
+			where
+				t1.wms_cre_credit_head_id=t2.wms_cre_credit_head_id and
+				t1.enable_flag=1 and t2.is_major=1
+				and t1.bill_status in ('I','KT') 
+				and t1.version_number='3'
+				and t1.cre_type='2'
+			<if test="bill_code != null">
+				and (t1.bill_code like #{bill_code} or (select ifnull(bill_code_group, '') from wms_cre_credit_group  where t1.wms_cre_credit_group_id = wms_cre_credit_group_id)  like #{bill_code})
+			</if>
+ 			<if test="create_timestamp_begin != null">
+				and date_format(t1.create_timestamp,'%Y-%m-%d') &gt;= #{create_timestamp_begin}
+			</if>
+			<if test="create_timestamp_end != null">
+				and date_format(t1.create_timestamp,'%Y-%m-%d') &lt;= #{create_timestamp_end}
+			</if>
+			<if test="salesman_name!=null or salesman_shortcode !=null">
+				and (t1.salesman_name like#{salesman_name} or
+				t1.salesman_shortcode like #{salesman_shortcode})
+			</if>
+			<if test="id_card!=null">
+				and t2.id_card like #{id_card}
+			</if>
+			<if test="customer_name != null">
+				and t2.customer_name like #{customer_name}
+			</if>
+			<if test="repay_status != null and repay_status != '-1'.toString()">
+				and 1=2
+			</if>
+			<if test="bill_type != null and bill_type == '2'.toString()">
+				and t1.bill_type ='02'
+			</if>
+			<if test="bill_type != null and bill_type == '3'.toString()">
+				and t1.bill_type = '03'
+			</if>
+			 <!-- 权限控制 -->
+			<if test="childrendept != null">
+				and (FIND_IN_SET(t1.salesman_dept_id, #{childrendept}) > 0)
+			</if>
+		UNION ALL
+
+					SELECT
+				t1.wms_cre_credit_head_id,
+				t1.wms_cre_credit_notary_warn_id,
+				(
+					SELECT
+						old_wms_cre_credit_head_id
+					FROM
+						wms_cre_credit_service_type
+					WHERE
+						wms_cre_credit_notary_warn_id = t1.wms_cre_credit_notary_warn_id
+					AND enable_flag = 1
+					GROUP BY
+						wms_cre_credit_notary_warn_id
+				) AS old_wms_cre_credit_head_id,
+				t1.bill_code,
+				t1.cre_type,
+				t1.bill_status,
+				IFNULL(t5.create_timestamp,t1.create_timestamp) as create_timestamp,
+		
+				date_format(
+					IFNULL(t5.create_timestamp,t1.create_timestamp),
+					'%Y-%m-%d %H:%i:%s'
+				) AS create_timestamp_str,
+				t1.customer_name,
+				t1.id_card,
+				IFNULL(
+					REPLACE (
+						FORMAT(t1.appro_limit / 10000, 0),
+						',',
+						''
+					),
+					''
+				) AS appro_limit,
+				t1.salesman_shortcode,
+				CONCAT(
+					t1.salesman_name,
+					"/",
+					t1.salesman_shortcode
+				) AS salesman_name_str,
+				t2.city,
+				t1.bill_type,
+				ifnull(
+					(
+						SELECT
+							value_meaning
+						FROM
+							wms_sys_dict_data
+						WHERE
+							value_code = t1.bill_type
+						AND wms_sys_dict_id = 124
+					),
+					'新增'
+				) AS bill_type_name,
+				t1.the_number,
+				(
+					SELECT
+						bill_code
+					FROM
+						wms_cre_credit_service_type
+					WHERE
+						wms_cre_credit_notary_warn_id = t1.wms_cre_credit_notary_warn_id
+				) AS bill_code_original,
+				'' AS is_guarantee,
+				t3.personnel_deptId AS dept_id,
+				t4.dept_id AS sales_dept_id,
+				t1.repay_status,
+				t6.value_meaning AS repay_status_name,
+				t1.bill_code_group
+			FROM
+				wms_cre_credit_notary_warn t1
+			LEFT JOIN (
+				SELECT
+					substring_index(
+						substring_index(value_meaning, "省" ,- 1),
+						'市',
+						1
+					) AS city,
+					p.personnel_shortCode
+				FROM
+					wms_sys_dict_data d,
+					pm_personnel p
+				WHERE
+					d.wms_sys_dict_id = 25
+				AND d.value_code = p.personnel_regionNumber
+			) t2 ON t2.personnel_shortCode = t1.salesman_shortcode
+			LEFT JOIN pm_personnel t3 ON t1.salesman_shortcode = t3.personnel_shortCode
+			LEFT JOIN sys_dept t4 ON t4.dept_code = t1.sales_epartment_code
+			LEFT JOIN wms_sys_dict_data t6 ON t6.value_code = t1.repay_status
+			AND wms_sys_dict_id = 122
+			LEFT JOIN wms_cre_credit_head t5 ON t5.wms_cre_credit_head_id = t1.wms_cre_credit_head_id
+			
+		<where>
+		t1.cre_type='2'
+			<if test="childrendept != null">
+				and ((FIND_IN_SET(t3.personnel_deptId, #{childrendept}) > 0) or (FIND_IN_SET(t4.dept_id, #{childrendept}) > 0))
+			</if>
+            <if test="bill_code != null">
+				and (t1.bill_code like #{bill_code} OR t1.bill_code_group LIKE #{bill_code})
+			</if>
+            <if test="create_timestamp_begin != null">
+				and date_format(t1.create_timestamp,'%Y-%m-%d') &gt;= #{create_timestamp_begin}
+			</if>
+			<if test="create_timestamp_end != null">
+				and date_format(t1.create_timestamp,'%Y-%m-%d') &lt;= #{create_timestamp_end}
+			</if>
+			<if test="salesman_name!=null or salesman_shortcode !=null">
+				and (t1.salesman_name like#{salesman_name} or
+				t1.salesman_shortcode like #{salesman_shortcode})
+			</if>
+			<if test="id_card!=null">
+				and t1.id_card like #{id_card}
+			</if>
+			<if test="customer_name != null">
+				and t1.customer_name like #{customer_name}
+			</if>
+			
+			<if test="bill_type != null and bill_type == '2'.toString()">
+				and t1.repay_status in (1,2,4,5,7)
+			</if>
+			<if test="bill_type != null and bill_type == '3'.toString()">
+				and t1.repay_status = 3
+				and t1.clean_up_date &gt; (SELECT date_sub(now(), interval 1 MONTH))
+			</if>
+			<if test="repay_status != null and repay_status != -1">
+				and t1.repay_status = #{repay_status}
+			</if>
+					
+        </where>
+			) t
+        <if test="sortname != null and sortorder != null">
+			order by ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize != null">
+			limit ${offset}, ${pagesize}
+	    </if>
+     </select>
+    
+    
+    
+    
+    
+    <select id="findCountAgreeInfoListForZQ" parameterType="map" resultType="int">
+          SELECT count(*) FROM (
+		select 
+			t1.bill_code
+
+			from wms_cre_credit_head
+					t1,wms_cre_credit_line_customer_change_head t2
+			where
+				t1.wms_cre_credit_head_id=t2.wms_cre_credit_head_id and
+				t1.enable_flag=1 and t2.is_major=1
+				and t1.bill_status in ('I','KT') 
+				and t1.version_number='3'
+				and t1.cre_type='2'
+			<if test="bill_code != null">
+				and (t1.bill_code like #{bill_code} or (select ifnull(bill_code_group, '') from wms_cre_credit_group  where t1.wms_cre_credit_group_id = wms_cre_credit_group_id)  like #{bill_code})
+			</if>
+ 			<if test="create_timestamp_begin != null">
+				and date_format(t1.create_timestamp,'%Y-%m-%d') &gt;= #{create_timestamp_begin}
+			</if>
+			<if test="create_timestamp_end != null">
+				and date_format(t1.create_timestamp,'%Y-%m-%d') &lt;= #{create_timestamp_end}
+			</if>
+			<if test="salesman_name!=null or salesman_shortcode !=null">
+				and (t1.salesman_name like#{salesman_name} or
+				t1.salesman_shortcode like #{salesman_shortcode})
+			</if>
+			<if test="id_card!=null">
+				and t2.id_card like #{id_card}
+			</if>
+			<if test="repay_status != null and repay_status != -1">
+				and 1=2
+			</if>
+			<if test="bill_type != null and bill_type == 2">
+				and t1.bill_type ='02'
+			</if>
+			<if test="bill_type != null and bill_type == 3">
+				and t1.bill_type = '03'
+			</if>
+			<if test="customer_name != null">
+				and t2.customer_name like #{customer_name}
+			</if>
+			 <!-- 权限控制 -->
+			<if test="childrendept != null">
+				and (FIND_IN_SET(t1.salesman_dept_id, #{childrendept}) > 0)
+			</if>
+		UNION ALL
+
+			select
+					t1.bill_code
+					FROM
+						wms_cre_credit_notary_warn t1
+					LEFT JOIN pm_personnel t3 on t1.salesman_shortcode=t3.personnel_shortCode
+					LEFT JOIN sys_dept t4 on t4.dept_code=t1.sales_epartment_code
+		<where>
+		t1.cre_type='2'
+			<if test="childrendept != null">
+				and ((FIND_IN_SET(t3.personnel_deptId, #{childrendept}) > 0) or (FIND_IN_SET(t4.dept_id, #{childrendept}) > 0))
+			</if>
+            <if test="bill_code != null">
+				and (bill_code like #{bill_code} OR bill_code_group LIKE #{bill_code})
+			</if>
+            <if test="create_timestamp_begin != null">
+				and date_format(t1.create_timestamp,'%Y-%m-%d') &gt;= #{create_timestamp_begin}
+			</if>
+			<if test="create_timestamp_end != null">
+				and date_format(t1.create_timestamp,'%Y-%m-%d') &lt;= #{create_timestamp_end}
+			</if>
+			<if test="salesman_name!=null or salesman_shortcode !=null">
+				and (salesman_name like#{salesman_name} or
+				salesman_shortcode like #{salesman_shortcode})
+			</if>
+			<if test="id_card!=null">
+				and id_card like #{id_card}
+			</if>
+			<if test="customer_name != null">
+				and customer_name like #{customer_name}
+			</if>
+			<if test="bill_type != null and bill_type == 2">
+				and repay_status in (1,2,4,5,7)
+			</if>
+			<if test="bill_type != null and bill_type == 3">
+				and repay_status = 3
+				and t1.clean_up_date &gt; (SELECT date_sub(now(), interval 1 MONTH))
+			</if>
+			<if test="repay_status != null and repay_status != -1">
+				and repay_status = #{repay_status}
+			</if>
+        </where>
+			) t
+     </select>
+    
+    
+     <!-- update -->
+    <update id="updateRepaystatus" parameterType="WmsCreCreditNotaryWarn">
+        update 
+        	wms_cre_credit_notary_warn
+       	set
+       		repay_status = #{repay_status}
+        <where>
+            wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+        </where>
+    </update>
+   	     <!-- 获取信息放款数据同步到还款提醒模块 baisong -->
+    <select id="getHosueCreditMessageToRepayWarn" parameterType="map" resultType="WmsCreCreditNotaryWarn">
+       SELECT
+       	  h.wms_cre_credit_head_id,
+       	  h.bill_code,
+       	  h.cre_type,
+		  date_format( h.create_timestamp ,'%Y-%m-%d')  AS appl_date, <!-- 申请时间-->
+		  IFNULL(p.cre_loan_type,h.cre_loan_type) as category_name, <!-- 产品名称-->
+		  (case  h.cre_type when '1' THEN  h.visa_limit*10000  when '2' then  h.appro_limit*10000 end ) as appro_limit, <!-- 面签金额-->
+		  h.salesman_shortcode as salesman_shortcode, <!-- 业务员短工号-->
+		  h.salesman_name as salesman_name, <!-- 业务员姓名  -->
+		  (SELECT personnel_id from pm_personnel where personnel_shortCode =h.salesman_shortcode) as salesman_id,
+		  h.city as city,<!-- 业务员城市-->
+		  h.salesman_dept_id as salesman_own_dept_id,<!-- 业务员所在部门id-->
+		  (SELECT dept_code from sys_dept where dept_id=h.salesman_dept_id) as salesman_own_dept_code,<!-- 业务员所在部门code-->
+		  h.salesman_city_code as salesman_city_code,<!-- 业务员所在城市编码-->
+		  d.dept_id as salesman_dept_id,<!-- 业务员团队id-->
+		  d.dept_code as salesman_dept_code,<!-- 业务员团队code-->
+ 		  (SELECT personnel_name from pm_personnel where personnel_id=d.dept_personId) as team_manager_name,
+          (SELECT personnel_shortCode from pm_personnel where personnel_id=d.dept_personId) as team_manager_code,
+          (case d.dept_level when "6" then (SELECT dept_id from sys_dept where dept_id=d.dept_pid) when "5" then dept_code end) as sales_epartment_id,
+		  (case d.dept_level when "6" then (SELECT dept_code from sys_dept where dept_id=d.dept_pid) when "5" then dept_code end) as sales_epartment_code,
+          (case d.dept_level when "6" then (SELECT dept_name from sys_dept where dept_id=d.dept_pid) when "5" then dept_name end) as sales_epartment_name,
+		  p.debtor_name as customer_name, <!-- 客户姓名  -->
+		  p.debtor_identity_id as id_card, <!-- 客户身份证号码  -->
+		  p.debtor_tel as mobile_telephone, <!-- 客户手机号码  -->
+		  c.fixed_telephone as debtor_fixed_line, <!-- 固定电话  -->
+		  p.debtor_address as current_address_more, <!-- 客户通讯地址  -->
+		  p.com_debtor_name as com_debtor_name, <!-- 共带人姓名  -->
+		  p.com_debtor_identity_id as com_debtor_identity_id, <!-- 共带人身份证号码  -->
+		  p.com_debtor_tel as com_debtor_tel, <!-- 共带人手机号  -->
+		  p.borrow_begin_date   as protocol_date, <!-- 合同签订日期  -->
+		  p.borrow_end_date  as borrow_end_date, <!-- 合同结束日期  -->
+		  p.protocol_id_year_num as protocol_id_year_num, <!-- 合同编号  -->
+		  p.borrow_interest as borrow_interest, <!--利率  -->
+		  p.borrow_deadline as borrow_deadline, <!-- 期数  -->
+		  p.principal_lower as principal_lower, <!-- 合同金额  -->
+		  p.refund_limit_month as refund_limit_month, <!-- 期还款金额  -->
+		  p.refund_bank , <!--银行  -->
+		  p.refund_number, <!-- 卡号  -->
+		  p.refund_name, <!--姓名  -->
+		  (p.it_cost_fee +p.expedited_fee) as  notarial_fee, <!-- 公证费  -->
+		  a.platform_fee as  platform_fee, <!-- 平台费  -->
+		  p.loan_amount as loan_amount, <!-- 打卡金额  -->
+		  <!-- r.current_repay_date,还款日期  因需求要求如果日期为31号变为30号 -->
+		  p.first_refund_date as current_repay_date,
+		  '0' as repay_period, <!-- 已还期数  -->
+		  p.appro_limit as un_pay_principal, <!-- 未还金额  -->
+		  '1' as repay_status,  <!-- 还款状态 -->
+		  h.enable_flag,
+		  #{create_user_id} as create_user_id,
+		  #{create_user_name} as create_user_name,
+		  now() as create_timestamp,
+		  #{create_user_id} as last_update_user_id,
+		  now() as last_update_timestamp,
+		  (case #{wms_cre_credit_head_id} when '' then '手动批量导入' else '自动导入' end) as warn_remak,
+		  (case #{wms_cre_credit_head_id} when '' then '10' else '11' end) as data_sources,
+		  g.group_date,
+		  g.bill_code_group,
+		  h.bill_type,
+		  "1" as bill_status,
+		  (SELECT the_number from wms_cre_credit_service_type where wms_cre_credit_head_id=h.wms_cre_credit_head_id and enable_flag=1 group by wms_cre_credit_notary_warn_id)as the_number
+		FROM
+			wms_cre_credit_head h
+		LEFT JOIN wms_cre_credit_line_customer_change_head  c on  c.enable_flag=1 and h.wms_cre_credit_head_id=c.wms_cre_credit_head_id and c.is_major=1
+		LEFT JOIN (SELECT 
+									c.wms_cre_credit_head_id,
+									c.customer_name ,
+									c.id_card ,
+									c.mobile_telephone1,
+									c.fixed_telephone
+								FROM
+									wms_cre_credit_line_customer_change_head c
+								WHERE 
+								 enable_flag = 1 and c.is_major!=1 
+								GROUP BY wms_cre_credit_head_id)  c1 on  h.wms_cre_credit_head_id=c1.wms_cre_credit_head_id 
+		LEFT JOIN wms_cre_appro_borrow_protocol p on h.wms_cre_credit_head_id=p.wms_cre_credit_head_id  and p.enable_flag=1
+		LEFT JOIN wms_fina_cre_loan_app a on h.wms_cre_credit_head_id=a.wms_cre_credit_head_id and a.enable_flag=1
+		LEFT JOIN sys_dept d on d.dept_id=h.salesman_dept_id and d.dept_level=6
+		LEFT JOIN wms_cre_credit_group g on h.wms_cre_credit_group_id=g.wms_cre_credit_group_id and g.enable_flag=1
+		<where>
+	    	h.enable_flag = 1
+	    	<!-- 信贷：0 草稿 1待复核 2待贷前审核 3待终审 4待面签  5面签通过7  6待放款 7已完成 9终止 10 待签约 11已签约 12 复核退回 13 补件中 14 待审批 15 待复议修订 -->
+			and h.enable_flag=1 and h.cre_type=#{cre_type} 
+         <if test="wms_cre_credit_head_id != null">
+            and h.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+         </if>
+          <if test="bill_status != null">
+              and h.bill_status =#{bill_status} 
+         </if>
+         </where>
+    </select>
+    
+    
+     <update id="updateInfoForHeadId" parameterType="WmsCreCreditNotaryWarn">
+        update wms_cre_credit_notary_warn
+        <set>
+            <if test="wms_cre_credit_notary_warn_id != null">
+                wms_cre_credit_notary_warn_id = #{wms_cre_credit_notary_warn_id},
+            </if>
+            <if test="bill_code != null">
+                bill_code = #{bill_code},
+            </if>
+            <if test="bill_status != null">
+                bill_status = #{bill_status},
+            </if>
+            <if test="end_time != null">
+                end_time = #{end_time},
+            </if>
+            <if test="end_reason != null">
+                end_reason = #{end_reason},
+            </if>
+            <if test="end_day_number != null">
+                end_day_number = #{end_day_number},
+            </if>
+            <if test="appl_date != null">
+                appl_date = #{appl_date},
+            </if>
+            <if test="customer_name != null">
+                customer_name = #{customer_name},
+            </if>
+            <if test="id_card != null">
+                id_card = #{id_card},
+            </if>
+            <if test="current_address_more != null">
+                current_address_more = #{current_address_more},
+            </if>
+            <if test="mobile_telephone != null">
+                mobile_telephone = #{mobile_telephone},
+            </if>
+            <if test="com_debtor_name != null">
+                com_debtor_name = #{com_debtor_name},
+            </if>
+            <if test="com_debtor_identity_id != null">
+                com_debtor_identity_id = #{com_debtor_identity_id},
+            </if>
+            <if test="com_debtor_tel != null">
+                com_debtor_tel = #{com_debtor_tel},
+            </if>
+            <if test="debtor_fixed_line != null">
+                debtor_fixed_line = #{debtor_fixed_line},
+            </if>
+            <if test="protocol_date != null">
+                protocol_date = #{protocol_date},
+            </if>
+            <if test="borrow_end_date != null">
+                borrow_end_date = #{borrow_end_date},
+            </if>
+            <if test="protocol_id_year_num != null">
+                protocol_id_year_num = #{protocol_id_year_num},
+            </if>
+            <if test="category_name != null">
+                category_name = #{category_name},
+            </if>
+            <if test="borrow_interest != null">
+                borrow_interest = #{borrow_interest},
+            </if>
+            <if test="appro_limit != null">
+                appro_limit = #{appro_limit},
+            </if>
+            <if test="borrow_deadline != null">
+                borrow_deadline = #{borrow_deadline},
+            </if>
+            <if test="loan_amount != null">
+                loan_amount = #{loan_amount},
+            </if>
+            <if test="platform_fee != null">
+                platform_fee = #{platform_fee},
+            </if>
+            <if test="notarial_fee != null">
+                notarial_fee = #{notarial_fee},
+            </if>
+            <if test="principal_lower != null">
+                principal_lower = #{principal_lower},
+            </if>
+            <if test="refund_limit_month != null">
+                refund_limit_month = #{refund_limit_month},
+            </if>
+            <if test="salesman_name != null">
+                salesman_name = #{salesman_name},
+            </if>
+            <if test="salesman_shortcode != null">
+                salesman_shortcode = #{salesman_shortcode},
+            </if>
+            <if test="salesman_dept_code != null">
+                salesman_dept_code = #{salesman_dept_code},
+            </if>
+            <if test="team_manager_name != null">
+                team_manager_name = #{team_manager_name},
+            </if>
+            <if test="team_manager_code != null">
+                team_manager_code = #{team_manager_code},
+            </if>
+            <if test="sales_epartment_code != null">
+                sales_epartment_code = #{sales_epartment_code},
+            </if>
+            <if test="sales_epartment_name != null">
+                sales_epartment_name = #{sales_epartment_name},
+            </if>
+            <if test="create_user_id != null">
+                create_user_id = #{create_user_id},
+            </if>
+            <if test="create_user_name != null">
+                create_user_name = #{create_user_name},
+            </if>
+            <if test="create_timestamp != null">
+                create_timestamp = #{create_timestamp},
+            </if>
+            <if test="last_update_user_id != null">
+                last_update_user_id = #{last_update_user_id},
+            </if>
+            <if test="last_update_timestamp != null">
+                last_update_timestamp = #{last_update_timestamp},
+            </if>
+            <if test="enable_flag != null">
+                enable_flag = #{enable_flag},
+            </if>
+            <if test="warn_remak != null">
+                warn_remak = #{warn_remak},
+            </if>
+            <if test="alreadyse_send_message_number != null">
+                alreadyse_send_message_number = #{alreadyse_send_message_number},
+            </if>
+            <if test="is_weekend_not_remind != null">
+                is_weekend_not_remind = #{is_weekend_not_remind},
+            </if>
+            <if test="data_sources != null">
+                data_sources = #{data_sources},
+            </if>
+            <if test="is_cycles != null">
+                is_cycles = #{is_cycles},
+            </if>
+            <if test="clean_up_date != null">
+                clean_up_date = #{clean_up_date},
+            </if>
+            <if test="clean_up_info != null">
+                clean_up_info = #{clean_up_info},
+            </if>
+            <if test="refund_bank != null">
+                refund_bank = #{refund_bank},
+            </if>
+            <if test="refund_number != null">
+                refund_number = #{refund_number},
+            </if>
+            <if test="refund_name != null">
+                refund_name = #{refund_name},
+            </if>
+            <if test="repay_period != null">
+                repay_period = #{repay_period},
+            </if>
+            <if test="un_pay_principal != null">
+                un_pay_principal = #{un_pay_principal},
+            </if>
+            <if test="cre_type != null">
+                cre_type = #{cre_type},
+            </if>
+            <if test="send_message_number != null">
+                send_message_number = #{send_message_number},
+            </if>
+            <if test="send_message_time != null">
+                send_message_time = #{send_message_time},
+            </if>
+            <if test="repay_status != null">
+                repay_status = #{repay_status},
+            </if>
+             <if test="wms_cre_credit_head_id != null">
+                wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+            </if>
+             <if test="current_repay_date != null">
+                current_repay_date = #{current_repay_date},
+            </if>
+            <if test="send_message_date != null">
+                send_message_date = #{send_message_date},
+            </if>
+            <if test="bill_type != null">
+                bill_type = #{bill_type},
+            </if>
+            <if test="the_number != null">
+                the_number = #{the_number},
+            </if>
+             <if test="bill_code_group != null">
+                bill_code_group = #{bill_code_group},
+            </if>
+               <if test="group_date != null">
+                group_date = #{group_date},
+            </if>
+        </set>
+        <where>
+            wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+        </where>
+    </update>
+    	 <!-- sql片段还款管理 -->  
+	 <sql id="query_notary_warn_notar">  
+	   SELECT
+			wa.wms_cre_credit_notary_warn_id AS wms_cre_credit_notary_warn_id,
+			wa.bill_code AS bill_code,
+			(
+				CASE
+				WHEN (
+					wa.bill_status = '0'
+				) THEN
+					'结清'
+				WHEN (
+					(
+						to_days(
+							wa.end_time
+						) - to_days(curdate())
+					) &lt; 0
+				) THEN
+					'过期'
+				WHEN (
+					(
+						0 &lt;= (
+							to_days(
+								wa.end_time
+							) - to_days(curdate())
+						)
+					)
+					AND (
+						(
+							to_days(
+								wa.end_time
+							) - to_days(curdate())
+						) &lt; 30
+					)
+				) THEN
+					'到期'
+				WHEN (
+					(
+						30 &lt;= (
+							to_days(
+								wa.end_time
+							) - to_days(curdate())
+						)
+					)
+					AND (
+						(
+							to_days(
+								wa.end_time
+							) - to_days(curdate())
+						) &lt;= 180
+					)
+				) THEN
+					'预到期'
+				ELSE
+					'正常'
+				END
+			) AS bill_status_name,
+			(
+				CASE
+				WHEN (
+					wa.bill_status = '0'
+				) THEN
+					'0'
+				WHEN (
+					(
+						to_days(
+							wa.end_time
+						) - to_days(curdate())
+					) &lt; 0
+				) THEN
+					'2'
+				WHEN (
+					(
+						0 &lt;= (
+							to_days(
+								wa.end_time
+							) - to_days(curdate())
+						)
+					)
+					AND (
+						(
+							to_days(
+								wa.end_time
+							) - to_days(curdate())
+						) &lt; 30
+					)
+				) THEN
+					'3'
+				WHEN (
+					(
+						30 &lt;= (
+							to_days(
+								wa.end_time
+							) - to_days(curdate())
+						)
+					)
+					AND (
+						(
+							to_days(
+								wa.end_time
+							) - to_days(curdate())
+						) &lt;= 180
+					)
+				) THEN
+					'4'
+				ELSE
+					'1'
+				END
+			) AS bill_status,
+			wa.end_time AS end_time,
+			wa.end_reason AS end_reason,
+			(
+				to_days(
+					wa.end_time
+				) - to_days(curdate())
+			) AS end_day_number,
+			wa.appl_date AS appl_date,
+			wa.customer_name AS customer_name,
+			wa.id_card AS id_card,
+			wa.current_address_more AS current_address_more,
+			wa.mobile_telephone AS mobile_telephone,
+			wa.com_debtor_name AS com_debtor_name,
+			wa.com_debtor_identity_id AS com_debtor_identity_id,
+			wa.com_debtor_tel AS com_debtor_tel,
+			wa.debtor_fixed_line AS debtor_fixed_line,
+			wa.protocol_date AS protocol_date,
+			wa.borrow_end_date AS borrow_end_date,
+			wa.protocol_id_year_num AS protocol_id_year_num,
+			da.value_meaning AS category_name,
+			wa.category_name AS category_id,
+			wa.borrow_interest AS borrow_interest,
+			cast(
+				round(
+					wa.appro_limit,
+					2
+				) AS CHAR charset utf8
+			) AS appro_limit,
+			wa.borrow_deadline AS borrow_deadline,
+			cast(
+				round(
+					wa.loan_amount,
+					2
+				) AS CHAR charset utf8
+			) AS loan_amount,
+			cast(
+				round(
+					wa.platform_fee,
+					2
+				) AS CHAR charset utf8
+			) AS platform_fee,
+			cast(
+				round(
+					wa.notarial_fee,
+					2
+				) AS CHAR charset utf8
+			) AS notarial_fee,
+			cast(
+				round(
+					wa.principal_lower,
+					2
+				) AS CHAR charset utf8
+			) AS principal_lower,
+			cast(
+				round(
+					wa.refund_limit_month,
+					2
+				) AS CHAR charset utf8
+			) AS refund_limit_month,
+			wa.salesman_name AS salesman_name,
+			(
+				CASE
+				WHEN (
+					(
+						wa.salesman_shortcode IS NOT NULL
+					)
+					AND (
+						wa.salesman_shortcode != ''
+					)
+					AND (
+						wa.salesman_name IS NOT NULL
+					)
+					AND (
+						wa.salesman_name != ''
+					)
+				) THEN
+					concat(
+						wa.salesman_name,
+						'/',
+						wa.salesman_shortcode
+					)
+				ELSE
+					wa.salesman_name
+				END
+			) AS salesman_name_str,
+			wa.salesman_shortcode AS salesman_shortcode,
+			wa.salesman_dept_code AS salesman_dept_code,
+			wa.team_manager_name AS team_manager_name,
+			wa.team_manager_code AS team_manager_code,
+			wa.sales_epartment_code AS sales_epartment_code,
+			wa.create_user_id AS create_user_id,
+			wa.create_user_name AS create_user_name,
+			wa.create_timestamp AS create_timestamp,
+			wa.last_update_user_id AS last_update_user_id,
+			wa.last_update_timestamp AS last_update_timestamp,
+			wa.enable_flag AS enable_flag,
+			REPLACE (
+				wa.warn_remak,
+				'\n',
+				''
+			) AS warn_remak,
+			d.dept_id AS dept_id,
+			d.dept_name AS sales_epartment_name,
+			wa.bill_code_group AS bill_code_group,
+			date_format(
+				wa.group_date,
+				'%Y-%m-%d %H:%i:%s'
+			) AS group_date
+		FROM
+						wms_cre_credit_notary_warn wa
+				LEFT JOIN sys_dept d ON 
+								d.dept_code = wa.sales_epartment_code
+							AND d.enable_flag = 1
+		
+				LEFT JOIN wms_sys_dict_data da ON 
+								(
+									da.wms_sys_dict_id = 26
+									OR da.wms_sys_dict_id = 27
+								)
+							AND da.wms_sys_dict_data_id = wa.category_name
+		
+			  LEFT JOIN wms_cre_credit_phone_history hi ON 
+							hi.enable_flag = 1
+							AND hi.is_new = 1
+							AND hi.wms_cre_credit_notary_warn_id = wa.wms_cre_credit_notary_warn_id
+		
+				LEFT JOIN wms_cre_credit_repay_history rh ON 
+						rh.enable_flag = 1
+						AND rh.is_new = 1
+						AND rh.wms_cre_credit_notary_warn_id = wa.wms_cre_credit_notary_warn_id
+		
+				LEFT JOIN wms_cre_credit_service_type ty ON 
+						ty.enable_flag = 1
+						AND ty.wms_cre_credit_notary_warn_id = wa.wms_cre_credit_notary_warn_id
+
+	 </sql>
+	 	 <!-- sql片段还款管理 -->  
+	 <sql id="query_notary_warn_notar_total">  
+	    SELECT
+				count(wa.wms_cre_credit_notary_warn_id) 
+		FROM
+							wms_cre_credit_notary_warn  wa
+							LEFT JOIN sys_dept d ON d.dept_code = wa.sales_epartment_code
+									AND d.enable_flag = 1
+						LEFT JOIN wms_sys_dict_data da ON 
+							  (
+									da.wms_sys_dict_id = 26
+									OR da.wms_sys_dict_id = 27
+								)
+								AND da.wms_sys_dict_data_id = wa.category_name
+		
+					LEFT JOIN wms_cre_credit_phone_history hi ON 
+							hi.enable_flag = 1
+							AND hi.is_new = 1
+							AND hi.wms_cre_credit_notary_warn_id = wa.wms_cre_credit_notary_warn_id
+		
+				  LEFT JOIN wms_cre_credit_repay_history rh ON 
+							rh.enable_flag = 1
+							AND rh.is_new = 1
+							AND rh.wms_cre_credit_notary_warn_id = wa.wms_cre_credit_notary_warn_id
+	 </sql> 
+	 
+	 	 <!-- sql片段还款管理 -->  
+	 <sql id="query_notary_warn_bill_status">  
+	   (
+				CASE
+				WHEN (
+					wa.bill_status = '0'
+				) THEN
+					'0'
+				WHEN (
+					(
+						to_days(
+							wa.end_time
+						) - to_days(curdate())
+					) &lt; 0
+				) THEN
+					'2'
+				WHEN (
+					(
+						0 &lt;= (
+							to_days(
+								wa.end_time
+							) - to_days(curdate())
+						)
+					)
+					AND (
+						(
+							to_days(
+								wa.end_time
+							) - to_days(curdate())
+						) &lt; 30
+					)
+				) THEN
+					'3'
+				WHEN (
+					(
+						30 &lt;= (
+							to_days(
+								wa.end_time
+							) - to_days(curdate())
+						)
+					)
+					AND (
+						(
+							to_days(
+								wa.end_time
+							) - to_days(curdate())
+						) &lt;= 180
+					)
+				) THEN
+					'4'
+				ELSE
+					'1'
+				END
+			)
+	 </sql>
+	 <!-- sql片段生日提醒 -->  
+	 <sql id="query_notary_warn_birthday_date">  
+	  		ifnull(
+				concat(
+					RIGHT (
+						LEFT (
+							wa.id_card,
+							10
+						),
+						4
+					),
+					'-',
+					RIGHT (
+						LEFT (
+							wa.id_card,
+							12
+						),
+						2
+					),
+					'-',
+					RIGHT (
+						LEFT (
+							wa.id_card,
+							14
+						),
+						2
+					)
+				),
+				''
+			)
+	 </sql>        
+	 <!-- sql片段还款管理 -->  
+	 <sql id="query_notary_warn_repay">  
+	   SELECT
+			wa.wms_cre_credit_notary_warn_id AS wms_cre_credit_notary_warn_id,
+			wa.bill_code AS bill_code,
+			wa.appl_date AS appl_date,
+			wa.customer_name AS customer_name,
+			wa.id_card AS id_card,
+			wa.current_address_more AS current_address_more,
+			wa.mobile_telephone AS mobile_telephone,
+			wa.com_debtor_name AS com_debtor_name,
+			wa.com_debtor_identity_id AS com_debtor_identity_id,
+			wa.com_debtor_tel AS com_debtor_tel,
+			wa.debtor_fixed_line AS debtor_fixed_line,
+			wa.protocol_date AS protocol_date,
+			wa.borrow_end_date AS borrow_end_date,
+			wa.protocol_id_year_num AS protocol_id_year_num,
+			da.value_meaning AS category_name,
+			wa.category_name AS category_id,
+			wa.borrow_interest AS borrow_interest,
+			cast(
+				round(
+					wa.appro_limit,
+					2
+				) AS CHAR charset utf8
+			) AS appro_limit,
+			wa.borrow_deadline AS borrow_deadline,
+			cast(
+				round(
+					wa.loan_amount,
+					2
+				) AS CHAR charset utf8
+			) AS loan_amount,
+			cast(
+				round(
+					wa.platform_fee,
+					2
+				) AS CHAR charset utf8
+			) AS platform_fee,
+			cast(
+				round(
+					wa.notarial_fee,
+					2
+				) AS CHAR charset utf8
+			) AS notarial_fee,
+			cast(
+				round(
+					wa.principal_lower,
+					2
+				) AS CHAR charset utf8
+			) AS principal_lower,
+			cast(
+				round(
+					wa.refund_limit_month,
+					2
+				) AS CHAR charset utf8
+			) AS refund_limit_month,
+			wa.salesman_name AS salesman_name,
+			(
+				CASE
+				WHEN (
+					(
+						wa.salesman_shortcode IS NOT NULL
+					)
+					AND (
+						wa.salesman_shortcode != ''
+					)
+					AND (
+						wa.salesman_name IS NOT NULL
+					)
+					AND (
+						wa.salesman_name != ''
+					)
+				) THEN
+					concat(
+						wa.salesman_name,
+						'/',
+						wa.salesman_shortcode
+					)
+				ELSE
+					wa.salesman_name
+				END
+			) AS salesman_name_str,
+			wa.salesman_shortcode AS salesman_shortcode,
+			wa.salesman_dept_code AS salesman_dept_code,
+			wa.team_manager_name AS team_manager_name,
+			wa.team_manager_code AS team_manager_code,
+			wa.sales_epartment_code AS sales_epartment_code,
+			wa.create_user_id AS create_user_id,
+			wa.create_user_name AS create_user_name,
+			wa.create_timestamp AS create_timestamp,
+			wa.last_update_user_id AS last_update_user_id,
+			wa.last_update_timestamp AS last_update_timestamp,
+			wa.enable_flag AS enable_flag,
+			REPLACE (
+				wa.warn_remak,
+				'\n',
+				''
+			) AS warn_remak,
+			wa.alreadyse_send_message_number AS alreadyse_send_message_number,
+			wa.is_weekend_not_remind AS is_weekend_not_remind,
+			wa.data_sources AS data_sources,
+			wa.is_cycles AS is_cycles,
+			wa.clean_up_date AS clean_up_date,
+			wa.clean_up_info AS clean_up_info,
+			wa.refund_bank AS refund_bank,
+			fomatRefundNumber (
+				wa.refund_number
+			) AS refund_number,
+			wa.refund_name AS refund_name,
+			wa.repay_period AS repay_period,
+			wa.current_repay_date AS current_repay_date,
+			ifnull(
+				wa.bill_type,
+				'01'
+			) AS bill_type,
+			(
+				SELECT
+					wms_sys_dict_data.value_meaning
+				FROM
+					wms_sys_dict_data
+				WHERE
+					(
+						(
+							wms_sys_dict_data.wms_sys_dict_id = 124
+						)
+						AND (
+							wms_sys_dict_data.value_code = ifnull(
+								wa.bill_type,
+								'01'
+							)
+						)
+					)
+			) AS bill_type_name,
+			wa.the_number AS the_number,
+			cast(
+				round(
+					wa.un_pay_principal,
+					2
+				) AS CHAR charset utf8
+			) AS un_pay_principal,
+			wa.cre_type AS cre_type,
+			ifnull(
+				wa.send_message_number,
+				wa.mobile_telephone
+			) AS send_message_number,
+			wa.send_message_time AS send_message_time,
+			ifnull(
+				wa.repay_status,
+				'1'
+			) AS repay_status,
+			(
+				SELECT
+					wms_sys_dict_data.value_meaning
+				FROM
+					wms_sys_dict_data
+				WHERE
+					(
+						(
+							wms_sys_dict_data.wms_sys_dict_id = 122
+						)
+						AND (
+							wms_sys_dict_data.value_code = ifnull(
+								wa.repay_status,
+								'1'
+							)
+						)
+					)
+			) AS repay_status_name,
+			wa.wms_cre_credit_head_id AS wms_cre_credit_head_id,
+			ty.old_wms_cre_credit_head_id AS old_wms_cre_credit_head_id,
+			date_format(
+				wa.send_message_date,
+				'%Y-%m-%d %H:%i:%s'
+			) AS send_message_date,
+
+			d.dept_id AS dept_id,
+			d.dept_name AS sales_epartment_name,
+			date_format(
+				hi.phone_date,
+				'%Y-%m-%d %H:%i:%s'
+			) AS phone_date,
+			hi.phone_handle_result AS phone_handle_result,
+			rh.track_handle_result AS track_handle_result,
+			cast(
+				round(
+					ifnull(
+						rh.repay_principal,
+						wa.refund_limit_month
+					),
+					2
+				) AS CHAR charset utf8
+			) AS should_repay_principal,
+			wa.bill_code_group AS bill_code_group,
+			date_format(
+				wa.group_date,
+				'%Y-%m-%d %H:%i:%s'
+			) AS group_date
+		FROM
+						wms_cre_credit_notary_warn wa
+				LEFT JOIN sys_dept d ON 
+								d.dept_code = wa.sales_epartment_code
+							AND d.enable_flag = 1
+		
+				LEFT JOIN wms_sys_dict_data da ON 
+								(
+									da.wms_sys_dict_id = 26
+									OR da.wms_sys_dict_id = 27
+								)
+							AND da.wms_sys_dict_data_id = wa.category_name
+		
+			  LEFT JOIN wms_cre_credit_phone_history hi ON 
+							hi.enable_flag = 1
+							AND hi.is_new = 1
+							AND hi.wms_cre_credit_notary_warn_id = wa.wms_cre_credit_notary_warn_id
+		
+				LEFT JOIN wms_cre_credit_repay_history rh ON 
+						rh.enable_flag = 1
+						AND rh.is_new = 1
+						AND rh.wms_cre_credit_notary_warn_id = wa.wms_cre_credit_notary_warn_id
+		
+				LEFT JOIN wms_cre_credit_service_type ty ON 
+						ty.enable_flag = 1
+						AND ty.wms_cre_credit_notary_warn_id = wa.wms_cre_credit_notary_warn_id
+
+	 </sql>
+	 	 <!-- sql片段还款管理 -->  
+	 <sql id="query_notary_warn_repay_total">  
+	    SELECT
+				count(wa.wms_cre_credit_notary_warn_id) 
+		FROM
+							wms_cre_credit_notary_warn  wa
+							LEFT JOIN sys_dept d ON d.dept_code = wa.sales_epartment_code
+									AND d.enable_flag = 1
+						LEFT JOIN wms_sys_dict_data da ON 
+							  (
+									da.wms_sys_dict_id = 26
+									OR da.wms_sys_dict_id = 27
+								)
+								AND da.wms_sys_dict_data_id = wa.category_name
+		
+					LEFT JOIN wms_cre_credit_phone_history hi ON 
+							hi.enable_flag = 1
+							AND hi.is_new = 1
+							AND hi.wms_cre_credit_notary_warn_id = wa.wms_cre_credit_notary_warn_id
+		
+				  LEFT JOIN wms_cre_credit_repay_history rh ON 
+							rh.enable_flag = 1
+							AND rh.is_new = 1
+							AND rh.wms_cre_credit_notary_warn_id = wa.wms_cre_credit_notary_warn_id
+	 </sql>    
+ </mapper> 

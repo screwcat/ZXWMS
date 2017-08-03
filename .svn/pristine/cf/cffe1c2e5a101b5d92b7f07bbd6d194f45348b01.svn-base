@@ -1,0 +1,583 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper
+	namespace="com.zx.emanage.cremanage.persist.WmsCreCustomerChangeLineContactDao">
+	<insert id="addNewRecord" parameterType="WmsCreCustomerChangeLineContact"
+		useGeneratedKeys="true" keyProperty="wms_cre_customer_change_line_contact_id">
+		insert into
+		wms_cre_customer_change_line_contact
+		(
+		contact_name,
+		contact_relation_type,
+		contact_relation_description,
+		contact_mobile_phone,
+		audit_result1,
+		audit_result2,
+		audit_result3,
+		wms_cre_credit_head_id,
+		wms_cre_credit_line_customer_change_head_id,
+		customer_name,
+		is_major,
+		phone1_1,
+		phone1_2,
+		phone1_3,
+		phone2_1,
+		phone2_2,
+		phone2_3,
+		contact_mobile_phone_short
+		)
+		values(
+		#{contact_name},
+		#{contact_relation_type},
+		#{contact_relation_description},
+		#{contact_mobile_phone},
+		#{audit_result1},
+		#{audit_result2},
+		#{audit_result3},
+		#{wms_cre_credit_head_id},
+		#{wms_cre_credit_line_customer_change_head_id},
+		#{customer_name},
+		#{is_major},
+		#{phone1_1},
+		#{phone1_2},
+		#{phone1_3},
+		#{phone2_1},
+		#{phone2_2},
+		#{phone2_3},
+		#{contact_mobile_phone_short}
+		)
+
+	</insert>
+	<select id="search" parameterType="map"
+		resultType="WmsCreCustomerChangeLineContact">
+		select
+		wms_cre_customer_change_line_contact_id,
+		contact_name,
+		contact_relation_type,
+		contact_relation_description,
+		contact_mobile_phone,
+		audit_result1,
+		audit_result2,
+		audit_result3,
+		wms_cre_credit_head_id,
+		wms_cre_credit_line_customer_change_head_id,
+		customer_name,
+		is_major,
+		phone1_1,
+		phone1_2,
+		phone1_3,
+		phone2_1,
+		phone2_2,
+		phone2_3,
+		contact_mobile_phone_short
+		from wms_cre_customer_change_line_contact
+		<where>
+			1=1
+			<if test="wms_cre_credit_line_customer_change_head_id!=null">
+				and wms_cre_credit_head_id =
+				#{wms_cre_credit_line_customer_change_head_id}
+			</if>
+			<!--主表单ID和客户变更主ID 获取联系信息 -->
+			<if
+				test="wms_cre_credit_head_id !=null  and wms_cre_credit_line_customer_change_head_id1 !=null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+				and
+				wms_cre_credit_line_customer_change_head_id=#{wms_cre_credit_line_customer_change_head_id1}
+			</if>
+		</where>
+		<if test="sortname!=null and sortorder!=null">
+			order by ${sortname} ${sortorder}
+		</if>
+		<if test="offset!=null and pagesize!=null">
+			limit ${offset},${sortorder}
+		</if>
+	</select>
+	<select id="searchByPhone" parameterType="map"
+		resultType="WmsCreCustomerChangeLineContact">
+		select
+		wms_cre_customer_change_line_contact_id,
+		contact_name,
+		contact_relation_type,
+		contact_relation_description,
+		contact_mobile_phone,
+		audit_result1,
+		audit_result2,
+		audit_result3,
+		wms_cre_credit_head_id,
+		wms_cre_credit_line_customer_change_head_id,
+		customer_name,
+		is_major,
+		phone1_1,
+		phone1_2,
+		phone1_3,
+		phone2_1,
+		phone2_2,
+		phone2_3,
+		contact_mobile_phone_short
+		from wms_cre_customer_change_line_contact
+		<where>
+			contact_mobile_phone = #{contact_mobile_phone}
+			and wms_cre_credit_head_id != #{wms_cre_credit_head_id}
+		</where>
+	</select>
+	<select id="searchByPhone2" parameterType="map"
+		resultType="WmsCreCustomerChangeLineContact">
+		select
+		wms_cre_customer_change_line_contact_id,
+		contact_name,
+		contact_relation_type,
+		contact_relation_description,
+		contact_mobile_phone,
+		audit_result1,
+		audit_result2,
+		audit_result3,
+		wms_cre_credit_head_id,
+		wms_cre_credit_line_customer_change_head_id,
+		customer_name,
+		is_major,
+		phone1_1,
+		phone1_2,
+		phone1_3,
+		phone2_1,
+		phone2_2,
+		phone2_3,
+		contact_mobile_phone_short
+		from wms_cre_customer_change_line_contact
+		<where>
+			(contact_mobile_phone = #{mobile_telephone1}
+			or contact_mobile_phone = #{mobile_telephone2})
+			and wms_cre_credit_head_id !=#{wms_cre_credit_head_id}
+		</where>
+	</select>
+	<select id="searchforborrow" parameterType="int" resultType="java.util.HashMap">
+		select
+		wms_cre_customer_change_line_contact_id,
+		contact_name,
+		contact_relation_type,
+		contact_relation_description,
+		contact_mobile_phone,
+		audit_result1,
+		audit_result2,
+		audit_result3,
+		wms_cre_credit_head_id,
+		wms_cre_credit_line_customer_change_head_id,
+		customer_name,
+		is_major,
+		phone1_1,
+		phone1_2,
+		phone1_3,
+		phone2_1,
+		phone2_2,
+		phone2_3,
+		contact_mobile_phone_short
+		from wms_cre_customer_change_line_contact
+		<where>
+			1=1 and contact_relation_type="保证人"
+			and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+		</where>
+		order by wms_cre_customer_change_line_contact_id
+	</select>
+
+	<select id="getListByEntity" parameterType="WmsCreCustomerChangeLineContact"
+		resultType="WmsCreCustomerChangeLineContact">
+		select
+		wms_cre_customer_change_line_contact_id,
+		contact_name,
+		contact_relation_type,
+		contact_relation_description,
+		contact_mobile_phone,
+		audit_result1,
+		audit_result2,
+		audit_result3,
+		wms_cre_credit_head_id,
+		wms_cre_credit_line_customer_change_head_id,
+		customer_name,
+		is_major,
+		phone1_1,
+		phone1_2,
+		phone1_3,
+		phone2_1,
+		phone2_2,
+		phone2_3,
+		contact_mobile_phone_short
+		from
+		wms_cre_customer_change_line_contact
+		<where>
+			<if test="wms_cre_customer_change_line_contact_id != null">
+				and wms_cre_customer_change_line_contact_id =
+				#{wms_cre_customer_change_line_contact_id}
+			</if>
+			<if test="contact_name != null">
+				and contact_name = #{contact_name}
+			</if>
+			<if test="contact_relation_type != null">
+				and contact_relation_type = #{contact_relation_type}
+			</if>
+			<if test="contact_relation_description != null">
+				and contact_relation_description = #{contact_relation_description}
+			</if>
+			<if test="contact_mobile_phone != null">
+				and contact_mobile_phone = #{contact_mobile_phone}
+			</if>
+			<if test="audit_result1 != null">
+				and audit_result1 = #{audit_result1}
+			</if>
+			<if test="audit_result2 != null">
+				and audit_result2 = #{audit_result2}
+			</if>
+			<if test="audit_result3 != null">
+				and audit_result3 = #{audit_result3}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="wms_cre_credit_line_customer_change_head_id != null">
+				and wms_cre_credit_line_customer_change_head_id =
+				#{wms_cre_credit_line_customer_change_head_id}
+			</if>
+			<if test="customer_name != null">
+				and customer_name = #{customer_name}
+			</if>
+			<if test="is_major != null">
+				and is_major = #{is_major}
+			</if>
+			<if test="phone1_1 != null">
+				and phone1_1 = #{phone1_1}
+			</if>
+			<if test="phone1_2 != null">
+				and phone1_2 = #{phone1_2}
+			</if>
+			<if test="phone1_3 != null">
+				and phone1_3 = #{phone1_3}
+			</if>
+			<if test="phone2_1 != null">
+				and phone2_1 = #{phone2_1}
+			</if>
+			<if test="phone2_2 != null">
+				and phone2_2 = #{phone2_2}
+			</if>
+			<if test="phone2_3 != null">
+				and phone2_3 = #{phone2_3}
+			</if>
+			<if test="contact_mobile_phone_short != null">
+				and contact_mobile_phone_short = #{contact_mobile_phone_short}
+			</if>
+
+		</where>
+	</select>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreCustomerChangeLineContact">
+		update wms_cre_customer_change_line_contact
+		<set>
+			<if test="wms_cre_customer_change_line_contact_id != null">
+				wms_cre_customer_change_line_contact_id = #{wms_cre_customer_change_line_contact_id},
+			</if>
+			<if test="contact_name != null">
+				contact_name = #{contact_name},
+			</if>
+			<if test="contact_relation_type != null">
+				contact_relation_type = #{contact_relation_type},
+			</if>
+			<if test="contact_relation_description != null">
+				contact_relation_description = #{contact_relation_description},
+			</if>
+			<if test="contact_mobile_phone != null">
+				contact_mobile_phone = #{contact_mobile_phone},
+			</if>
+			<if test="audit_result1 != null">
+				audit_result1 = #{audit_result1},
+			</if>
+			<if test="audit_result2 != null">
+				audit_result2 = #{audit_result2},
+			</if>
+			<if test="audit_result3 != null">
+				audit_result3 = #{audit_result3},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="wms_cre_credit_line_customer_change_head_id != null">
+				wms_cre_credit_line_customer_change_head_id = #{wms_cre_credit_line_customer_change_head_id},
+			</if>
+			<if test="customer_name != null">
+				customer_name = #{customer_name},
+			</if>
+			<if test="is_major != null">
+				is_major = #{is_major},
+			</if>
+			<if test="phone1_1 != null">
+				phone1_1 = #{phone1_1},
+			</if>
+			<if test="phone1_2 != null">
+				phone1_2 = #{phone1_2},
+			</if>
+			<if test="phone1_3 != null">
+				phone1_3 = #{phone1_3},
+			</if>
+			<if test="phone2_1 != null">
+				phone2_1 = #{phone2_1},
+			</if>
+			<if test="phone2_2 != null">
+				phone2_2 = #{phone2_2},
+			</if>
+			<if test="phone2_3 != null">
+				phone2_3 = #{phone2_3},
+			</if>
+			<if test="contact_mobile_phone_short != null">
+				contact_mobile_phone_short = #{contact_mobile_phone_short},
+			</if>
+		</set>
+		where
+		wms_cre_customer_change_line_contact_id = #{wms_cre_customer_change_line_contact_id}
+	</update>
+	<!-- 更新用户 -->
+	<update id="updateChangeContantBF" parameterType="WmsCreCustomerChangeLineContact">
+		update wms_cre_customer_change_line_contact
+		<set>
+			<if test="contact_name != null">
+				contact_name = #{contact_name},
+			</if>
+			<if test="contact_relation_type != null">
+				contact_relation_type = #{contact_relation_type},
+			</if>
+			<if test="contact_relation_description != null">
+				contact_relation_description = #{contact_relation_description},
+			</if>
+			<if test="contact_mobile_phone != null">
+				contact_mobile_phone = #{contact_mobile_phone},
+			</if>
+			<if test="is_major != null">
+				is_major = #{is_major},
+			</if>
+			<if test="contact_mobile_phone_short != null">
+				contact_mobile_phone_short = #{contact_mobile_phone_short},
+			</if>
+		</set>
+		where
+		wms_cre_customer_change_line_contact_id = #{wms_cre_customer_change_line_contact_id}
+	</update>
+	<delete id="deleteByMap" parameterType="map">
+		delete from wms_cre_customer_change_line_contact
+		<where>
+			<if test="dltIDArr !=null">
+				and wms_cre_credit_line_customer_change_head_id in
+				<foreach collection="dltIDArr"
+					item="wms_cre_credit_line_customer_change_head_id" index="index"
+					open="(" separator="," close=")">
+					#{wms_cre_credit_line_customer_change_head_id}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+	<delete id="deleteOut" parameterType="map">
+		delete from wms_cre_customer_change_line_contact
+		<where>
+			<if test="dltIDArr !=null">
+				and wms_cre_customer_change_line_contact_id not in
+				<foreach collection="dltIDArr"
+					item="wms_cre_customer_change_line_contact_id" index="index"
+					open="(" separator="," close=")">
+					#{wms_cre_customer_change_line_contact_id}
+				</foreach>
+			</if>
+			and wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+		</where>
+	</delete>
+	
+	<select id="searchList" parameterType="map" resultType="java.util.HashMap">
+	select
+	wms_cre_customer_change_line_contact_id,
+	IFNULL(contact_name, '') as contact_name,
+	contact_relation_type,
+	(
+	SELECT value_meaning from wms_sys_dict_data where
+	contact_relation_description=value_code and wms_sys_dict_id=(
+	case when contact_type=0 then '141'
+	when contact_type=1 then '140'
+	end
+	)
+	) as contact_relation_description,
+	IFNULL(contact_mobile_phone, '') as contact_mobile_phone,
+	audit_result1,
+	audit_result2,
+	audit_result3,
+	wms_cre_credit_head_id,
+	wms_cre_credit_line_customer_change_head_id,
+	customer_name,
+	is_major,
+	phone1_1,
+	phone1_2,
+	phone1_3,
+	phone2_1,
+	phone2_2,
+	phone2_3,
+	IFNULL(contact_mobile_phone_short, '') as contact_mobile_phone_short,
+	contact_type
+	from wms_cre_customer_change_line_contact
+        <where>
+            <if test="wms_cre_credit_line_customer_change_head_id != null">
+                and wms_cre_credit_line_customer_change_head_id = #{wms_cre_credit_line_customer_change_head_id}
+            </if>
+        </where>
+        <if test="sortname !=null and sortorder != null">
+            order by ${sortname} ${sortorder}
+        </if>
+        <if test="offset != null and pagesize != null">
+            limit ${offset}, ${sortorder}
+        </if>
+    </select>
+    
+	<delete id="deleteByPKs" parameterType="map">
+        delete from wms_cre_customer_change_line_contact
+        <where>
+            <if test="pkArray != null">
+                and wms_cre_customer_change_line_contact_id in
+                <foreach collection="pkArray" item="wms_cre_customer_change_line_contact_id" index="index"
+                    open="(" separator="," close=")">
+                    #{wms_cre_customer_change_line_contact_id}
+                </foreach>
+            </if>
+        </where>
+    </delete>
+    
+	
+	
+	<delete id="deleteForHeadId" parameterType="map" >
+	    delete 
+	    from
+	    	wms_cre_customer_change_line_contact
+	    where
+	    	wms_cre_credit_head_id =  #{wms_cre_credit_head_id}
+	    AND 
+	    	FIND_IN_SET(wms_cre_customer_change_line_contact_id,#{wms_cre_customer_change_line_contact_id_list})=0
+	    AND
+	       	wms_cre_credit_line_customer_change_head_id=
+	       	(
+	       	SELECT 
+	       		wms_cre_credit_line_customer_change_head_id 
+	       	from  
+	       		wms_cre_credit_line_customer_change_head 
+	       	where 	
+	       		wms_cre_credit_head_id =  #{wms_cre_credit_head_id} 
+	       	and 
+	       		is_major = 1
+	       	)
+	    		
+	    		
+	</delete>
+		<!-- 获取表信息 -->
+	<select id="getCopyInfo" parameterType="Integer" resultType="WmsCreCustomerChangeLineContact">
+		select *
+		from wms_cre_customer_change_line_contact
+		where
+		wms_cre_credit_line_customer_change_head_id=#{id}
+	</select>
+	 <!-- save -->
+	<insert id="saveBatch" parameterType="java.util.List">
+		INSERT INTO wms_cre_customer_change_line_contact
+		(
+			contact_name,
+			contact_relation_type,
+			contact_relation_description,
+			contact_mobile_phone,
+			audit_result1,
+			audit_result2,
+			audit_result3,
+			wms_cre_credit_head_id,
+			wms_cre_credit_line_customer_change_head_id,
+			customer_name,
+			is_major,
+			phone1_1,
+			phone1_2,
+			phone1_3,
+			phone2_1,
+			phone2_2,
+			phone2_3,
+			contact_mobile_phone_short
+		)
+		VALUES
+		 <foreach collection="list" item="item" index="index" separator="," >  
+		 (	
+				#{item.contact_name},
+				#{item.contact_relation_type},
+				#{item.contact_relation_description},
+				#{item.contact_mobile_phone},
+				#{item.audit_result1},
+				#{item.audit_result2},
+				#{item.audit_result3},
+				#{item.wms_cre_credit_head_id},
+				#{item.wms_cre_credit_line_customer_change_head_id},
+				#{item.customer_name},
+				#{item.is_major},
+				#{item.phone1_1},
+				#{item.phone1_2},
+				#{item.phone1_3},
+				#{item.phone2_1},
+				#{item.phone2_2},
+				#{item.phone2_3},
+				#{item.contact_mobile_phone_short}
+		)  
+    	</foreach>
+	</insert>
+	
+	<select id="getContactsInfoList" parameterType="map" resultType="java.util.HashMap">
+        select
+            wms_cre_customer_change_line_contact_id,
+            IFNULL(contact_name, '') as contact_name,
+            contact_relation_type,
+            IFNULL((
+				SELECT
+						value_meaning
+				FROM
+					wms_sys_dict_data
+				WHERE
+					value_code = contact_relation_description
+				AND wms_sys_dict_id = (
+					CASE
+					WHEN contact_type = 0 THEN
+						'141'
+					WHEN contact_type = 1 THEN
+						'140'
+					END
+				)
+			),contact_relation_description) AS contact_relation_description,
+            IFNULL(contact_mobile_phone, '') as contact_mobile_phone,
+            audit_result1,
+            audit_result2,
+            audit_result3,
+            wms_cre_credit_head_id,
+            wms_cre_credit_line_customer_change_head_id,
+            customer_name,
+            is_major,
+            phone1_1,
+            phone1_2,
+            phone1_3,
+            phone2_1,
+            phone2_2,
+            phone2_3,
+            IFNULL(contact_mobile_phone_short, '') as contact_mobile_phone_short
+          from wms_cre_customer_change_line_contact
+        where
+            is_major = 1
+            and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+        <if test="sortname !=null and sortorder != null">
+            order by ${sortname} ${sortorder}
+        </if>
+        <if test="offset != null and pagesize != null">
+            limit ${offset}, ${sortorder}
+        </if>
+    </select>
+    
+	<select id="getContactsInfoListCount" parameterType="map" resultType="int">
+        select
+            count(wms_cre_customer_change_line_contact_id)
+        from
+        	wms_cre_customer_change_line_contact
+        where
+            is_major = 1
+            and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+    </select>
+</mapper> 

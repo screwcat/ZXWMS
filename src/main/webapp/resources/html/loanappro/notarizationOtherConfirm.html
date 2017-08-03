@@ -1,0 +1,344 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/media/js/ZeroClipboard.js"></script>
+<title>房贷终审>公证/他项确认</title>
+</head>
+<body style="overflow-y: hidden;">
+	<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<!--查询条件-->
+			<div class="l-panel-search-cond clearfix">
+				<div class="float-l">
+					<div class="l-panel-search-title">客户姓名：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="Customer_name" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">单据编号：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="bill_code" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">业务员/工号：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="salesman_name" />
+					</div>
+				</div>
+				<div class="float-l clearboth">
+					<div class="l-panel-search-title">办件状态：</div>
+					<div class="l-panel-search-item">
+						<select id="office_status">
+							<option value="-1">---请选择---</option>
+							<option value="0">未确认收到</option>
+							<option value="1">公证未收到</option>
+							<option value="2">他项未收到</option>
+							<option value="3">全部已收到</option>
+						</select>
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">申请时间：</div>
+					<div class="l-panel-search-item">
+						<input id="Create_timestamp_begin" class="Wdate" type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})" style="width: 133px; vertical-align: top;" />
+					</div>
+				</div>
+				<div class="float-l" style="margin-left: 57px;">
+					<div class="l-panel-search-title">至</div>
+					<div class="l-panel-search-item" style="margin-left: 12px;">
+						<input id="Create_timestamp_end" class="Wdate" type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})" style="width: 133px; vertical-align: top;" />
+					</div>
+				</div>
+				<div class="float-l" style="margin-left: 8px;">
+					<div class="l-panel-search-title">产品种类:</div>
+					<div class="l-panel-search-item">
+						<select id="mort_flag" style="width: 137px;"></select>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="centertoolbar" class="minwidth400"></div>
+	<div id="grid"></div>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+		var grid;
+		var toolbar;
+		var params;
+		var dialog;
+		var columns;
+		$(function() {
+			initGrid();
+			var toolbarItemData = [];
+			toolbarItemData.push({
+				text : '确认',
+				click : makeloans,
+				icon : 'approve'
+			});
+			toolbarItemData.push({
+				line : true
+			});
+			toolbarItemData.push({
+				text : '查询',
+				click : search,
+				icon : 'search'
+			});
+			toolbarItemData.push({
+				line : true
+			});
+			toolbarItemData.push({
+				text : '清空',
+				click : clear,
+				icon : 'empty'
+			});
+			toolbarItemData.push({
+				line : true
+			});
+			toolbarItemData.push({
+				text : '导出Excel',
+				icon : 'export',
+				id : 'ToolTables_XLS_2'
+			});
+			toolbarItemData.push({
+				line : true
+			});
+			$("#centertoolbar").ligerToolBar({
+				items : toolbarItemData
+			});
+			search();
+			registerCsv();
+			init_mort_flag_sel();
+		});
+		function registerCsv() {
+			var moviePath = "../../js/media/swf/copy_csv_xls_pdf.swf";
+			var fileName = '公证及他项确认列表.xls';
+			var titleJson = '';
+			var dataJson = '';
+			var obj = $("div[toolbarid='ToolTables_XLS_2']")[0];//获取菜单对象
+			var getDataFun = function() {
+				var text = {};
+				initParams();
+				//实现导出的时候，规定导出的具体内容
+				text.title = {
+					'bill_code' : '单据编号',
+					'create_timestamp' : '申请时间',
+					'mort_flag_name' : '产品种类',
+					'cre_loan_type_name' : '贷款产品',
+					'debtor_name' : '客户姓名',
+					'id_card' : '身份证号',
+					'appro_limit' : '终审金额（万元）',
+					'salesman_name_str' : '业务员/工号',
+					'city' : '城市',
+					'notary_he' : '办件状态（公证/他项）',
+					'bill_status_name' : '单据状态',
+					'bill_code_group' : '组合贷编号'
+				};//定义需要导出的列名以及列名与数据的对应关系
+				var json = globalUtil.syncGetJson("/loanappro/getNotarizationOtherListWithoutPaging.do?sortname=create_timestamp&sortorder=desc", params);//同步获取需要导出的数据内容
+				text.data = json.Rows;
+				return text;
+			};
+			registerXlsFlashBtn(moviePath, fileName, titleJson, dataJson, obj, getDataFun);
+		}
+
+		//清空所填写内容
+		function clear() {
+			$("#Customer_name").val("");
+			$("#debtor_tel").val("");
+			$("#salesman_name").val("");
+			$("#bill_code").val("");
+			$("#Create_timestamp_begin").val("");
+			$("#Create_timestamp_end").val("");
+			$('#office_status').val("-1");
+			$('#mort_flag').val("-1");
+			//search();
+		}
+
+		//表格初始化
+		function initGrid() {
+			columns = [ {
+				display : '单据编号',
+				name : 'bill_code',
+				width : 130,
+				minWidth : 130,
+				render : function(rowdata, rowindex, value) {
+					return '<a href="javascript:creditInfo(' + rowdata.wms_cre_credit_head_id + ',' + rowdata.version_number + ');" style="color:#056AFF;text-decoration: none;">' + value + '</a>';
+				},
+			}, {
+				display : '申请时间',
+				name : 'create_timestamp',
+				width : 130,
+				minWidth : 130
+			}, {
+				display : '产品种类',
+				name : 'mort_flag_name',
+				width : 100,
+				minWidth : 100,
+			}, {
+				display : '贷款产品',
+				name : 'cre_loan_type_name',
+				width : 120,
+				minWidth : 120
+			}, {
+				display : '客户姓名',
+				name : 'debtor_name',
+				width : 130,
+				minWidth : 130
+			}, {
+				display : '身份证号',
+				name : 'id_card',
+				width : 150,
+				minWidth : 150
+			}, {
+				display : '终审金额<br/>（万元）',
+				name : 'appro_limit',
+				width : 90,
+				minWidth : 90,
+				render : function(rowdata, rowindex, value) {
+					if (value != null && typeof (value) != 'undefined') {
+						return Math.round(parseFloat(value) * 100000000) / 100000000;
+					} else {
+						return '';
+					}
+				}
+			}, {
+				display : '业务员/工号',
+				name : 'salesman_name_str',
+				width : 100,
+				minWidth : 100
+			}, {
+				display : '城市',
+				name : 'city',
+				width : 100,
+				minWidth : 100
+			}, {
+				display : '办件状态<br/>（公证/他项）',
+				name : 'notary_he',
+				width : 100,
+				minWidth : 100
+			}, {
+				display : '单据状态',
+				name : 'bill_status_name',
+				width : 100,
+				minWidth : 100
+			}, {
+				display : '流程历程',
+				width : 100,
+				minWidth : 100,
+				//添加超链接
+				render : function(rowdata, rowindex, value) {
+					return '<a href="javascript:approvalProcess(' + rowdata.wms_cre_credit_head_id + ');" style="color:#056AFF;text-decoration: none;">' + "查看" + '</a>';
+				}
+			}, {
+				display : '组合贷编号',
+				name : 'bill_code_group',
+				width : 120,
+				minWidth : 120
+			} ];
+
+			grid = $("#grid").ligerGrid({
+				columns : columns,
+				url : global_param.context_name + '/loanappro/getNotarizationOtherListWithPaging.do',
+				sortName : 'create_timestamp', // 排序列名
+				sortOrder : 'desc', // 排序方式
+				rownumbers : true,
+				allowUnSelectRow : true,
+				usePager : true,
+				width : '100%',
+				height : '95%',
+				heightDiff : -4,
+				parms : {
+					_filterParms : -1
+				},
+				headerRowHeight : '40'
+			});
+
+		}
+
+		function makeloans() {
+			var row = grid.getSelectedRow();
+			if (row == null) {
+				globalUtil.warnMsg(globalErrorMsg['500210']);
+				return;
+			} else {
+				var url = '';
+				url = globalUtil.getHtml("../loanappro/notarizationOtherConfirmDtl.html?" + "wms_cre_credit_head_id=" + row.wms_cre_credit_head_id);
+				var title_val = '公证/他项确认';
+				if (row.mort_flag_name != undefined && row.mort_flag_name != ""&&row.mort_flag=="2") {
+					title_val = '公证/他项确认' + "  ##" + row.mort_flag_name + "##";
+				}
+				dialog = $.ligerDialog.open({
+					url : url,
+					title : title_val,
+					width : 580,
+					height : globalUtil.setDialogHeight(340),
+					onHiddenOrClose : function() {
+					},
+					isResize : false
+				});
+			}
+		}
+
+		//------------------------------------贷款详细信息------------------------------
+		function approvalProcess(wms_cre_credit_head_id) {
+			var url = globalUtil.getHtml("../creditManage/houseApprovalProcess.html?wms_cre_credit_head_id=" + wms_cre_credit_head_id);
+			dialog = $.ligerDialog.open({
+				url : url,
+				title : '查看',
+				width : 1000,
+				height : globalUtil.setDialogHeight(500),
+				onHiddenOrClose : function() {
+				},
+				isResize : false
+			});
+		}
+
+		function creditInfo(wms_cre_credit_head_id, version_number) {
+			var url = "";
+			url = globalUtil.getHtml("../creditManage/houseLoanApply.html?wms_cre_credit_head_id=" + wms_cre_credit_head_id + "&type=1");
+			dialog = $.ligerDialog.open({
+				url : url,
+				title : '客户贷款详细信息',
+				width : 1500,
+				height : globalUtil.setDialogHeight(1000),
+				onHiddenOrClose : function() {
+				},
+				isResize : false
+			});
+		}
+		//关闭
+		function closeDialog() {
+			dialog.close();
+		}
+		//------------------------------------贷款详细信息结束------------------------------
+
+		function initParams() {
+			params = globalUtil.getFormParam("searchbar");
+			params.office_status = $("#office_status").val();
+			if (params.office_status == '-1') {
+				params.office_status = '';
+			}
+			params.mort_flag=$("#mort_flag").val();
+        	if(params.mort_flag == '-1'){
+            	params.mort_flag = '';
+            }
+		}
+		//查询
+		var search = function() {
+			initParams();
+			global_ligerui_extend.search(grid, params);
+		}
+		//初始产品种类
+		function init_mort_flag_sel() {
+			globalUtil.init_select_value('mort_flag', 'value_code', 'value_meaning', true, '147');
+		}
+	</script>
+</body>
+</html>

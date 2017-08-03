@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveCustomerCardUpdateLogDao">
+	
+	<insert id="saveCustomerCardUpdateLog" parameterType="WmsInveCustomerCardUpdateLog" useGeneratedKeys="true" keyProperty="wms_inve_customer_card_update_log_id">
+		insert into wms_inve_customer_card_update_log
+		(
+			original_bank_of_deposit,
+			original_bank_branch,
+			new_bank_of_deposit,
+			new_bank_branch,
+			create_user_id,
+			create_date_time,
+			wms_inve_customer_card_id,
+			wms_inve_transa_prod_id,
+			wms_inve_transa_id
+		)
+		values
+		(
+			#{original_bank_of_deposit},
+			#{original_bank_branch},
+			#{new_bank_of_deposit},
+			#{new_bank_branch},
+			#{create_user_id},
+			#{create_date_time},
+			#{wms_inve_customer_card_id},
+			#{wms_inve_transa_prod_id},
+			#{wms_inve_transa_id}
+		)
+	</insert>
+	
+</mapper> 

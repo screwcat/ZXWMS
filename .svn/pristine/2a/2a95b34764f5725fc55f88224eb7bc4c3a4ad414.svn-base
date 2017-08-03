@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveCreditPackageDao">
+
+	<select id="get" parameterType="int" resultType="WmsInveCreditPackage">
+		select * from wms_inve_credit_package where wms_inve_credit_package_id = #{wms_inve_credit_package_id }
+	</select>
+	
+	<update id="update" parameterType="WmsInveCreditPackage">
+		update
+			wms_inve_credit_package
+		<set>
+			<if test="wms_inve_multicre_info_id != null">
+				wms_inve_multicre_info_id = #{wms_inve_multicre_info_id },
+			</if>
+			<if test="cre_pkg_code != null">
+				cre_pkg_code = #{cre_pkg_code },
+			</if>
+			<if test="cre_type != null">
+				cre_type = #{cre_type },
+			</if>
+			<if test="cre_per_name != null">
+				cre_per_name = #{cre_per_name },
+			</if>
+			<if test="wms_cre_credit_line_customer_change_head_id != null">
+				wms_cre_credit_line_customer_change_head_id = #{wms_cre_credit_line_customer_change_head_id },
+			</if>
+			<if test="protocol_id_year_num != null">
+				protocol_id_year_num = #{protocol_id_year_num },
+			</if>
+			<if test="cre_per_card_id != null">
+				cre_per_card_id = #{cre_per_card_id },
+			</if>
+			<if test="cre_pledge_mon != null">
+				cre_pledge_mon = #{cre_pledge_mon },
+			</if>
+			<if test="matched_product_account != null">
+				matched_product_account = #{matched_product_account },
+			</if>
+			<if test="house_size != null">
+				house_size = #{house_size },
+			</if>
+			<if test="crepg_start_date != null">
+				crepg_start_date = #{crepg_start_date },
+			</if>
+			<if test="crepg_end_date != null">
+				crepg_end_date = #{crepg_end_date },
+			</if>
+			<if test="act_end_date != null">
+				act_end_date = #{act_end_date },
+			</if>
+			<if test="rele_per_id != null">
+				rele_per_id = #{rele_per_id },
+			</if>
+			<if test="rele_per_name != null">
+				rele_per_name = #{rele_per_name },
+			</if>
+			<if test="loca_num != null">
+				loca_num = #{loca_num },
+			</if>
+			<if test="crepackage_state != null">
+				crepackage_state = #{crepackage_state },
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id },
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp },
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id },
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp },
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag },
+			</if>
+			<if test="remark != null">
+				remark = #{remark },
+			</if>
+			<if test="destroy_reason != null">
+				destroy_reason = #{destroy_reason }
+			</if>
+		</set>
+		where wms_inve_credit_package_id = #{wms_inve_credit_package_id }
+	</update>
+	
+	<select id="queryAllCreditPackageByTransaId" parameterType="map" resultType="WmsInveCreditPackage">
+		SELECT 
+			cp.*
+		FROM
+			wms_inve_transa_crepkg tc,
+			wms_inve_credit_package cp
+		<where>
+			tc.wms_inve_credit_package_id = cp.wms_inve_credit_package_id
+			and tc.wms_inve_transa_id = #{transaId }
+			<if test="protocolId != null">
+				and tc.wms_inve_clerk_protocol_id = #{protocolId }
+			</if>
+			and tc.acl_state in (${state })
+			and cp.enable_flag = '1'
+			and tc.enable_flag = '1'
+		</where>
+	</select>
+
+	<select id="queryAllCreditList" parameterType="map" resultType="com.zx.emanage.inve.util.credit.CreditData" flushCache="true" useCache="false">
+		SELECT
+			ccp.wms_inve_credit_package_id as id,
+			ccp.cre_type as creType,
+			ccp.cre_pledge_mon as origProductAccount,
+			ccp.loca_num as localNum,
+			ccp.wms_inve_clerk_region_id as localId,
+			IFNULL(ttc.group_matched, 0) as groupUseProductAccount,
+			IFNULL(ccp.matched_product_account,0) as totalUseProductAccount,
+			IFNULL(ttc.groupSplitCount, 0) as groupSplitCount,
+			ccp.crepg_end_date as crepgEndDate,
+			ccp.acl_match_date as aclMatchDate
+		FROM
+			(
+				SELECT
+					cp.*,
+					r.wms_inve_clerk_region_id, 
+					tc.acl_match_mon,
+					tc.acl_match_date
+				FROM
+					(
+						SELECT
+							*
+						FROM
+							wms_inve_credit_package cp
+						WHERE
+							cp.enable_flag = '1'
+						AND cp.cre_type = '4'
+						AND IFNULL(cp.act_end_date, cp.crepg_end_date) &gt;= DATE_ADD(DATE_FORMAT(#{date2 },'%y-%m-%d'),INTERVAL #{dayRange} DAY)
+						AND DATE_ADD(cp.crepg_start_date,INTERVAL -1 MONTH) &lt;= DATE_FORMAT(#{date1 },'%y-%m-%d')
+					) cp
+				LEFT JOIN (
+					SELECT
+						wms_inve_credit_package_id,
+						SUM(acl_mon) AS acl_match_mon,
+						MAX(acl_date) AS acl_match_date
+					FROM
+						wms_inve_transa_crepkg
+					WHERE
+						cre_type = '4'
+					AND acl_state NOT IN ('3','5')
+					AND enable_flag = '1'
+					GROUP BY
+						wms_inve_credit_package_id
+				) tc ON cp.wms_inve_credit_package_id = tc.wms_inve_credit_package_id,
+					wms_inve_clerk_region r
+				WHERE
+					cp.loca_num = r.region_number
+			) ccp
+		LEFT JOIN (
+				SELECT
+					wms_inve_credit_package_id,
+					IFNULL(SUM(acl_mon), 0) AS group_matched,
+					COUNT(
+						tc.wms_inve_credit_package_id
+					) as groupSplitCount
+				FROM
+					(
+					SELECT
+						*
+					FROM
+						wms_inve_transa ta
+					WHERE
+						ta.data_status NOT IN ('6', '7')
+					AND CASE
+					WHEN ta.bel_center_manager_id IS NULL THEN
+						CASE
+					WHEN ta.bel_vice_general_manager_id IS NULL THEN
+						ta.bel_general_manager_id
+					ELSE
+						ta.bel_vice_general_manager_id
+					END
+					ELSE
+						ta.bel_center_manager_id
+					END IN (
+						SELECT
+							personnel_id
+						FROM
+							wms_inve_credit_splitconfig_body
+						WHERE
+							group_id = (
+								SELECT
+									group_id
+								FROM
+									wms_inve_credit_splitconfig_body
+								WHERE
+									personnel_id = (
+										SELECT
+											CASE
+										WHEN t.bel_center_manager_id IS NULL THEN
+											CASE
+										WHEN t.bel_vice_general_manager_id IS NULL THEN
+											t.bel_general_manager_id
+										ELSE
+											t.bel_vice_general_manager_id
+										END
+										ELSE
+											t.bel_center_manager_id
+										END
+										FROM
+											wms_inve_transa t
+										WHERE
+											t.wms_inve_transa_id = #{transaId }
+									)
+								AND personnel_deptid = (
+									SELECT
+										CASE
+									WHEN t.bel_center_manager_id IS NULL THEN
+										CASE
+									WHEN t.bel_vice_general_manager_id IS NULL THEN
+										t.bel_general_manager_dept_id
+									ELSE
+										t.bel_vice_general_manager_dept_id
+									END
+									ELSE
+										t.bel_center_manager_dept_id
+									END
+									FROM
+										wms_inve_transa t
+									WHERE
+										t.wms_inve_transa_id = #{transaId }
+								)
+								AND enable_flag = '1'
+							)
+						AND enable_flag = '1'
+					)
+					AND CASE
+					WHEN ta.bel_center_manager_id IS NULL THEN
+						CASE
+					WHEN ta.bel_vice_general_manager_id IS NULL THEN
+						ta.bel_general_manager_dept_id
+					ELSE
+						ta.bel_vice_general_manager_dept_id
+					END
+					ELSE
+						ta.bel_center_manager_dept_id
+					END IN (
+						SELECT
+							personnel_deptid
+						FROM
+							wms_inve_credit_splitconfig_body
+						WHERE
+							group_id = (
+								SELECT
+									group_id
+								FROM
+									wms_inve_credit_splitconfig_body
+								WHERE
+									personnel_id = (
+										SELECT
+											CASE
+										WHEN t.bel_center_manager_id IS NULL THEN
+											CASE
+										WHEN t.bel_vice_general_manager_id IS NULL THEN
+											t.bel_general_manager_id
+										ELSE
+											t.bel_vice_general_manager_id
+										END
+										ELSE
+											t.bel_center_manager_id
+										END
+										FROM
+											wms_inve_transa t
+										WHERE
+											t.wms_inve_transa_id = #{transaId }
+									)
+								AND personnel_deptid = (
+									SELECT
+										CASE
+									WHEN t.bel_center_manager_id IS NULL THEN
+										CASE
+									WHEN t.bel_vice_general_manager_id IS NULL THEN
+										t.bel_general_manager_dept_id
+									ELSE
+										t.bel_vice_general_manager_dept_id
+									END
+									ELSE
+										t.bel_center_manager_dept_id
+									END
+									FROM
+										wms_inve_transa t
+									WHERE
+										t.wms_inve_transa_id = #{transaId }
+								)
+								AND enable_flag = '1'
+							)
+						AND enable_flag = '1'
+					)
+				) tt,
+				(
+					SELECT
+						*
+					FROM
+						wms_inve_transa_crepkg
+					WHERE
+						cre_type = '4'
+					AND acl_state NOT IN ('3','5')
+					AND enable_flag = '1'
+				) tc
+			WHERE
+				tt.wms_inve_transa_id = tc.wms_inve_transa_id
+			GROUP BY
+				tc.wms_inve_credit_package_id
+		) ttc ON ccp.wms_inve_credit_package_id = ttc.wms_inve_credit_package_id
+	</select>
+
+	<!-- 查询 全集团剩余债权额度、今日到期抵押包额度 -->
+	<select id="getCompanyRemainCreditPackage" resultType="java.util.HashMap">
+		SELECT
+			sum(rs.creditPackage_over)/10000 AS creditPackage_over,
+			sum(rs.company_remain)/10000 AS company_remain
+		FROM
+			(
+				SELECT
+					sum(p.matched_product_account) AS creditPackage_over,
+					0 AS company_remain
+				FROM
+					wms_inve_credit_package p
+				WHERE
+					p.enable_flag = 1
+				AND ifnull(
+					p.act_end_date,
+					p.crepg_end_date
+				) = DATE_FORMAT(now(), '%Y-%m-%d')
+				UNION ALL
+					SELECT 
+						0 AS creditPackage_over,
+						(tt.remain_mon_real - used_mon_real) as company_remain
+					FROM 
+					(
+						SELECT
+							sum(
+								ceil(t.cre_pledge_mon/10000 * (
+									SELECT
+										head.ela_coeff
+									FROM
+										wms_inve_credit_splitconfig_head head
+									WHERE
+										head.enable_flag = '1'
+								)
+							)*10000) AS 'remain_mon_coeff',
+							sum(t.cre_pledge_mon) AS 'remain_mon_real',
+							sum(ifnull(t.matched_product_account,0)) AS 'used_mon_coeff',
+							sum(
+								IF (
+									t.cre_pledge_mon - ifnull(
+										t.matched_product_account,
+										0
+									) &lt; 0,
+									t.cre_pledge_mon,
+									ifnull(
+										t.matched_product_account,
+										0
+									)
+								)
+							) AS 'used_mon_real'
+						FROM
+							wms_inve_credit_package t
+						WHERE
+							t.enable_flag = '1'
+						AND ifnull(
+							t.act_end_date,
+							t.crepg_end_date
+						) >= CURDATE()
+					) tt
+			) rs
+	</select>
+	
+	<!-- 查询 各组剩余可匹配额度和已匹配金额 -->
+	<select id="getGroupRemainCreditPackage" resultType="java.util.HashMap">
+			SELECT
+				c.group_id,
+				c.group_name,
+				sum(
+					CASE
+					WHEN c.remain_mon &lt;= 10000 THEN
+						c.remain_mon
+					WHEN c.remain_mon = 20000 THEN
+						c.remain_mon -
+					IF (
+						c.plus_mon > 10000,
+						10000,
+						c.plus_mon
+					)
+					ELSE
+						c.remain_mon - c.plus_mon
+					END
+				) / 10000 AS remain_mon_once,
+				sum(c.remain_mon) / 10000 AS remain_mon,
+				sum(c.cre_pledge_mon_coeff) / 10000 AS 'sum_mon_coeff',
+				sum(c.cre_pledge_mon) / 10000 AS 'sum_mon_real',
+				sum(ifnull(c.used_amount, 0)) / 10000 AS 'used_mon'
+			FROM
+				(
+					SELECT
+						aa.group_id,
+						aa.group_name,
+						aa.wms_inve_credit_package_id,
+						(
+							CASE is_finished
+							WHEN 1 THEN
+			
+							IF (
+								aa.cre_pledge_mon_coeff - ifnull(aa.matched_product_account,0) > aa.cre_pledge_mon - ifnull(d.used_amount,0),
+								aa.cre_pledge_mon - ifnull(d.used_amount,0),
+			
+							IF (
+								aa.cre_pledge_mon_coeff &lt; ifnull(aa.matched_product_account,0),
+								0,
+								aa.cre_pledge_mon_coeff - ifnull(aa.matched_product_account,0)
+							)
+							)
+							ELSE
+								0
+							END
+						) AS 'remain_mon',
+						ifnull(d.used_time, 2) * 10000 AS plus_mon,
+						aa.cre_pledge_mon_coeff AS 'cre_pledge_mon_coeff',
+						aa.cre_pledge_mon AS 'cre_pledge_mon',
+						ifnull(d.used_amount, 0) AS 'used_amount'
+					FROM
+						(
+							SELECT
+								ifnull(
+									cp.act_end_date,
+									cp.crepg_end_date
+								) >= CURDATE() AS is_finished,
+								ceil(
+									cp.cre_pledge_mon / 10000 * (
+										SELECT
+											head.ela_coeff
+										FROM
+											wms_inve_credit_splitconfig_head head
+										WHERE
+											head.enable_flag = '1'
+									)
+								) * 10000 AS cre_pledge_mon_coeff,
+								cp.wms_inve_credit_package_id,
+								cp.cre_pledge_mon,
+								ifnull(
+									cp.matched_product_account,
+									0
+								) AS matched_product_account,
+								a.group_id,
+								a.group_name
+							FROM
+								wms_inve_credit_package cp,
+								(
+									SELECT
+										body.group_id,
+										group_name
+									FROM
+										wms_inve_credit_splitconfig_body body
+									WHERE
+										body.enable_flag = '1'
+									GROUP BY
+										body.group_id,
+										group_name
+								) a
+							WHERE
+								cp.enable_flag = '1'
+						) aa
+					LEFT JOIN (
+						SELECT
+							t3.group_id,
+							t3.group_name,
+							sum(t1.acl_mon) AS used_amount,
+							(
+								CASE
+								WHEN count(1) >= 2 THEN
+									0
+								WHEN count(1) = 1 THEN
+									1
+								END
+							) AS used_time,
+							t1.wms_inve_credit_package_id
+						FROM
+							wms_inve_transa_crepkg t1,
+							wms_inve_transa t2,
+							wms_inve_credit_splitconfig_body t3
+						WHERE
+							t1.wms_inve_transa_id = t2.wms_inve_transa_id
+						AND t3.personnel_id = (
+							CASE
+							WHEN t2.bel_center_manager_id IS NOT NULL THEN
+								t2.bel_center_manager_id
+							WHEN t2.bel_vice_general_manager_id IS NOT NULL THEN
+								t2.bel_vice_general_manager_id
+							WHEN t2.bel_general_manager_id IS NOT NULL THEN
+								t2.bel_general_manager_id
+							END
+						)
+						AND t3.personnel_deptid = (
+							CASE
+							WHEN t2.bel_center_manager_id IS NOT NULL THEN
+								t2.bel_center_manager_dept_id
+							WHEN t2.bel_vice_general_manager_id IS NOT NULL THEN
+								t2.bel_vice_general_manager_dept_id
+							WHEN t2.bel_general_manager_id IS NOT NULL THEN
+								t2.bel_general_manager_dept_id
+							END
+						)
+						AND t1.acl_state IN ('1', '4')
+						AND t1.enable_flag = '1'
+						AND t3.enable_flag = '1'
+						GROUP BY
+							t3.group_id,
+							t3.group_name,
+							t1.wms_inve_credit_package_id
+					) AS d ON aa.group_id = d.group_id
+					AND aa.wms_inve_credit_package_id = d.wms_inve_credit_package_id
+					AND aa.group_name = d.group_name
+					GROUP BY
+						aa.group_id,
+						aa.group_name,
+						aa.wms_inve_credit_package_id
+				) c
+			GROUP BY
+				c.group_id,
+				c.group_name
+	</select>
+	
+	
+	<!-- 查询 各地区剩余债权额度 -->
+	<select id="getRegionRemainCreditPackage" resultType="java.util.HashMap">
+			select 
+				rs.region_number,
+				rs.region_name,
+				rs.used_mon,
+				case 
+					when rs.cur_limit_mon is NULL then '无限额'
+					else (ceil(cur_limit_mon)) 
+				end as cur_limit_mon,				
+				ceil(rs.cur_warn_mon) as cur_warn_mon,
+				case 
+					when rs.cur_limit_mon is NULL then '无限额'
+					else (ceil(rs.cur_limit_mon-rs.used_mon)) 
+				end as remain_mon
+			from (
+				select 
+					rg.region_number,
+					rg.region_name,
+					ifnull(tc.used_mon,0)/10000 as used_mon,
+					(select l1.limit_amount from wms_inve_sale_limit l1 where l1.enable_flag =1 and DATE_FORMAT(l1.create_timestamp,'%y-%m-%d') = CURDATE() and l1.limit_type = 1 and l1.region_number = rg.region_number) as cur_limit_mon,
+					(select l2.limit_amount from wms_inve_sale_limit l2 where l2.enable_flag =1 and DATE_FORMAT(l2.create_timestamp,'%y-%m-%d') = CURDATE() and l2.limit_type = 2 and l2.region_number = rg.region_number) as cur_warn_mon 
+				from (
+						select 
+							r.region_number,
+							r.region_name 
+						from wms_inve_clerk_region r where r.enable_flag = 1 and r.level5_dept_ids is not null
+					) rg
+				left join (
+						SELECT
+							d.personnel_regionNumber,			
+							SUM(tp.org_product_account)as used_mon
+						FROM
+							wms_inve_clerk_data d, wms_inve_transa t, wms_inve_transa_prod tp
+						WHERE
+							d.wms_inve_transa_id = t.wms_inve_transa_id
+						AND t.wms_inve_transa_id = tp.wms_inve_transa_id
+						AND
+							DATE_FORMAT(
+								d.sort_timestamp,
+								'%y-%m-%d'
+							) = CURDATE()
+						AND d.data_type = '1'
+						AND t.data_status IN ('4','5','6','11','12','13','19')
+						AND ifnull(t.date_of_act,CURDATE()) = CURDATE()
+						AND d.enable_flag = '1'
+						and t.contract_signing_type = 2
+					GROUP BY d.personnel_regionNumber
+					) tc
+					on rg.region_number = tc.personnel_regionNumber		
+			) rs
+	</select>
+</mapper>

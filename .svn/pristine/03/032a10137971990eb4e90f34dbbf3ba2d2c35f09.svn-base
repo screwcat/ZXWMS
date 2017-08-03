@@ -1,0 +1,338 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script type="text/javascript" charset="utf-8"
+    src="../../js/media/js/ZeroClipboard.js"></script>
+<title>财务管理>理财上单>退单确认</title>
+</head>
+<body style="overflow-y: hidden;">
+    <div class="l-panel-search clearfix centertoolbar-w">
+        <div id="searchbar" class="l-searchbar clearfix">
+            <!--查询条件-->
+            <div class="l-panel-search-cond clearfix">
+                <div class="float-l">
+                    <div class="l-panel-search-title">客户姓名：</div>
+                    <div class="l-panel-search-item">
+                        <input type="text" id="cus_name" />
+                    </div>
+                </div>
+                <div class="float-l">
+                    <div class="l-panel-search-title">理财产品：</div>
+                    <div class="l-panel-search-item">
+                        <input type="text" id="category_name" />
+                    </div>
+                </div>
+                <div class="float-l">
+                    <div class="l-panel-search-title">有效证件：</div>
+                    <div class="l-panel-search-item">
+                        <input type="text" id="id_card" />
+                    </div>
+                </div>
+                <div class="float-l">
+                    <div class="l-panel-search-title" style="margin-left: 16px">上单时间:</div>
+                    <div class="l-panel-search-item">
+                        <input id="create_timestamp_begin" class="Wdate" type="text"
+                            onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+                            style="width: 133px; vertical-align: top;" /> 至
+                        <input id="create_timestamp_end" class="Wdate" type="text"
+                            onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+                            style="width: 133px; vertical-align: top;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="centertoolbar" class="minwidth400"></div>
+    <div id="grid"></div>
+<!-- 工具条初始化 -->
+<script type="text/javascript">
+    var grid;
+    var toolbar;
+    var params;
+    var dialog;
+    var columns;
+    var ppqkList = [{ "ppqkValue": "1", "ppqkName": "是"}, { "ppqkValue": "0", "ppqkName": "否"}];//是/否
+
+    $(function() {
+                    
+        initGrid();
+        var toolbarItemData = [];
+        toolbarItemData.push({
+            text: '退单确认',
+            click: singleConfirmation,
+            icon: 'approve'
+        });
+        toolbarItemData.push({
+            line: true
+        });
+        toolbarItemData.push({
+            text: '退单撤销',
+            click: backApplyRevocation,
+            icon: 'approve'
+        });
+        toolbarItemData.push({
+            line: true
+        });
+        toolbarItemData.push({
+            text: '查询',
+            click:search,
+            icon: 'search'
+        });
+        toolbarItemData.push({
+            line: true
+        });
+        toolbarItemData.push({
+            text: '清空',
+            click:clear,
+            icon: 'empty'
+        });
+        toolbarItemData.push({
+            line: true
+        });
+        toolbarItemData.push({
+            text: '导出Excel',
+            icon: 'export',
+            id:'ToolTables_XLS_2'
+        });
+        toolbarItemData.push({
+            line: true
+        });
+        $("#centertoolbar").ligerToolBar({
+             items: toolbarItemData
+        });
+        search();
+        init_category_name();
+        registerCvs();
+    });
+    //------------------------------------------------------------------实现债权匹配列表数据导出
+    function registerCvs(){
+        var moviePath = "../../js/media/swf/copy_csv_xls_pdf.swf";
+        var fileName = '退单确认情况.xls';
+        var titleJson = '';
+        var dataJson = '';
+        var obj = $("div[toolbarid='ToolTables_XLS_2']")[0];//获取菜单对象
+        var getDataFun = function(){
+            var text = {};
+            initParams();
+            //实现导出的时候，规定导出的具体内容
+            text.title = {
+            	'bill_code':'单据编号',
+            	'cus_name':'客户姓名',
+            	'id_card':'有效证件',
+            	'category_name':'理财产品',
+            	'product_deadline':'理财期限',
+            	'product_account_show':'投资金额（万元）',
+            	'create_timestamp_str':'录入时间',
+            	'date_of_payment_str':'支付时间',
+            	'is_finish_name':'债权匹配是否完成',
+            	'data_status':'单据状态'
+            };
+            var json = globalUtil.syncPostJson("/inve/searchSingleConfirmationListForExport.do?sortname=create_timestamp&sortorder=desc", params);//同步获取需要导出的数据内容
+            text.data = json.Rows;
+            return text;
+        };
+        registerXlsFlashBtn(moviePath, fileName, titleJson, dataJson, obj, getDataFun);
+    }
+    //------------------------------------------------------------------理财产品类型
+    function init_category_name(){
+        var category_name_params = {
+            dest_url:'/inve/wmsinvepruductcategorylistforselectKey.do?is_forbidden=0',
+            t_col_name:'category_name',
+            valueField:'wms_inve_pruduct_category_id',   //下拉框value对应的值，默认为id
+            textField:'category_name',    //下拉框text对应的值，默认为text
+            input_width:133,
+            def_val:'first'
+        };
+        global_ligerui_extend.initCombox("category_name", null, category_name_params);
+        global_ligerui_extend.initComboxDefVal("category_name");
+    }
+    //------------------------------------------------------------------债权匹配页面列表数据显示 初始化
+    function initGrid() {
+        columns = [{
+            display: '单据编号',
+            name: 'bill_code',
+            width: 150,
+            minWidth: 150,
+            //添加超链接的东西
+            render: function (rowdata, rowindex, value) { 
+                return '<a href="javascript:inveInfo(' + rowdata.wms_inve_transa_id + ',' + rowdata.wms_inve_transa_prod_id + ');" style="color:#056AFF;text-decoration: none;">' + value + '</a>';
+            },
+        },{
+            display: '客户姓名',
+            name: 'cus_name',
+            width: 120,
+            minWidth: 120
+        },{
+            display: '有效证件',
+            name: 'id_card',
+            width: 150,
+            minWidth: 150
+        },{
+            display: '理财产品',
+            name: 'category_name',
+            width: 120,
+            minWidth: 120   
+        },{
+            display: '理财期限',
+            name: 'product_deadline',
+            width: 120,
+            minWidth: 120
+        },{
+            display: '投资金额（万元）',
+            name: 'product_account_show',
+            width: 120,
+            minWidth: 120
+        },{
+            display: '录入时间',
+            name: 'create_timestamp_str',
+            width: 200,
+            minWidth: 200
+        },{
+            display: '支付时间',
+            name: 'date_of_payment_str',
+            width: 120,
+            minWidth: 120
+        },{
+            display: '单据状态',
+            name: 'data_status',
+            width: 120,
+            minWidth: 120
+        },{
+            display: '流程历程',
+            name: 'process',
+            width: 100,
+            minWidth: 100,
+            //添加超链接
+            render: function (rowdata, rowindex, value) {                    
+                 return '<a href="javascript:financialSingleProcess(' + rowdata.wms_inve_transa_id + ');" style="color:#056AFF;text-decoration: none;">' + "查看" + '</a>';                                  
+             }
+        }];
+        
+        grid = $("#grid").ligerGrid({
+            columns: columns,
+            url: global_param.context_name + '/inve/searchSingleConfirmationList.do',
+            sortName: 'bill_code', // 排序列名
+            sortOrder: 'desc', // 排序方式
+            rownumbers: true,
+            allowUnSelectRow: true,
+            usePager: true,
+            width: '100%',
+            height: '95%',
+            heightDiff: -4,
+            parms: {
+                _filterParms: -1
+            }
+        });
+    }   
+    
+    //流程历程查看
+    function financialSingleProcess(wms_inve_transa_id){
+        var url = globalUtil.getHtml("financialSingleProcess.html?wms_inve_transa_id=" + wms_inve_transa_id);
+        dialog = $.ligerDialog.open({
+            url:url,
+            title: '',
+            width: 1000,
+            height: globalUtil.setDialogHeight(500),
+            onHiddenOrClose: function(){
+            },
+            isResize: false
+        }); 
+    }
+    
+    //弹出退单确认页面
+    var rowsled;
+    function singleConfirmation(){
+    	var row = grid.getSelectedRow();
+        if(row == null){
+            globalUtil.warnMsg(globalErrorMsg['910095']);
+            return;
+        }
+        var url = globalUtil.getHtml("singleApplication.html?wms_inve_transa_id=" + 
+                row.wms_inve_transa_id +
+                "&wms_inve_transa_prod_id=" + row.wms_inve_transa_prod_id + 
+                "&wms_inve_pruduct_category_id=" + row.wms_inve_pruduct_category_id + 
+                "&wms_inve_customer_id=" + row.wms_inve_customer_id + "&taskId=" + row.taskId + "&type=" + 2);//type=1为退单申请页面跳转 type=2为退单确认页面跳转(仅为展示)
+        dialog = $.ligerDialog.open({
+            url: url,
+            title: '退单申请详情',
+            width: 1000,
+            height: globalUtil.setDialogHeight(700),
+            onHiddenOrClose: function(){
+            },
+            isResize: false
+        });
+    }
+    //退单撤销
+    function backApplyRevocation(){
+    	var row = grid.getSelectedRow();
+    	if(row == null){
+            globalUtil.warnMsg(globalErrorMsg['910095']);
+            return;
+        }
+    	$.ligerDialog.confirm(globalErrorMsg['800703'],
+        function(yes) {
+            if(yes) {
+            	var bean = {};
+            	bean.wms_inve_transa_id = row.wms_inve_transa_id;
+            	bean.wms_inve_transa_prod_id = row.wms_inve_transa_prod_id;
+            	bean.taskId = row.taskId;
+                //撤销退单
+            	$.ajax({ 
+                    type: "POST", 
+                    url: global_param.context_name + "/inve/revocationTransaBackApply.do",
+                    async: false,
+                    dataType: "json",
+                    data: bean, 
+                    success: function(data){
+                        if(data == "success"){
+                            globalUtil.successMsg(globalErrorMsg['800706'], function(){                            
+                                search();
+                            });
+                        }else{
+                            globalUtil.warnMsg(globalErrorMsg['100012']);
+                        }
+                    }
+                });
+            }                                            
+        });
+    	
+    }
+    //理财详细信息
+    function inveInfo(wms_inve_transa_id, wms_inve_transa_prod_id){
+        var url = globalUtil.getHtml("inve/addFinancialManagement.html?wms_inve_transa_id=" + wms_inve_transa_id + "&wms_inve_transa_prod_id=" + wms_inve_transa_prod_id + "&cktype=ck&zftype=zf");
+        globalUtil.openTab(10001, "理财详细信息", url, false);
+    }
+    //查询
+    var search = function() {
+        initParams();
+        global_ligerui_extend.search(grid, params);
+    }
+    function initParams() {
+        params = globalUtil.getFormParam("searchbar");
+        if(params.data_status == '-1'){
+            params.data_status = '';
+        }
+        params.category_name = $("#category_name").val();
+        if(params.category_name == "请选择"){
+            params.category_name ='';
+        }
+    }
+    
+    //清空查询条件
+    function clear(){
+        $("#cus_name").val("");
+        $("#id_card").val("");
+        $("#create_timestamp_begin").val("");
+        $("#create_timestamp_end").val("");
+        global_ligerui_extend.setComboxVal("category_name", "-1");
+        search();
+    }
+</script>
+</body>
+</html>

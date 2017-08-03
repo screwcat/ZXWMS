@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>活动量统计</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+
+</head>
+<body>
+<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<!--查询条件-->
+			<div class="l-panel-search-cond clearfix">
+				<div class="float-l">
+					<div class="l-panel-search-title">归属月份：</div>
+					<div class="l-panel-search-item">
+						<input id="statics_month" name="statics_month" class="Wdate" type="text" onclick="WdatePicker({dateFmt:'yyyy-MM',isShowClear:true, maxDate:'%y-%M'})"
+					style="width: 135px; vertical-align: top;" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="tool_bar" class="minwidth400"></div>
+	<div id="gridList"></div>
+
+<script type="text/javascript">
+var parm;
+var statics_month;
+var mydate = new Date();
+var y = mydate.getFullYear();
+var m =  mydate.getMonth();
+var date = y+"-"+(m>9?m:"0"+m);
+var data_status;
+$(function(){
+	data_status();
+	$("#statics_month").val(date);
+	$("#tool_bar").ligerToolBar({
+		items : toolbar
+	});
+	init_parm();
+	initgrid();
+	
+})
+
+//单据状态
+function data_status(){
+	$.ajax({
+		type:"post",
+		data :{
+			dict_id:1003			
+		},
+		url : global_param.context_name + '/inve/selectDataStateDictInfo.do',
+		success : function(data) {
+			data_status =data;
+		}
+	});
+	
+}
+
+
+var columns = [ {
+	display : '一级部门',
+	name : 'parent_dept_name',
+	width : 300,
+	render : function(rowdata, rowindex, value) {
+		return valueStyle(rowdata,value);
+	}
+	
+}, {
+	display : "二级部门",
+	name : 'dept_name',
+	width : 300,
+	render : function(rowdata, rowindex, value) {
+		var html = "<a href='javascript:void(0)'  onclick=getDeptInfo(" + rowdata.dept_id + ") >"+value+"</a>"
+		return html;
+	}
+}, {
+	display : '部门经理提交结果',
+	name : 'is_pay_department_result',
+	width : 300,
+	render : function(rowdata, rowindex, value) {
+		value =getStr(rowdata,value);
+		return valueStyle(rowdata,value);
+	}
+}, {
+	display : '副总|中分总审核结果',
+	name : 'is_pay_vice_general_result',
+	width : 300,
+	render : function(rowdata, rowindex, value) {
+		value =getStr(rowdata,value);
+		return valueStyle(rowdata,value);
+	}
+}, {
+	display : '总经理审核结果',
+	name : 'is_pay_general_result',
+	width : 300,
+	render : function(rowdata, rowindex, value) {
+		value =getStr(rowdata,value);
+		return valueStyle(rowdata,value);
+	}
+},
+{
+	display : '单据状态',
+	name : 'data_status',
+	width : 150,
+	render : function(rowdata, rowindex, value) {
+		var val = "";
+		if(data_status!=null&&data_status.length>0){
+			for(var i=0; i<data_status.length;i++){
+				if(data_status[i].value_code==value){
+					val = data_status[i].value_meaning
+				}
+			}
+		}
+		
+		return val;
+	}
+},
+{
+	display : '流程历程',
+	name : 'transa_bill_code',
+	width : 150,
+	render : function(rowdata, rowindex, value) {
+		var html = "<a href='javascript:void(0)'  onclick=getProcess(" + rowdata.wms_inve_salary_pre_total_id + ") >查看</a>"
+		return html;
+	}
+}
+ ]
+
+var toolbar = [];
+
+toolbar.push({
+	text : '查询',
+	click : search,
+	icon : 'search'
+});
+toolbar.push({
+	text : '清空',
+	click : clear,
+	icon : 'empty'
+	
+});
+
+//初始化grid参数
+function init_parm() {
+
+	parm = {
+			statics_month : $("#statics_month").val()
+	}
+}
+
+//初始化列表
+function initgrid(id) {
+
+		grid = $("#gridList").ligerGrid({
+			columns : columns,
+			url : global_param.context_name + '/inve/selectSalaryPreItemByMonth.do',
+			parms : parm,
+			rownumbers : true,
+			allowUnSelectRow : true,
+			usePager : false,
+			width : '100%',
+			height : '710',
+			heightDiff : -4
+		
+		});
+	}
+//查询方法
+function search() {
+	init_parm();
+	initgrid()
+}
+
+function clear(){
+	$("#statics_month").val(date);
+}
+//查看二级部门
+var dept_id = "";
+function getDeptInfo(id){
+	dept_id = id;
+	statics_month = $("#statics_month").val();
+  	var url = globalUtil.getHtml("opernSituationDeptInfo.html");
+	dialog = $.ligerDialog.open({
+		url : url,
+		title : '本团队开资情况审核结果',
+		width : '1200',
+		height : globalUtil.setDialogHeight(700),
+		isResize : false
+	});
+}
+//查看流程
+var wms_inve_salary_pre_total_id = "";
+function getProcess(id){
+	wms_inve_salary_pre_total_id = id;
+  	var url = globalUtil.getHtml("openSituationProcess.html");
+	dialog = $.ligerDialog.open({
+		url : url,
+		title : '流程历程',
+		width : '1100',
+		height : globalUtil.setDialogHeight(500),
+		isResize : false
+	});
+	
+}
+//处理value样式
+function valueStyle(data,value){
+	if(data==null){return false;}
+	value = value ==null?"":value;
+	var html;
+	var is_pay_department = data.is_pay_department_result;
+	var is_pay_vice_general = data.is_pay_vice_general_result;
+	var is_pay_general = data.is_pay_general_result;
+// 	if(is_pay_department!=is_pay_vice_general||is_pay_vice_general!=is_pay_general){
+// 	 html = "<span style='color:red'>"+value+"</span>"
+// 	}else{
+// 	}
+	html = value;
+	return html;
+}
+
+function getStr(data,value){
+	if(data==null){return false;}
+	if(value==null){
+		value = "";
+	}else{
+		value =value+"（开资）  |"+data.total_num+"（总数）";
+	}
+	return value;
+}
+
+
+
+</script>		
+</body>
+
+</html>

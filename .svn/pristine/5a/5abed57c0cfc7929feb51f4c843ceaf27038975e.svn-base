@@ -1,0 +1,2582 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.reportmanage.persist.WmsProviderForAppDao">
+	<select id="getPersonnelCommDeptStaOtherMonth" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			salesman_name AS personnel_name,
+			salesman_shortcode AS personnel_shortcode,
+			salesman_id AS personnel_id,
+			format(
+				ifnull(add_comm_mon, 0) + ifnull(stock_comm_mon, 0) - ifnull(tax_mon, 0) + ifnull(old_stock_comm_mon, 0) - ifnull(old_tax_mon, 0),
+				2
+			) AS personnel_comm_fmt,
+			ifnull(add_comm_mon, 0) + ifnull(stock_comm_mon, 0) - ifnull(tax_mon, 0) + ifnull(old_stock_comm_mon, 0) - ifnull(old_tax_mon, 0) AS personnel_comm
+		FROM
+			wms_inve_commion_record
+		where statics_month=#{statics_month}
+		and salesman_name is not null
+		and salesman_shortcode is not null
+		and dept_id in (${dept_ids})
+		<if test="personnel_info != null and personnel_info != ''">
+			and (salesman_name like '%${personnel_info}%' or salesman_shortcode like '%${personnel_info}%')
+		</if>
+		order by CONVERT( salesman_name USING gbk ) COLLATE gbk_chinese_ci ASC
+		<if test="page !=null and page_size !=null">
+			limit ${(page-1)*page_size},${page_size}
+		</if> 
+	</select>
+	
+	
+	<select id="getPersonnelcommCommItemSta" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			a.salesman_name AS personnel_name,
+			a.salesman_shortcode AS personnel_shortcode,
+			concat(a.salesman_id,'') AS personnel_id,
+			(select b.dept_name from sys_dept b where a.dept_id=b.dept_id ) as dept_name,
+			format(ifnull(a.old_stock_comm_mon, 0),2) as oldpro_per_comm_fmt,
+			ifnull(a.old_stock_comm_mon, 0) as oldpro_per_comm,
+			format(ifnull(a.old_tax_mon, 0),2) as old_tax_mon_fmt,
+			ifnull(a.old_tax_mon, 0) as old_tax_mon,
+			'01' as oldpro_per_comm_item,
+			format(ifnull(a.add_comm_mon, 0),2) as newpro_comm_add_fmt,
+			ifnull(a.add_comm_mon, 0) as newpro_comm_add,
+			format(ifnull(a.tax_mon, 0),2) as newpro_tax_fmt,
+			ifnull(a.tax_mon, 0) as newpro_tax,
+			'02' as newpro_comm_add_item,
+			format(ifnull(a.stock_comm_mon, 0),2) as newpro_comm_stock_fmt,
+			ifnull(a.stock_comm_mon, 0) as newpro_comm_stock,
+			'03' as newpro_comm_stock_item,
+			format(
+				ifnull(a.add_comm_mon, 0) + ifnull(a.stock_comm_mon, 0) - ifnull(a.tax_mon, 0) + ifnull(a.old_stock_comm_mon, 0) - ifnull(a.old_tax_mon, 0),
+				2
+			) AS comm_sum_fmt,
+			ifnull(a.add_comm_mon, 0) + ifnull(a.stock_comm_mon, 0) - ifnull(a.tax_mon, 0) + ifnull(a.old_stock_comm_mon, 0) - ifnull(a.old_tax_mon, 0) AS comm_sum
+		FROM
+			wms_inve_commion_record a
+		where a.statics_month=#{statics_month}
+		and a.salesman_name is not null
+		and a.salesman_shortcode is not null
+		<if test="personnel_ids != null and personnel_ids != ''">
+			and a.salesman_id in (${personnel_ids})
+		</if>
+		<if test="personnel_info != null and personnel_info != ''">
+			and (a.salesman_name like '%${personnel_info}%' or a.salesman_shortcode like '%${personnel_info}%')
+		</if>
+		<if test="page !=null and page_size !=null">
+			limit ${(page-1)*page_size},${page_size}
+		</if>
+	</select>
+	<select id="getPersonnelCommInveSta_old" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			t2.cus_name,
+			FORMAT(t1.product_account,2) AS product_account_fmt,
+			t3.product_account,
+			DATE_FORMAT(t1.date_of_payment,'%Y/%m/%d') AS date_of_payment,
+			FORMAT(t1.redeem_amount,2) AS redeem_amount_fmt,
+			t1.redeem_amount,
+			DATE_FORMAT(t1.redeem_date,'%Y/%m/%d') AS redeem_date,
+			t2.bill_code,
+			t3.category_name AS product_name,
+			CONCAT(t3.product_deadline,'月') AS product_deadline,
+			CONCAT(cast(t1.stock_comm_coeff*100 as decimal(9,1)),'%') AS comm_coeff,
+			CONCAT(t1.commission_days,'天') AS comm_days,
+			CONCAT(ROUND(DATE_FORMAT(LAST_DAY(NOW()),'%d')),'天') AS curr_month_days,
+			FORMAT(IFNULL(t1.old_stock_comm_mon,0),2) AS comm_mon_fmt,
+			ROUND(IFNULL(t1.old_stock_comm_mon,0),2) AS comm_mon,
+			FORMAT(CEIL(IFNULL(t1.tax_mon,0)),2) AS tax_mon_fmt,
+			CEIL(IFNULL(t1.tax_mon,0)) AS tax_mon,
+			FORMAT(IFNULL(t1.old_stock_comm_mon ,0)- IFNULL(t1.tax_mon,0),2) AS actual_mon_fmt,
+			ROUND(IFNULL(t1.old_stock_comm_mon ,0) - IFNULL(t1.tax_mon,0),2) AS actual_mon
+		FROM
+			wms_inve_old_comm_his t1,
+			wms_inve_transa t2,
+			wms_inve_transa_prod t3
+		WHERE t1.wms_inve_transa_id = t2.wms_inve_transa_id
+		AND t2.wms_inve_transa_id = t3.wms_inve_transa_id
+		AND t1.statics_month = #{statics_month}
+		
+		<if test="personnel_ids != null and personnel_ids != ''">
+			and t1.salesman_id in (${personnel_ids})
+		</if>  
+		<if test="personnel_info != null and personnel_info != ''">
+			and t2.cus_name like '%${personnel_info}%'
+		</if>
+		order by t2.date_of_payment
+		<if test="page !=null and page_size !=null">
+			limit ${(page-1)*page_size},${page_size}
+		</if>
+	</select>
+	<select id="getPersonnelCommInveSta_new_add" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			a.cus_name,
+			format(if(a.inve_type='1',a.investredemp_amount,0),2) as product_account_fmt,
+			if(a.inve_type='1',a.investredemp_amount,0) as product_account,
+			DATE_FORMAT(a.date_of_payment,'%Y/%m/%d') as date_of_payment,
+			format(if(a.inve_type='0',a.investredemp_amount,0),2) as redeem_amount_fmt,
+			if(a.inve_type='0',a.investredemp_amount,0) as redeem_amount,
+			if(a.inve_type='0',DATE_FORMAT(a.redeem_date,'%Y/%m/%d'),'') as redeem_date,
+			a.bill_code,
+			(select b.category_name from wms_inve_pruduct_category b where b.wms_inve_pruduct_category_id=a.wms_inve_pruduct_category_id ) as product_name,
+			CONCAT(a.product_deadline,'月') as product_deadline,
+			CONCAT(cast(a.add_comm_coeff*100 as decimal(9,1)),'%')  as comm_coeff,
+			CONCAT(a.redeem_back_days,'天') as comm_days,
+			CONCAT(ROUND(DATE_FORMAT(LAST_DAY(STR_TO_DATE(#{statics_month},'%Y-%m')),'%d')),'天') AS curr_month_days,
+			format(ifnull(a.add_comm_mon,0),2) as comm_mon_fmt,
+			ifnull(a.add_comm_mon,0) as comm_mon,
+			format(ifnull(a.tax_mon,0),2) as tax_mon_fmt,
+			ifnull(a.tax_mon,0) as tax_mon,
+			format(ifnull(a.add_comm_mon,0)-ifnull(a.tax_mon,0),2) as actual_mon_fmt,
+			ifnull(a.add_comm_mon,0)-ifnull(a.tax_mon,0) as actual_mon
+		FROM
+			wms_inve_commission_performance_his a
+		where 
+			a.add_comm_mon is not null
+		and a.add_comm_mon!=0
+		and a.statics_month=#{statics_month}
+		<if test="personnel_ids != null and personnel_ids != ''">
+			and a.bel_salesman_id_id in (${personnel_ids})
+		</if>  
+		<if test="personnel_info != null and personnel_info != ''">
+			and a.cus_name like '%${personnel_info}%'
+		</if>
+		order by a.date_of_payment
+		<if test="page !=null and page_size !=null">
+			limit ${(page-1)*page_size},${page_size}
+		</if>
+	</select>
+	
+	<select id="getPersonnelCommInveSta_new_stock" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			a.cus_name,
+			format(if(a.inve_type='1',a.investredemp_amount,0),2) as product_account_fmt,
+			if(a.inve_type='1',a.investredemp_amount,0) as product_account,
+			DATE_FORMAT(a.date_of_payment,'%Y/%m/%d') as date_of_payment,
+			format(if(a.inve_type='0',a.investredemp_amount,0),2) as redeem_amount_fmt,
+			if(a.inve_type='0',a.investredemp_amount,0) as redeem_amount,
+			if(a.inve_type='0',DATE_FORMAT(a.redeem_date,'%Y/%m/%d'),'') as redeem_date,
+			a.bill_code,
+			(select b.category_name from wms_inve_pruduct_category b where b.wms_inve_pruduct_category_id=a.wms_inve_pruduct_category_id ) as product_name,
+			CONCAT(a.product_deadline,'月') as product_deadline,
+			CONCAT(cast(a.stock_comm_coeff*100 as decimal(9,1)),'%')  as comm_coeff,
+			CONCAT(a.commission_days,'天') as comm_days,
+			CONCAT(ROUND(DATE_FORMAT(LAST_DAY(STR_TO_DATE(#{statics_month},'%Y-%m')),'%d')),'天') AS curr_month_days,
+			format(ifnull(a.stock_comm_mon,0),2) as comm_mon_fmt,
+			ifnull(a.stock_comm_mon,0) as comm_mon,
+			format(0,2) as tax_mon_fmt,
+			ifnull(0,0) as tax_mon,
+			format(ifnull(a.stock_comm_mon,0),2) as actual_mon_fmt,
+			ifnull(a.stock_comm_mon,0) as actual_mon
+		FROM
+			wms_inve_commission_performance_his a
+		where 
+			a.stock_comm_mon is not null
+		and a.stock_comm_mon!=0
+		and a.statics_month=#{statics_month}
+		<if test="personnel_ids != null and personnel_ids != ''">
+			and a.bel_salesman_id_id in (${personnel_ids})
+		</if>  
+		<if test="personnel_info != null and personnel_info != ''">
+			and a.cus_name like '%${personnel_info}%'
+		</if>
+		order by a.date_of_payment
+		<if test="page !=null and page_size !=null">
+			limit ${(page-1)*page_size},${page_size}
+		</if>
+	</select>
+	<select id="getAchCenterSta" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			format(sum(ifnull(per_add_base,0)),2) as team_add_fmt,
+			sum(ifnull(per_add_base,0)) as team_add,
+			format(sum(ifnull(per_redeem_base,0)),2) as team_redeem_fmt,
+			sum(ifnull(per_redeem_base,0)) as team_redeem,
+			format(sum(ifnull(per_clear_add,0)),2) as team_clear_add_fmt,
+			sum(ifnull(per_clear_add,0)) as team_clear_add,
+			format(sum(ifnull(per_stock_all,0)),2) as team_stock_fmt,
+			sum(ifnull(per_stock_all,0)) as team_stock,
+			format(sum(ifnull(per_stock_new_deal,0)),2) as team_newpro_stock_fmt,
+			sum(ifnull(per_stock_new_deal,0)) as team_newpro_stock
+		FROM
+			wms_personnel_achievement_his
+		where 
+			statics_month=#{statics_month}
+			
+	</select>
+	<select id="getAchDeptSta" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			(select c.dept_name from sys_dept c where c.dept_id=b.dept_pid) as dept_name,
+			concat(b.dept_pid,'') as dept_id,
+			format(sum(ifnull(a.team_exc_add_base,0)),2) as team_add_fmt,
+			sum(ifnull(a.team_exc_add_base,0)) as team_add,
+			format(sum(ifnull(a.team_exc_redeem_all_base,0)),2) as team_redeem_fmt,
+			sum(ifnull(a.team_exc_redeem_all_base,0)) as team_redeem,
+			format(sum(ifnull(a.team_clear_add,0)),2) as team_clear_add_fmt,
+			sum(ifnull(a.team_clear_add,0)) as team_clear_add,
+			format(sum(ifnull(a.team_stock_all,0)),2) as team_stock_all_fmt,
+			sum(ifnull(a.team_stock_all,0)) as team_stock_all,
+			
+			format(sum(ifnull(a.team_reinve_mon,0)),2) as reinve_mon_fmt,
+			sum(ifnull(a.team_reinve_mon,0)) as reinve_mon,
+			
+			format(sum(ifnull(a.team_stock_new_deal,0)),2) as team_stock_all_newpro_fmt,
+			sum(ifnull(a.team_stock_new_deal,0)) as team_stock_all_newpro
+		FROM
+			wms_personnel_achievement_his a,
+			sys_dept b
+		where 
+			statics_month=#{statics_month}
+		and a.dept_id=b.dept_id
+		and b.dept_pid in (${dept_ids})
+		group by b.dept_pid
+		order by dept_name
+		<if test="page !=null and page_size !=null">
+			limit ${(page-1)*page_size},${page_size}
+		</if>
+	</select>
+	<select id="getAchTeamSta" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			concat((select c.dept_name from sys_dept c where c.dept_id=b.dept_pid),'/',(select c.dept_name from sys_dept c where c.dept_id=b.dept_id)) as dept_name,
+			CONCAT(b.dept_id,'') as dept_id,
+			format(ifnull(a.team_exc_add_base,0),2) as team_add_fmt,
+			ifnull(a.team_exc_add_base,0) as team_add,
+			format(ifnull(a.team_exc_redeem_all_base,0),2) as team_redeem_fmt,
+			ifnull(a.team_exc_redeem_all_base,0) as team_redeem,
+			format(ifnull(a.team_clear_add,0),2) as team_clear_add_fmt,
+			ifnull(a.team_clear_add,0) as team_clear_add,
+			format(ifnull(a.team_reinve_mon,0),2) as reinve_mon_fmt,
+			ifnull(a.team_reinve_mon,0) as reinve_mon,
+			format(ifnull(a.team_stock_all,0),2) as team_stock_all_fmt,
+			ifnull(a.team_stock_all,0) as team_stock_all,
+			format(ifnull(a.team_stock_new_deal,0),2) as team_stock_all_newpro_fmt,
+			ifnull(a.team_stock_new_deal,0) as team_stock_all_newpro
+		FROM
+			wms_personnel_achievement_his a,
+			sys_dept b
+		where 
+			statics_month=#{statics_month}
+		and a.dept_id=b.dept_id
+		<if test="team_ids != null and team_ids != ''">
+			and b.dept_id in (${team_ids})
+		</if>
+		<if test="dept_ids != null and dept_ids != ''">
+			and b.dept_pid in (${dept_ids})
+		</if>
+		and a.team_stock_all is not null
+		order by dept_name
+		<if test="page !=null and page_size !=null">
+			limit ${(page-1)*page_size},${page_size}
+		</if>
+	</select>
+	
+	<select id="getAchPersonnelSta" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			(select personnel_name from pm_personnel x where a.personnel_id=x.personnel_id) as personnel_name,
+			(select personnel_shortcode from pm_personnel x where a.personnel_id=x.personnel_id) as personnel_shortcode,
+			concat(a.personnel_id,'') as personnel_id,
+			format(sum(ifnull(a.per_add_deal,0))-sum(ifnull(a.per_back_deal,0))+sum(ifnull(a.per_special_add,0)),2) as per_add_ach_deal_fmt,
+			sum(ifnull(a.per_add_deal,0))-sum(ifnull(a.per_back_deal,0))+sum(ifnull(a.per_special_add,0)) as per_add_ach_deal,
+			format(sum(ifnull(a.per_add_base,0)),2) as per_add_deal_fmt,
+			sum(ifnull(a.per_add_base,0)) as per_add_deal,
+			format(sum(ifnull(a.per_redeem_base,0)),2) as per_redeem_base_fmt,
+			sum(ifnull(a.per_redeem_base,0)) as per_redeem_base,
+			format(sum(ifnull(a.per_clear_add,0)),2) as per_clear_add_fmt,
+			sum(ifnull(a.per_clear_add,0)) as per_clear_add,
+			max(a.per_stock_lev) as per_stock_lev,
+			format(sum(ifnull(a.per_stock_all_deal,0)),2) as per_stock_all_deal_fmt,
+			sum(ifnull(a.per_stock_all_deal,0)) as per_stock_all_deal,
+			format(sum(ifnull(a.per_stock_all,0)),2) as per_stock_all_fmt,
+			sum(ifnull(a.per_stock_all,0)) as per_stock_all,
+			format(sum(ifnull(a.per_stock_new_deal,0)),2) as per_stock_new_deal_fmt,
+			sum(ifnull(a.per_stock_new_deal,0)) as per_stock_new_deal,
+			format(sum(ifnull(a.per_stock_new,0)),2) as per_stock_new_fmt,
+			sum(ifnull(a.per_stock_new,0)) as per_stock_new,
+			format((sum(ifnull(a.per_stock_all,0))-sum(ifnull(a.per_stock_new,0))),2) as per_stock_old_fmt,
+			(sum(ifnull(a.per_stock_all,0))-sum(ifnull(a.per_stock_new,0))) as per_stock_old,
+			format(sum(ifnull(a.reinve_mon,0)),2) as changepro_mon_fmt,
+			sum(ifnull(a.reinve_mon,0)) as changepro_mon
+		FROM
+			wms_personnel_achievement_his a
+		where 
+			a.statics_month=#{statics_month}
+		and a.personnel_id is not null
+		and a.personnel_name_detail!='冯涛 100006(转)'
+		<if test="personnel_ids != null and personnel_ids != ''">
+			and a.personnel_id in (${personnel_ids})
+		</if>
+		<if test="team_ids != null and team_ids != ''">
+			and a.dept_id in (${team_ids})
+		</if>
+		<if test="personnel_info != null and personnel_info != ''">
+			and exists (select 1 from pm_personnel c where c.personnel_id=a.personnel_id and (c.personnel_name like '%${personnel_info}%' or c.personnel_shortcode like '%${personnel_info}%'))
+		</if>
+		group by a.personnel_id,a.personnel_name_detail
+		order by  CONVERT( a.personnel_name_detail USING gbk ) COLLATE gbk_chinese_ci 
+		<if test="page !=null and page_size !=null">
+			limit ${(page-1)*page_size},${page_size}
+		</if>
+	</select>
+	<select id="getAchInveSta" parameterType="map" resultType="java.util.HashMap">
+		select
+			(select x.personnel_name from pm_personnel x where x.personnel_id=e.bel_salesman_id_id) as personnel_name,
+			(select x.personnel_shortcode from pm_personnel x where x.personnel_id=e.bel_salesman_id_id) as personnel_shortcode,
+			(select x.dept_name from sys_dept x where x.dept_id=e.bel_salesman_dept_id) as dept_name,
+			e.cus_name,
+			e.product_account_fmt,
+			e.product_account,
+			e.date_of_payment,
+			e.redeem_amount_fmt,
+			e.redeem_amount,
+			e.redeem_date,
+			e.bill_code,
+			e.product_name,
+			e.product_deadline,
+			e.is_overdate
+			from 
+			(
+			SELECT
+				a.data_status,
+				a.bel_salesman_id_id,
+				a.bel_salesman_dept_id,
+				b.cus_name,
+				format(a.product_account,2) as product_account_fmt,
+				a.product_account,
+				DATE_FORMAT(a.date_of_payment,'%Y/%m/%d') as date_of_payment,
+				'0.00' as redeem_amount_fmt,
+				0 as redeem_amount,
+				'' as redeem_date,
+				b.bill_code,
+				(select c.category_name from wms_inve_pruduct_category c where c.wms_inve_pruduct_category_id=a.wms_inve_pruduct_category_id) as product_name,
+				concat(a.product_deadline,'月') as product_deadline, 
+				(select if(c.end_of_date>=LAST_DAY(STR_TO_DATE(#{statics_month},'%Y-%m')),0,1) from wms_inve_transa_protocol c where c.wms_inve_transa_id=a.wms_inve_transa_id limit 1) as is_overdate
+			FROM
+				wms_inve_transa_backup a,
+				wms_inve_transa b
+			WHERE
+				a.backup_month = #{statics_month}
+			and a.data_status='4'
+			and a.product_account!=0
+			and a.bel_salesman_id_id is not null
+			and a.bel_salesman_dept_id is not null
+			<if test="personnel_ids != null and personnel_ids != ''">
+				and a.bel_salesman_id_id in (${personnel_ids})
+			</if>
+			<if test="personnel_info != null and personnel_info != ''">
+				and b.cus_name like '%${personnel_info}%'
+			</if>
+			AND a.wms_inve_transa_id = b.wms_inve_transa_id
+			
+			union ALL
+			SELECT
+				a.data_status,
+				a.bel_salesman_id_id,
+				a.bel_salesman_dept_id,
+				b.cus_name,
+				'0.00' as product_account_fmt,
+				0,
+				DATE_FORMAT(a.date_of_payment,'%Y/%m/%d'),
+				format(d.redeem_amount,2) as redeem_amount_fmt,
+				d.redeem_amount as redeem_amount,
+				DATE_FORMAT(c.redeem_date,'%Y/%m/%d') as redeem_date,
+				b.bill_code,
+				(select c.category_name from wms_inve_pruduct_category c where c.wms_inve_pruduct_category_id=a.wms_inve_pruduct_category_id) as product_name,
+				concat(a.product_deadline,'月'),
+				'0' as is_overdate
+			FROM
+				wms_inve_transa_backup a,
+				wms_inve_transa b,
+				wms_inve_redeem c,
+				wms_inve_redeem_detail d
+			WHERE
+				a.backup_month = #{statics_month}
+			and a.data_status='6'
+			and a.bel_salesman_id_id is not null
+			and a.bel_salesman_dept_id is not null
+			<if test="personnel_ids != null and personnel_ids != ''">
+				and a.bel_salesman_id_id in (${personnel_ids})
+			</if>
+			<if test="personnel_info != null and personnel_info != ''">
+				and b.cus_name like '%${personnel_info}%'
+			</if>
+			AND c.redeem_type not IN ('2')
+			and (#{sta_begin_date}>b.date_of_payment or (b.date_of_payment>=#{sta_begin_date} and c.is_take_off_damages = '1'))
+			and c.data_status='6'
+			AND a.wms_inve_transa_id = b.wms_inve_transa_id
+			and c.wms_inve_redeem_id=d.wms_inve_redeem_id
+			and d.wms_inve_transa_id=a.wms_inve_transa_id
+			and c.redeem_date>=STR_TO_DATE(#{statics_month},'%Y-%m')
+			and LAST_DAY(STR_TO_DATE(#{statics_month},'%Y-%m'))>=c.redeem_date
+			) e
+			order by e.data_status asc, CONVERT( cus_name USING gbk ) COLLATE gbk_chinese_ci
+			<if test="page !=null and page_size !=null">
+				limit ${(page-1)*page_size},${page_size}
+			</if>
+	</select>
+	<select id="getAchViceSta" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			concat(if(a.personnel_name_detail='冯涛 100006(转)','冯涛_转',substring_index(trim(a.personnel_name_detail),' ',1)),'(',a.dept_name,')') as team_name,
+			if(a.personnel_name_detail='冯涛 100006(转)','',concat(a.dept_id,'')) as team_id,
+			format(if(a.personnel_id=#{general_manager_id},ifnull(a.per_add_base,0),ifnull(a.team_exc_add_base,0)),2) as team_add_fmt,
+			ifnull(a.team_exc_add_base,0) as team_add,
+			format(if(a.personnel_id=#{general_manager_id},ifnull(a.per_redeem_base,0),ifnull(a.team_exc_redeem_all_base,0)),2) as team_redeem_fmt,
+			ifnull(a.team_exc_redeem_all_base,0) as team_redeem,
+			format(if(a.personnel_id=#{general_manager_id},ifnull(a.per_clear_add,0),ifnull(a.team_clear_add,0)),2) as team_clear_add_fmt,
+			ifnull(a.team_clear_add,0) as team_clear_add,
+			format(if(a.personnel_id=#{general_manager_id},ifnull(a.reinve_mon,0),ifnull(a.team_reinve_mon,0)),2) as reinve_mon_fmt,
+			ifnull(a.team_reinve_mon,0) as reinve_mon,
+			format(if(a.personnel_id=#{general_manager_id},ifnull(a.per_stock_all,0),ifnull(a.team_stock_all,0)),2) as team_stock_all_fmt,
+			ifnull(a.team_stock_all,0) as team_stock_all,
+			format(if(a.personnel_id=#{general_manager_id},ifnull(a.per_stock_new_deal,0),ifnull(a.team_stock_new_deal,0)),2) as team_stock_all_newpro_fmt,
+			ifnull(a.team_stock_new_deal,0) as team_stock_all_newpro
+		FROM
+			wms_personnel_achievement_his a
+		where 
+			statics_month=#{statics_month}
+		and a.team_stock_all is not null
+		and 
+		(
+			a.personnel_id=#{general_manager_id}
+			or exists (select 1 from sys_post b where a.post_number=b.post_id and (b.post_number like '%PCFZXFGSZJL%' or b.post_number like '%PCFZXFZJL%' or b.post_number like '%PCFJXZXFZJL%'))
+			or exists (select 1 from wms_inve_transa_non_busi_leader c where a.personnel_id=c.leader_personnel_id)
+		)
+		<if test="vice_personnel_id != null and vice_personnel_id != ''">
+				and a.personnel_id=#{vice_personnel_id}
+		</if>
+		<if test="vice_team_id != null and vice_team_id != ''">
+				and a.dept_id=#{vice_team_id}
+		</if>
+		
+		
+		order by a.personnel_name_detail
+		<if test="page !=null and page_size !=null">
+			limit ${(page-1)*page_size},${page_size}
+		</if>
+	</select>
+	<select id="getAchInveSta_curr" parameterType="map" resultType="java.util.HashMap">
+		select
+			(select x.personnel_name from pm_personnel x where x.personnel_id=e.bel_salesman_id_id) as personnel_name,
+			(select x.personnel_shortcode from pm_personnel x where x.personnel_id=e.bel_salesman_id_id) as personnel_shortcode,
+			(select x.dept_name from sys_dept x where x.dept_id=e.bel_salesman_dept_id) as dept_name,
+			e.cus_name,
+			e.product_account_fmt,
+			e.product_account,
+			e.date_of_payment,
+			e.redeem_amount_fmt,
+			e.redeem_amount,
+			e.redeem_date,
+			e.bill_code,
+			e.product_name,
+			e.product_deadline,
+			e.is_overdate
+			from 
+			(
+			SELECT
+				b.data_status,
+				b.bel_salesman_id_id,
+				b.bel_salesman_dept_id,
+				b.cus_name,
+				format(a.product_account,2) as product_account_fmt,
+				a.product_account,
+				DATE_FORMAT(b.date_of_payment,'%Y/%m/%d') as date_of_payment,
+				'0.00' as redeem_amount_fmt,
+				0 as redeem_amount,
+				'' as redeem_date,
+				b.bill_code,
+				(select c.category_name from wms_inve_pruduct_category c where c.wms_inve_pruduct_category_id=a.wms_inve_pruduct_category_id) as product_name,
+				concat(a.product_deadline,'月') as product_deadline, 
+				(select if(c.end_of_date>=now(),0,1) from wms_inve_transa_protocol c where c.wms_inve_transa_id=a.wms_inve_transa_id limit 1) as is_overdate
+			FROM
+				wms_inve_transa_prod a,
+				wms_inve_transa b
+			WHERE
+				 b.data_status='4'
+			and b.bel_salesman_id_id is not null
+			and b.bel_salesman_dept_id is not null
+			<if test="personnel_ids != null and personnel_ids != ''">
+				and b.bel_salesman_id_id in (${personnel_ids})
+			</if>
+			<if test="personnel_info != null and personnel_info != ''">
+				and b.cus_name like '%${personnel_info}%'
+			</if>
+			AND a.wms_inve_transa_id = b.wms_inve_transa_id
+			
+			union ALL
+			SELECT
+				b.data_status,
+				b.bel_salesman_id_id,
+				b.bel_salesman_dept_id,
+				b.cus_name,
+				'0.00' as product_account_fmt,
+				0,
+				DATE_FORMAT(b.date_of_payment,'%Y/%m/%d'),
+				format(d.redeem_amount,2) as redeem_amount_fmt,
+				d.redeem_amount as redeem_amount,
+				DATE_FORMAT(c.redeem_date,'%Y/%m/%d') as redeem_date,
+				b.bill_code,
+				(select c.category_name from wms_inve_pruduct_category c where c.wms_inve_pruduct_category_id=a.wms_inve_pruduct_category_id) as product_name,
+				concat(a.product_deadline,'月'),
+				(select if(c.end_of_date>=now(),0,1) from wms_inve_transa_protocol c where c.wms_inve_transa_id=a.wms_inve_transa_id limit 1) as is_overdate
+			FROM
+				wms_inve_transa_prod a,
+				wms_inve_transa b,
+				wms_inve_redeem c,
+				wms_inve_redeem_detail d
+			WHERE
+				b.data_status='6'
+			and b.bel_salesman_id_id is not null
+			and b.bel_salesman_dept_id is not null
+			<if test="personnel_ids != null and personnel_ids != ''">
+				and b.bel_salesman_id_id in (${personnel_ids})
+			</if>
+			<if test="personnel_info != null and personnel_info != ''">
+				and b.cus_name like '%${personnel_info}%'
+			</if>
+			and c.data_status='6'
+			AND c.redeem_type not IN ('2')
+			and (#{sta_begin_date}>b.date_of_payment or (b.date_of_payment>=#{sta_begin_date} and c.is_take_off_damages = '1'))
+			AND a.wms_inve_transa_id = b.wms_inve_transa_id
+			and c.wms_inve_redeem_id=d.wms_inve_redeem_id
+			and d.wms_inve_transa_id=a.wms_inve_transa_id
+			and c.redeem_date>=date_add(curdate(), interval - day(curdate()) + 1 day)
+			and now()>=c.redeem_date
+			) e
+			order by e.data_status asc, CONVERT( cus_name USING gbk ) COLLATE gbk_chinese_ci
+			<if test="page !=null and page_size !=null">
+				limit ${(page-1)*page_size},${page_size}
+			</if>
+	</select>
+	<select id="getAchPersonnelSta_curr" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			(select personnel_name from pm_personnel x where a.personnel_id=x.personnel_id) as personnel_name,
+			(select personnel_shortcode from pm_personnel x where a.personnel_id=x.personnel_id) as personnel_shortcode,
+			concat(a.personnel_id,'') as personnel_id,
+			format(sum(ifnull(a.per_add_deal,0))-sum(ifnull(a.per_back_deal,0))+sum(ifnull(a.per_special_add,0)),2) as per_add_ach_deal_fmt,
+			sum(ifnull(a.per_add_deal,0))-sum(ifnull(a.per_back_deal,0))+sum(ifnull(a.per_special_add,0)) as per_add_ach_deal,
+			format(sum(ifnull(a.per_add_base,0)),2) as per_add_deal_fmt,
+			sum(ifnull(a.per_add_base,0)) as per_add_deal,
+			format(sum(ifnull(a.per_redeem_base,0)),2) as per_redeem_base_fmt,
+			sum(ifnull(a.per_redeem_base,0)) as per_redeem_base,
+			format(sum(ifnull(a.per_clear_add,0)),2) as per_clear_add_fmt,
+			sum(ifnull(a.per_clear_add,0)) as per_clear_add,
+			max(a.per_stock_lev) as per_stock_lev,
+			format(sum(ifnull(a.per_stock_all_deal,0)),2) as per_stock_all_deal_fmt,
+			sum(ifnull(a.per_stock_all_deal,0)) as per_stock_all_deal,
+			format(sum(ifnull(a.per_stock_all,0)),2) as per_stock_all_fmt,
+			sum(ifnull(a.per_stock_all,0)) as per_stock_all,
+			format(sum(ifnull(a.per_stock_new_deal,0)),2) as per_stock_new_deal_fmt,
+			sum(ifnull(a.per_stock_new_deal,0)) as per_stock_new_deal,
+			format(sum(ifnull(a.per_stock_new,0)),2) as per_stock_new_fmt,
+			sum(ifnull(a.per_stock_new,0)) as per_stock_new,
+			format((sum(ifnull(a.per_stock_all,0))-sum(ifnull(a.per_stock_new,0))),2) as per_stock_old_fmt,
+			(sum(ifnull(a.per_stock_all,0))-sum(ifnull(a.per_stock_new,0))) as per_stock_old,
+			format(sum(ifnull(a.reinve_mon,0)),2) as changepro_mon_fmt,
+			sum(ifnull(a.reinve_mon,0)) as changepro_mon
+		FROM
+			wms_personnel_achievement_mrtp a
+		where 
+			a.statics_personnel_id=#{statics_personnel_id}
+		and a.statics_type=#{statics_type}
+		and a.personnel_id is not null
+		<if test="personnel_ids != null and personnel_ids != ''">
+			and a.personnel_id in (${personnel_ids})
+		</if>
+		<if test="team_ids != null and team_ids != ''">
+			and a.dept_id in (${team_ids})
+		</if>
+		<if test="personnel_info != null and personnel_info != ''">
+			and exists (select 1 from pm_personnel c where c.personnel_id=a.personnel_id and (c.personnel_name like '%${personnel_info}%' or c.personnel_shortcode like '%${personnel_info}%'))
+		</if>
+		group by a.personnel_id,a.personnel_name_detail
+		order by CONVERT(a.personnel_name_detail USING gbk) COLLATE gbk_chinese_ci
+		<if test="page !=null and page_size !=null">
+			limit ${(page-1)*page_size},${page_size}
+		</if>
+	</select>
+	<delete id="deleteAchPersonnelStaCurr" parameterType="map">
+		delete from wms_personnel_achievement_mrtp  where statics_personnel_id=#{statics_personnel_id} and statics_type=#{statics_type}
+	</delete>
+	
+	<insert id="insertAchPersonnelStaStockCurr" parameterType="map">
+		insert into wms_personnel_achievement_mrtp
+		(
+			statics_type,
+			statics_personnel_id,
+			company_id,
+			company_name,
+			dept_id,
+			dept_name,
+			personnel_id,
+			personnel_name_detail,
+			post_number,
+			post_name,
+			per_stock_all,
+			per_stock_all_deal,
+			per_stock_new,
+			per_stock_new_deal,
+			per_stock_lev
+		)
+		select 
+			#{statics_type},
+			#{statics_personnel_id},
+			getParentDeptIdByDeptId(a.personnel_deptid),
+			getParenetDeptNameByDeptId(a.personnel_deptid),
+			a.personnel_deptid,
+			(select x.dept_name from sys_dept x where x.dept_id=a.personnel_deptid ),
+			a.personnel_id,
+			CONCAT(a.personnel_name,' ',a.personnel_shortcode),
+			a.personnel_postid,
+			a.personnel_postname,
+			product_account,
+			product_account_deal,
+			new_product_account,
+			new_product_account_deal,
+			case 
+						when  product_account/10000 &lt; 100 THEN 'A'
+						when product_account/10000>=100 and 300>product_account/10000 THEN 'B'
+						when product_account/10000>=300 and 500>product_account/10000 THEN 'C'
+						when product_account/10000>=500 and 700>product_account/10000 THEN 'D'
+						when product_account/10000>=700 and 900>product_account/10000 THEN 'E'
+						when product_account/10000>=900 and 1100>product_account/10000 THEN 'F'
+						when product_account/10000>=1100 and 1300>product_account/10000 THEN 'G'
+						when product_account/10000>=1300 and 1500>product_account/10000 THEN 'H'
+						when product_account/10000>=1500 and 1700>product_account/10000 THEN 'I'
+					END
+		from
+					(
+					SELECT
+						a.personnel_deptid,a.personnel_id,a.personnel_name,a.personnel_shortcode,a.personnel_postid,a.personnel_postname,a.personnel_state
+					FROM
+						pm_personnel a
+					where 1=1
+					<if test="personnel_ids != null and personnel_ids != ''">
+						and a.personnel_id in (${personnel_ids})
+					</if>
+					<if test="team_ids != null and team_ids != ''">
+						and a.personnel_deptid in (${team_ids})
+					</if>
+					<if test="personnel_info != null and personnel_info != ''">
+						and  (a.personnel_name like '%${personnel_info}%' or a.personnel_shortcode like '%${personnel_info}%')
+					</if>
+					UNION
+						SELECT
+							b.dept_id as personnel_deptid,a.personnel_id,a.personnel_name,a.personnel_shortcode,b.post_id as personnel_postid,a.personnel_postname,a.personnel_state
+						FROM
+							pm_personnel a,
+							sys_concurrent_post b
+						WHERE
+							a.personnel_id = b.personnel_id
+							<if test="personnel_ids != null and personnel_ids != ''">
+								and a.personnel_id in (${personnel_ids})
+							</if>
+							<if test="team_ids != null and team_ids != ''">
+								and b.dept_id in (${team_ids})
+							</if>
+							<if test="personnel_info != null and personnel_info != ''">
+								and  (a.personnel_name like '%${personnel_info}%' or a.personnel_shortcode like '%${personnel_info}%')
+							</if>
+					) a
+					left join (
+								SELECT
+									a.bel_salesman_id_id,
+									a.bel_salesman_dept_id,
+									sum(ifnull(b.product_account,0)) as product_account,
+									sum(ifnull(b.product_account,0)*b.product_deadline/12) as product_account_deal,
+									sum((case when a.date_of_payment >= #{limit_date} and b.wms_inve_pruduct_category_id in (${new_pros})  then ifnull(b.product_account,0) else 0 end)) as new_product_account,
+									sum((case when a.date_of_payment >= #{limit_date} and b.wms_inve_pruduct_category_id in (${new_pros})  then ifnull(b.product_account,0) else 0 end)*b.product_deadline/12) as new_product_account_deal
+								FROM
+									wms_inve_transa a,
+									wms_inve_transa_prod b
+								WHERE
+									a.data_status = '4'
+								<if test="personnel_ids != null and personnel_ids != ''">
+									and a.bel_salesman_id_id in (${personnel_ids})
+								</if>
+								<if test="team_ids != null and team_ids != ''">
+									and a.bel_salesman_dept_id in (${team_ids})
+								</if>
+								<if test="personnel_info != null and personnel_info != ''">
+									and exists (select 1 from pm_personnel c where c.personnel_id=a.bel_salesman_id_id and (c.personnel_name like '%${personnel_info}%' or c.personnel_shortcode like '%${personnel_info}%'))
+								</if>
+								
+								and exists (select 1 from wms_inve_transa_protocol c where c.wms_inve_transa_id=a.wms_inve_transa_id and c.end_of_date>=DATE_SUB(#{sta_end_date},INTERVAL 1 DAY) LIMIT 1) 	
+								and a.date_of_payment &lt; #{sta_end_date}
+								and b.wms_inve_pruduct_category_id not in (${reject_proid})
+								AND a.wms_inve_transa_id = b.wms_inve_transa_id
+								and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=a.wms_inve_customer_id
+										and a.date_of_payment &lt; x.end_of_date
+										and x.data_type='1'
+									)
+								group by a.bel_salesman_id_id,a.bel_salesman_dept_id
+							) c
+			on a.personnel_id=c.bel_salesman_id_id and a.personnel_deptid=c.bel_salesman_dept_id
+	</insert>
+	
+	<update id="updateAchPersonnelStaAddCurr" parameterType="map">
+		update wms_personnel_achievement_mrtp a INNER JOIN
+		(
+		SELECT
+				f.bel_salesman_id_id,
+				f.bel_salesman_dept_id,
+				sum(ifnull(f.all_add,0)) as who_all_add,
+				sum(ifnull(f.deal_add,0)) as who_deal_add,
+				sum(ifnull(f.per_redeem_base,0)) as per_redeem_base,
+				sum(ifnull(f.per_redeem_deal,0)) as per_redeem_deal, 
+				sum(per_back_base) as per_back_base, 
+				sum(per_back_deal) as per_back_deal, 
+				sum(f.clear_add) as who_clear_add,  
+				sum(f.mon_deal_who) as who_clear_add_deal, 
+				sum(per_back_base_newpro) as per_back_base_newpro, 
+				sum(per_back_deal_newpro) as per_back_deal_newpro 
+			FROM
+				(
+					SELECT
+						c.bel_salesman_id_id,
+						c.bel_salesman_dept_id,
+						c.wms_inve_customer_id,
+						c.cus_all_inve as all_add,
+						c.cus_deal_add as deal_add,
+						ifnull(e.sub_am, 0) as per_redeem_base,
+						ifnull(e.sub_deal_am, 0) as per_redeem_deal,
+						if(c.cus_all_inve>=ifnull(e.back_sub_am, 0),ifnull(e.back_sub_am, 0),c.cus_all_inve) as per_back_base,
+						if(c.cus_deal_add>=ifnull(e.back_sub_deal_am, 0),ifnull(e.back_sub_deal_am, 0),c.cus_deal_add) as per_back_deal,
+						if(c.cus_all_inve>=ifnull(e.back_newpro_subam, 0),ifnull(e.back_newpro_subam, 0),c.cus_all_inve) as per_back_base_newpro,
+						if(c.cus_deal_add>=ifnull(e.back_newpro_subam_deal, 0),ifnull(e.back_newpro_subam_deal, 0),c.cus_deal_add) as per_back_deal_newpro,
+						c.cus_all_inve-ifnull(e.sub_am, 0) AS clear_add,
+						c.cus_deal_add-ifnull(e.sub_deal_am, 0) as mon_deal_who 
+					FROM
+						(
+							SELECT
+								b.bel_salesman_id_id,
+								b.bel_salesman_dept_id,
+								b.wms_inve_customer_id,
+								sum(ifnull(b.act_account, 0)) as cus_all_inve,
+								sum(ifnull(b.deal_account,0)) as cus_deal_add
+							FROM
+								(
+									SELECT
+										a.bel_salesman_id_id,
+										a.bel_salesman_dept_id,
+										a.wms_inve_customer_id,
+										(w.org_product_account-ifnull(d.no_damage_am,0)) as act_account,
+										(w.org_product_account-ifnull(d.no_damage_am,0))*w.product_deadline/12/(if(w.wms_inve_pruduct_category_id in (${specialpro}),4,1)) as deal_account
+									FROM
+										wms_inve_transa a,
+										wms_inve_transa_prod w
+										left join 
+										(select 
+												b.wms_inve_transa_id,
+												sum(if(c.is_take_off_damages ='0',b.redeem_amount,0)) as no_damage_am
+											from 
+												wms_inve_redeem c,
+												wms_inve_redeem_detail b 
+											where 
+												c.wms_inve_redeem_id=b.wms_inve_redeem_id 
+												and c.redeem_date >= #{sta_begin_date}
+												AND #{sta_end_date}>c.redeem_date 
+												group by b.wms_inve_transa_id
+												)
+												d
+												on w.wms_inve_transa_id=d.wms_inve_transa_id
+									WHERE
+										a.data_status IN ('4','5','6')
+									<if test="personnel_ids != null and personnel_ids != ''">
+										and a.bel_salesman_id_id in (${personnel_ids})
+									</if>
+									<if test="team_ids != null and team_ids != ''">
+										and a.bel_salesman_dept_id in (${team_ids})
+									</if>
+									<if test="personnel_info != null and personnel_info != ''">
+										and exists (select 1 from pm_personnel c where c.personnel_id=a.bel_salesman_id_id and (c.personnel_name like '%${personnel_info}%' or c.personnel_shortcode like '%${personnel_info}%'))
+									</if>	
+									and w.wms_inve_pruduct_category_id not in (${reject_proid})
+									AND a.wms_inve_transa_id = w.wms_inve_transa_id
+									AND a.date_of_payment >= #{sta_begin_date}
+									AND a.date_of_payment &lt; #{sta_end_date}
+									and a.old_wms_inve_transa_id is null
+									and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=a.wms_inve_customer_id
+										and a.date_of_payment &lt; x.end_of_date
+										and x.data_type='1'
+									)
+								) b
+							GROUP BY
+								b.bel_salesman_id_id,
+								b.wms_inve_customer_id,
+								b.bel_salesman_dept_id
+						) c
+					LEFT JOIN (
+						SELECT
+				d.wms_inve_customer_id,
+				d.bel_salesman_id_id,
+				d.bel_salesman_dept_id,
+				sum(ifnull(d.sub_am, 0)) AS sub_am,
+				sum(ifnull(d.back_sub_am, 0)) AS back_sub_am,
+				sum(ifnull(d.sub_deal_am, 0)) AS sub_deal_am,
+				sum(ifnull(d.back_sub_deal_am, 0)) AS back_sub_deal_am,
+				sum(ifnull(d.newpro_subam, 0)) AS newpro_subam,
+				sum(ifnull(d.back_newpro_subam, 0)) AS back_newpro_subam,
+				sum(ifnull(d.newpro_subam_deal, 0)) AS newpro_subam_deal,
+				sum(ifnull(d.back_newpro_subam_deal, 0)) AS back_newpro_subam_deal
+			FROM
+				(
+					SELECT
+						d.wms_inve_customer_id,
+						x.bel_salesman_id_id,
+						x.bel_salesman_dept_id,
+						v.redeem_amount AS sub_am,
+						if(d.is_take_off_damages='0' and d.redeem_type in ('1','3'),v.redeem_amount,0) as back_sub_am,
+						v.redeem_amount * u.product_deadline / 12 AS sub_deal_am,
+						if(d.is_take_off_damages='0' and d.redeem_type in ('1','3'),v.redeem_amount,0)* u.product_deadline / 12 as back_sub_deal_am,
+						if(u.wms_inve_pruduct_category_id in (${new_pros}),v.redeem_amount,0) as newpro_subam,
+						if(d.is_take_off_damages='0' and d.redeem_type in ('1','3') and u.wms_inve_pruduct_category_id in (${new_pros}),v.redeem_amount,0) as back_newpro_subam,
+						if(u.wms_inve_pruduct_category_id in (${new_pros}),v.redeem_amount * u.product_deadline / 12,0) as newpro_subam_deal,
+						if(d.is_take_off_damages='0' and d.redeem_type in ('1','3') and u.wms_inve_pruduct_category_id in (${new_pros}),v.redeem_amount,0)* u.product_deadline / 12 as back_newpro_subam_deal
+					FROM
+						wms_inve_redeem d,
+						wms_inve_redeem_detail v,
+						wms_inve_transa_prod u,
+						wms_inve_transa x
+					WHERE
+						d.redeem_date >= #{sta_begin_date}
+					<if test="personnel_ids != null and personnel_ids != ''">
+							and x.bel_salesman_id_id in (${personnel_ids})
+					</if>
+					<if test="team_ids != null and team_ids != ''">
+							and x.bel_salesman_dept_id in (${team_ids})
+					</if>
+					<if test="personnel_info != null and personnel_info != ''">
+							and exists (select 1 from pm_personnel c where c.personnel_id=x.bel_salesman_id_id and (c.personnel_name like '%${personnel_info}%' or c.personnel_shortcode like '%${personnel_info}%'))
+					</if>	
+					AND date_format(#{sta_end_date},'%Y-%m-%d') >= d.redeem_date
+					AND d.redeem_type not IN ('2')
+					AND d.data_status IN ('6')
+					and x.data_status in ('4','5','6')
+					and (date_format(#{sta_begin_date},'%Y-%m-%d') > x.date_of_payment or (x.date_of_payment>=#{sta_begin_date} and d.is_take_off_damages = '1'))
+					AND d.wms_inve_redeem_id = v.wms_inve_redeem_id
+					AND v.wms_inve_transa_id = u.wms_inve_transa_id
+					AND u.wms_inve_transa_id = x.wms_inve_transa_id
+					and u.wms_inve_pruduct_category_id not in (${reject_proid})
+					and u.wms_inve_pruduct_category_id not in (${specialpro})
+					and not exists (select 1 from wms_inve_customer_remove_his h where h.wms_inve_customer_id=x.wms_inve_customer_id
+										and h.end_of_date > x.date_of_payment
+										and h.data_type='1'
+									)
+					UNION ALL
+						SELECT
+							d.wms_inve_customer_id,
+							x.bel_salesman_id_id,
+							x.bel_salesman_dept_id,
+							v.redeem_amount  AS sub_am,
+							if(d.is_take_off_damages='0' 
+								and d.redeem_type in ('1','3') 
+								and d.redeem_date >= x.date_of_payment
+								AND DATE_ADD(x.date_of_payment,INTERVAL 3  MONTH) >= d.redeem_date
+								,v.redeem_amount,0) as back_sub_am,
+							v.redeem_amount * u.product_deadline / 12 /4 AS sub_deal_am,
+							if(d.is_take_off_damages='0' 
+								and d.redeem_type in ('1','3') 
+								and d.redeem_date >= x.date_of_payment
+								AND DATE_ADD(x.date_of_payment,INTERVAL 3  MONTH) >= d.redeem_date
+								,v.redeem_amount,0)* u.product_deadline / 12 /4 as back_sub_deal_am,
+							v.redeem_amount as newpro_subam,
+							if(d.is_take_off_damages='0' 
+								and d.redeem_type in ('1','3') 
+								and d.redeem_date >= x.date_of_payment
+								AND DATE_ADD(x.date_of_payment,INTERVAL 3  MONTH) >= d.redeem_date
+								,v.redeem_amount,0) as back_newpro_subam,
+							v.redeem_amount * u.product_deadline / 12 /4 as newpro_subam_deal,
+							if(d.is_take_off_damages='0' 
+								and d.redeem_type in ('1','3') 
+								and d.redeem_date >= x.date_of_payment
+								AND DATE_ADD(x.date_of_payment,INTERVAL 3  MONTH) >= d.redeem_date
+								,v.redeem_amount,0)* u.product_deadline / 12 /4 as back_newpro_subam_deal
+						FROM
+							wms_inve_redeem d,
+							wms_inve_redeem_detail v,
+							wms_inve_transa_prod u,
+							wms_inve_transa x
+						WHERE
+							d.redeem_date >= #{sta_begin_date}
+						AND date_format(#{sta_end_date},'%Y-%m-%d') >= d.redeem_date
+						<if test="personnel_ids != null and personnel_ids != ''">
+								and x.bel_salesman_id_id in (${personnel_ids})
+						</if>
+						<if test="team_ids != null and team_ids != ''">
+								and x.bel_salesman_dept_id in (${team_ids})
+						</if>
+						<if test="personnel_info != null and personnel_info != ''">
+								and exists (select 1 from pm_personnel c where c.personnel_id=x.bel_salesman_id_id and (c.personnel_name like '%${personnel_info}%' or c.personnel_shortcode like '%${personnel_info}%'))
+						</if>
+						AND d.redeem_type not IN ('2')
+						AND d.data_status IN ('6')
+						and x.data_status in ('4','5','6')
+						and (date_format(#{sta_begin_date},'%Y-%m-%d')>x.date_of_payment or (x.date_of_payment>=#{sta_begin_date} and d.is_take_off_damages = '1'))
+						AND d.wms_inve_redeem_id = v.wms_inve_redeem_id
+						AND v.wms_inve_transa_id = u.wms_inve_transa_id
+						AND u.wms_inve_transa_id = x.wms_inve_transa_id
+						and u.wms_inve_pruduct_category_id in (${specialpro})
+						and not exists (select 1 from wms_inve_customer_remove_his h where h.wms_inve_customer_id=x.wms_inve_customer_id
+										and h.end_of_date>x.date_of_payment
+										and h.data_type='1'
+									)
+				) d
+			GROUP BY
+				d.wms_inve_customer_id,
+				d.bel_salesman_id_id,
+				d.bel_salesman_dept_id
+					) e ON c.wms_inve_customer_id = e.wms_inve_customer_id and c.bel_salesman_id_id=e.bel_salesman_id_id and c.bel_salesman_dept_id=e.bel_salesman_dept_id
+		UNION
+					SELECT
+						e.bel_salesman_id_id,
+						e.bel_salesman_dept_id,
+						c.wms_inve_customer_id,
+						ifnull(c.cus_all_inve, 0) as all_add,
+						ifnull(c.cus_deal_add, 0) as deal_add,
+						ifnull(e.sub_am, 0) as per_redeem_base,
+						ifnull(e.sub_deal_am, 0) as per_redeem_deal,
+						if(ifnull(c.cus_all_inve, 0)>=ifnull(e.back_sub_am, 0),ifnull(e.back_sub_am, 0),ifnull(c.cus_all_inve, 0)) as per_back_base,
+						if(ifnull(c.cus_deal_add, 0)>=ifnull(e.back_sub_deal_am, 0),ifnull(e.back_sub_deal_am, 0),ifnull(c.cus_deal_add, 0)) as per_back_deal,
+						if(ifnull(c.cus_all_inve, 0)>=ifnull(e.back_newpro_subam, 0),ifnull(e.back_newpro_subam, 0),ifnull(c.cus_all_inve, 0)) as per_back_base_newpro,
+						if(ifnull(c.cus_deal_add, 0)>=ifnull(e.back_newpro_subam_deal, 0),ifnull(e.back_newpro_subam_deal, 0),ifnull(c.cus_deal_add, 0)) as per_back_deal_newpro,
+						ifnull(c.cus_all_inve, 0)-ifnull(e.sub_am, 0) AS clear_add,
+						ifnull(c.cus_deal_add, 0)-ifnull(e.sub_deal_am, 0) as mon_deal_who 
+						
+					FROM
+						(
+						SELECT
+				d.wms_inve_customer_id,
+				d.bel_salesman_id_id,
+				d.bel_salesman_dept_id,
+				sum(ifnull(d.sub_am, 0)) AS sub_am,
+				sum(ifnull(d.back_sub_am, 0)) AS back_sub_am,
+				sum(ifnull(d.sub_deal_am, 0)) AS sub_deal_am,
+				sum(ifnull(d.back_sub_deal_am, 0)) AS back_sub_deal_am,
+				sum(ifnull(d.newpro_subam, 0)) AS newpro_subam,
+				sum(ifnull(d.back_newpro_subam, 0)) AS back_newpro_subam,
+				sum(ifnull(d.newpro_subam_deal, 0)) AS newpro_subam_deal,
+				sum(ifnull(d.back_newpro_subam_deal, 0)) AS back_newpro_subam_deal
+			FROM
+				(
+					SELECT
+						d.wms_inve_customer_id,
+						x.bel_salesman_id_id,
+						x.bel_salesman_dept_id,
+						v.redeem_amount AS sub_am,
+						if(d.is_take_off_damages='0' and d.redeem_type in ('1','3'),v.redeem_amount,0) as back_sub_am,
+						v.redeem_amount * u.product_deadline / 12 AS sub_deal_am,
+						if(d.is_take_off_damages='0' and d.redeem_type in ('1','3'),v.redeem_amount,0)* u.product_deadline / 12 as back_sub_deal_am,
+						if(u.wms_inve_pruduct_category_id in (${new_pros}),v.redeem_amount,0) as newpro_subam,
+						if(d.is_take_off_damages='0' and d.redeem_type in ('1','3') and u.wms_inve_pruduct_category_id in (${new_pros}),v.redeem_amount,0) as back_newpro_subam,
+						if(u.wms_inve_pruduct_category_id in (${new_pros}),v.redeem_amount * u.product_deadline / 12,0) as newpro_subam_deal,
+						if(d.is_take_off_damages='0' and d.redeem_type in ('1','3') and u.wms_inve_pruduct_category_id in (${new_pros}),v.redeem_amount,0)* u.product_deadline / 12 as back_newpro_subam_deal
+					FROM
+						wms_inve_redeem d,
+						wms_inve_redeem_detail v,
+						wms_inve_transa_prod u,
+						wms_inve_transa x
+					WHERE
+						d.redeem_date >= #{sta_begin_date}
+					AND date_format(#{sta_end_date},'%Y-%m-%d') >= d.redeem_date
+					<if test="personnel_ids != null and personnel_ids != ''">
+								and x.bel_salesman_id_id in (${personnel_ids})
+						</if>
+						<if test="team_ids != null and team_ids != ''">
+								and x.bel_salesman_dept_id in (${team_ids})
+						</if>
+						<if test="personnel_info != null and personnel_info != ''">
+								and exists (select 1 from pm_personnel c where c.personnel_id=x.bel_salesman_id_id and (c.personnel_name like '%${personnel_info}%' or c.personnel_shortcode like '%${personnel_info}%'))
+						</if>
+					AND d.redeem_type not IN ('2')
+					AND d.data_status IN ('6')
+					and x.data_status in ('4','5','6')
+					and (date_format(#{sta_begin_date},'%Y-%m-%d')>x.date_of_payment or (x.date_of_payment>=#{sta_begin_date} and d.is_take_off_damages = '1'))
+					AND d.wms_inve_redeem_id = v.wms_inve_redeem_id
+					AND v.wms_inve_transa_id = u.wms_inve_transa_id
+					AND u.wms_inve_transa_id = x.wms_inve_transa_id
+					and u.wms_inve_pruduct_category_id not in (${reject_proid})
+					and u.wms_inve_pruduct_category_id not in (${specialpro})
+					and not exists (select 1 from wms_inve_customer_remove_his h where h.wms_inve_customer_id=x.wms_inve_customer_id
+										and h.end_of_date>x.date_of_payment
+										and h.data_type='1'
+									)
+					UNION ALL
+						SELECT
+							d.wms_inve_customer_id,
+							x.bel_salesman_id_id,
+							x.bel_salesman_dept_id,
+							v.redeem_amount  AS sub_am,
+							if(d.is_take_off_damages='0' 
+								and d.redeem_type in ('1','3') 
+								and d.redeem_date >= x.date_of_payment
+								AND DATE_ADD(x.date_of_payment,INTERVAL 3  MONTH) >= d.redeem_date
+								,v.redeem_amount,0) as back_sub_am,
+							v.redeem_amount * u.product_deadline / 12 /4 AS sub_deal_am,
+							if(d.is_take_off_damages='0' 
+								and d.redeem_type in ('1','3') 
+								and d.redeem_date >= x.date_of_payment
+								AND DATE_ADD(x.date_of_payment,INTERVAL 3  MONTH) >= d.redeem_date
+								,v.redeem_amount,0)* u.product_deadline / 12 /4 as back_sub_deal_am,
+							v.redeem_amount as newpro_subam,
+							if(d.is_take_off_damages='0' 
+								and d.redeem_type in ('1','3') 
+								and d.redeem_date >= x.date_of_payment
+								AND DATE_ADD(x.date_of_payment,INTERVAL 3  MONTH) >= d.redeem_date
+								,v.redeem_amount,0) as back_newpro_subam,
+							v.redeem_amount * u.product_deadline / 12 /4 as newpro_subam_deal,
+							if(d.is_take_off_damages='0' 
+								and d.redeem_type in ('1','3') 
+								and d.redeem_date >=x.date_of_payment
+								AND DATE_ADD(x.date_of_payment,INTERVAL 3  MONTH) >= d.redeem_date
+								,v.redeem_amount,0)* u.product_deadline / 12 /4 as back_newpro_subam_deal
+							
+						FROM
+							wms_inve_redeem d,
+							wms_inve_redeem_detail v,
+							wms_inve_transa_prod u,
+							wms_inve_transa x
+						WHERE
+							d.redeem_date >= #{sta_begin_date}
+						AND date_format(#{sta_end_date},'%Y-%m-%d') >= d.redeem_date
+						<if test="personnel_ids != null and personnel_ids != ''">
+								and x.bel_salesman_id_id in (${personnel_ids})
+						</if>
+						<if test="team_ids != null and team_ids != ''">
+								and x.bel_salesman_dept_id in (${team_ids})
+						</if>
+						<if test="personnel_info != null and personnel_info != ''">
+								and exists (select 1 from pm_personnel c where c.personnel_id=x.bel_salesman_id_id and (c.personnel_name like '%${personnel_info}%' or c.personnel_shortcode like '%${personnel_info}%'))
+						</if>
+						AND d.redeem_type not IN ('2')
+						AND d.data_status IN ('6')
+						and x.data_status in ('4','5','6')
+						and (date_format(#{sta_begin_date},'%Y-%m-%d')>x.date_of_payment or (x.date_of_payment>=#{sta_begin_date} and d.is_take_off_damages = '1'))
+						AND d.wms_inve_redeem_id = v.wms_inve_redeem_id
+						AND v.wms_inve_transa_id = u.wms_inve_transa_id
+						AND u.wms_inve_transa_id = x.wms_inve_transa_id
+						and u.wms_inve_pruduct_category_id in (${specialpro})
+						
+						and not exists (select 1 from wms_inve_customer_remove_his h where h.wms_inve_customer_id=x.wms_inve_customer_id
+										and h.end_of_date>x.date_of_payment
+										and h.data_type='1'
+									)
+				) d
+			GROUP BY
+				d.wms_inve_customer_id,
+				d.bel_salesman_id_id,
+				d.bel_salesman_dept_id
+					) e 
+		LEFT JOIN
+		(
+							SELECT
+								b.bel_salesman_id_id,
+								b.bel_salesman_dept_id,
+								b.wms_inve_customer_id,
+								sum(ifnull(b.act_account, 0)) as cus_all_inve,
+								sum(ifnull(b.deal_account,0)) as cus_deal_add
+							FROM
+								(
+									SELECT
+										a.bel_salesman_id_id,
+										a.bel_salesman_dept_id,
+										a.wms_inve_customer_id,
+										(w.org_product_account-ifnull(d.no_damage_am,0)) as act_account,
+										(w.org_product_account-ifnull(d.no_damage_am,0))*w.product_deadline/12/(if(w.wms_inve_pruduct_category_id in (${specialpro}),4,1)) as deal_account
+									FROM
+										wms_inve_transa a,
+										wms_inve_transa_prod w
+										left join 
+										(select 
+												b.wms_inve_transa_id,
+												sum(if(c.is_take_off_damages ='0',b.redeem_amount,0)) as no_damage_am
+											from 
+												wms_inve_redeem c,
+												wms_inve_redeem_detail b 
+											where 
+												c.wms_inve_redeem_id=b.wms_inve_redeem_id 
+												and c.redeem_date >= #{sta_begin_date}
+												AND #{sta_end_date}>c.redeem_date 
+												group by b.wms_inve_transa_id
+												)
+												d
+												on w.wms_inve_transa_id=d.wms_inve_transa_id
+									WHERE
+										a.data_status IN ('4','5','6')
+									<if test="personnel_ids != null and personnel_ids != ''">
+											and a.bel_salesman_id_id in (${personnel_ids})
+									</if>
+									<if test="team_ids != null and team_ids != ''">
+											and a.bel_salesman_dept_id in (${team_ids})
+									</if>
+									<if test="personnel_info != null and personnel_info != ''">
+											and exists (select 1 from pm_personnel c where c.personnel_id=a.bel_salesman_id_id and (c.personnel_name like '%${personnel_info}%' or c.personnel_shortcode like '%${personnel_info}%'))
+									</if>
+									and w.wms_inve_pruduct_category_id not in (${reject_proid})
+									AND a.wms_inve_transa_id = w.wms_inve_transa_id
+									AND a.date_of_payment >= #{sta_begin_date}
+									and a.old_wms_inve_transa_id is null
+									AND date_format(#{sta_end_date},'%Y-%m-%d')>a.date_of_payment
+									and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=a.wms_inve_customer_id
+										and x.end_of_date>a.date_of_payment
+										and x.data_type='1'
+									)
+									
+								) b
+							GROUP BY
+								b.bel_salesman_id_id,
+								b.wms_inve_customer_id,
+								b.bel_salesman_dept_id
+						) c
+		ON c.wms_inve_customer_id = e.wms_inve_customer_id and c.bel_salesman_id_id=e.bel_salesman_id_id and c.bel_salesman_dept_id=e.bel_salesman_dept_id
+				) f
+		
+			GROUP BY
+				f.bel_salesman_id_id,f.bel_salesman_dept_id
+		) b
+		on a.personnel_id = b.bel_salesman_id_id and a.dept_id=b.bel_salesman_dept_id
+		set 
+			a.per_add_base=b.who_all_add,
+			a.per_add_deal=b.who_deal_add,
+			a.per_redeem_base=b.per_redeem_base,
+			a.per_redeem_deal=b.per_redeem_deal,
+			a.per_back_base=b.per_back_base,
+			a.per_back_deal=b.per_back_deal,
+			a.per_clear_add=b.who_clear_add,
+			a.per_clear_add_deal=b.who_clear_add_deal,
+			a.per_back_base_newpro=b.per_back_base_newpro,
+			a.per_back_deal_newpro=b.per_back_deal_newpro
+		where a.personnel_name_detail !='冯涛 100006(转)'
+		and a.statics_personnel_id=#{statics_personnel_id}
+		and a.statics_type=#{statics_type}
+	</update>
+	<select id="getAchTeamStaCurr" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			concat((select c.dept_name from sys_dept c where c.dept_id=b.dept_pid),'/',(select c.dept_name from sys_dept c where c.dept_id=b.dept_id)) as dept_name,
+			concat(b.dept_id,'') as dept_id,
+			format(ifnull(a.team_exc_add_base,0),2) as team_add_fmt,
+			ifnull(a.team_exc_add_base,0) as team_add,
+			format(ifnull(a.team_exc_redeem_all_base,0),2) as team_redeem_fmt,
+			ifnull(a.team_exc_redeem_all_base,0) as team_redeem,
+			format(ifnull(a.team_clear_add,0),2) as team_clear_add_fmt,
+			ifnull(a.team_clear_add,0) as team_clear_add,
+			format(ifnull(a.team_reinve_mon,0),2) as reinve_mon_fmt,
+			ifnull(a.team_reinve_mon,0) as reinve_mon,
+			format(ifnull(a.team_stock_all,0),2) as team_stock_all_fmt,
+			ifnull(a.team_stock_all,0) as team_stock_all,
+			format(ifnull(a.team_stock_new_deal,0),2) as team_stock_all_newpro_fmt,
+			ifnull(a.team_stock_new_deal,0) as team_stock_all_newpro
+		FROM
+			wms_personnel_achievement_mrtp a,
+			sys_dept b
+		where 
+			a.statics_personnel_id=#{statics_personnel_id}
+		and a.statics_type=#{statics_type}
+		and a.dept_id=b.dept_id
+		<if test="team_ids != null and team_ids != ''">
+			and b.dept_id in (${team_ids})
+		</if>
+		and a.team_stock_all is not null
+		<if test="dept_ids != null and dept_ids != ''">
+			and b.dept_pid in (${dept_ids})
+		</if>
+		order by dept_name
+		<if test="page !=null and page_size !=null">
+			limit ${(page-1)*page_size},${page_size}
+		</if>
+	</select>
+	<insert id="insertTeamDeptStockDataCurr" parameterType="map">
+		insert into wms_personnel_achievement_mrtp
+		(
+			statics_type,
+			statics_personnel_id,
+			dept_id,
+			team_stock_all,
+			team_stock_all_deal,
+			team_stock_new,
+			team_stock_new_deal
+		)
+		SELECT
+			#{statics_type},
+			#{statics_personnel_id},
+			a.bel_department_manager_dept_id,
+			sum(ifnull(w.product_account, 0)) as allpro_stock,
+			sum(ifnull(w.product_account*w.product_deadline/12, 0)) as allpro_stock_deal,
+			sum(if(a.date_of_payment>=#{limit_date} and w.wms_inve_pruduct_category_id in (${new_pros}),w.product_account,0)) as newpro_stock,
+			sum(if(a.date_of_payment>=#{limit_date} and w.wms_inve_pruduct_category_id in (${new_pros}),w.product_account*w.product_deadline/12,0)) as newpro_stock_deal
+		FROM
+			wms_inve_transa a,
+			wms_inve_transa_prod w
+		WHERE
+			a.data_status = '4'
+			<if test="team_ids != null and team_ids != ''">
+				and a.bel_department_manager_dept_id in (${team_ids})
+			</if>
+			<if test="dept_ids != null and dept_ids != ''">
+				and a.bel_department_manager_dept_id in (select dept_id from sys_dept where dept_pid in (${dept_ids}))
+			</if>
+			and exists (select 1 from wms_inve_transa_protocol c where c.wms_inve_transa_id=a.wms_inve_transa_id and c.end_of_date>=DATE_SUB(#{sta_end_date},INTERVAL 1 DAY) LIMIT 1) 
+			and #{sta_end_date}>a.date_of_payment
+			and a.wms_inve_transa_id=w.wms_inve_transa_id
+			and w.wms_inve_pruduct_category_id not in (${reject_proid})
+			and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=a.wms_inve_customer_id
+						and x.end_of_date>a.date_of_payment
+						and x.data_type='1'
+					)
+			group by a.bel_department_manager_dept_id
+	</insert>
+	<update id="updateTeamDeptAddDataCurr" parameterType="map">
+		update wms_personnel_achievement_mrtp a inner join (
+			select 
+				f.bel_department_manager_dept_id,
+				f.all_add,
+				f.redeem_all,
+				f.cle_add,
+				f.deal_pro_add,
+				redeem_all_deal,
+				cle_add_deal
+			from (
+				SELECT
+								a.bel_department_manager_dept_id,
+								a.all_pro_acc as all_add,
+								ifnull(c.redeem_all, 0) as redeem_all,
+								a.all_pro_acc - ifnull(c.redeem_all, 0) as cle_add,
+								a.deal_pro_add,
+								ifnull(c.redeem_all_deal, 0) as redeem_all_deal,
+								a.deal_pro_add-ifnull(c.redeem_all_deal, 0) as cle_add_deal
+							FROM
+								(
+									SELECT
+										g.bel_department_manager_dept_id,
+										sum((h.org_product_account-ifnull(d.no_damage_am,0))) as all_pro_acc,
+										sum((h.org_product_account-ifnull(d.no_damage_am,0))*h.product_deadline/12/(if(h.wms_inve_pruduct_category_id in (${specialpro}),4,1))) as deal_pro_add
+									FROM
+										wms_inve_transa g,
+										wms_inve_transa_prod h
+										left join
+										(select 
+												b.wms_inve_transa_id,
+												sum(if(c.is_take_off_damages ='0',b.redeem_amount,0)) as no_damage_am
+											from 
+												wms_inve_redeem c,
+												wms_inve_redeem_detail b 
+											where 
+												c.wms_inve_redeem_id=b.wms_inve_redeem_id 
+												and c.redeem_date >= #{sta_begin_date}
+												AND #{sta_end_date}>c.redeem_date 
+												group by b.wms_inve_transa_id
+												)
+												d
+												on h.wms_inve_transa_id=d.wms_inve_transa_id
+									WHERE
+										g.wms_inve_transa_id = h.wms_inve_transa_id
+									<if test="team_ids != null and team_ids != ''">
+										and g.bel_department_manager_dept_id in (${team_ids})
+									</if>
+									<if test="dept_ids != null and dept_ids != ''">
+										and g.bel_department_manager_dept_id in (select dept_id from sys_dept where dept_pid in (${dept_ids}))
+									</if>
+									AND g.data_status in ('4','5','6')
+									and g.old_wms_inve_transa_id is null
+									and h.wms_inve_pruduct_category_id not in (${reject_proid})
+									AND g.date_of_payment >= #{sta_begin_date}
+									AND #{sta_end_date}>g.date_of_payment
+									and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=g.wms_inve_customer_id
+										and x.end_of_date>g.date_of_payment
+										and x.data_type='1'
+									)
+									group by g.bel_department_manager_dept_id
+								) a
+							LEFT JOIN (
+								SELECT
+									n.bel_department_manager_dept_id,
+									sum(ifnull(v.redeem_amount,0)) AS redeem_all,
+									sum(ifnull(v.redeem_amount,0)*x.product_deadline/12/(if(x.wms_inve_pruduct_category_id in (${specialpro}),4,1))) AS redeem_all_deal
+								FROM
+									wms_inve_redeem b,
+									wms_inve_redeem_detail v,
+									wms_inve_transa_prod x,
+									wms_inve_transa n
+								WHERE
+									b.redeem_date >= #{sta_begin_date}
+								AND #{sta_end_date}>b.redeem_date
+								<if test="team_ids != null and team_ids != ''">
+									and n.bel_department_manager_dept_id in (${team_ids})
+								</if>
+								<if test="dept_ids != null and dept_ids != ''">
+									and n.bel_department_manager_dept_id in (select dept_id from sys_dept where dept_pid in (${dept_ids}))
+								</if>
+								and b.data_status in ('6')
+								and n.data_status in ('4','5','6')
+								and b.data_status !='7'
+								and b.redeem_type !='2'
+								and (#{sta_begin_date}>n.date_of_payment or (n.date_of_payment>=#{sta_begin_date} and b.is_take_off_damages = '1')) 
+								and x.wms_inve_pruduct_category_id not in (${reject_proid})
+								AND b.wms_inve_redeem_id = v.wms_inve_redeem_id
+								AND v.wms_inve_transa_id = x.wms_inve_transa_id
+								and n.wms_inve_transa_id=x.wms_inve_transa_id
+								and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=n.wms_inve_customer_id
+										and x.end_of_date>n.date_of_payment
+										and x.data_type='1'
+									)
+								group by n.bel_department_manager_dept_id
+							) c ON a.bel_department_manager_dept_id = c.bel_department_manager_dept_id
+				UNION
+				SELECT
+								c.bel_department_manager_dept_id,
+								ifnull(a.all_pro_acc,0) as all_add,
+								ifnull(c.redeem_all, 0) as redeem_all,
+								ifnull(a.all_pro_acc,0) - ifnull(c.redeem_all, 0) as cle_add,
+								ifnull(a.deal_pro_add,0) as deal_pro_add,
+								ifnull(c.redeem_all_deal, 0) as redeem_all_deal,
+								ifnull(a.deal_pro_add,0)-ifnull(c.redeem_all_deal, 0) as cle_add_deal
+								
+								
+							FROM
+				(
+								SELECT
+									n.bel_department_manager_dept_id,
+									sum(ifnull(v.redeem_amount,0)) AS redeem_all,
+									sum(ifnull(v.redeem_amount,0)*x.product_deadline/12/(if(x.wms_inve_pruduct_category_id in (${specialpro}),4,1))) AS redeem_all_deal
+								FROM
+									wms_inve_redeem b,
+									wms_inve_redeem_detail v,
+									wms_inve_transa_prod x,
+									wms_inve_transa n
+								WHERE
+									b.redeem_date >= #{sta_begin_date}
+								AND #{sta_end_date}>b.redeem_date
+								<if test="team_ids != null and team_ids != ''">
+									and n.bel_department_manager_dept_id in (${team_ids})
+								</if>
+								<if test="dept_ids != null and dept_ids != ''">
+									and n.bel_department_manager_dept_id in (select dept_id from sys_dept where dept_pid in (${dept_ids}))
+								</if>
+								and b.data_status in ('6')
+								and b.redeem_type not IN ('3','5')
+								and n.data_status in ('4','5','6')
+								and b.data_status !='7'
+								and b.redeem_type !='2'
+								and (#{sta_begin_date}>n.date_of_payment or (n.date_of_payment>=#{sta_begin_date} and b.is_take_off_damages = '1')) 
+								and x.wms_inve_pruduct_category_id not in (${reject_proid})
+								AND b.wms_inve_redeem_id = v.wms_inve_redeem_id
+								AND v.wms_inve_transa_id = x.wms_inve_transa_id
+								and n.wms_inve_transa_id=x.wms_inve_transa_id
+								and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=n.wms_inve_customer_id
+										and x.end_of_date>n.date_of_payment
+										and x.data_type='1'
+									)
+								group by n.bel_department_manager_dept_id
+							) c 
+				LEFT JOIN
+				(
+									SELECT
+										g.bel_department_manager_dept_id,
+										sum((h.org_product_account-ifnull(d.no_damage_am,0))) as all_pro_acc,
+										sum((h.org_product_account-ifnull(d.no_damage_am,0))*h.product_deadline/12/(if(h.wms_inve_pruduct_category_id in (${specialpro}),4,1))) as deal_pro_add
+									FROM
+										wms_inve_transa g,
+										wms_inve_transa_prod h
+										left join
+										(select 
+												b.wms_inve_transa_id,
+												sum(if(c.is_take_off_damages ='0',b.redeem_amount,0)) as no_damage_am
+											from 
+												wms_inve_redeem c,
+												wms_inve_redeem_detail b 
+											where 
+												c.wms_inve_redeem_id=b.wms_inve_redeem_id 
+												and c.redeem_date >= #{sta_begin_date}
+												AND #{sta_end_date}>c.redeem_date 
+												group by b.wms_inve_transa_id
+												)
+												d
+												on h.wms_inve_transa_id=d.wms_inve_transa_id
+									WHERE
+										g.wms_inve_transa_id = h.wms_inve_transa_id
+									<if test="team_ids != null and team_ids != ''">
+										and g.bel_department_manager_dept_id in (${team_ids})
+									</if>
+									<if test="dept_ids != null and dept_ids != ''">
+										and g.bel_department_manager_dept_id in (select dept_id from sys_dept where dept_pid in (${dept_ids}))
+									</if>
+									AND g.data_status in ('4','5','6')
+									and g.old_wms_inve_transa_id is null
+									and h.wms_inve_pruduct_category_id not in (${reject_proid})
+									AND g.date_of_payment >= #{sta_begin_date}
+									AND #{sta_end_date}>g.date_of_payment
+									and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=g.wms_inve_customer_id
+										and x.end_of_date>g.date_of_payment
+										and x.data_type='1'
+									)
+									group by g.bel_department_manager_dept_id
+								) a
+				ON a.bel_department_manager_dept_id=c.bel_department_manager_dept_id
+				) f
+		) c
+		on a.dept_id=c.bel_department_manager_dept_id
+		set 
+			a.team_exc_add_base=c.all_add,
+			a.team_exc_add_deal=c.deal_pro_add,
+			a.team_exc_redeem_all_base=c.redeem_all,
+			a.team_exc_redeem_all_deal=c.redeem_all_deal,
+			a.team_clear_add=c.cle_add,
+			a.team_clear_add_deal=c.cle_add_deal
+		where a.statics_personnel_id=#{statics_personnel_id}
+		and a.statics_type=#{statics_type}
+	</update>
+	
+	<select id="getAchDeptStaCurr" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			(select c.dept_name from sys_dept c where c.dept_id=b.dept_pid) as dept_name,
+			concat(b.dept_pid,'') as dept_id,
+			format(sum(ifnull(a.team_exc_add_base,0)),2) as team_add_fmt,
+			sum(ifnull(a.team_exc_add_base,0)) as team_add,
+			format(sum(ifnull(a.team_exc_redeem_all_base,0)),2) as team_redeem_fmt,
+			sum(ifnull(a.team_exc_redeem_all_base,0)) as team_redeem,
+			format(sum(ifnull(a.team_clear_add,0)),2) as team_clear_add_fmt,
+			sum(ifnull(a.team_clear_add,0)) as team_clear_add,
+			format(sum(ifnull(a.team_stock_all,0)),2) as team_stock_all_fmt,
+			sum(ifnull(a.team_stock_all,0)) as team_stock_all,
+			
+			format(sum(ifnull(a.team_reinve_mon,0)),2) as reinve_mon_fmt,
+			sum(ifnull(a.team_reinve_mon,0)) as reinve_mon,
+			
+			format(sum(ifnull(a.team_stock_new_deal,0)),2) as team_stock_all_newpro_fmt,
+			sum(ifnull(a.team_stock_new_deal,0)) as team_stock_all_newpro
+		FROM
+			wms_personnel_achievement_mrtp a,
+			sys_dept b
+		where 
+			a.statics_personnel_id=#{statics_personnel_id}
+		and a.statics_type=#{statics_type}
+		and a.dept_id=b.dept_id
+		and b.dept_pid in (${dept_ids})
+		group by b.dept_pid
+		order by dept_name
+		<if test="page !=null and page_size !=null">
+			limit ${(page-1)*page_size},${page_size}
+		</if>
+	</select>
+	<select id="getAchViceStaCurr" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			concat(if(a.personnel_name_detail='冯涛 100006(转)','冯涛_转',substring_index(trim(a.personnel_name_detail),' ',1)),'(',a.dept_name,')') as team_name,
+			if(a.personnel_name_detail='冯涛 100006(转)','',concat(a.dept_id,'')) as team_id,
+			format(ifnull(a.team_add_base,0),2) as team_add_fmt,
+			ifnull(a.team_add_base,0) as team_add,
+			format(ifnull(a.team_redeem_all_base,0),2) as team_redeem_fmt,
+			ifnull(a.team_redeem_all_base,0) as team_redeem,
+			format(ifnull(a.team_clear_add,0),2) as team_clear_add_fmt,
+			ifnull(a.team_clear_add,0) as team_clear_add,
+			format(ifnull(a.team_reinve_mon,0),2) as reinve_mon_fmt,
+			ifnull(a.team_reinve_mon,0) as reinve_mon,
+			format(ifnull(a.team_stock_all,0),2) as team_stock_all_fmt,
+			ifnull(a.team_stock_all,0) as team_stock_all,
+			format(ifnull(a.team_stock_new_deal,0),2) as team_stock_all_newpro_fmt,
+			ifnull(a.team_stock_new_deal,0) as team_stock_all_newpro
+		FROM
+			wms_personnel_achievement_mrtp a
+		where 
+			a.statics_personnel_id=#{statics_personnel_id}
+		and a.statics_type=#{statics_type}
+		and a.team_stock_all is not null
+		and 
+		(
+			a.personnel_id=#{general_manager_id}
+			or exists (select 1 from sys_post b where a.post_number=b.post_id and (b.post_number like '%PCFZXFGSZJL%' or b.post_number like '%PCFZXFZJL%' or b.post_number like '%PCFJXZXFZJL%'))
+			or exists (select 1 from wms_inve_transa_non_busi_leader c where a.personnel_id=c.leader_personnel_id)
+		)
+		<if test="vice_personnel_id != null and vice_personnel_id != ''">
+				and a.personnel_id=#{vice_personnel_id}
+		</if>
+		<if test="vice_team_id != null and vice_team_id != ''">
+				and a.dept_id=#{vice_team_id}
+		</if>
+		order by a.personnel_name_detail
+		<if test="page !=null and page_size !=null">
+			limit ${(page-1)*page_size},${page_size}
+		</if>
+	</select>
+	<insert id="insertAchCerterManStockCurr" parameterType="map">
+		insert into wms_personnel_achievement_mrtp
+		(
+			statics_type,
+			statics_personnel_id,
+			company_id,
+			company_name,
+			dept_name,
+			personnel_name_detail,
+			personnel_id,
+			post_number,
+			dept_id,
+			team_stock_all,
+			team_stock_all_deal,
+			team_stock_new,
+			team_stock_new_deal
+		)
+		SELECT
+			#{statics_type},
+			#{statics_personnel_id},
+			getParentDeptIdByDeptId(a.bel_center_manager_dept_id),
+			getParenetDeptNameByDeptId(a.bel_center_manager_dept_id),
+			(select x.dept_name from sys_dept x where x.dept_id=a.bel_center_manager_dept_id ),
+			(SELECT CONCAT(X.personnel_name,' ',X.personnel_shortcode) FROM V_PERSONNEL_DETAIL X WHERE X.PERSONNEL_ID=a.bel_center_manager_id AND X.PERSONNEL_DEPTID=A.bel_center_manager_dept_id),
+			
+			a.bel_center_manager_id,
+			(select x.personnel_postid from v_personnel_detail x where x.personnel_id=a.bel_center_manager_id and x.personnel_deptid=a.bel_center_manager_dept_id),
+			a.bel_center_manager_dept_id,
+			sum(ifnull(w.product_account, 0)) as allpro_stock,
+			sum(ifnull(w.product_account*w.product_deadline/12, 0)) as allpro_stock_deal,
+			sum(if(a.date_of_payment>=#{limit_date} and w.wms_inve_pruduct_category_id in (${new_pros}),w.product_account,0)) as newpro_stock,
+			sum(if(a.date_of_payment>=#{limit_date} and w.wms_inve_pruduct_category_id in (${new_pros}),w.product_account*w.product_deadline/12,0)) as newpro_stock_deal
+		FROM
+			wms_inve_transa a,
+			wms_inve_transa_prod w
+		WHERE
+			a.data_status = '4'
+			<if test="vice_personnel_id != null and vice_personnel_id != ''">
+				and a.bel_center_manager_id=#{vice_personnel_id}
+			</if>
+			and a.bel_center_manager_id is not null
+			and exists (select 1 from wms_inve_transa_protocol c where c.wms_inve_transa_id=a.wms_inve_transa_id and c.end_of_date>=DATE_SUB(#{sta_end_date},INTERVAL 1 DAY) LIMIT 1) 
+			and #{sta_end_date}>a.date_of_payment
+			and a.wms_inve_transa_id=w.wms_inve_transa_id
+			and w.wms_inve_pruduct_category_id not in (${reject_proid})
+			group by a.bel_center_manager_id,a.bel_center_manager_dept_id
+	</insert>
+	<insert id="insertAchViceManStockCurr" parameterType="map">
+		insert into wms_personnel_achievement_mrtp
+		(
+			statics_type,
+			statics_personnel_id,
+			company_id,
+			company_name,
+			dept_name,
+			personnel_name_detail,
+			personnel_id,
+			post_number,
+			dept_id,
+			team_stock_all,
+			team_stock_all_deal,
+			team_stock_new,
+			team_stock_new_deal
+		)
+		SELECT
+			#{statics_type},
+			#{statics_personnel_id},
+			getParentDeptIdByDeptId(a.bel_vice_general_manager_dept_id),
+			getParenetDeptNameByDeptId(a.bel_vice_general_manager_dept_id),
+			(select x.dept_name from sys_dept x where x.dept_id=a.bel_vice_general_manager_dept_id ),
+			(SELECT CONCAT(X.personnel_name,' ',X.personnel_shortcode) FROM V_PERSONNEL_DETAIL X WHERE X.PERSONNEL_ID=a.bel_vice_general_manager_id AND X.PERSONNEL_DEPTID=A.bel_vice_general_manager_dept_id),
+			a.bel_vice_general_manager_id,
+			(select x.personnel_postid from v_personnel_detail x where x.personnel_id=a.bel_vice_general_manager_id and x.personnel_deptid=a.bel_vice_general_manager_dept_id),
+			a.bel_vice_general_manager_dept_id,
+			sum(ifnull(w.product_account, 0)) as allpro_stock,
+			sum(ifnull(w.product_account*w.product_deadline/12, 0)) as allpro_stock_deal,
+			sum(if(a.date_of_payment>=#{limit_date} and w.wms_inve_pruduct_category_id in (${new_pros}),w.product_account,0)) as newpro_stock,
+			sum(if(a.date_of_payment>=#{limit_date} and w.wms_inve_pruduct_category_id in (${new_pros}),w.product_account*w.product_deadline/12,0)) as newpro_stock_deal
+		FROM
+			wms_inve_transa a,
+			wms_inve_transa_prod w
+		WHERE
+			a.data_status = '4'
+			<if test="vice_personnel_id != null and vice_personnel_id != ''">
+				and a.bel_vice_general_manager_id=#{vice_personnel_id}
+			</if>
+			and exists (select 1 from wms_inve_transa_protocol c where c.wms_inve_transa_id=a.wms_inve_transa_id and c.end_of_date>=DATE_SUB(#{sta_end_date},INTERVAL 1 DAY) LIMIT 1) 
+			and #{sta_end_date}>a.date_of_payment
+			and a.wms_inve_transa_id=w.wms_inve_transa_id
+			and a.bel_center_manager_id is null
+			and a.bel_vice_general_manager_id is not null
+			and w.wms_inve_pruduct_category_id not in (${reject_proid})
+			group by a.bel_vice_general_manager_id,a.bel_vice_general_manager_dept_id
+	</insert>
+	<insert id="insertAchGelManStockCurr" parameterType="map">
+		insert into wms_personnel_achievement_mrtp
+		(
+			statics_type,
+			statics_personnel_id,
+			dept_id,
+			per_stock_all,
+			per_stock_all_deal,
+			per_stock_new,
+			per_stock_new_deal
+		)
+		SELECT
+			#{statics_type},
+			#{statics_personnel_id},
+			a.bel_general_manager_dept_id,
+			sum(ifnull(w.product_account, 0)) as allpro_stock,
+			sum(ifnull(w.product_account*w.product_deadline/12, 0)) as allpro_stock_deal,
+			sum(if(a.date_of_payment>=#{limit_date} and w.wms_inve_pruduct_category_id in (${new_pros}),w.product_account,0)) as newpro_stock,
+			sum(if(a.date_of_payment>=#{limit_date} and w.wms_inve_pruduct_category_id in (${new_pros}),w.product_account*w.product_deadline/12,0)) as newpro_stock_deal
+		FROM
+			wms_inve_transa a,
+			wms_inve_transa_prod w
+		WHERE
+			a.data_status = '4'
+			<if test="vice_personnel_id != null and vice_personnel_id != ''">
+				and a.bel_general_manager_id=#{vice_personnel_id}
+			</if>
+			and exists (select 1 from wms_inve_transa_protocol c where c.wms_inve_transa_id=a.wms_inve_transa_id and c.end_of_date>=DATE_SUB(#{sta_end_date},INTERVAL 1 DAY) LIMIT 1) 
+			and #{sta_end_date}>a.date_of_payment
+			and a.wms_inve_transa_id=w.wms_inve_transa_id
+			and a.bel_center_manager_id is null
+			and a.bel_vice_general_manager_id is null
+			and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=a.wms_inve_customer_id
+										and x.end_of_date>a.date_of_payment
+										and x.data_type='1'
+									)
+			and w.wms_inve_pruduct_category_id not in (${reject_proid})
+			group by a.bel_general_manager_id,a.bel_general_manager_dept_id
+	</insert>
+	<update id="updateAchCerterManAddCurr" parameterType="map">
+		update wms_personnel_achievement_mrtp a inner join (
+			select 
+				f.bel_center_manager_id,
+				f.bel_center_manager_dept_id,
+				f.all_add,
+				f.redeem_all,
+				f.cle_add,
+				f.deal_pro_add,
+				redeem_all_deal,
+				cle_add_deal
+			from (
+				SELECT
+								a.bel_center_manager_id,
+								a.bel_center_manager_dept_id,
+								a.all_pro_acc as all_add,
+								ifnull(c.redeem_all, 0) as redeem_all,
+								a.all_pro_acc - ifnull(c.redeem_all, 0) as cle_add,
+								a.deal_pro_add,
+								ifnull(c.redeem_all_deal, 0) as redeem_all_deal,
+								a.deal_pro_add-ifnull(c.redeem_all_deal, 0) as cle_add_deal
+							FROM
+								(
+									SELECT
+										g.bel_center_manager_id,
+										g.bel_center_manager_dept_id,
+										sum((h.org_product_account-ifnull(d.no_damage_am,0))) as all_pro_acc,
+										sum((h.org_product_account-ifnull(d.no_damage_am,0))*h.product_deadline/12/(if(h.wms_inve_pruduct_category_id in (${specialpro}),4,1))) as deal_pro_add
+									FROM
+										wms_inve_transa g,
+										wms_inve_transa_prod h
+										left join
+										(select 
+												b.wms_inve_transa_id,
+												sum(if(c.is_take_off_damages ='0',b.redeem_amount,0)) as no_damage_am
+											from 
+												wms_inve_redeem c,
+												wms_inve_redeem_detail b 
+											where 
+												c.wms_inve_redeem_id=b.wms_inve_redeem_id 
+												and c.redeem_date >= #{sta_begin_date}
+												AND #{sta_end_date}>c.redeem_date 
+												group by b.wms_inve_transa_id
+												)
+												d
+												on h.wms_inve_transa_id=d.wms_inve_transa_id
+									WHERE
+										g.wms_inve_transa_id = h.wms_inve_transa_id
+									AND g.data_status in ('4','5','6')
+									<if test="vice_personnel_id != null and vice_personnel_id != ''">
+										and g.bel_center_manager_id=#{vice_personnel_id}
+									</if>
+									and h.wms_inve_pruduct_category_id not in (${reject_proid})
+									and g.old_wms_inve_transa_id is null
+									AND g.date_of_payment >= #{sta_begin_date}
+									AND #{sta_end_date}>g.date_of_payment
+									and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=g.wms_inve_customer_id
+										and x.end_of_date>g.date_of_payment
+										and x.data_type='1'
+									)
+									group by g.bel_center_manager_id,g.bel_center_manager_dept_id
+								) a
+							LEFT JOIN (
+								SELECT
+									n.bel_center_manager_id,
+									n.bel_center_manager_dept_id,
+									sum(ifnull(v.redeem_amount,0)) AS redeem_all,
+									sum(ifnull(v.redeem_amount,0)*x.product_deadline/12/(if(x.wms_inve_pruduct_category_id in (${specialpro}),4,1))) AS redeem_all_deal
+								FROM
+									wms_inve_redeem b,
+									wms_inve_redeem_detail v,
+									wms_inve_transa_prod x,
+									wms_inve_transa n
+								WHERE
+									b.redeem_date >= #{sta_begin_date}
+								AND #{sta_end_date}>b.redeem_date
+								<if test="vice_personnel_id != null and vice_personnel_id != ''">
+									and n.bel_center_manager_id=#{vice_personnel_id}
+								</if>
+								and b.data_status in ('6')
+								and n.data_status in ('4','5','6')
+								and b.data_status !='7'
+								and b.redeem_type not in ('2')
+								and (#{sta_begin_date}>n.date_of_payment or (n.date_of_payment>=#{sta_begin_date} and b.is_take_off_damages = '1')) 
+								and x.wms_inve_pruduct_category_id not in (${reject_proid})
+								AND b.wms_inve_redeem_id = v.wms_inve_redeem_id
+								AND v.wms_inve_transa_id = x.wms_inve_transa_id
+								and n.wms_inve_transa_id=x.wms_inve_transa_id
+								and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=n.wms_inve_customer_id
+										and x.end_of_date>n.date_of_payment
+										and x.data_type='1'
+									)
+								group by n.bel_center_manager_id,n.bel_center_manager_dept_id
+							) c ON a.bel_center_manager_id = c.bel_center_manager_id and a.bel_center_manager_dept_id=c.bel_center_manager_dept_id
+				UNION
+				SELECT
+								c.bel_center_manager_id,
+								c.bel_center_manager_dept_id,
+								ifnull(a.all_pro_acc,0) as all_add,
+								ifnull(c.redeem_all, 0) as redeem_all,
+								ifnull(a.all_pro_acc,0) - ifnull(c.redeem_all, 0) as cle_add,
+								ifnull(a.deal_pro_add,0) as deal_pro_add,
+								ifnull(c.redeem_all_deal, 0) as redeem_all_deal,
+								ifnull(a.deal_pro_add,0)-ifnull(c.redeem_all_deal, 0) as cle_add_deal
+								
+								
+							FROM
+				(
+								SELECT
+									n.bel_center_manager_id,
+									n.bel_center_manager_dept_id,
+									sum(ifnull(v.redeem_amount,0)) AS redeem_all,
+									sum(ifnull(v.redeem_amount,0)*x.product_deadline/12/(if(x.wms_inve_pruduct_category_id in (${specialpro}),4,1))) AS redeem_all_deal
+								FROM
+									wms_inve_redeem b,
+									wms_inve_redeem_detail v,
+									wms_inve_transa_prod x,
+									wms_inve_transa n
+								WHERE
+									b.redeem_date >= #{sta_begin_date}
+								AND #{sta_end_date}>b.redeem_date
+								<if test="vice_personnel_id != null and vice_personnel_id != ''">
+									and n.bel_center_manager_id=#{vice_personnel_id}
+								</if>
+								and b.data_status in ('6')
+								and b.redeem_type not IN ('2','3','5')
+								and n.data_status in ('4','5','6')
+								and b.data_status !='7'
+								and (#{sta_begin_date}>n.date_of_payment or (n.date_of_payment>=#{sta_begin_date} and b.is_take_off_damages = '1')) 
+								and x.wms_inve_pruduct_category_id not in (${reject_proid})
+								AND b.wms_inve_redeem_id = v.wms_inve_redeem_id
+								AND v.wms_inve_transa_id = x.wms_inve_transa_id
+								and n.wms_inve_transa_id=x.wms_inve_transa_id
+								and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=n.wms_inve_customer_id
+										and x.end_of_date>n.date_of_payment
+										and x.data_type='1'
+									)
+								group by n.bel_center_manager_id,n.bel_center_manager_dept_id
+							) c 
+				LEFT JOIN
+				(
+									SELECT
+										g.bel_center_manager_id,
+										g.bel_center_manager_dept_id,
+										sum((h.org_product_account-ifnull(d.no_damage_am,0))) as all_pro_acc,
+										sum((h.org_product_account-ifnull(d.no_damage_am,0))*h.product_deadline/12/(if(h.wms_inve_pruduct_category_id in (${specialpro}),4,1))) as deal_pro_add
+									FROM
+										wms_inve_transa g,
+										wms_inve_transa_prod h
+										left join
+										(select 
+												b.wms_inve_transa_id,
+												sum(if(c.is_take_off_damages ='0',b.redeem_amount,0)) as no_damage_am
+											from 
+												wms_inve_redeem c,
+												wms_inve_redeem_detail b 
+											where 
+												c.wms_inve_redeem_id=b.wms_inve_redeem_id 
+												and c.redeem_date >= #{sta_begin_date}
+												AND #{sta_end_date}>c.redeem_date 
+												group by b.wms_inve_transa_id
+												)
+												d
+												on h.wms_inve_transa_id=d.wms_inve_transa_id
+									WHERE
+										g.wms_inve_transa_id = h.wms_inve_transa_id
+									<if test="vice_personnel_id != null and vice_personnel_id != ''">
+										and g.bel_center_manager_id=#{vice_personnel_id}
+									</if>
+									AND g.data_status in ('4','5','6')
+									and h.wms_inve_pruduct_category_id not in (${reject_proid})
+									AND g.date_of_payment >= #{sta_begin_date}
+									and g.old_wms_inve_transa_id is null
+									AND #{sta_end_date}>g.date_of_payment
+									and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=g.wms_inve_customer_id
+										and x.end_of_date>g.date_of_payment
+										and x.data_type='1'
+									)
+									group by g.bel_center_manager_id,g.bel_center_manager_dept_id
+								) a
+				ON a.bel_center_manager_id = c.bel_center_manager_id and a.bel_center_manager_dept_id=c.bel_center_manager_dept_id
+				) f
+		) c
+		on a.personnel_id=c.bel_center_manager_id and a.dept_id=c.bel_center_manager_dept_id
+		set 
+			a.team_add_base=c.all_add,
+			a.team_add_deal=c.deal_pro_add,
+			a.team_redeem_all_base=c.redeem_all,
+			a.team_redeem_all_deal=c.redeem_all_deal,
+			a.team_clear_add=c.cle_add,
+			a.team_clear_add_deal=c.cle_add_deal
+		where a.statics_personnel_id=#{statics_personnel_id}
+		and a.statics_type=#{statics_type}
+	</update>
+	<update id="updateAchViceManAddCurr" parameterType="map">
+		update wms_personnel_achievement_mrtp a inner join (
+			select 
+				f.bel_vice_general_manager_id,
+				f.bel_vice_general_manager_dept_id,
+				f.all_add,
+				f.redeem_all,
+				f.cle_add,
+				f.deal_pro_add,
+				redeem_all_deal,
+				cle_add_deal
+			from (
+				SELECT
+								a.bel_vice_general_manager_id,
+								a.bel_vice_general_manager_dept_id,
+								a.all_pro_acc as all_add,
+								ifnull(c.redeem_all, 0) as redeem_all,
+								a.all_pro_acc - ifnull(c.redeem_all, 0) as cle_add,
+								a.deal_pro_add,
+								ifnull(c.redeem_all_deal, 0) as redeem_all_deal,
+								a.deal_pro_add-ifnull(c.redeem_all_deal, 0) as cle_add_deal
+							FROM
+								(
+									SELECT
+										g.bel_vice_general_manager_id,
+										g.bel_vice_general_manager_dept_id,
+										sum((h.org_product_account-ifnull(d.no_damage_am,0))) as all_pro_acc,
+										sum((h.org_product_account-ifnull(d.no_damage_am,0))*h.product_deadline/12/(if(h.wms_inve_pruduct_category_id in (${specialpro}),4,1))) as deal_pro_add
+									FROM
+										wms_inve_transa g,
+										wms_inve_transa_prod h
+										left join
+										(select 
+												b.wms_inve_transa_id,
+												sum(if(c.is_take_off_damages ='0',b.redeem_amount,0)) as no_damage_am
+											from 
+												wms_inve_redeem c,
+												wms_inve_redeem_detail b 
+											where 
+												c.wms_inve_redeem_id=b.wms_inve_redeem_id 
+												and c.redeem_date >= #{sta_begin_date}
+												AND #{sta_end_date}>c.redeem_date 
+												group by b.wms_inve_transa_id
+												)
+												d
+												on h.wms_inve_transa_id=d.wms_inve_transa_id
+									WHERE
+										g.wms_inve_transa_id = h.wms_inve_transa_id
+									<if test="vice_personnel_id != null and vice_personnel_id != ''">
+										and g.bel_vice_general_manager_id=#{vice_personnel_id}
+									</if>
+									and g.bel_center_manager_id is null
+									and g.old_wms_inve_transa_id is null
+									AND g.data_status in ('4','5','6')
+									and h.wms_inve_pruduct_category_id not in (${reject_proid})
+									AND g.date_of_payment >= #{sta_begin_date}
+									AND #{sta_end_date}>g.date_of_payment
+									and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=g.wms_inve_customer_id
+										and x.end_of_date>g.date_of_payment
+										and x.data_type='1'
+									)
+									group by g.bel_vice_general_manager_id,g.bel_vice_general_manager_dept_id
+								) a
+							LEFT JOIN (
+								SELECT
+									n.bel_vice_general_manager_id,
+									n.bel_vice_general_manager_dept_id,
+									sum(ifnull(v.redeem_amount,0)) AS redeem_all,
+									sum(ifnull(v.redeem_amount,0)*x.product_deadline/12/(if(x.wms_inve_pruduct_category_id in (${specialpro}),4,1))) AS redeem_all_deal
+								FROM
+									wms_inve_redeem b,
+									wms_inve_redeem_detail v,
+									wms_inve_transa_prod x,
+									wms_inve_transa n
+								WHERE
+									b.redeem_date >= #{sta_begin_date}
+								AND #{sta_end_date}>b.redeem_date
+								<if test="vice_personnel_id != null and vice_personnel_id != ''">
+									and n.bel_vice_general_manager_id=#{vice_personnel_id}
+								</if>
+								and b.data_status in ('6')
+								and n.data_status in ('4','5','6')
+								and b.data_status !='7'
+								and b.redeem_type not in ('2')
+								and (#{sta_begin_date}>n.date_of_payment or (n.date_of_payment>=#{sta_begin_date} and b.is_take_off_damages = '1')) 
+								and x.wms_inve_pruduct_category_id not in (${reject_proid})
+								AND b.wms_inve_redeem_id = v.wms_inve_redeem_id
+								and n.bel_center_manager_id is null
+								AND v.wms_inve_transa_id = x.wms_inve_transa_id
+								and n.wms_inve_transa_id=x.wms_inve_transa_id
+								and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=n.wms_inve_customer_id
+										and x.end_of_date>n.date_of_payment
+										and x.data_type='1'
+									)
+								group by n.bel_vice_general_manager_id,n.bel_vice_general_manager_dept_id
+							) c ON a.bel_vice_general_manager_id = c.bel_vice_general_manager_id and a.bel_vice_general_manager_dept_id=c.bel_vice_general_manager_dept_id
+				UNION
+				SELECT
+								c.bel_vice_general_manager_id,
+								c.bel_vice_general_manager_dept_id,
+								ifnull(a.all_pro_acc,0) as all_add,
+								ifnull(c.redeem_all, 0) as redeem_all,
+								ifnull(a.all_pro_acc,0) - ifnull(c.redeem_all, 0) as cle_add,
+								ifnull(a.deal_pro_add,0) as deal_pro_add,
+								ifnull(c.redeem_all_deal, 0) as redeem_all_deal,
+								ifnull(a.deal_pro_add,0)-ifnull(c.redeem_all_deal, 0) as cle_add_deal
+								
+								
+							FROM
+				(
+								SELECT
+									n.bel_vice_general_manager_id,
+									n.bel_vice_general_manager_dept_id,
+									sum(ifnull(v.redeem_amount,0)) AS redeem_all,
+									sum(ifnull(v.redeem_amount,0)*x.product_deadline/12/(if(x.wms_inve_pruduct_category_id in (${specialpro}),4,1))) AS redeem_all_deal
+								FROM
+									wms_inve_redeem b,
+									wms_inve_redeem_detail v,
+									wms_inve_transa_prod x,
+									wms_inve_transa n
+								WHERE
+									b.redeem_date >= #{sta_begin_date}
+								AND #{sta_end_date}>b.redeem_date
+								<if test="vice_personnel_id != null and vice_personnel_id != ''">
+									and n.bel_vice_general_manager_id=#{vice_personnel_id}
+								</if>
+								and b.data_status in ('6')
+								and b.redeem_type not IN ('2','3','5')
+								and n.data_status in ('4','5','6')
+								and b.data_status !='7'
+								and (#{sta_begin_date}>n.date_of_payment or (n.date_of_payment>=#{sta_begin_date} and b.is_take_off_damages = '1')) 
+								and x.wms_inve_pruduct_category_id not in (${reject_proid})
+								AND b.wms_inve_redeem_id = v.wms_inve_redeem_id
+								and n.bel_center_manager_id is null
+								AND v.wms_inve_transa_id = x.wms_inve_transa_id
+								and n.wms_inve_transa_id=x.wms_inve_transa_id
+								and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=n.wms_inve_customer_id
+										and x.end_of_date>n.date_of_payment
+										and x.data_type='1'
+									)
+								group by n.bel_vice_general_manager_id,n.bel_vice_general_manager_dept_id
+							) c 
+				LEFT JOIN
+				(
+									SELECT
+										g.bel_vice_general_manager_id,
+										g.bel_vice_general_manager_dept_id,
+										sum((h.org_product_account-ifnull(d.no_damage_am,0))) as all_pro_acc,
+										sum((h.org_product_account-ifnull(d.no_damage_am,0))*h.product_deadline/12/(if(h.wms_inve_pruduct_category_id in (${specialpro}),4,1))) as deal_pro_add
+									FROM
+										wms_inve_transa g,
+										wms_inve_transa_prod h
+										left join
+										(select 
+												b.wms_inve_transa_id,
+												sum(if(c.is_take_off_damages ='0',b.redeem_amount,0)) as no_damage_am
+											from 
+												wms_inve_redeem c,
+												wms_inve_redeem_detail b 
+											where 
+												c.wms_inve_redeem_id=b.wms_inve_redeem_id 
+												and c.redeem_date >= #{sta_begin_date}
+												AND #{sta_end_date}>c.redeem_date 
+												group by b.wms_inve_transa_id
+												)
+												d
+												on h.wms_inve_transa_id=d.wms_inve_transa_id
+									WHERE
+										g.wms_inve_transa_id = h.wms_inve_transa_id
+									<if test="vice_personnel_id != null and vice_personnel_id != ''">
+										and g.bel_vice_general_manager_id=#{vice_personnel_id}
+									</if>
+									AND g.data_status in ('4','5','6')
+									and h.wms_inve_pruduct_category_id not in (${reject_proid})
+									AND g.date_of_payment >= #{sta_begin_date}
+									AND #{sta_end_date}>g.date_of_payment
+									and g.old_wms_inve_transa_id is null
+									and g.bel_center_manager_id is null
+									and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=g.wms_inve_customer_id
+										and x.end_of_date>g.date_of_payment
+										and x.data_type='1'
+									)
+									group by g.bel_vice_general_manager_id,g.bel_vice_general_manager_dept_id
+								) a
+				ON a.bel_vice_general_manager_id = c.bel_vice_general_manager_id and a.bel_vice_general_manager_dept_id=c.bel_vice_general_manager_dept_id
+				) f
+		) c
+		on a.personnel_id=c.bel_vice_general_manager_id and a.dept_id=c.bel_vice_general_manager_dept_id
+		set 
+			a.team_add_base=c.all_add,
+			a.team_add_deal=c.deal_pro_add,
+			a.team_redeem_all_base=c.redeem_all,
+			a.team_redeem_all_deal=c.redeem_all_deal,
+			a.team_clear_add=c.cle_add,
+			a.team_clear_add_deal=c.cle_add_deal
+		where a.statics_personnel_id=#{statics_personnel_id}
+		and a.statics_type=#{statics_type}
+	</update>
+	<update id="updateAchGelManAddCurr" parameterType="map">
+		
+	</update>
+	<select id="getAchCenterStaCurr" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			format(sum(ifnull(per_add_base,0)),2) as team_add_fmt,
+			sum(ifnull(per_add_base,0)) as team_add,
+			format(sum(ifnull(per_redeem_base,0)),2) as team_redeem_fmt,
+			sum(ifnull(per_redeem_base,0)) as team_redeem,
+			format(sum(ifnull(per_clear_add,0)),2) as team_clear_add_fmt,
+			sum(ifnull(per_clear_add,0)) as team_clear_add,
+			format(sum(ifnull(per_stock_all,0)),2) as team_stock_fmt,
+			sum(ifnull(per_stock_all,0)) as team_stock,
+			format(sum(ifnull(per_stock_new_deal,0)),2) as team_newpro_stock_fmt,
+			sum(ifnull(per_stock_new_deal,0)) as team_newpro_stock
+		FROM
+			wms_personnel_achievement_mrtp
+		where 
+			statics_personnel_id=#{statics_personnel_id}
+		and statics_type=#{statics_type}
+	</select>
+	<insert id="insertAchAllPerStaCurr" parameterType="map">
+		insert into wms_personnel_achievement_mrtp
+		(
+			statics_personnel_id,
+			statics_type,
+			company_id,
+			company_name,
+			dept_id,
+			dept_name,
+			personnel_id,
+			personnel_name_detail,
+			post_number,
+			post_name,
+			per_stock_all,
+			per_stock_all_deal,
+			per_stock_new,
+			per_stock_new_deal
+		)
+		select 
+			#{statics_personnel_id},
+			#{statics_type},
+			getParentDeptIdByDeptId(a.personnel_deptid),
+			getParenetDeptNameByDeptId(a.personnel_deptid),
+			a.personnel_deptid,
+			(select x.dept_name from sys_dept x where x.dept_id=a.personnel_deptid ),
+			a.personnel_id,
+			CONCAT(a.personnel_name,' ',a.personnel_shortcode),
+			a.personnel_postid,
+			a.personnel_postname,
+			product_account,
+			product_account_deal,
+			new_product_account,
+			new_product_account_deal
+		from
+					(
+					SELECT
+						a.personnel_deptid,a.personnel_id,a.personnel_name,a.personnel_shortcode,a.personnel_postid,a.personnel_postname,a.personnel_state
+					FROM
+						pm_personnel a
+					UNION
+						SELECT
+							b.dept_id as personnel_deptid,a.personnel_id,a.personnel_name,a.personnel_shortcode,b.post_id as personnel_postid,a.personnel_postname,a.personnel_state
+						FROM
+							pm_personnel a,
+							sys_concurrent_post b
+						WHERE
+							a.personnel_id = b.personnel_id
+					) a
+					left join (
+								SELECT
+									a.bel_salesman_id_id,
+									a.bel_salesman_dept_id,
+									sum(ifnull(b.product_account,0)) as product_account,
+									sum(ifnull(b.product_account,0)*b.product_deadline/12) as product_account_deal,
+									sum((case when a.date_of_payment >= #{limit_date} and b.wms_inve_pruduct_category_id in (${new_pros})  then ifnull(b.product_account,0) else 0 end)) as new_product_account,
+									sum((case when a.date_of_payment >= #{limit_date} and b.wms_inve_pruduct_category_id in (${new_pros})  then ifnull(b.product_account,0) else 0 end)*b.product_deadline/12) as new_product_account_deal
+								FROM
+									wms_inve_transa a,
+									wms_inve_transa_prod b
+								WHERE
+									a.data_status = '4'
+								and exists (select 1 from wms_inve_transa_protocol c where c.wms_inve_transa_id=a.wms_inve_transa_id and c.end_of_date>=DATE_SUB(#{sta_end_date},INTERVAL 1 DAY) LIMIT 1) 	
+								and a.date_of_payment &lt; #{sta_end_date}
+								and b.wms_inve_pruduct_category_id not in (${reject_proid})
+								AND a.wms_inve_transa_id = b.wms_inve_transa_id
+								
+								group by a.bel_salesman_id_id,a.bel_salesman_dept_id
+							) c
+			on a.personnel_id=c.bel_salesman_id_id and a.personnel_deptid=c.bel_salesman_dept_id
+	</insert>
+	
+	<update id="updateAchAllPerAddCurr" parameterType="map">
+		update wms_personnel_achievement_mrtp a INNER JOIN
+		(
+		SELECT
+				f.bel_salesman_id_id,
+				f.bel_salesman_dept_id,
+				sum(ifnull(f.all_add,0)) as who_all_add,
+				sum(ifnull(f.deal_add,0)) as who_deal_add,
+				sum(ifnull(f.per_redeem_base,0)) as per_redeem_base,
+				sum(ifnull(f.per_redeem_deal,0)) as per_redeem_deal, 
+				sum(per_back_base) as per_back_base, 
+				sum(per_back_deal) as per_back_deal, 
+				sum(f.clear_add) as who_clear_add,  
+				sum(f.mon_deal_who) as who_clear_add_deal, 
+				sum(per_back_base_newpro) as per_back_base_newpro, 
+				sum(per_back_deal_newpro) as per_back_deal_newpro 
+			FROM
+				(
+					SELECT
+						c.bel_salesman_id_id,
+						c.bel_salesman_dept_id,
+						c.wms_inve_customer_id,
+						c.cus_all_inve as all_add,
+						c.cus_deal_add as deal_add,
+						ifnull(e.sub_am, 0) as per_redeem_base,
+						ifnull(e.sub_deal_am, 0) as per_redeem_deal,
+						if(c.cus_all_inve>=ifnull(e.back_sub_am, 0),ifnull(e.back_sub_am, 0),c.cus_all_inve) as per_back_base,
+						if(c.cus_deal_add>=ifnull(e.back_sub_deal_am, 0),ifnull(e.back_sub_deal_am, 0),c.cus_deal_add) as per_back_deal,
+						if(c.cus_all_inve>=ifnull(e.back_newpro_subam, 0),ifnull(e.back_newpro_subam, 0),c.cus_all_inve) as per_back_base_newpro,
+						if(c.cus_deal_add>=ifnull(e.back_newpro_subam_deal, 0),ifnull(e.back_newpro_subam_deal, 0),c.cus_deal_add) as per_back_deal_newpro,
+						c.cus_all_inve-ifnull(e.sub_am, 0) AS clear_add,
+						c.cus_deal_add-ifnull(e.sub_deal_am, 0) as mon_deal_who 
+					FROM
+						(
+							SELECT
+								b.bel_salesman_id_id,
+								b.bel_salesman_dept_id,
+								b.wms_inve_customer_id,
+								sum(ifnull(b.act_account, 0)) as cus_all_inve,
+								sum(ifnull(b.deal_account,0)) as cus_deal_add
+							FROM
+								(
+									SELECT
+										a.bel_salesman_id_id,
+										a.bel_salesman_dept_id,
+										a.wms_inve_customer_id,
+										(w.org_product_account-ifnull(d.no_damage_am,0)) as act_account,
+										(w.org_product_account-ifnull(d.no_damage_am,0))*w.product_deadline/12/(if(w.wms_inve_pruduct_category_id in (${specialpro}),4,1)) as deal_account
+									FROM
+										wms_inve_transa a,
+										wms_inve_transa_prod w
+										left join 
+										(select 
+												b.wms_inve_transa_id,
+												sum(if(c.is_take_off_damages ='0',b.redeem_amount,0)) as no_damage_am
+											from 
+												wms_inve_redeem c,
+												wms_inve_redeem_detail b 
+											where 
+												c.wms_inve_redeem_id=b.wms_inve_redeem_id 
+												and c.redeem_date >= #{sta_begin_date}
+												AND #{sta_end_date}>c.redeem_date 
+												group by b.wms_inve_transa_id
+												)
+												d
+												on w.wms_inve_transa_id=d.wms_inve_transa_id
+									WHERE
+										a.data_status IN ('4','5','6')
+									and w.wms_inve_pruduct_category_id not in (${reject_proid})
+									AND a.wms_inve_transa_id = w.wms_inve_transa_id
+									AND a.date_of_payment >= #{sta_begin_date}
+									AND a.date_of_payment &lt; #{sta_end_date}
+									and a.old_wms_inve_transa_id is null
+									and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=a.wms_inve_customer_id
+										and a.date_of_payment &lt; x.end_of_date
+										and x.data_type='1'
+									)
+								) b
+							GROUP BY
+								b.bel_salesman_id_id,
+								b.wms_inve_customer_id,
+								b.bel_salesman_dept_id
+						) c
+					LEFT JOIN (
+						SELECT
+				d.wms_inve_customer_id,
+				d.bel_salesman_id_id,
+				d.bel_salesman_dept_id,
+				sum(ifnull(d.sub_am, 0)) AS sub_am,
+				sum(ifnull(d.back_sub_am, 0)) AS back_sub_am,
+				sum(ifnull(d.sub_deal_am, 0)) AS sub_deal_am,
+				sum(ifnull(d.back_sub_deal_am, 0)) AS back_sub_deal_am,
+				sum(ifnull(d.newpro_subam, 0)) AS newpro_subam,
+				sum(ifnull(d.back_newpro_subam, 0)) AS back_newpro_subam,
+				sum(ifnull(d.newpro_subam_deal, 0)) AS newpro_subam_deal,
+				sum(ifnull(d.back_newpro_subam_deal, 0)) AS back_newpro_subam_deal
+			FROM
+				(
+					SELECT
+						d.wms_inve_customer_id,
+						x.bel_salesman_id_id,
+						x.bel_salesman_dept_id,
+						v.redeem_amount AS sub_am,
+						if(d.is_take_off_damages='0' and d.redeem_type in ('1','3'),v.redeem_amount,0) as back_sub_am,
+						v.redeem_amount * u.product_deadline / 12 AS sub_deal_am,
+						if(d.is_take_off_damages='0' and d.redeem_type in ('1','3'),v.redeem_amount,0)* u.product_deadline / 12 as back_sub_deal_am,
+						if(u.wms_inve_pruduct_category_id in (${new_pros}),v.redeem_amount,0) as newpro_subam,
+						if(d.is_take_off_damages='0' and d.redeem_type in ('1','3') and u.wms_inve_pruduct_category_id in (${new_pros}),v.redeem_amount,0) as back_newpro_subam,
+						if(u.wms_inve_pruduct_category_id in (${new_pros}),v.redeem_amount * u.product_deadline / 12,0) as newpro_subam_deal,
+						if(d.is_take_off_damages='0' and d.redeem_type in ('1','3') and u.wms_inve_pruduct_category_id in (${new_pros}),v.redeem_amount,0)* u.product_deadline / 12 as back_newpro_subam_deal
+					FROM
+						wms_inve_redeem d,
+						wms_inve_redeem_detail v,
+						wms_inve_transa_prod u,
+						wms_inve_transa x
+					WHERE
+						d.redeem_date >= #{sta_begin_date}
+					AND date_format(#{sta_end_date},'%Y-%m-%d') >= d.redeem_date
+					AND d.redeem_type not IN ('2')
+					AND d.data_status IN ('6')
+					and x.data_status in ('4','5','6')
+					and (date_format(#{sta_begin_date},'%Y-%m-%d') > x.date_of_payment or (x.date_of_payment>=#{sta_begin_date} and d.is_take_off_damages = '1'))
+					AND d.wms_inve_redeem_id = v.wms_inve_redeem_id
+					AND v.wms_inve_transa_id = u.wms_inve_transa_id
+					AND u.wms_inve_transa_id = x.wms_inve_transa_id
+					and u.wms_inve_pruduct_category_id not in (${reject_proid})
+					and u.wms_inve_pruduct_category_id not in (${specialpro})
+					
+					UNION ALL
+						SELECT
+							d.wms_inve_customer_id,
+							x.bel_salesman_id_id,
+							x.bel_salesman_dept_id,
+							v.redeem_amount  AS sub_am,
+							if(d.is_take_off_damages='0' 
+								and d.redeem_type in ('1','3') 
+								and d.redeem_date >= x.date_of_payment
+								AND DATE_ADD(x.date_of_payment,INTERVAL 3  MONTH) >= d.redeem_date
+								,v.redeem_amount,0) as back_sub_am,
+							v.redeem_amount * u.product_deadline / 12 /4 AS sub_deal_am,
+							if(d.is_take_off_damages='0' 
+								and d.redeem_type in ('1','3') 
+								and d.redeem_date >= x.date_of_payment
+								AND DATE_ADD(x.date_of_payment,INTERVAL 3  MONTH) >= d.redeem_date
+								,v.redeem_amount,0)* u.product_deadline / 12 /4 as back_sub_deal_am,
+							v.redeem_amount as newpro_subam,
+							if(d.is_take_off_damages='0' 
+								and d.redeem_type in ('1','3') 
+								and d.redeem_date >= x.date_of_payment
+								AND DATE_ADD(x.date_of_payment,INTERVAL 3  MONTH) >= d.redeem_date
+								,v.redeem_amount,0) as back_newpro_subam,
+							v.redeem_amount * u.product_deadline / 12 /4 as newpro_subam_deal,
+							if(d.is_take_off_damages='0' 
+								and d.redeem_type in ('1','3') 
+								and d.redeem_date >= x.date_of_payment
+								AND DATE_ADD(x.date_of_payment,INTERVAL 3  MONTH) >= d.redeem_date
+								,v.redeem_amount,0)* u.product_deadline / 12 /4 as back_newpro_subam_deal
+						FROM
+							wms_inve_redeem d,
+							wms_inve_redeem_detail v,
+							wms_inve_transa_prod u,
+							wms_inve_transa x
+						WHERE
+							d.redeem_date >= #{sta_begin_date}
+						AND date_format(#{sta_end_date},'%Y-%m-%d') >= d.redeem_date
+						AND d.redeem_type not IN ('2')
+						AND d.data_status IN ('6')
+						and x.data_status in ('4','5','6')
+						and (date_format(#{sta_begin_date},'%Y-%m-%d')>x.date_of_payment or (x.date_of_payment>=#{sta_begin_date} and d.is_take_off_damages = '1'))
+						AND d.wms_inve_redeem_id = v.wms_inve_redeem_id
+						AND v.wms_inve_transa_id = u.wms_inve_transa_id
+						AND u.wms_inve_transa_id = x.wms_inve_transa_id
+						and u.wms_inve_pruduct_category_id in (${specialpro})
+						
+				) d
+			GROUP BY
+				d.wms_inve_customer_id,
+				d.bel_salesman_id_id,
+				d.bel_salesman_dept_id
+					) e ON c.wms_inve_customer_id = e.wms_inve_customer_id and c.bel_salesman_id_id=e.bel_salesman_id_id and c.bel_salesman_dept_id=e.bel_salesman_dept_id
+		UNION
+					SELECT
+						e.bel_salesman_id_id,
+						e.bel_salesman_dept_id,
+						c.wms_inve_customer_id,
+						ifnull(c.cus_all_inve, 0) as all_add,
+						ifnull(c.cus_deal_add, 0) as deal_add,
+						ifnull(e.sub_am, 0) as per_redeem_base,
+						ifnull(e.sub_deal_am, 0) as per_redeem_deal,
+						if(ifnull(c.cus_all_inve, 0)>=ifnull(e.back_sub_am, 0),ifnull(e.back_sub_am, 0),ifnull(c.cus_all_inve, 0)) as per_back_base,
+						if(ifnull(c.cus_deal_add, 0)>=ifnull(e.back_sub_deal_am, 0),ifnull(e.back_sub_deal_am, 0),ifnull(c.cus_deal_add, 0)) as per_back_deal,
+						if(ifnull(c.cus_all_inve, 0)>=ifnull(e.back_newpro_subam, 0),ifnull(e.back_newpro_subam, 0),ifnull(c.cus_all_inve, 0)) as per_back_base_newpro,
+						if(ifnull(c.cus_deal_add, 0)>=ifnull(e.back_newpro_subam_deal, 0),ifnull(e.back_newpro_subam_deal, 0),ifnull(c.cus_deal_add, 0)) as per_back_deal_newpro,
+						ifnull(c.cus_all_inve, 0)-ifnull(e.sub_am, 0) AS clear_add,
+						ifnull(c.cus_deal_add, 0)-ifnull(e.sub_deal_am, 0) as mon_deal_who 
+						
+					FROM
+						(
+						SELECT
+				d.wms_inve_customer_id,
+				d.bel_salesman_id_id,
+				d.bel_salesman_dept_id,
+				sum(ifnull(d.sub_am, 0)) AS sub_am,
+				sum(ifnull(d.back_sub_am, 0)) AS back_sub_am,
+				sum(ifnull(d.sub_deal_am, 0)) AS sub_deal_am,
+				sum(ifnull(d.back_sub_deal_am, 0)) AS back_sub_deal_am,
+				sum(ifnull(d.newpro_subam, 0)) AS newpro_subam,
+				sum(ifnull(d.back_newpro_subam, 0)) AS back_newpro_subam,
+				sum(ifnull(d.newpro_subam_deal, 0)) AS newpro_subam_deal,
+				sum(ifnull(d.back_newpro_subam_deal, 0)) AS back_newpro_subam_deal
+			FROM
+				(
+					SELECT
+						d.wms_inve_customer_id,
+						x.bel_salesman_id_id,
+						x.bel_salesman_dept_id,
+						v.redeem_amount AS sub_am,
+						if(d.is_take_off_damages='0' and d.redeem_type in ('1','3'),v.redeem_amount,0) as back_sub_am,
+						v.redeem_amount * u.product_deadline / 12 AS sub_deal_am,
+						if(d.is_take_off_damages='0' and d.redeem_type in ('1','3'),v.redeem_amount,0)* u.product_deadline / 12 as back_sub_deal_am,
+						if(u.wms_inve_pruduct_category_id in (${new_pros}),v.redeem_amount,0) as newpro_subam,
+						if(d.is_take_off_damages='0' and d.redeem_type in ('1','3') and u.wms_inve_pruduct_category_id in (${new_pros}),v.redeem_amount,0) as back_newpro_subam,
+						if(u.wms_inve_pruduct_category_id in (${new_pros}),v.redeem_amount * u.product_deadline / 12,0) as newpro_subam_deal,
+						if(d.is_take_off_damages='0' and d.redeem_type in ('1','3') and u.wms_inve_pruduct_category_id in (${new_pros}),v.redeem_amount,0)* u.product_deadline / 12 as back_newpro_subam_deal
+					FROM
+						wms_inve_redeem d,
+						wms_inve_redeem_detail v,
+						wms_inve_transa_prod u,
+						wms_inve_transa x
+					WHERE
+						d.redeem_date >= #{sta_begin_date}
+					AND date_format(#{sta_end_date},'%Y-%m-%d') >= d.redeem_date
+					AND d.redeem_type not IN ('2')
+					AND d.data_status IN ('6')
+					and x.data_status in ('4','5','6')
+					and (date_format(#{sta_begin_date},'%Y-%m-%d')>x.date_of_payment or (x.date_of_payment>=#{sta_begin_date} and d.is_take_off_damages = '1'))
+					AND d.wms_inve_redeem_id = v.wms_inve_redeem_id
+					AND v.wms_inve_transa_id = u.wms_inve_transa_id
+					AND u.wms_inve_transa_id = x.wms_inve_transa_id
+					and u.wms_inve_pruduct_category_id not in (${reject_proid})
+					and u.wms_inve_pruduct_category_id not in (${specialpro})
+					
+					UNION ALL
+						SELECT
+							d.wms_inve_customer_id,
+							x.bel_salesman_id_id,
+							x.bel_salesman_dept_id,
+							v.redeem_amount  AS sub_am,
+							if(d.is_take_off_damages='0' 
+								and d.redeem_type in ('1','3') 
+								and d.redeem_date >= x.date_of_payment
+								AND DATE_ADD(x.date_of_payment,INTERVAL 3  MONTH) >= d.redeem_date
+								,v.redeem_amount,0) as back_sub_am,
+							v.redeem_amount * u.product_deadline / 12 /4 AS sub_deal_am,
+							if(d.is_take_off_damages='0' 
+								and d.redeem_type in ('1','3') 
+								and d.redeem_date >= x.date_of_payment
+								AND DATE_ADD(x.date_of_payment,INTERVAL 3  MONTH) >= d.redeem_date
+								,v.redeem_amount,0)* u.product_deadline / 12 /4 as back_sub_deal_am,
+							v.redeem_amount as newpro_subam,
+							if(d.is_take_off_damages='0' 
+								and d.redeem_type in ('1','3') 
+								and d.redeem_date >= x.date_of_payment
+								AND DATE_ADD(x.date_of_payment,INTERVAL 3  MONTH) >= d.redeem_date
+								,v.redeem_amount,0) as back_newpro_subam,
+							v.redeem_amount * u.product_deadline / 12 /4 as newpro_subam_deal,
+							if(d.is_take_off_damages='0' 
+								and d.redeem_type in ('1','3') 
+								and d.redeem_date >=x.date_of_payment
+								AND DATE_ADD(x.date_of_payment,INTERVAL 3  MONTH) >= d.redeem_date
+								,v.redeem_amount,0)* u.product_deadline / 12 /4 as back_newpro_subam_deal
+							
+						FROM
+							wms_inve_redeem d,
+							wms_inve_redeem_detail v,
+							wms_inve_transa_prod u,
+							wms_inve_transa x
+						WHERE
+							d.redeem_date >= #{sta_begin_date}
+						AND date_format(#{sta_end_date},'%Y-%m-%d') >= d.redeem_date
+						AND d.redeem_type not IN ('2')
+						AND d.data_status IN ('6')
+						and x.data_status in ('4','5','6')
+						and (date_format(#{sta_begin_date},'%Y-%m-%d')>x.date_of_payment or (x.date_of_payment>=#{sta_begin_date} and d.is_take_off_damages = '1'))
+						AND d.wms_inve_redeem_id = v.wms_inve_redeem_id
+						AND v.wms_inve_transa_id = u.wms_inve_transa_id
+						AND u.wms_inve_transa_id = x.wms_inve_transa_id
+						and u.wms_inve_pruduct_category_id in (${specialpro})
+						
+				) d
+			GROUP BY
+				d.wms_inve_customer_id,
+				d.bel_salesman_id_id,
+				d.bel_salesman_dept_id
+					) e 
+		LEFT JOIN
+		(
+							SELECT
+								b.bel_salesman_id_id,
+								b.bel_salesman_dept_id,
+								b.wms_inve_customer_id,
+								sum(ifnull(b.act_account, 0)) as cus_all_inve,
+								sum(ifnull(b.deal_account,0)) as cus_deal_add
+							FROM
+								(
+									SELECT
+										a.bel_salesman_id_id,
+										a.bel_salesman_dept_id,
+										a.wms_inve_customer_id,
+										(w.org_product_account-ifnull(d.no_damage_am,0)) as act_account,
+										(w.org_product_account-ifnull(d.no_damage_am,0))*w.product_deadline/12/(if(w.wms_inve_pruduct_category_id in (${specialpro}),4,1)) as deal_account
+									FROM
+										wms_inve_transa a,
+										wms_inve_transa_prod w
+										left join 
+										(select 
+												b.wms_inve_transa_id,
+												sum(if(c.is_take_off_damages ='0',b.redeem_amount,0)) as no_damage_am
+											from 
+												wms_inve_redeem c,
+												wms_inve_redeem_detail b 
+											where 
+												c.wms_inve_redeem_id=b.wms_inve_redeem_id 
+												and c.redeem_date >= #{sta_begin_date}
+												AND #{sta_end_date}>c.redeem_date 
+												group by b.wms_inve_transa_id
+												)
+												d
+												on w.wms_inve_transa_id=d.wms_inve_transa_id
+									WHERE
+										a.data_status IN ('4','5','6')
+									and w.wms_inve_pruduct_category_id not in (${reject_proid})
+									AND a.wms_inve_transa_id = w.wms_inve_transa_id
+									AND a.date_of_payment >= #{sta_begin_date}
+									and a.old_wms_inve_transa_id is null
+									AND date_format(#{sta_end_date},'%Y-%m-%d')>a.date_of_payment
+									
+									
+								) b
+							GROUP BY
+								b.bel_salesman_id_id,
+								b.wms_inve_customer_id,
+								b.bel_salesman_dept_id
+						) c
+		ON c.wms_inve_customer_id = e.wms_inve_customer_id and c.bel_salesman_id_id=e.bel_salesman_id_id and c.bel_salesman_dept_id=e.bel_salesman_dept_id
+				) f
+		
+			GROUP BY
+				f.bel_salesman_id_id,f.bel_salesman_dept_id
+		) b
+		on a.personnel_id = b.bel_salesman_id_id and a.dept_id=b.bel_salesman_dept_id
+		set 
+			a.per_add_base=b.who_all_add,
+			a.per_add_deal=b.who_deal_add,
+			a.per_redeem_base=b.per_redeem_base,
+			a.per_redeem_deal=b.per_redeem_deal,
+			a.per_back_base=b.per_back_base,
+			a.per_back_deal=b.per_back_deal,
+			a.per_clear_add=b.who_clear_add,
+			a.per_clear_add_deal=b.who_clear_add_deal,
+			a.per_back_base_newpro=b.per_back_base_newpro,
+			a.per_back_deal_newpro=b.per_back_deal_newpro
+		where a.statics_personnel_id=#{statics_personnel_id}
+		and a.statics_type=#{statics_type}
+	</update>
+	<update id="updateAchPersonnelReinveCurr" parameterType="map">
+		update wms_personnel_achievement_mrtp a inner join (
+			select 
+				a.bel_salesman_id_id,
+				a.bel_salesman_dept_id,
+				sum(ifnull(b.act_account,0)) as reinve_mon
+			from 
+				wms_inve_transa a,
+				wms_inve_transa_card b,
+				wms_inve_transa_prod c
+			where 
+				a.wms_inve_transa_id=b.wms_inve_transa_id 
+			and a.data_status in ('4','6')
+			and b.pay_type='3'
+			and a.wms_inve_transa_id=c.wms_inve_transa_id
+			and c.wms_inve_pruduct_category_id not in (${reject_proid})
+			and a.date_of_payment>=#{sta_begin_date}
+			and #{sta_end_date}>a.date_of_payment
+			and not exists (select 1 from wms_inve_customer_remove_his x where x.wms_inve_customer_id=a.wms_inve_customer_id
+										and x.end_of_date>a.date_of_payment
+										and x.data_type='1'
+										and x.change_date&lt;=(select t1.job_date from wms_inve_job_time t1 where t1.job_month=#{statics_month} and t1.job_type='1')
+									)
+			group by a.bel_salesman_id_id,a.bel_salesman_dept_id
+		) b on a.personnel_id = b.bel_salesman_id_id and a.dept_id=b.bel_salesman_dept_id
+		set a.reinve_mon=b.reinve_mon
+		where a.statics_personnel_id=#{statics_personnel_id}
+		and a.statics_type=#{statics_type}
+	</update>
+	<update id="updateTeamReinveMonCurr" parameterType="map">
+		update wms_personnel_achievement_mrtp a inner join (
+			select 
+				a.bel_department_manager_dept_id,
+				sum(ifnull(b.act_account,0)) as reinve_mon
+			from 
+				wms_inve_transa a,
+				wms_inve_transa_card b,
+				wms_inve_transa_prod c
+			where 
+				a.wms_inve_transa_id=b.wms_inve_transa_id 
+			and a.data_status in ('4','6')
+			and b.pay_type='3'
+			and a.wms_inve_transa_id=c.wms_inve_transa_id
+			and c.wms_inve_pruduct_category_id not in (${reject_proid})
+			and a.date_of_payment>=#{sta_begin_date}
+			and #{sta_end_date}>a.date_of_payment
+			group by a.bel_department_manager_dept_id
+		) b on a.dept_id=b.bel_department_manager_dept_id
+		set a.team_reinve_mon=b.reinve_mon
+		where a.statics_personnel_id=#{statics_personnel_id}
+		and a.statics_type=#{statics_type}
+	</update>
+	<update id="updateAchCenterTeamReinveMon" parameterType="map">
+		update wms_personnel_achievement_mrtp a inner join (
+			select 
+				a.bel_center_manager_id,
+				a.bel_center_manager_dept_id,
+				sum(ifnull(b.act_account,0)) as reinve_mon
+			from 
+				wms_inve_transa a,
+				wms_inve_transa_card b,
+				wms_inve_transa_prod c
+			where 
+				a.wms_inve_transa_id=b.wms_inve_transa_id 
+			and a.data_status in ('4','6')
+			and b.pay_type='3'
+			and a.wms_inve_transa_id=c.wms_inve_transa_id
+			and c.wms_inve_pruduct_category_id not in (${reject_proid})
+			and a.date_of_payment>=#{sta_begin_date}
+			and #{sta_end_date}>a.date_of_payment
+			and a.bel_center_manager_id is not null
+			group by a.bel_center_manager_id,a.bel_center_manager_dept_id
+		) b on a.personnel_id = b.bel_center_manager_id and a.dept_id=b.bel_center_manager_dept_id
+		set a.team_reinve_mon=b.reinve_mon
+		where a.statics_personnel_id=#{statics_personnel_id}
+		and a.statics_type=#{statics_type}
+	</update>
+	<update id="updateAchViceTeamReinveMon" parameterType="map">
+		update wms_personnel_achievement_mrtp a inner join (
+			select 
+				a.bel_vice_general_manager_id,
+				a.bel_vice_general_manager_dept_id,
+				sum(ifnull(b.act_account,0)) as reinve_mon
+			from 
+				wms_inve_transa a,
+				wms_inve_transa_card b,
+				wms_inve_transa_prod c
+			where 
+				a.wms_inve_transa_id=b.wms_inve_transa_id 
+			and a.data_status in ('4','6')
+			and b.pay_type='3'
+			and a.wms_inve_transa_id=c.wms_inve_transa_id 
+			and c.wms_inve_pruduct_category_id not in (${reject_proid})
+			and a.date_of_payment>=#{sta_begin_date}
+			and #{sta_end_date}>a.date_of_payment
+			and a.bel_vice_general_manager_id is not null
+			and a.bel_center_manager_id is null
+			group by a.bel_vice_general_manager_id,a.bel_vice_general_manager_dept_id
+		) b on a.personnel_id = b.bel_vice_general_manager_id and a.dept_id=b.bel_vice_general_manager_dept_id
+		set a.team_reinve_mon=b.reinve_mon
+		where a.statics_personnel_id=#{statics_personnel_id}
+		and a.statics_type=#{statics_type}
+	</update>
+</mapper>

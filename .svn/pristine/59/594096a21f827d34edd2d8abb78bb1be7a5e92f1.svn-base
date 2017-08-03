@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveOperSituationResultDao">
+
+	<select id="selectSalaryPreItemByMonth" parameterType="map" resultType="map">
+			SELECT
+			t.wms_inve_salary_pre_total_id,
+			d.dept_name,
+			d.dept_id,
+			t.total_num,
+			(
+				SELECT
+					dept_name
+				FROM
+					sys_dept sd
+				WHERE
+					sd.dept_id = d.dept_pid
+			) AS parent_dept_name,
+		
+		if(i.is_pay_department is null,null,
+		 COUNT(
+			CASE
+			WHEN i.is_pay_department = 1 THEN
+				is_pay_department
+			END
+		) )AS is_pay_department_result,
+		
+		if(i.is_pay_vice_general is null,null,
+		 COUNT(
+			CASE
+			WHEN i.is_pay_vice_general = 1 THEN
+				is_pay_vice_general
+			END
+		)) AS is_pay_vice_general_result ,
+		
+		
+		if(i.is_pay_general is null,null,
+		COUNT(
+			CASE
+			WHEN i.is_pay_general = 1 THEN
+				is_pay_general
+			END
+		)) AS is_pay_general_result
+		
+		
+		FROM
+			wms_inve_salary_pre_item i
+		LEFT JOIN pm_personnel_maininfo_backup b ON b.personnel_id = i.personnel_id
+		RIGHT JOIN wms_inve_salary_pre_total AS t ON t.statics_month = i.statics_month
+		AND t.dept_id = i.personnel_deptId
+		AND b.backup_month = i.statics_month
+		LEFT JOIN sys_dept d ON d.dept_id = i.personnel_deptId
+		WHERE
+			i.statics_month = #{statics_month}
+		AND i.enable_flag = 1
+		GROUP BY
+			i.personnel_deptId
+		ORDER BY
+			parent_dept_name,
+			d.dept_name
+
+	</select>
+
+
+	<select id="selectSalaryPreItemByMonthAndDeptId" parameterType="map" resultType="map"> 
+		SELECT
+		i.personnel_id,
+		CONCAT(p.personnel_name,p.personnel_shortCode) as personnel_name,
+		p.personnel_state,
+		i.is_pay_platform,
+		i.performance_salary_platform,
+		i.is_pay_department,
+		i.performance_salary_department,
+		i.is_pay_vice_general,
+		i.performance_salary_vice_general,
+		i.is_pay_general,
+		i.performance_salary_general
+		FROM
+		wms_inve_salary_pre_item i
+		LEFT JOIN pm_personnel_maininfo_backup p on p.personnel_id =
+		i.personnel_id and i.statics_month = p.backup_month
+		WHERE
+		i.personnel_deptId = #{dept_id}
+		and
+		i.statics_month = #{statics_month}
+		and
+		i.enable_flag =1
+	</select>
+
+
+
+</mapper>

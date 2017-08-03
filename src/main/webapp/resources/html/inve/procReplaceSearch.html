@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script type="text/javascript" charset="utf-8"
+	src="../../js/media/js/ZeroClipboard.js"></script>
+<title>产品转换>转换审核列表</title>
+</head>
+<!--style="overflow-y:hidden;"主要实现边框右边无滚动条  -->
+<body style="overflow-y: hidden;">
+	<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<!--查询条件-->
+			<div class="l-panel-search-cond clearfix">
+				<div class="float-l">
+					<div class="l-panel-search-title">客户姓名：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="cus_name" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">有效证件：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="id_card" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="centertoolbar" class="minwidth400"></div>
+	<div id="grid"></div>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+        var grid;
+		var toolbar;
+		var params;
+		var dialog;
+		var columns;
+        $(function() {
+        
+        	var toolbarItemData = [];
+        	initGrid();  
+            toolbarItemData.push({
+                text: '审核',
+                click: approve,
+                icon: 'approve'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+            toolbarItemData.push({
+                text: '查询',
+                click:search,
+                icon: 'search'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+            toolbarItemData.push({
+                text: '清空',
+                click:clear,
+                icon: 'empty'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+            toolbarItemData.push({
+                line: true
+            });
+          $("#centertoolbar").ligerToolBar({
+            items: toolbarItemData
+        	});
+            search();
+            //registerCsv();
+        });
+        /**
+         *在菜单上注册导出事件，并定义获取的导出的excel内容 
+         */
+        function registerCsv(){
+        	var moviePath = "../../js/media/swf/copy_csv_xls_pdf.swf";
+        	var fileName = '赎回审核单据信息.xls';
+        	var titleJson = '';
+        	var dataJson = '';
+        	var obj = $("div[toolbarid='ToolTables_XLS_2']")[0];//获取菜单对象                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+        	var getDataFun = function(){
+        		var text = {};
+        		initParams();
+        		text.title={'bill_code':'单据编号','cus_name':'客户姓名','id_card':'有效证件','redeem_apply_total_amount':'赎回金额','redeem_date_str':'申请时间','data_status_name':'单据状态'};//定义需要导出的列名以及列名与数据的对应关系
+				var sortname = 'bill_code';
+        		var json = globalUtil.syncPostJson("/inve/wmsinveredeemwithoutpaginglist.do?sortname="+sortname+"&sortorder=desc",params);//同步获取需要导出的数据内容
+        		text.data = json.Rows;
+        		return text;
+        	};
+        	registerXlsFlashBtn(moviePath,fileName,titleJson,dataJson,obj,getDataFun);
+        }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+        //清空所填写内容
+        function clear(){
+        	$("#cus_name").val("");
+        	$("#id_card").val("");
+        }
+        //表格初始化-- 1.单据编号  2客户姓名  3有效证件  4原产品名称  5新产品名称 6 申请时间   7 单据状态  8 流程历程
+        function initGrid() {
+        	columns = [{
+                display: '单据编号',
+                name: 'bill_code',
+                width: 200,
+                minWidth: 200,
+                //添加超链接的东西
+                render: function (rowdata, rowindex, value) { 
+                	return '<a href="javascript:inveInfo('+rowdata.wms_inve_transa_id+','+rowdata.wms_inve_transa_prod_id+');" style="color:#056AFF;text-decoration: none;">'+value+'</a>';
+        		}
+            },{
+           		 display: '客户姓名',
+            	 name: 'cus_name',
+            	 width: 120,
+            	 minWidth: 120,
+        	},{
+           	 	 display: '有效证件',
+            	 name: 'id_card',
+             	 width: 200,
+             	 minWidth: 200,
+       		},{
+           		 display: '原产品名称',
+            	 name: 'category_name',
+            	 width: 120,
+            	 minWidth: 120,
+        	},{
+           		 display: '新产品名称',
+            	 name: 'new_category_name',
+            	 width: 120,
+            	 minWidth: 120,
+        	},{
+           		 display: '申请时间',
+            	 name: 'apply_datetime',
+            	 width: 120,
+            	 minWidth: 120,
+        	},{
+           	 	display: '单据状态',
+             	name: 'data_status_name',
+             	width: 120,
+             	minWidth: 120,
+       		},{
+           	 	 display: '流程历程',
+             	 width: 200,
+            	 minWidth: 200,
+            	 render: function (rowdata, rowindex, value) { 
+         			return '<a href="javascript:InveWorkFlowProcess('+rowdata.wms_inve_replace_id+');" style="color:#056AFF;text-decoration: none;">'+"查看"+'</a>';
+         		}
+        	}];
+            grid = $("#grid").ligerGrid({
+        		columns: columns,
+        		url: global_param.context_name + '/inve/wmsinvereplacewithpaginglist.do',
+        		sortName: 't1.apply_datetime', // 排序列名
+				sortOrder: 'desc', // 排序方式
+        		rownumbers: true,
+        		allowUnSelectRow: true,
+        		usePager: true,
+        		width: '100%',
+        		height: '95%',
+        		heightDiff: -4,
+        		parms: {
+        			_filterParms: -1
+        		}
+            });
+        }
+      	//理财详细信息
+        function inveInfo(wms_inve_transa_id,wms_inve_transa_prod_id){
+        	var url = globalUtil.getHtml("inve/addFinancialManagement.html?wms_inve_transa_id="+wms_inve_transa_id+"&wms_inve_transa_prod_id="+wms_inve_transa_prod_id+"&cktype=ck");
+            globalUtil.openTab(10001, "理财详细信息", url, false);
+        }
+        //流程历程
+        function InveWorkFlowProcess(wms_inve_redeem_id){
+        	var url = globalUtil.getHtml("approvalProcessOwner.html?data_id="+wms_inve_redeem_id);
+       		dialog=$.ligerDialog.open({
+       			url:url,
+       			title: '查看',
+		        width: 1000,
+		        height: globalUtil.setDialogHeight(500),
+		        onHiddenOrClose: function(){
+		    	},
+		        isResize: false
+       		});
+        }
+       
+        function approve(){
+        	var row=grid.getSelectedRow();
+        	if(row==null){
+        		globalUtil.warnMsg(globalErrorMsg['800302']);//请选择一行记录进行操作
+                return;
+        	}
+        	var url = globalUtil.getHtml("replaceApprove.html?wms_inve_replace_id="+row.wms_inve_replace_id);
+       		dialog=$.ligerDialog.open({
+       			url:url,
+       			title: '审核',
+		        width: 1110,
+		        height: globalUtil.setDialogHeight(650),
+		        onHiddenOrClose: function(){
+		    	},
+		        isResize: false
+       		}); 
+        }
+        function initParams() {
+        	params = globalUtil.getFormParam("searchbar");
+        	params.data_status='3';
+        }
+        var search= function() {
+            initParams();
+            global_ligerui_extend.search(grid, params);
+        }
+        </script>
+</body>
+</html>

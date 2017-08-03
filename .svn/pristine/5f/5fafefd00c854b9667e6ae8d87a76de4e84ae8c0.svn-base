@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>信息修改</title>
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<style type="text/css">
+.float-l {
+    height: 40px;
+}
+input {
+    width: 150px;
+}
+select {
+    width: 152px;
+}
+.readonly {
+    background-color: rgb(235, 235, 228);
+}
+</style>
+</head>
+<body>
+	<div class="pop-center overflow-au" style="margin: 5px; margin-top: 5px;">
+	        <div style="padding-top: 20px; margin-left: 10px;" id="data">
+		        <div class="float-l clearboth">
+	                <div class="l-panel-search-title">
+	                	<span class="redstar">*</span>拨打电话时间：</div>
+	                <div class="l-panel-search-item">
+	                    <input id="phone_date" class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true})"
+							style="width: 133px; vertical-align: top;" />
+	                </div>
+	            </div>
+	            <div class="float-l clearboth" style="margin-left: 33px;">
+	                <div class="l-panel-search-title">电话记录：</div>
+	                <div class="l-panel-search-item">
+	                    <textarea id="phone_handle_result" style="width: 415px; height: 120px;"></textarea>
+	                </div>
+	            </div>
+		    </div>
+	</div>
+    <!-- 提交功能按钮区 -->
+    <div class="pop-footer5 clearboth" style="bottom: 1px; height: 35px" id="tb_btn">
+        <!-- 提交 -->
+        <input id="save" class="btn-save"
+            onmouseover="this.className='btn-save-over'"
+            onmouseout="this.className='btn-save'"
+            onmousedown="this.className='btn-save-down'" type="button"
+            style="margin-right: 7px;" />
+        <input id="cancel"
+            class="btn-cancel" onmouseover="this.className='btn-cancel-over'"
+            onmouseout="this.className='btn-cancel'"
+            onmousedown="this.className='btn-cancel-down'" type="button" />
+    </div>
+<script type="text/javascript">
+
+jQuery(function($){ 
+    
+	//默认当前时间
+	$('#phone_date').val(new Date().format("yyyy-MM-dd hh:mm:ss"));
+	
+	var reqMap = {};
+	var wms_cre_credit_notary_warn_id = $.query.get('wms_cre_credit_notary_warn_id');
+	var phone_history_type = $.query.get('phone_history_type');
+	reqMap.wms_cre_credit_notary_warn_id = wms_cre_credit_notary_warn_id;
+	reqMap.phone_history_type = phone_history_type;
+	//保存
+	$('#save').click(function() {
+		//拨打电话时间必填校验
+		if($('#phone_date').val() == '') {
+			globalUtil.warnMsg(globalErrorMsg['1700031']);
+			return;
+		}
+		//电话记录长度校验
+		if($('#phone_handle_result').val() != '' && $('#phone_handle_result').val().length > 100) {
+			globalUtil.warnMsg(globalErrorMsg['1700032']);
+			return;
+		}
+		
+		reqMap.phone_date = $('#phone_date').val();
+		reqMap.phone_handle_result = $('#phone_handle_result').val();
+		
+		$.ajax({
+	        url: global_param.context_name + '/remind/WmsCreCreditPhoneHistorysave.do',
+	        type: 'POST',
+	        data: reqMap,
+	        async: false,
+	        success: function(data) {
+	        	if(data == "success") {
+	        		globalUtil.successMsg(globalErrorMsg['100002'], function() {  
+	        			window.parent.dialog.hide();
+	        			window.parent.research();
+	                });
+	        	} else {
+	        		globalUtil.warnMsg(globalErrorMsg['100012']);
+	        	}
+	        }
+	    });
+	});
+	
+	//取消
+	$('#cancel').click(function() {
+        window.parent.dialog.hide();
+	});
+	
+});
+
+
+function closePage() {
+    try {
+        window.parent.dialog.hide();
+    } catch(e) {
+        globalUtil.closeCurrentTab();
+    }
+ }
+
+//关闭本页并刷新查询页面
+function refreshAndClosePage() {     
+    window.parent.search();
+    closePage();    
+}
+
+</script>
+</body>
+</html>

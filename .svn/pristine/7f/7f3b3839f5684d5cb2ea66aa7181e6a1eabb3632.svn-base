@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.cremanage.persist.WmsCreCarpApproInfoDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsCreCarpApproInfo">
+		select
+        				wms_cre_carp_appro_info_id,
+        				wms_cre_credit_head_id,
+        				carp_appro_type,
+        				carp_appro_pass,
+        				is_yd,
+        				carp_appro_advice,
+        				create_user_id,
+						date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+        				create_timestamp,
+        				last_update_user_id,
+						date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+        				last_update_timestamp,
+        				enable_flag
+        	from
+        		wms_cre_carp_appro_info
+        	where
+        				wms_cre_carp_appro_info_id = #{wms_cre_carp_appro_info_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cre_carp_appro_info_id) as count
+		from wms_cre_carp_appro_info
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_cre_carp_appro_info_id,
+				wms_cre_credit_head_id,
+				carp_appro_type,
+				carp_appro_pass,
+				is_yd,
+				carp_appro_advice,
+				create_user_id,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from wms_cre_carp_appro_info
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreCarpApproInfo" useGeneratedKeys="true" keyProperty="wms_cre_carp_appro_info_id">
+		INSERT INTO wms_cre_carp_appro_info
+		(
+				wms_cre_carp_appro_info_id,
+
+				wms_cre_credit_head_id,
+
+				carp_appro_type,
+
+				carp_appro_pass,
+
+				is_yd,
+
+				carp_appro_advice,
+
+				create_user_id,
+
+				create_timestamp,
+
+				last_update_user_id,
+
+				last_update_timestamp,
+
+				enable_flag
+		)
+		VALUES
+		(
+				#{wms_cre_carp_appro_info_id},
+				#{wms_cre_credit_head_id},
+				#{carp_appro_type},
+				#{carp_appro_pass},
+				#{is_yd},
+				#{carp_appro_advice},
+				#{create_user_id},
+				#{create_timestamp},
+				#{last_update_user_id},
+				#{last_update_timestamp},
+				#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreCarpApproInfo">
+		update wms_cre_carp_appro_info
+		<set>
+					<if test="wms_cre_carp_appro_info_id != null">
+						 wms_cre_carp_appro_info_id = #{wms_cre_carp_appro_info_id},
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						 wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+					</if>
+					<if test="carp_appro_type != null">
+						 carp_appro_type = #{carp_appro_type},
+					</if>
+					<if test="carp_appro_pass != null">
+						 carp_appro_pass = #{carp_appro_pass},
+					</if>
+					<if test="is_yd != null">
+						 is_yd = #{is_yd},
+					</if>
+					<if test="carp_appro_advice != null">
+						 carp_appro_advice = #{carp_appro_advice},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="create_timestamp != null">
+						 create_timestamp = #{create_timestamp},
+					</if>
+					<if test="last_update_user_id != null">
+						 last_update_user_id = #{last_update_user_id},
+					</if>
+					<if test="last_update_timestamp != null">
+						 last_update_timestamp = #{last_update_timestamp},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+	   </set>
+		 where 
+    				wms_cre_carp_appro_info_id = #{wms_cre_carp_appro_info_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreCarpApproInfo" resultType="WmsCreCarpApproInfo">
+		select 
+				wms_cre_carp_appro_info_id,
+				wms_cre_credit_head_id,
+				carp_appro_type,
+				carp_appro_pass,
+				is_yd,
+				carp_appro_advice,
+				create_user_id,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from
+		wms_cre_carp_appro_info
+		<where>
+					<if test="wms_cre_carp_appro_info_id != null">
+						and wms_cre_carp_appro_info_id = #{wms_cre_carp_appro_info_id}
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+					</if>
+					<if test="carp_appro_type != null">
+						and carp_appro_type = #{carp_appro_type}
+					</if>
+					<if test="carp_appro_pass != null">
+						and carp_appro_pass = #{carp_appro_pass}
+					</if>
+					<if test="is_yd != null">
+						and is_yd = #{is_yd}
+					</if>
+					<if test="carp_appro_advice != null">
+						and carp_appro_advice = #{carp_appro_advice}
+					</if>
+					<if test="create_user_id != null">
+						and create_user_id = #{create_user_id}
+					</if>
+					<if test="create_timestamp != null">
+						and create_timestamp = #{create_timestamp}
+					</if>
+					<if test="last_update_user_id != null">
+						and last_update_user_id = #{last_update_user_id}
+					</if>
+					<if test="last_update_timestamp != null">
+						and last_update_timestamp = #{last_update_timestamp}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_cre_carp_appro_info_id != #{wms_cre_carp_appro_info_id}
+					</if>
+		</where>
+	</select>
+	<select id="getInfoByHK" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_cre_carp_appro_info_id,
+				wms_cre_credit_head_id,
+				carp_appro_type,
+				carp_appro_pass,
+				is_yd,
+				carp_appro_advice,
+				create_user_id,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from
+		wms_cre_carp_appro_info
+		where
+			wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			and carp_appro_type = #{carp_appro_type}
+			and enable_flag = '1'
+	</select>
+</mapper> 

@@ -1,0 +1,893 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>业务管理>理财管理>金额管理>金额支付</title>
+
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script language="Javascript" src="../../js/zx-all.js"> </script>
+<style>
+.textright{
+text-align:right;
+}
+.textleft{
+text-align:left;
+}
+/*input_tb css*/
+.input_tb_new{
+/*border:1px solid #dfdfdf;*/
+width:100%;
+margin-bottom:10px;
+}
+.input_tb_new a{
+color:#056aff;
+text-decoration:none;
+font-weight:normal;
+}
+.input_tb_new td{
+height:35px;
+line-height:25px;
+/*border-bottom:1px dashed #d5d5d5;*/
+padding-top:3px;
+}
+.input_tb_new .tr_title td{
+background-color:#f5f8ff;
+padding-left:16px;
+font-weight:bold;
+height:30px;
+line-height:30px;
+/*border-bottom:1px solid #dfdfdf;*/
+}
+.input_tb_new .tr_last td{
+border-bottom:0;
+}
+.input_tb_new .title{
+text-align:right;
+}
+.input_tb_new .subtitle{
+text-align:left;
+background-color:#d2e1fd;
+border-top:1px solid #fff;
+/*border-left:1px solid #fff;*/
+}
+
+.input_tb_new .tr_btn_input td{
+background-color:#fbfbfb;
+/*border-top:1px solid #dbdbdb;*/
+/*height:40px;*/
+
+}
+
+.title_tb{
+background-color:#f5f8ff;
+padding-left:16px;
+font-weight:bold;
+height:30px;
+line-height:30px;
+/*border:1px solid #dfdfdf;8/
+border-bottom:0;
+}
+.title_tb .title_txt{
+float:left;
+}
+.title_tb .title_btn{
+float:right;
+margin-top:2px;
+font-weight:normal;
+}
+.input_tb_new td {
+    /*border-bottom: 1px dashed #D5D5D5;*/
+    height: 35px;
+    line-height: 25px;
+    padding-top: 3px;
+}
+
+.data_tb td{
+height:30px;
+line-height:24px;
+padding-left:10px;
+border-bottom:1px dashed #e3e4e6;
+text-align:left;
+}
+</style>
+
+<script type="text/javascript">
+var wms_inve_transa_id='';//主键
+
+var grid_divwt1;
+var grid_divwt1_data={};
+
+var grid_divwt2;
+var grid_divwt2_data={};
+
+var grid_divwt3;
+var grid_divwt3_data={};
+
+var grid_divwt4;
+var grid_divwt4_data={};
+var all_pos_data;//所有pos机
+
+var this_inve_trance_data;//上单信息
+
+var this_inve_trance_pro_data;//上单产品信息
+
+var all_pos_data;//所有pos机
+
+var json={};//获取收益卡信息
+
+var pay_type;
+
+$(function(){
+	wms_inve_transa_id = $.query.get('wms_inve_transa_id');
+	wms_inve_transa_prod_id=$.query.get('wms_inve_transa_prod_id');
+	pay_type=$.query.get('pay_type');
+    this_inve_trance_data = globalUtil.syncGetJson('/inve/wmsinvetransainfobypk.do',{
+        'wms_inve_transa_id':wms_inve_transa_id
+        },'GET');
+    this_inve_trance_pro_data = globalUtil.syncGetJson('/inve/wmsinvetransaprodinfobypkforjegl.do',{
+        'wms_inve_transa_id':wms_inve_transa_id
+        },'GET');
+    //获取pos机数据
+    all_pos_data=globalUtil.syncGetJson('/inve/wmsinveposwithoutpaginglistEnable.do',{
+        'sortname':'wms_inve_pos_id'
+    },'GET');
+    json = globalUtil.syncGetJson('/inve/getinvetransaprodbyid.do',{
+        wms_inve_transa_prod_id: wms_inve_transa_prod_id,
+        sortname: 'sort_order', // 排序列名
+        sortorder: 'asc' // 排序方式
+    },'POST');
+    initForm(pay_type);
+    initGrid(pay_type);
+});
+//获取初始化值
+function initForm(pay_type){
+	 $("input[type='radio']").each(function(){
+		 $(this).attr("checked")=="checked"
+		 if(pay_type==1 && $(this).val()=='xj'){
+			 $(this).attr("checked","checked");
+			 $("#divpart2_1").css("display","");
+             $("#divpart2_2").css("display","none");
+             $("#divpart2_3").css("display","none");
+		 }else if(pay_type==2 && $(this).val()=='yhk'){
+			 $(this).attr("checked","checked");
+			 $("#divpart2_2").css("display","");
+             $("#divpart2_1").css("display","none");
+             $("#divpart2_3").css("display","none");
+		 }else if(pay_type==3 && $(this).val()=='xj&yhk'){
+			 $(this).attr("checked","checked");
+			 $("#divpart2_3").css("display","");
+             $("#divpart2_1").css("display","none");
+             $("#divpart2_2").css("display","none");
+		 }
+    });
+	$("input[type='radio']").attr("disabled","disabled");
+}
+var flaga = false;
+
+//获取省
+function getProvinceData() {
+	return globalUtil.syncGetJson('/sysmanage/wmssysdictdatabydictidempty.do',
+			{'isEmpty' : true, 'wms_sys_dict_id' : '72'},'GET');
+}
+
+//获取市
+function getCityData(p_wms_sys_dict_data_id){
+	return globalUtil.syncGetJson('/sysmanage/wmssysdictdatabydictidemptyc.do',
+			{'isEmpty' : true, 'wms_sys_dict_id' : '73', 'p_wms_sys_dict_data_id' : p_wms_sys_dict_data_id},'GET');
+}
+
+//初始化Grid
+function initGrid(pay_type) {
+	   if(pay_type==1){
+		   grid_divwt1_data=globalUtil.syncGetJson('/inve/wmsinvetransacardforjedzwithoutpaginglist.do',{
+	            'wms_inve_transa_id':wms_inve_transa_id,
+	            'pay_type':1,
+	            'sortname':'wms_inve_transa_card_id'
+	        },'GET');
+	    }
+	
+	   //支付信息列表配置开始
+	   //获取pos机数据
+	   var all_pos_data=globalUtil.syncGetJson('/inve/wmsinveposwithoutpaginglistEnable.do',{
+	        'sortname':'wms_inve_pos_id'
+	    },'GET');
+	    var posArr=[];
+		for(var i=0;i<parseInt(all_pos_data.Rows.length);i++){
+		  	var thid=all_pos_data.Rows[i].wms_inve_pos_id;
+		  	var thval=all_pos_data.Rows[i].pos_code;
+		  	posArr.push({"wms_inve_pos_id":thid,"pos_code":thval})
+		}
+	   
+	   var payTypeData = [{ value_code: 1, value_meaning: '现金' },{ value_code: 2, value_meaning: '银行卡' },{ value_code: 3, value_meaning: '续单本金' }];
+		
+		grid_divwt4_data=globalUtil.syncGetJson('/inve/wmsinvetransaforzfinfolist.do',{
+	        'wms_inve_transa_id':wms_inve_transa_id,
+	        'sortname':'wms_inve_transa_card_id'
+	    },'GET');
+		var updateCellIndex = 0;
+		//添加表格的默认行设置以及表格的设置
+		var columns4 = [{
+			display: '支付方式',
+			name: 'pay_type',
+			resizable: false,
+			width: 80,
+			minWidth: 80,
+			editor: { 
+				type: 'select', // 该列为可编辑状态
+				data: payTypeData, 
+				valueField:'value_code',   //下拉框value对应的值，默认为id
+				textField:'value_meaning'
+			},
+			render: function (rowdata, nowRowIndex, value, column) {
+				var payTypeValueStr = global_ligerui_extend.gridRenderSelectedValue2(rowdata, value, column);
+				if(grid_divwt4_data.Rows.length != 0){
+					if(updateCellIndex != 0){
+						updateRowKHZFXX(nowRowIndex,rowdata, payTypeValueStr);	
+					}
+				}else{
+					updateRowKHZFXX(nowRowIndex,rowdata, payTypeValueStr);
+				}
+				return payTypeValueStr;
+			}
+		},{
+			display: '关联单据',
+			name: 'bill_code',
+			width: 160,
+			minWidth: 160,
+			resizable: false,
+			render: function (rowdata, nowRowIndex, value, column) {
+				var varluStr = "<a href='javascript:selectBill();'><img src='../../../resources/images/icons/search.gif' style='float:right;'/></a>";
+				if(value == null || value == ''){
+					return "----"
+				}else{
+					return value;
+				}
+			} 
+		},{
+			display: '卡主姓名',
+			name: 'card_owner_name',
+			resizable: false,
+			width: 80,
+			minWidth: 80,
+			editor: {
+				type: 'text'
+			}
+		},{
+			display: '银行账号',
+			name: 'card_no',
+			resizable: false,
+			width: 180,
+			minWidth: 180,
+			editor: {
+				type: 'text'
+			},
+			render:function(rowdata, nowRowIndex,value,column){
+				if(value==null || value == '' || value == undefined){
+					return "----";
+				}
+				return value;
+			}
+		},{
+			display: '省',
+			name: 'bank_of_deposit_pro',
+			newline: false,
+			width: 100,
+			minWidth: 100,
+			editor: { 
+				type: 'select', // 该列为可编辑状态
+				data: getProvinceData(), 
+				valueField:'value_code',   //下拉框value对应的值，默认为id
+				textField:'value_meaning'
+			},
+			render: function (rowdata, nowRowIndex, value, column) {
+				if(value == 0 || value == undefined){
+					return "----";
+				}else{
+					return global_ligerui_extend.gridRenderSelectedValue2(rowdata, value, column);
+				}
+			}
+		},{
+			display: '市',
+			name: 'bank_of_deposit_city',
+			newline: false,
+			width: 100,
+			minWidth: 100,
+			editor: { 
+				type: 'select', // 该列为可编辑状态
+				valueField:'value_code',   //下拉框value对应的值，默认为id
+				textField:'value_meaning',    //下拉框text对应的值，默认为text
+				ext:function(obj){
+					var options;
+					if(obj.bank_of_deposit_pro != "-1" && obj.bank_of_deposit_pro != "") {
+						options =  {
+			                	data: getCityData(obj.bank_of_deposit_pro)
+			                };
+					}
+	                return options;
+	           }
+			},
+			render: function (rowdata, nowRowIndex, value, column) {
+				if(value == 0 || value == undefined){
+					return "----";
+				}else{
+					return global_ligerui_extend.gridRenderSelectedValue3(rowdata, value, column, getCityData(rowdata.bank_of_deposit_pro));
+				}
+			}
+		},{
+			display: '开户行名称',
+			name: 'bank_of_deposit_name',
+			resizable: false,
+			width: 130,
+			minWidth: 130,
+			editor: {
+				type: 'text'
+			},
+			render:function(rowdata, nowRowIndex, value, column){
+				if(value==null || value == '' || value == undefined){
+					return "----";
+				}
+				return value;
+			}
+		},{
+			display: 'POS机编号',
+			name: 'wms_inve_pos_id',
+			resizable: false,
+			width: 100,
+			minWidth: 100,
+			editor: { 
+				type: 'select', // 该列为可编辑状态
+				data: posArr, 
+				valueField: 'wms_inve_pos_id', 
+				textField: 'pos_code' 
+			},
+			render: function (rowdata, nowRowIndex, value, column) {
+				if(value==null || value == '' || value == undefined || value == "0"){
+					return "----";
+				}
+				return global_ligerui_extend.gridRenderSelectedValue(rowdata, nowRowIndex, value, column);
+			}
+		},{
+			display: '实际支付金额（元）',
+			name: 'pay_account',
+			resizable: false,
+			width: 120,
+			minWidth: 120,
+			editor: {
+				type: 'text'
+			},
+			render:function(rowdata,nowRowIndex,value,column){
+				return value;
+			}
+		},{
+			display:'赎回信息id',
+			name:'wms_inve_redeem_id',
+			resizable:false,
+			width:10,
+			minWidth:10,
+			hide:1,
+			render:function(rowdata,nowRowIndex,value,column){
+				return value;
+			}
+		},{
+			display:'可用金额',
+			name:'redeem_amount',
+			resizable:false,
+			width:10,
+			minWidth:10,
+			hide:1,
+			render:function(rowdata,nowRowIndex,value,column){
+				return value;
+			}
+		},{
+			display:'赎回本金信息id',
+			name:'wms_inve_redeem_principal_detail_id',
+			resizable:false,
+			width:10,
+			minWidth:10,
+			hide:1,
+			render:function(rowdata,nowRowIndex,value,column){
+				return value;
+			}
+		},{
+			display:'赎回详细信息id',
+			name:'wms_inve_redeem_detail_id',
+			resizable:false,
+			width:10,
+			minWidth:10,
+			hide:1,
+			render:function(rowdata,nowRowIndex,value,column){
+				return value;
+			}
+		}
+		];
+		
+		grid_divwt4 = $("#grid-divwt4").ligerGrid({ // maingrid为表格div所在id
+			columns: columns4,
+			data:grid_divwt4_data,
+			rownumbers: true,
+			usePager: false, // 是否分页支持，默认为true
+			enabledEdit: false,
+			width: '100%',
+			height:100,
+			heightDiff: -4,
+			enabledEdit: true
+		});
+	   
+		var datas = grid_divwt4.getData();
+		for(var i = 0; i < datas.length; i++){
+			for(var k = 0; k < 10 ; k++ ){
+				var s = grid_divwt4.getCellObj(i,k);         	
+				$(s).bind("click",function(){return false;});
+			}
+		}
+		
+	   //支付信息列表配置结束
+	   
+	   
+	var columns1 = [{
+		display: '<font color=red>*</font>姓名',
+		name: 'card_owner_name',
+		resizable: false,
+		width: 210,
+		minWidth: 210,
+		editor: { 
+			type: 'text'
+		}
+	},{
+        display: '应支付金额（元）',
+        name: 'should_pay_account',
+        resizable: false,
+        width: 210,
+        minWidth: 210,
+        editor: {
+            type: 'text'
+        }
+    },{
+		display: '<font color=red>*</font>支付金额（元）',
+		name: 'pay_account',
+		resizable: false,
+		width: 210,
+		minWidth: 210,
+		editor: {
+			type: 'text'
+		}
+	}];
+	
+	grid_divwt1 = $("#grid-divwt1").ligerGrid({ // maingrid为表格div所在id
+		columns: columns1,
+		data:grid_divwt1_data,
+		usePager: false, // 是否分页支持，默认为true
+		enabledEdit: false,
+		width: '100%',
+		height:80,
+		heightDiff: -4
+	});
+	
+	//POS机信息
+	var posArr=[{"wms_inve_pos_id":'',"pos_code":'请选择'}];
+	for(var i=0;i<parseInt(all_pos_data.Rows.length);i++){
+	  	var thid=all_pos_data.Rows[i].wms_inve_pos_id;
+	  	var thval=all_pos_data.Rows[i].pos_code;
+	  	posArr.push({"wms_inve_pos_id":thid,"pos_code":thval})
+	}
+	
+	if(pay_type==2){
+		grid_divwt2_data=globalUtil.syncGetJson('/inve/wmsinvetransacardforjedzwithoutpaginglist.do',{
+            'wms_inve_transa_id':wms_inve_transa_id,
+            'pay_type':2,
+            'sortname':'wms_inve_transa_card_id'
+        },'GET');
+	}
+	var columns2 = [{
+		display: '<font color=red>*</font>卡主姓名',
+		name: 'card_owner_name',
+		resizable: false,
+		width: 80,
+		minWidth: 80,
+		editor: {
+			type: 'text'
+		}
+	},{
+		display: '<font color=red>*</font>银行账号',
+		name: 'card_no',
+		resizable: false,
+		width: 180,
+		minWidth: 180,
+		editor: {
+			type: 'text'
+		}
+	},{
+		display: '省',
+		name: 'bank_of_deposit_pro',
+		newline: false,
+		width: 100,
+		minWidth: 100,
+		editor: { 
+			type: 'select', // 该列为可编辑状态
+			data: getProvinceData(), 
+			valueField:'value_code',   //下拉框value对应的值，默认为id
+			textField:'value_meaning'
+		},
+		render: function (rowdata, nowRowIndex, value, column) {
+			return global_ligerui_extend.gridRenderSelectedValue2(rowdata, value, column);
+		}
+	},{
+		display: '市',
+		name: 'bank_of_deposit_city',
+		newline: false,
+		width: 100,
+		minWidth: 100,
+		editor: { 
+			type: 'select', // 该列为可编辑状态
+			valueField:'value_code',   //下拉框value对应的值，默认为id
+			textField:'value_meaning',    //下拉框text对应的值，默认为text
+			ext:function(obj){
+				var options;
+				if(obj.bank_of_deposit_pro != "-1" && obj.bank_of_deposit_pro != "") {
+					options =  {
+		                	data: getCityData(obj.bank_of_deposit_pro)
+		                };
+				}
+                return options;
+           }
+		},
+		render: function (rowdata, nowRowIndex, value, column) {
+			return global_ligerui_extend.gridRenderSelectedValue3(rowdata, value, column, getCityData(rowdata.bank_of_deposit_pro));
+		}
+	},{
+		display: '开户行名称',
+		name: 'bank_of_deposit_name',
+		resizable: false,
+		width: 160,
+		minWidth: 160,
+		editor: {
+			type: 'text'
+		}
+	},{
+		display: '支行名称',
+		name: 'bank_branch',
+		resizable: false,
+		width: 160,
+		minWidth: 160,
+		editor: {
+			type: 'text'
+		}
+	},{
+		display: 'POS机编号',
+		name: 'wms_inve_pos_id',
+		resizable: false,
+		width: 100,
+		minWidth: 100,
+		editor: { 
+			type: 'select', // 该列为可编辑状态
+			data: posArr, 
+			valueField: 'wms_inve_pos_id', 
+			textField: 'pos_code' 
+		},
+		render: function (rowdata, nowRowIndex, value, column) {
+			return global_ligerui_extend.gridRenderSelectedValue(rowdata, nowRowIndex, value, column);
+		}
+	},{
+		display: '<font color=red>*</font>支付金额（元）',
+		name: 'pay_account',
+		resizable: false,
+		width: 100,
+		minWidth: 100,
+		editor: {
+			type: 'text'
+		}
+	}];
+	
+	grid_divwt2 = $("#grid-divwt2").ligerGrid({ // maingrid为表格div所在id
+		columns: columns2,
+		data:grid_divwt2_data,
+		rownumbers: true,
+		usePager: false, // 是否分页支持，默认为true
+		enabledEdit: false,
+		width: '100%',
+		height:100,
+		heightDiff: -4
+	});
+	
+	if(pay_type ==3){
+		grid_divwt3_data=globalUtil.syncGetJson('/inve/wmsinvetransacardforjedzwithoutpaginglist.do',{
+	        'wms_inve_transa_id':wms_inve_transa_id,
+	        'pay_type':'3',
+	        'sortname':'wms_inve_transa_card_id'
+	    },'GET');
+	}
+	var columns3 = [{
+		display: '<font color=red>*</font>支付方式',
+		name: 'pay_type',
+		resizable: false,
+		width: 80,
+		minWidth: 80
+	},{
+		display: '<font color=red>*</font>卡主姓名',
+		name: 'card_owner_name',
+		resizable: false,
+		width: 80,
+		minWidth: 80,
+		editor: {
+			type: 'text'
+		}
+	},{
+		display: '<font color=red>*</font>银行账号',
+		name: 'card_no',
+		resizable: false,
+		width: 180,
+		minWidth: 180,
+		editor: {
+			type: 'text'
+		}
+	},{
+		display: '省',
+		name: 'bank_of_deposit_pro',
+		newline: false,
+		width: 100,
+		minWidth: 100,
+		editor: { 
+			type: 'select', // 该列为可编辑状态
+			data: getProvinceData(), 
+			valueField:'value_code',   //下拉框value对应的值，默认为id
+			textField:'value_meaning'
+		},
+		render: function (rowdata, nowRowIndex, value, column) {
+			if(nowRowIndex==0){
+				return '----';
+			}
+			return global_ligerui_extend.gridRenderSelectedValue2(rowdata, value, column);
+		}
+	},{
+		display: '市',
+		name: 'bank_of_deposit_city',
+		newline: false,
+		width: 100,
+		minWidth: 100,
+		editor: { 
+			type: 'select', // 该列为可编辑状态
+			valueField:'value_code',   //下拉框value对应的值，默认为id
+			textField:'value_meaning',    //下拉框text对应的值，默认为text
+			ext:function(obj){
+				var options;
+				if(obj.bank_of_deposit_pro != "-1" && obj.bank_of_deposit_pro != "") {
+					options =  {
+		                	data: getCityData(obj.bank_of_deposit_pro)
+		                };
+				}
+                return options;
+           }
+		},
+		render: function (rowdata, nowRowIndex, value, column) {
+			if(nowRowIndex==0){
+				return '----';
+			}
+			return global_ligerui_extend.gridRenderSelectedValue3(rowdata, value, column, getCityData(rowdata.bank_of_deposit_pro));
+		}
+	},{
+		display: '开户行名称',
+		name: 'bank_of_deposit_name',
+		resizable: false,
+		width: 130,
+		minWidth: 130,
+		editor: {
+			type: 'text'
+		}
+	},{
+		display: '支行名称',
+		name: 'bank_branch',
+		resizable: false,
+		width: 130,
+		minWidth: 130,
+		editor: {
+			type: 'text'
+		}
+	},{
+		display: 'POS机编号',
+		name: 'wms_inve_pos_id',
+		resizable: false,
+		width: 100,
+		minWidth: 100,
+		editor: { 
+			type: 'select', // 该列为可编辑状态
+			data: posArr, 
+			valueField: 'wms_inve_pos_id', 
+			textField: 'pos_code' 
+		},
+		render: function (rowdata, nowRowIndex, value, column) {
+			if(nowRowIndex==0){
+				return '----';
+			}
+			return global_ligerui_extend.gridRenderSelectedValue(rowdata, nowRowIndex, value, column);
+		}
+	},{
+		display: '<font color=red>*</font>支付金额（元）',
+		name: 'pay_account',
+		resizable: false,
+		width: 100,
+		minWidth: 100,
+		editor: {
+			type: 'text'
+		}
+	}];
+	
+	grid_divwt3 = $("#grid-divwt3").ligerGrid({ // maingrid为表格div所在id
+		columns: columns3,
+		data:grid_divwt3_data,
+		rownumbers: true,
+		usePager: false, // 是否分页支持，默认为true
+		enabledEdit: false,
+		width: '100%',
+		height:100,
+		heightDiff: -4,
+		onAfterShowData:function(){
+			if(flaga){
+				for (var i = 3; i < 8; i++) {
+					var s = grid_divwt3.getCellObj(0,i);         	
+					$(s).bind("click",function(){return false;})
+				}
+				flaga=false;
+			}
+		}
+	});
+	for (var i = 3; i < 9; i++) {
+		var s = grid_divwt3.getCellObj(0,i);         	
+		$(s).bind("click",function(){return false;})
+	}
+	
+}
+	//客户收益卡信息-初始化省
+	function init_bank_of_deposit_pro(json){
+	        var bank_of_deposit_pro_params ={
+	                dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=72',
+	                t_col_name:'bank_of_deposit_pro',
+	                valueField:'value_code',   //下拉框value对应的值，默认为id
+	                textField:'value_meaning',    //下拉框text对应的值，默认为text
+	                input_width:200,
+	                def_val:'first'
+	        };
+	        global_ligerui_extend.initCombox("bank_of_deposit_pro",null,bank_of_deposit_pro_params);
+	        if(json){
+	            //把值装载设定
+	            global_ligerui_extend.syncRequestInitComboxData(json,"bank_of_deposit_pro");
+	            //让其不可编辑
+	            //global_ligerui_extend.disabledCombox("bank_of_deposit_pro");
+	        }else{          
+	            global_ligerui_extend.initComboxDefVal("bank_of_deposit_pro");
+	        }
+	}
+	//客户收益卡信息-当点击省的时候,加载市
+	function getCityData1(){
+	        var jsondata0;
+	        if(json.wmsInveTransaProd.bank_of_deposit_pro != null && json.wmsInveTransaProd.bank_of_deposit_city != null) {
+	            jsondata0 = json.wmsInveTransaProd;
+	        }
+	    init_bank_of_deposit_city($("#bank_of_deposit_pro_hidden").val(), jsondata0)
+	}
+	//客户收益卡信息-获取市
+	function init_bank_of_deposit_city(p_wms_sys_dict_data_id, json){
+	    var bank_of_deposit_city_params ={
+	            dest_url:'/sysmanage/wmssysdictdatabydictidemptyc.do?isEmpty=true&wms_sys_dict_id=73&p_wms_sys_dict_data_id='+p_wms_sys_dict_data_id,
+	            t_col_name:'bank_of_deposit_city',
+	            valueField:'value_code',   //下拉框value对应的值，默认为id
+	            textField:'value_meaning',    //下拉框text对应的值，默认为text
+	            input_width:200,//下拉框长度
+	            def_val:'first'
+	            };
+	    global_ligerui_extend.initCombox("bank_of_deposit_city",null,bank_of_deposit_city_params);
+	    
+	    if(json){
+	        //把值装载设定
+	        global_ligerui_extend.syncRequestInitComboxData(json,"bank_of_deposit_city");
+	        //让其不可编辑
+	        //global_ligerui_extend.disabledCombox("bank_of_deposit_city");
+	    }else{          
+	        global_ligerui_extend.initComboxDefVal("bank_of_deposit_city");
+	    }
+	}
+	/**
+     *实现客户支付信息选择功能
+     */
+    function radioShowDiv(){
+        $("input[type='radio']").each(function(){
+               if($(this).attr("checked")=="checked"){
+                 if($(this).val()=='xj'){
+                     $("#divpart2_1").css("display","");
+                     $("#divpart2_2").css("display","none");
+                     $("#divpart2_3").css("display","none");
+                 }
+                 if($(this).val()=='yhk'){
+                     $("#divpart2_2").css("display","");
+                     $("#divpart2_1").css("display","none");
+                     $("#divpart2_3").css("display","none");
+                 }
+                 if($(this).val()=='xj&yhk'){
+                     $("#divpart2_3").css("display","");
+                     $("#divpart2_1").css("display","none");
+                     $("#divpart2_2").css("display","none");
+                 }
+             }
+          });
+    }
+    /**
+     *关闭窗口
+     */
+    function closeDialog() {
+      window.parent.dialog.hide();
+    }
+    /*
+        获取表格数据，去除全部为空的记录
+    */
+    function getGridData(grid){
+                grid.endEdit();
+            var data_all = grid.getData();
+            var griddata = [];
+            for(var i=0;i<data_all.length;i++){
+                var data = data_all[i];
+                var isEmpty = true;
+                if(data){
+                    for(var key in data){
+                        if($.trim(key) == '' || $.trim(key) == '__status'){continue;}
+                        if(!globalUtil.isEmpty(data[key])){
+                            if(data[key] instanceof Date){
+                                data[key]= data[key].format('yyyy-MM-dd');//格式化日期类型数据
+                            }
+                            
+                            isEmpty = false;
+                        }
+                    }
+                }
+                if(!isEmpty){
+                    griddata.push(data);
+                }
+            }
+        return griddata;
+    }
+    function closeTabAndRes(){
+        parent.window.search();
+        closeDialog();
+    }
+
+</script>
+</head>
+<body>
+	<div class="pop-center overflow-au" id="myForm">
+		<div id="divpart2" class="pop-formDiv clearfix" style="margin: 5px;height: 180px;">
+			<div class="float-l clearboth" style="height: 10px;"></div>
+			<div class="center-content clearboth" style="min-width: 700px;">
+				<!-- 添加客户支付信息begin -->
+				<div class="center-title">
+					<font color="black">客户支付信息</font><!-- (<font color="red">*为必填项</font>) <input
+						type="radio" name="zffsrad" value="xj" onchange="radioShowDiv()"
+						class="radio3" style="margin-left: 8px;" />现金 <input type="radio"
+						name="zffsrad" value="yhk" onchange="radioShowDiv()"
+						class="radio3" />银行卡 <input type="radio" name="zffsrad"
+						value="xj&yhk" onchange="radioShowDiv()" class="radio3" />现金+银行卡 -->
+				</div>
+				<!-- <div class="center-txt" style="margin-bottom: 15px; display: none;"
+					id="divpart2_1">
+					<div id="toolbar-divwt1" class="minwidth400"></div>
+					<div id="grid-divwt1"></div>
+				</div>
+				<div class="center-txt" style="margin-bottom: 15px; display: none;"
+					id="divpart2_2">
+					<div id="toolbar-divwt2" class="minwidth400"></div>
+					<div id="grid-divwt2"></div>
+				</div>
+				<div class="center-txt" style="margin-bottom: 15px; display: none;"
+					id="divpart2_3">
+					<div id="toolbar-divwt3" class="minwidth400"></div>
+					<div id="grid-divwt3"></div>
+				</div> -->
+				
+				<div class="center-txt" style="margin-bottom: 15px; display: '';" id="divpart2_4">
+					<div id="toolbar-divwt4" class="minwidth400"></div>
+					<div id="grid-divwt4"></div>
+				</div>
+				<!-- 添加客户支付信息end -->   
+			</div>
+		</div>
+    </div>
+</body>
+</html>

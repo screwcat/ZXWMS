@@ -1,0 +1,858 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.loanfina.persist.WmsFinaCrePeriodRepayDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsFinaCrePeriodRepay">
+		select
+		wms_fina_cre_period_pay_id,
+		wms_cre_credit_head_id,
+		repay_no,
+		date_format(current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		current_repay_date,
+		org_repay_principal,
+		org_repay_interest,
+		date_format(repay_date,'%Y-%m-%d') as repay_date_str,
+		repay_date,
+		repay_total,
+		repay_principal,
+		repay_interest,
+		is_overdue,
+		cur_overdue_day,
+		cur_late_fee,
+		derate,
+		is_upload,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_fina_cre_period_repay
+		where
+		wms_fina_cre_period_pay_id = #{wms_fina_cre_period_pay_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_fina_cre_period_pay_id) as count
+		from
+		wms_fina_cre_period_repay
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		wms_fina_cre_period_pay_id,
+		wms_cre_credit_head_id,
+		repay_no,
+		date_format(current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		current_repay_date,
+		org_repay_principal,
+		org_repay_interest,
+		date_format(repay_date,'%Y-%m-%d') as repay_date_str,
+		repay_date,
+		repay_total,
+		repay_principal,
+		repay_interest,
+		is_overdue,
+		cur_overdue_day,
+		cur_late_fee,
+		derate,
+		is_upload,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from wms_fina_cre_period_repay
+		<where>
+			enable_flag='1' and repay_date is not null
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsFinaCrePeriodRepay"
+		useGeneratedKeys="true" keyProperty="wms_fina_cre_period_pay_id">
+		INSERT INTO
+		wms_fina_cre_period_repay
+		(
+
+		wms_cre_credit_head_id,
+
+		repay_no,
+
+		current_repay_date,
+
+		org_repay_principal,
+
+		org_repay_interest,
+
+		repay_date,
+
+		repay_total,
+
+		repay_principal,
+
+		repay_interest,
+
+		is_overdue,
+
+		cur_overdue_day,
+
+		cur_late_fee,
+
+		derate,
+
+		is_upload,
+
+		create_user_id,
+
+		create_user_name,
+
+		create_timestamp,
+
+		last_update_user_id,
+
+		last_update_timestamp,
+
+		enable_flag,
+		
+		three_before_reminder_time,
+		
+		two_before_reminder_time,
+		
+		one_before_reminder_time
+		)
+		VALUES
+		(
+		#{wms_cre_credit_head_id},
+		#{repay_no},
+		#{current_repay_date},
+		#{org_repay_principal},
+		#{org_repay_interest},
+		#{repay_date},
+		#{repay_total},
+		#{repay_principal},
+		#{repay_interest},
+		#{is_overdue},
+		#{cur_overdue_day},
+		#{cur_late_fee},
+		#{derate},
+		#{is_upload},
+		#{create_user_id},
+		#{create_user_name},
+		#{create_timestamp},
+		#{last_update_user_id},
+		#{last_update_timestamp},
+		#{enable_flag},
+		date_sub(#{current_repay_date},interval 3 day),
+		date_sub(#{current_repay_date},interval 2 day),
+		date_sub(#{current_repay_date},interval 1 day)
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsFinaCrePeriodRepay">
+		update wms_fina_cre_period_repay
+		<set>
+			<if test="wms_fina_cre_period_pay_id != null">
+				wms_fina_cre_period_pay_id = #{wms_fina_cre_period_pay_id},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="repay_no != null">
+				repay_no = #{repay_no},
+			</if>
+			<if test="current_repay_date != null">
+				current_repay_date = #{current_repay_date},
+			</if>
+			<if test="org_repay_principal != null">
+				org_repay_principal = #{org_repay_principal},
+			</if>
+			<if test="org_repay_interest != null">
+				org_repay_interest = #{org_repay_interest},
+			</if>
+			<if test="repay_date != null">
+				repay_date = #{repay_date},
+			</if>
+			<if test="repay_total != null">
+				repay_total = #{repay_total},
+			</if>
+			<if test="repay_principal != null">
+				repay_principal = #{repay_principal},
+			</if>
+			<if test="repay_interest != null">
+				repay_interest = #{repay_interest},
+			</if>
+			<if test="is_overdue != null">
+				is_overdue = #{is_overdue},
+			</if>
+			<if test="cur_overdue_day != null">
+				cur_overdue_day = #{cur_overdue_day},
+			</if>
+			<if test="cur_late_fee != null">
+				cur_late_fee = #{cur_late_fee},
+			</if>
+			<if test="derate != null">
+				derate = #{derate},
+			</if>
+			<if test="is_upload != null">
+				is_upload = #{is_upload},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+		</set>
+		<where>
+		        1=1
+			<if test="wms_fina_cre_period_pay_id !=null">
+				and wms_fina_cre_period_pay_id = #{wms_fina_cre_period_pay_id}
+			</if>
+			<if test="wms_cre_credit_head_id !=null and repay_no !=null">
+				and wms_cre_credit_head_id =#{wms_cre_credit_head_id} and repay_no =#{repay_no}
+			</if>
+		</where>
+	</update>
+	<select id="getListByEntity" parameterType="WmsFinaCrePeriodRepay"
+		resultType="WmsFinaCrePeriodRepay">
+		select
+		wms_fina_cre_period_pay_id,
+		wms_cre_credit_head_id,
+		repay_no,
+		date_format(current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		current_repay_date,
+		org_repay_principal,
+		org_repay_interest,
+		date_format(repay_date,'%Y-%m-%d') as repay_date_str,
+		repay_date,
+		repay_total,
+		repay_principal,
+		repay_interest,
+		is_overdue,
+		cur_overdue_day,
+		cur_late_fee,
+		derate,
+		is_upload,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_fina_cre_period_repay
+		<where>
+			<if test="wms_fina_cre_period_pay_id != null">
+				and wms_fina_cre_period_pay_id = #{wms_fina_cre_period_pay_id}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="repay_no != null">
+				and repay_no = #{repay_no}
+			</if>
+			<if test="current_repay_date != null">
+				and current_repay_date = #{current_repay_date}
+			</if>
+			<if test="org_repay_principal != null">
+				and org_repay_principal = #{org_repay_principal}
+			</if>
+			<if test="org_repay_interest != null">
+				and org_repay_interest = #{org_repay_interest}
+			</if>
+			<if test="repay_date != null">
+				and repay_date = #{repay_date}
+			</if>
+			<if test="repay_total != null">
+				and repay_total = #{repay_total}
+			</if>
+			<if test="repay_principal != null">
+				and repay_principal = #{repay_principal}
+			</if>
+			<if test="repay_interest != null">
+				and repay_interest = #{repay_interest}
+			</if>
+			<if test="is_overdue != null">
+				and is_overdue = #{is_overdue}
+			</if>
+			<if test="cur_overdue_day != null">
+				and cur_overdue_day = #{cur_overdue_day}
+			</if>
+			<if test="cur_late_fee != null">
+				and cur_late_fee = #{cur_late_fee}
+			</if>
+			<if test="derate != null">
+				and derate = #{derate}
+			</if>
+			<if test="is_upload != null">
+				and is_upload = #{is_upload}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name = #{create_user_name}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id = #{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+			<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+				and wms_fina_cre_period_pay_id != #{wms_fina_cre_period_pay_id}
+			</if>
+		</where>
+	</select>
+	<!-- get entity by pk 逾期还款确认 查询清单baisong -->
+	<select id="getinfobyid" parameterType="int" resultType="WmsFinaCrePeriodRepay">
+		select
+		p.wms_fina_cre_period_pay_id,
+		p.wms_cre_credit_head_id,
+		sum(p.org_repay_principal) ,
+		sum(p.org_repay_interest)
+		from
+		wms_fina_cre_period_repay p,wms_fina_cre_repay r
+		<where>
+			p.enable_flag=1 and r.enable_flag=1
+			and p.wms_cre_credit_head_id =r.wms_cre_credit_head_id
+			and p.current_repay_date between r.current_repay_date and CURDATE()
+			and r.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			and p.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+		</where>
+	</select>
+	<!-- get entity by pk 根据WmsFinaCrePeriodRepay 获取期还款台账信息 baisong -->
+	<select id="getbyobject" parameterType="WmsFinaCrePeriodRepay"
+		resultType="WmsFinaCrePeriodRepay">
+		select
+		wms_fina_cre_period_pay_id,
+		wms_cre_credit_head_id,
+		repay_no,
+		date_format(current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		current_repay_date,
+		org_repay_principal,
+		org_repay_interest,
+		date_format(repay_date,'%Y-%m-%d') as repay_date_str,
+		repay_date,
+		repay_total,
+		repay_principal,
+		repay_interest,
+		is_overdue,
+		cur_overdue_day,
+		cur_late_fee,
+		derate,
+		is_upload,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+
+		from
+		wms_fina_cre_period_repay
+		<where>
+			enable_flag = 1
+			<if test="wms_fina_cre_period_pay_id != null">
+				and wms_fina_cre_period_pay_id = #{wms_fina_cre_period_pay_id}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="repay_no != null">
+				and repay_no = #{repay_no}
+			</if>
+			<if test="current_repay_date != null">
+				and current_repay_date = #{current_repay_date}
+			</if>
+		</where>
+	</select>
+	<!-- get entity by pk 逾期还款确认 查询清单 baisong -->
+	<select id="getbyfk" parameterType="int" resultType="WmsFinaCrePeriodRepay">
+		select 
+		wms_fina_cre_period_pay_id,
+		p.wms_cre_credit_head_id,
+		p.repay_no,
+		date_format(p.current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		p.current_repay_date,
+		p.org_repay_principal,
+		p.org_repay_interest,
+		date_format(p.repay_date,'%Y-%m-%d') as repay_date_str,
+		p.repay_date,
+		p.repay_total,
+		p.repay_principal,
+		p.repay_interest,
+		p.is_overdue,
+		p.cur_overdue_day,
+		p.cur_late_fee,
+		p.derate,
+		p.is_upload,
+		p.create_user_id,
+		p.create_user_name,
+		date_format(p.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		p.create_timestamp,
+		p.last_update_user_id,
+		date_format(p.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		p.last_update_timestamp
+		from
+		wms_fina_cre_period_repay p,wms_fina_cre_repay r
+		<where>
+			p.enable_flag=1 and r.enable_flag=1
+			and p.wms_cre_credit_head_id =r.wms_cre_credit_head_id
+			and p.current_repay_date between r.current_repay_date and CURDATE()
+			and r.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+		</where>
+		ORDER BY p.repay_no
+	</select>
+	<!-- get entity by no根据贷款主表id 获取到申请提前还款的所有期的数据 baisong -->
+	<select id="getbyno" parameterType="int" resultType="WmsFinaCrePeriodRepay">
+		select wms_fina_cre_period_pay_id,
+		p.wms_cre_credit_head_id,
+		p.repay_no,
+		date_format(p.current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		p.current_repay_date,
+		p.org_repay_principal,
+		p.org_repay_interest,
+		date_format(p.repay_date,'%Y-%m-%d') as repay_date_str,
+		p.repay_date,
+		p.repay_total,
+		p.repay_principal,
+		p.repay_interest,
+		p.is_overdue,
+		p.cur_overdue_day,
+		p.cur_late_fee,
+		p.derate,
+		p.is_upload,
+		p.create_user_id,
+		p.create_user_name,
+		date_format(p.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		p.create_timestamp,
+		p.last_update_user_id,
+		date_format(p.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		p.last_update_timestamp
+		from
+		wms_fina_cre_period_repay p,wms_fina_cre_repay r
+		<where>
+			p.enable_flag=1 and r.enable_flag=1
+			and p.wms_cre_credit_head_id =r.wms_cre_credit_head_id
+			and p.repay_no between r.repay_period+1 and
+			r.repay_period+r.un_pay_period
+			and r.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			and p.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+		</where>
+		ORDER BY p.repay_no
+	</select>
+	<!-- get entity by pk 正常还款确认 查询清单 baisong -->
+	<select id="getbyfkfornor" parameterType="int" resultType="WmsFinaCrePeriodRepay">
+		select wms_fina_cre_period_pay_id,
+		p.wms_cre_credit_head_id,
+		p.repay_no,
+		date_format(p.current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		p.current_repay_date,
+		p.org_repay_principal,
+		p.org_repay_interest,
+		date_format(p.repay_date,'%Y-%m-%d') as repay_date_str,
+		p.repay_date,
+		p.repay_total,
+		p.repay_principal,
+		p.repay_interest,
+		p.is_overdue,
+		p.cur_overdue_day,
+		p.cur_late_fee,
+		p.derate,
+		p.is_upload,
+		p.create_user_id,
+		p.create_user_name,
+		date_format(p.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		p.create_timestamp,
+		p.last_update_user_id,
+		date_format(p.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		p.last_update_timestamp
+		from
+		wms_fina_cre_period_repay p,wms_fina_cre_repay r
+		<where>
+			p.enable_flag=1 and r.enable_flag=1
+			and p.wms_cre_credit_head_id =r.wms_cre_credit_head_id
+			and p.current_repay_date= r.current_repay_date
+			and r.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			and p.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+		</where>
+		ORDER BY p.repay_no
+	</select>
+	<!-- 更新用户 -->
+	<update id="updatelist" parameterType="java.util.List">
+		update wms_fina_cre_period_repay
+		<set>
+			<if test="current_repay_date != null">
+				current_repay_date = #{current_repay_date},
+			</if>
+			<if test="org_repay_principal != null">
+				org_repay_principal = #{org_repay_principal},
+			</if>
+			<if test="org_repay_interest != null">
+				org_repay_interest = #{org_repay_interest},
+			</if>
+			<if test="repay_date != null">
+				repay_date = #{repay_date},
+			</if>
+			<if test="repay_total != null">
+				repay_total = #{repay_total},
+			</if>
+			<if test="repay_principal != null">
+				repay_principal = #{repay_principal},
+			</if>
+			<if test="repay_interest != null">
+				repay_interest = #{repay_interest},
+			</if>
+			<if test="is_overdue != null">
+				is_overdue = #{is_overdue},
+			</if>
+			<if test="cur_overdue_day != null">
+				cur_overdue_day = #{cur_overdue_day},
+			</if>
+			<if test="cur_late_fee != null">
+				cur_late_fee = #{cur_late_fee},
+			</if>
+			<if test="derate != null">
+				derate = #{derate},
+			</if>
+			<if test="is_upload != null">
+				is_upload = #{is_upload},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+		</set>
+		where
+		wms_fina_cre_period_pay_id = #{wms_fina_cre_period_pay_id}
+
+	</update>
+	<update id="updateForYQ" parameterType="WmsFinaCrePeriodRepay">
+		update wms_fina_cre_period_repay
+		set
+			repay_date=current_repay_date,repay_total=0,repay_principal=0,repay_interest=0,is_overdue=0,cur_overdue_day=0,cur_late_fee=0,derate=0,is_upload=0		
+		where 
+		repay_no &lt;=#{repay_no} and wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+	</update>
+	<update id="updateForjme" parameterType="WmsFinaCrePeriodRepay">
+		update wms_fina_cre_period_repay
+		set
+			derate=#{derate},is_overdue=1,cur_overdue_day=#{cur_overdue_day},cur_late_fee=#{cur_late_fee}
+		where 
+		repay_no =#{repay_no}+1 and wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+	</update>
+	<!-- 计算总逾期天数 -->
+	<select id="totalDay" parameterType="map" resultType="HashMap">
+		select 
+			(DATEDIFF(CURDATE(),r.current_repay_date)-1) as totalday
+		from wms_fina_cre_period_repay r
+		
+		where repay_no=(#{repay_no}+1) and wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+	</select>
+	<!--计算临近当前日期最近的期数-->
+	<select id="totalPeriod" parameterType="map" resultType="HashMap">
+		select 
+			MAX(repay_no) as period_sum
+		from wms_fina_cre_period_repay r
+
+		where  wms_cre_credit_head_id=#{wms_cre_credit_head_id} and current_repay_date &gt;=CURDATE();
+	</select>
+	<!-- 获取相对应的还款日期下一期还款时间 -->
+	<select id="getCurrentRepayDay" parameterType="map" resultType="WmsFinaCrePeriodRepay">
+		select 
+		
+		r.current_repay_date
+		
+		from wms_fina_cre_period_repay r
+		
+		where repay_no=#{repay_no}+1 and wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+		
+	</select>
+	
+		
+	<!-- 电话提醒记录更新 -->
+	<update id="updatePhoneRemind" parameterType="java.util.HashMap">
+		update wms_fina_cre_period_repay
+		set
+			three_before_result = #{reminder_result},
+			last_update_user_id = #{reminder_id},
+			last_update_timestamp = NOW()
+		where 
+			repay_no = #{repay_no} and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</update>
+	
+	<!-- 电话提醒记录更新延迟 -->
+	<update id="updatePhoneRemindno3" parameterType="java.util.HashMap">
+		update wms_fina_cre_period_repay
+		set
+			one_before_result = #{reminder_result},
+			last_update_user_id = #{reminder_id},
+			last_update_timestamp = NOW()
+		where 
+			repay_no = #{repay_no} and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</update>
+	
+	<!-- 获取前三天和前一天应提醒时间-->
+	<select id="getReminderTime" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select three_before_reminder_time as 3date, one_before_reminder_time as 1date
+		from wms_fina_cre_period_repay
+		where repay_no = #{repay_no} and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</select>
+	
+	<!-- 电话催缴还款情况中每期信息-->
+	<select id="getinfoforphone" parameterType="int" resultType="java.util.Map">
+		select
+			t.wms_fina_cre_period_pay_id,
+			t.wms_cre_credit_head_id,
+			t.repay_no,
+			t.org_repay_principal,
+			t.org_repay_interest,
+			(t.org_repay_interest+t.org_repay_principal) as org_repay_total,
+			(SELECT cre_loan_type FROM wms_cre_credit_head WHERE wms_cre_credit_head_id=t.wms_cre_credit_head_id) as cre_loan_type
+		from
+			wms_fina_cre_period_repay t
+		where
+			t.enable_flag=1
+			AND	t.wms_cre_credit_head_id =  #{wms_fina_cre_period_pay_id}   
+			and (t.repay_no=(select
+			MIN(repay_no)
+		from
+			wms_fina_cre_period_repay
+		where
+			enable_flag=1
+			AND	wms_cre_credit_head_id =  #{wms_fina_cre_period_pay_id} )OR t.repay_no=	(select
+			Max(repay_no)
+		from
+			wms_fina_cre_period_repay
+		where
+			enable_flag=1
+			AND	wms_cre_credit_head_id =  #{wms_fina_cre_period_pay_id})) 
+	</select>
+	<!-- 更新用户 -->
+	<update id="updateforv" parameterType="WmsFinaCrePeriodRepay">
+		update wms_fina_cre_period_repay
+		<set>
+		
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="repay_no != null">
+				repay_no = #{repay_no},
+			</if>
+			<if test="current_repay_date != null">
+				current_repay_date = #{current_repay_date},
+			</if>
+			<if test="org_repay_principal != null">
+				org_repay_principal = #{org_repay_principal},
+			</if>
+			<if test="org_repay_interest != null">
+				org_repay_interest = #{org_repay_interest},
+			</if>
+			<if test="repay_date != null">
+				repay_date = #{repay_date},
+			</if>
+			<if test="repay_total != null">
+				repay_total = #{repay_total},
+			</if>
+			<if test="repay_principal != null">
+				repay_principal = #{repay_principal},
+			</if>
+			<if test="repay_interest != null">
+				repay_interest = #{repay_interest},
+			</if>
+			<if test="is_overdue != null">
+				is_overdue = #{is_overdue},
+			</if>
+			<if test="cur_overdue_day != null">
+				cur_overdue_day = #{cur_overdue_day},
+			</if>
+			<if test="cur_late_fee != null">
+				cur_late_fee = #{cur_late_fee},
+			</if>
+			<if test="derate != null">
+				derate = #{derate},
+			</if>
+			<if test="is_upload != null">
+				is_upload = #{is_upload},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+		</set>
+		where
+			wms_fina_cre_period_pay_id = #{wms_fina_cre_period_pay_id}
+	</update>
+	<!-- 查询出现在应该还款哪一期信息 -->
+	<select id="getListByYiPeriod" parameterType="WmsFinaCrePeriodRepay" resultType="WmsFinaCrePeriodRepay">
+		select 
+			    wms_fina_cre_period_pay_id,
+				wms_cre_credit_head_id,
+				repay_no,
+				date_format(current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+				current_repay_date,
+				org_repay_principal,
+				org_repay_interest,
+				date_format(repay_date,'%Y-%m-%d') as repay_date_str,
+				repay_date,
+				repay_total,
+				repay_principal,
+				repay_interest,
+				is_overdue,
+				cur_overdue_day,
+				cur_late_fee,
+				derate,
+				is_upload,
+				create_user_id,
+				create_user_name,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				enable_flag
+		from wms_fina_cre_period_repay rep
+		where rep.current_repay_date=(select max(re.current_repay_date) from wms_fina_cre_period_repay re where re.wms_cre_credit_head_id=#{wms_cre_credit_head_id} and current_repay_date &gt;= #{current_repay_date} and current_repay_date &lt;= CURRENT_DATE()  and ISNULL(re.repay_date)) and rep.wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+	</select>
+	<!-- 实现更新台账信息数据只包含(除提供逾期数据之外的逾期数据处理) -->
+	<update id="updateforperiodrepay" parameterType="map">
+		update wms_fina_cre_period_repay re
+
+         SET
+         
+			re.repay_date=re.current_repay_date,
+			re.repay_total=(re.org_repay_principal+re.org_repay_interest),
+			re.repay_principal=re.org_repay_principal,
+			re.repay_interest=re.org_repay_interest,
+			re.is_upload=2,
+			re.last_update_user_id=re.create_user_id,
+			re.last_update_timestamp=re.current_repay_date
+			
+		<where>
+		   re.wms_cre_credit_head_id in (
+			<if test="IdLists !=null">
+			 select wms_cre_credit_head_id from wms_fina_cre_repay where wms_cre_credit_head_id not in
+				<foreach collection="IdLists" item="wms_cre_credit_head_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_cre_credit_head_id}
+				</foreach>
+				 and repay_status=2 and cre_type=1
+			</if>
+			) and re.current_repay_date &lt;=CURRENT_DATE();
+		</where> 
+	</update>
+	<select id="searchfordata" parameterType="map" resultType="WmsFinaCrePeriodRepay">
+		select
+		wms_fina_cre_period_pay_id,
+		wms_cre_credit_head_id,
+		repay_no,
+		date_format(current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		current_repay_date,
+		org_repay_principal,
+		org_repay_interest,
+		date_format(repay_date,'%Y-%m-%d') as repay_date_str,
+		repay_date,
+		repay_total,
+		repay_principal,
+		repay_interest,
+		is_overdue,
+		cur_overdue_day,
+		cur_late_fee,
+		derate,
+		is_upload,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_fina_cre_period_repay re
+		<where>
+		    re.wms_cre_credit_head_id in (
+			select wms_cre_credit_head_id from wms_fina_cre_repay where wms_cre_credit_head_id not in
+			<if test="IdLists !=null">
+				<foreach collection="IdLists" item="wms_cre_credit_head_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_cre_credit_head_id}
+				</foreach>
+			</if>
+			 and repay_status=2 and cre_type=1
+			) and re.current_repay_date &lt;=CURRENT_DATE();
+		</where>
+	</select>
+</mapper> 

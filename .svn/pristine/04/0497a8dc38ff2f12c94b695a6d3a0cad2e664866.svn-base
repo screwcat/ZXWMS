@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.loanreview.persist.WmsCreRevWaterRepayLoanDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsCreRevWaterRepayLoan">
+		select
+		wms_cre_rev_water_repay_loan_id,
+		wms_cre_credit_head_id,
+		wms_cre_credit_line_customer_change_head_id,
+		repay_loan_type,
+		name,
+		bank_name,
+		beak_card_no_tail,
+		water_begin_month,
+		water_end_month,
+		account_balance,
+		is_repay,
+		remark,
+		is_pay_taxes,
+		is_pay_wages,
+		is_late_pay_taxes,
+		late_pay_taxes_days,
+		is_arrears,
+		arrears_days
+		from
+		wms_cre_rev_water_repay_loan
+		where
+		wms_cre_rev_water_repay_loan_id = #{wms_cre_rev_water_repay_loan_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cre_rev_water_repay_loan_id) as count
+		from
+		wms_cre_rev_water_repay_loan
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		wms_cre_rev_water_repay_loan_id,
+		wms_cre_credit_head_id,
+		wms_cre_credit_line_customer_change_head_id,
+		repay_loan_type,
+		name,
+		bank_name,
+		beak_card_no_tail,
+		water_begin_month,
+		water_end_month,
+		account_balance,
+		is_repay,
+		remark,
+		is_pay_taxes,
+		is_pay_wages,
+		is_late_pay_taxes,
+		late_pay_taxes_days,
+		is_arrears,
+		arrears_days
+		from wms_cre_rev_water_repay_loan
+		<where>
+
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+			</if>
+			<if test="wms_cre_credit_line_customer_change_head_id != null">
+				and
+				wms_cre_credit_line_customer_change_head_id=#{wms_cre_credit_line_customer_change_head_id}
+			</if>
+			<if test="repay_loan_type != null">
+				and repay_loan_type=#{repay_loan_type}
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreRevWaterRepayLoan"
+		useGeneratedKeys="true" keyProperty="wms_cre_rev_water_repay_loan_id">
+		INSERT INTO
+		wms_cre_rev_water_repay_loan
+		(
+		wms_cre_credit_head_id,
+
+		wms_cre_credit_line_customer_change_head_id,
+
+		repay_loan_type,
+
+		name,
+
+		bank_name,
+
+		beak_card_no_tail,
+
+		water_begin_month,
+
+		water_end_month,
+
+		account_balance,
+
+		is_repay,
+
+		remark,
+
+		is_pay_taxes,
+
+		is_pay_wages,
+
+		is_late_pay_taxes,
+
+		late_pay_taxes_days,
+
+		is_arrears,
+
+		arrears_days
+		)
+		VALUES
+		(
+		#{wms_cre_credit_head_id},
+		#{wms_cre_credit_line_customer_change_head_id},
+		#{repay_loan_type},
+		#{name},
+		#{bank_name},
+		#{beak_card_no_tail},
+		#{water_begin_month},
+		#{water_end_month},
+		#{account_balance},
+		#{is_repay},
+		#{remark},
+		#{is_pay_taxes},
+		#{is_pay_wages},
+		#{is_late_pay_taxes},
+		#{late_pay_taxes_days},
+		#{is_arrears},
+		#{arrears_days}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreRevWaterRepayLoan">
+		update wms_cre_rev_water_repay_loan
+		<set>
+			<if test="wms_cre_rev_water_repay_loan_id != null">
+				wms_cre_rev_water_repay_loan_id = #{wms_cre_rev_water_repay_loan_id},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="wms_cre_credit_line_customer_change_head_id != null">
+				wms_cre_credit_line_customer_change_head_id = #{wms_cre_credit_line_customer_change_head_id},
+			</if>
+			<if test="repay_loan_type != null">
+				repay_loan_type = #{repay_loan_type},
+			</if>
+			<if test="name != null">
+				name = #{name},
+			</if>
+			<if test="bank_name != null">
+				bank_name = #{bank_name},
+			</if>
+			<if test="beak_card_no_tail != null">
+				beak_card_no_tail = #{beak_card_no_tail},
+			</if>
+			<if test="water_begin_month != null">
+				water_begin_month = #{water_begin_month},
+			</if>
+			<if test="water_end_month != null">
+				water_end_month = #{water_end_month},
+			</if>
+			<if test="account_balance != null">
+				account_balance = #{account_balance},
+			</if>
+			<if test="is_repay != null">
+				is_repay = #{is_repay},
+			</if>
+			<if test="remark != null">
+				remark = #{remark},
+			</if>
+			<if test="is_pay_taxes != null">
+				is_pay_taxes = #{is_pay_taxes},
+			</if>
+			<if test="is_pay_wages != null">
+				is_pay_wages = #{is_pay_wages},
+			</if>
+			<if test="is_late_pay_taxes != null">
+				is_late_pay_taxes = #{is_late_pay_taxes},
+			</if>
+			<if test="late_pay_taxes_days != null">
+				late_pay_taxes_days = #{late_pay_taxes_days},
+			</if>
+			<if test="is_arrears != null">
+				is_arrears = #{is_arrears},
+			</if>
+			<if test="arrears_days != null">
+				arrears_days = #{arrears_days},
+			</if>
+		</set>
+		where
+		wms_cre_rev_water_repay_loan_id = #{wms_cre_rev_water_repay_loan_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreRevWaterRepayLoan"
+		resultType="WmsCreRevWaterRepayLoan">
+		select
+		wms_cre_rev_water_repay_loan_id,
+		wms_cre_credit_head_id,
+		wms_cre_credit_line_customer_change_head_id,
+		repay_loan_type,
+		name,
+		bank_name,
+		beak_card_no_tail,
+		water_begin_month,
+		water_end_month,
+		account_balance,
+		is_repay,
+		remark,
+		is_pay_taxes,
+		is_pay_wages,
+		is_late_pay_taxes,
+		late_pay_taxes_days,
+		is_arrears,
+		arrears_days
+		from
+		wms_cre_rev_water_repay_loan
+		<where>
+			<if test="wms_cre_rev_water_repay_loan_id != null">
+				and wms_cre_rev_water_repay_loan_id =
+				#{wms_cre_rev_water_repay_loan_id}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="wms_cre_credit_line_customer_change_head_id != null">
+				and wms_cre_credit_line_customer_change_head_id =
+				#{wms_cre_credit_line_customer_change_head_id}
+			</if>
+			<if test="repay_loan_type != null">
+				and repay_loan_type = #{repay_loan_type}
+			</if>
+			<if test="name != null">
+				and name = #{name}
+			</if>
+			<if test="bank_name != null">
+				and bank_name = #{bank_name}
+			</if>
+			<if test="beak_card_no_tail != null">
+				and beak_card_no_tail = #{beak_card_no_tail}
+			</if>
+			<if test="water_begin_month != null">
+				and water_begin_month = #{water_begin_month}
+			</if>
+			<if test="water_end_month != null">
+				and water_end_month = #{water_end_month}
+			</if>
+			<if test="account_balance != null">
+				and account_balance = #{account_balance}
+			</if>
+			<if test="is_repay != null">
+				and is_repay = #{is_repay}
+			</if>
+			<if test="remark != null">
+				and remark = #{remark}
+			</if>
+			<if test="is_pay_taxes != null">
+				and is_pay_taxes = #{is_pay_taxes}
+			</if>
+			<if test="is_pay_wages != null">
+				and is_pay_wages = #{is_pay_wages}
+			</if>
+			<if test="is_late_pay_taxes != null">
+				and is_late_pay_taxes = #{is_late_pay_taxes}
+			</if>
+			<if test="late_pay_taxes_days != null">
+				and late_pay_taxes_days = #{late_pay_taxes_days}
+			</if>
+			<if test="is_arrears != null">
+				and is_arrears = #{is_arrears}
+			</if>
+			<if test="arrears_days != null">
+				and arrears_days = #{arrears_days}
+			</if>
+			<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+				and wms_cre_rev_water_repay_loan_id !=
+				#{wms_cre_rev_water_repay_loan_id}
+			</if>
+		</where>
+	</select>
+	<delete id="deleteRecords" parameterType="map">
+		delete from wms_cre_rev_water_repay_loan
+		<where>
+			1=1
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="wms_cre_credit_line_customer_change_head_id != null">
+				and wms_cre_credit_line_customer_change_head_id =
+				#{wms_cre_credit_line_customer_change_head_id}
+			</if>
+			<if test="repay_loan_type != null">
+				and repay_loan_type = #{repay_loan_type}
+			</if>
+		</where>
+	</delete>
+</mapper> 

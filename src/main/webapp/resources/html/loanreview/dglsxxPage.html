@@ -1,0 +1,640 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+</head>
+<body>
+	<div class="pop-center overflow-au">
+		<div class="center-content" style="min-width: 550px;">
+			<div>
+				<div class="center-title3 position-re" style="margin-bottom: 10px">
+					总体情况
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				<div class="center-txt clearfix"
+					style="margin-bottom: 5px; padding: 5px; border: 1px solid #BFBFBF; height: auto;">
+					<div class="float-l commonstyle">
+						<div class="pop-form-title2">是否符合进件标准</div>
+						<div class="pop-form-item">
+							<select name="is_standard" style="width: 120px;">
+								<option selected="selected" value="">请选择</option>
+								<option value="1">符合</option>
+								<option value="0">不符合</option>
+							</select>
+						</div>
+					</div>
+					<div class="float-l commonstyle">
+						<div class="pop-form-title2">流水</div>
+						<div class="pop-form-item">
+							<input type="text" name="warter_copies" style="width: 103px"
+								maxlength="25" /> 份
+						</div>
+					</div>
+					<div class="float-l commonstyle" style="margin-left: 100px">
+						<div class="pop-form-item">
+							<input type="radio" id="fcco1" name="comp_type" value="0"
+								class="radio3" /> 企业 <input type="radio" id="fcco2"
+								name="comp_type" value="1" class="radio3" /> 个体工商户
+						</div>
+					</div>
+					<div class="float-l commonstyle clearboth">
+						<div class="pop-form-title2">评价</div>
+						<div class="pop-form-item">
+							<select name="evaluation" style="width: 120px;">
+								<option selected="selected" value="">请选择</option>
+								<option value="1">好</option>
+								<option value="2">中</option>
+								<option value="3">差</option>
+							</select>
+						</div>
+					</div>
+					<div class="float-l commonstyle">
+						<div class="pop-form-title2">负债</div>
+						<div class="pop-form-item">
+							<select name="liabilities" style="width: 120px;">
+								<option selected="selected" value="">请选择</option>
+								<option value="1">高</option>
+								<option value="2">中</option>
+								<option value="3">低</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div>
+				<div class="center-title3 position-re">
+					对公流水
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				<div id="toolbar-dgls" class="minwidth400"
+					style="border: none; background-color: #e6f4ff; margin-bottom: 10px;"></div>
+				<div class="center-txt class_dgls clearfix"
+					style="margin-bottom: 5px; padding: 5px; border: 1px solid #BFBFBF; height: auto;">
+					<div class="float-l commonstyle">
+						<div class="pop-form-item">
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="bank_name"
+								style="width: 220px" maxlength="50" /> 银行， （ <input
+								name="water_begin_month" type="text" style="width: 129px"
+								maxlength="50" /> - <input name="water_end_month" type="text"
+								style="width: 129px" maxlength="50" />）， 余额 <input type="text"
+								name="account_balance" style="width: 120px" maxlength="25" /> 元
+						</div>
+					</div>
+					<div class="float-l commonstyle clearboth">
+						<div class="pop-form-title2">有无贷款还款体现</div>
+						<div class="pop-form-item" style="margin-right: 120px">
+							<input type="radio" name="is_repay0" value="1" class="radio3"
+								onclick="toggleYwdkhktx(this)" />有 <input type="radio"
+								name="is_repay0" value="0" class="radio3" checked="checked"
+								onclick="toggleYwdkhktx(this)" />无
+						</div>
+					</div>
+					<div class="float-l commonstyle">
+						<div class="pop-form-title2">有无缴税体现</div>
+						<div class="pop-form-item">
+							<input type="radio" name="is_pay_taxes0" value="1" class="radio3" />有&nbsp;&nbsp;&nbsp;
+							（有无晚缴 <input type="radio" name="is_late_pay_taxes0" value="1"
+								class="radio3" />有 <input type="radio"
+								name="is_late_pay_taxes0" value="0" class="radio3"
+								checked="checked" />无 &nbsp;&nbsp;&nbsp; <input type="text"
+								name="late_pay_taxes_days" style="width: 50px" maxlength="25" />
+							天）&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input
+								type="radio" name="is_pay_taxes0" value="0" class="radio3"
+								checked="checked" />无
+						</div>
+					</div>
+					<div class="float-l commonstyle clearboth"
+						style="margin-left: 311px">
+						<div class="pop-form-title2">有无工资体现</div>
+						<div class="pop-form-item">
+							<input type="radio" name="is_pay_wages0" value="1" class="radio3" />有&nbsp;&nbsp;&nbsp;
+							（有无拖欠 <input type="radio" name="is_arrears0" value="1"
+								class="radio3" />有 <input type="radio" name="is_arrears0"
+								value="0" class="radio3" checked="checked" />无
+							&nbsp;&nbsp;&nbsp; <input type="text" name="arrears_days"
+								style="width: 50px" maxlength="25" />
+							天）&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input
+								type="radio" name="is_pay_wages0" value="0" class="radio3"
+								checked="checked" />无
+						</div>
+					</div>
+					<div class="float-l commonstyle clearboth class_group_xz dgls_xz"
+						style="margin-left: 20px; height: 60px">
+						<div class="pop-form-item">
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label class="grouplabel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><a
+								href="#" class="createa groupnew"
+								onclick="createRecord(this,'dgls_xz')" style="display: none">新增</a>
+							固定：名称 <input type="text" name="repay_name" style="width: 126px"
+								disabled="disabled" maxlength="25" /> 放款日期 <input
+								name="loan_date" maxlength="50" type="text" style="width: 100px"
+								disabled="disabled" /> 金额 <input type="text" name="loan_amount"
+								style="width: 50px" disabled="disabled" maxlength="25" /> 元 有无逾期
+							<input type="radio" name="is_overdue0" value="1" class="radio3"
+								disabled="disabled" />有 <input type="radio" name="is_overdue0"
+								value="0" class="radio3" checked="checked" disabled="disabled" />无<br />
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 还款日期
+							<input name="repay_date" maxlength="50" type="text"
+								style="width: 100px" disabled="disabled" /> 金额 <input
+								type="text" name="repay_account" style="width: 50px"
+								disabled="disabled" maxlength="25" /> 元 逾期天数 <input type="text"
+								name="overdue_days" style="width: 50px" disabled="disabled"
+								maxlength="25" /> 天， 滞纳金 <input type="text" name="late_fee"
+								style="width: 50px" disabled="disabled" maxlength="25" /> 元
+						</div>
+					</div>
+					<div class="float-l commonstyle clearboth"
+						style="margin-left: -76px">
+						<div class="pop-form-title2">其他</div>
+						<div class="pop-form-item" style="height: 48px">
+							<textarea name="remark" style="resize: none; width: 717px;"
+								maxlength="200"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="display: none" id="copy_dgls_xz">
+				<div class="pop-form-item">
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;固定：名称 <input type="text"
+						name="repay_name" style="width: 126px" maxlength="25" /> 放款日期 <input
+						name="loan_date" maxlength="50" type="text" style="width: 100px" />
+					金额 <input type="text" name="loan_amount" style="width: 50px"
+						maxlength="25" /> 元 有无逾期 <input type="radio" name="is_overdue"
+						value="1" class="radio3" />有 <input type="radio"
+						name="is_overdue" value="0" class="radio3" checked="checked" />无
+					<a href="#" class="groupdel" onclick="delRecord(this)"> 删除</a> <br />
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					还款日期 <input name="repay_date" maxlength="50" type="text"
+						style="width: 100px" /> 金额 <input type="text" name="repay_account"
+						style="width: 50px" maxlength="25" /> 元 逾期天数 <input type="text"
+						name="overdue_days" style="width: 50px" maxlength="25" /> 天， 滞纳金 <input
+						type="text" name="late_fee" style="width: 50px" maxlength="25" />
+					元
+				</div>
+			</div>
+			<div id="copy_dgls" style="display: none">
+				<div class="float-l commonstyle">
+					<div class="pop-form-item">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="bank_name"
+							style="width: 220px" maxlength="50" /> 银行， （ <input
+							name="water_begin_month" type="text" style="width: 129px"
+							maxlength="50" /> - <input name="water_end_month" type="text"
+							style="width: 129px" maxlength="50" />）， 余额 <input type="text"
+							name="account_balance" style="width: 120px" maxlength="25" /> 元
+					</div>
+				</div>
+				<div class="float-l commonstyle clearboth">
+					<div class="pop-form-title2">有无贷款还款体现</div>
+					<div class="pop-form-item" style="margin-right: 120px">
+						<input type="radio" name="is_repay" value="1" class="radio3"
+							onclick="toggleYwdkhktx(this)" />有 <input type="radio"
+							name="is_repay" value="0" class="radio3" checked="checked"
+							onclick="toggleYwdkhktx(this)" />无
+					</div>
+				</div>
+				<div class="float-l commonstyle">
+					<div class="pop-form-title2">有无缴税体现</div>
+					<div class="pop-form-item">
+						<input type="radio" name="is_pay_taxes" value="1" class="radio3" />有&nbsp;&nbsp;&nbsp;
+						（有无晚缴 <input type="radio" name="is_late_pay_taxes" value="1"
+							class="radio3" />有 <input type="radio" name="is_late_pay_taxes"
+							value="0" class="radio3" checked="checked" />无
+						&nbsp;&nbsp;&nbsp; <input type="text" name="late_pay_taxes_days"
+							style="width: 50px" maxlength="25" />
+						天）&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input
+							type="radio" name="is_pay_taxes" value="0" class="radio3"
+							checked="checked" />无
+					</div>
+				</div>
+				<div class="float-l commonstyle clearboth"
+					style="margin-left: 311px">
+					<div class="pop-form-title2">有无工资体现</div>
+					<div class="pop-form-item">
+						<input type="radio" name="is_pay_wages" value="1" class="radio3" />有&nbsp;&nbsp;&nbsp;
+						（有无拖欠 <input type="radio" name="is_arrears" value="1"
+							class="radio3" />有 <input type="radio" name="is_arrears"
+							value="0" class="radio3" checked="checked" />无
+						&nbsp;&nbsp;&nbsp; <input type="text" name="arrears_days"
+							style="width: 50px" maxlength="25" />
+						天）&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input
+							type="radio" name="is_pay_wages" value="0" class="radio3"
+							checked="checked" />无
+					</div>
+				</div>
+				<div class="float-l commonstyle clearboth class_group_xz dgls_xz"
+					style="margin-left: 20px; height: 60px">
+					<div class="pop-form-item">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label class="grouplabel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><a
+							href="#" class="createa groupnew"
+							onclick="createRecord(this,'dgls_xz')" style="display: none">新增</a>
+						固定：名称 <input type="text" name="repay_name" style="width: 126px"
+							disabled="disabled" maxlength="25" /> 放款日期 <input
+							name="loan_date" maxlength="50" type="text" style="width: 100px"
+							disabled="disabled" /> 金额 <input type="text" name="loan_amount"
+							style="width: 50px" disabled="disabled" maxlength="25" /> 元 有无逾期
+						<input type="radio" name="is_overdue" value="1" class="radio3"
+							disabled="disabled" />有 <input type="radio" name="is_overdue"
+							value="0" class="radio3" checked="checked" disabled="disabled" />无
+						<br />
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						还款日期 <input name="repay_date" maxlength="50" type="text"
+							style="width: 100px" disabled="disabled" /> 金额 <input type="text"
+							name="repay_account" style="width: 50px" disabled="disabled"
+							maxlength="25" /> 元 逾期天数 <input type="text" name="overdue_days"
+							style="width: 50px" disabled="disabled" maxlength="25" /> 天， 滞纳金
+						<input type="text" name="late_fee" style="width: 50px"
+							disabled="disabled" maxlength="25" /> 元
+					</div>
+				</div>
+				<div class="float-l commonstyle clearboth"
+					style="margin-left: -76px; height: 52px">
+					<div class="pop-form-title2">其他</div>
+					<div class="pop-form-item">
+						<textarea name="remark" style="resize: none; width: 717px;"
+							maxlength="200"></textarea>
+					</div>
+				</div>
+				<div class="float-l clearboth delthisgroup"
+					style="margin-left: 723px; margin-top: 20px">
+					<div class="pop-form-item">
+						<a href="#" onclick="delThisInfo(this);">删除本组信息</a>
+					</div>
+				</div>
+			</div>
+			<div>
+				<div class="center-title3 position-re">
+					备注
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				<div class="center-txt clearfix"
+					style="margin-bottom: 5px; padding: 5px; border: 1px solid #BFBFBF; height: auto; margin-top: 10px">
+					<div class="float-l commonstyle clearfix"
+						style="margin-left: -73px; margin-top: 5px; height: auto">
+						<div class="pop-form-title2">附件</div>
+						<div class="pop-form-item">
+							<a class="btn" href="#" onclick="openAddAttDialog()"
+								id="uploadButton">上传附件</a>
+						</div>
+						<div class="pop-form-item clearfix" id="fileinfo"
+							style="height: auto"></div>
+					</div>
+					<div class="float-l commonstyle clearboth clearfix"
+						style="margin-left: -76px; height: auto">
+						<div class="pop-form-title2">备注</div>
+						<div class="pop-form-item clearfix" style="height: auto">
+							<textarea name="remark" class="bz_remark"
+								style="resize: none; width: 718px;" maxlength="500"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+var index = 1;
+var fileArr = [];//上传附件列表
+var wms_cre_credit_head_id = $.query.get('wms_cre_credit_head_id');
+var wms_cre_credit_line_customer_change_head_id = $.query.get('wms_cre_credit_line_customer_change_head_id');
+var cktype = $.query.get('cktype');
+$(function() {
+	initForm();
+	if(cktype=='ck'){		
+		
+	}else{
+		//对私流水新增工具条
+		$("#toolbar-dgls").ligerToolBar({
+			 items: [{
+			        text: '新增',
+			        click: add_dglsDiv,
+			        icon: 'add'
+			    },{
+			            line: true
+			    }]
+		});
+	}		
+});
+//初始化表单
+function initForm(){
+	$.getJSON(globalUtil.getTimestampUrl('/loanreview/wmscrerevwatermaininfobyfkforadd.do'),
+			{
+				"wms_cre_credit_head_id" : wms_cre_credit_head_id,
+				"wms_cre_credit_line_customer_change_head_id" : wms_cre_credit_line_customer_change_head_id
+			},
+			function(json) {	
+				if(json.ztqk != null){
+					$("select[name='is_standard']").val(json.ztqk.is_standard);//是否符合进件标准
+					$("input[name='warter_copies']").val(json.ztqk.warter_copies);//流水份数
+					setRadioVal("comp_type",json.ztqk.comp_type);//企业或个体工商户
+					$("select[name='evaluation']").val(json.ztqk.evaluation);//评价
+					$("select[name='liabilities']").val(json.ztqk.liabilities);//负债
+					$("textarea[class='bz_remark']").val(json.ztqk.remark);//备注
+					for(i=0;i<json.dgls.length-1;i++){
+						add_dglsDiv();
+					}
+					$('.class_dgls').each(function(i){							
+						$(this).find('[name=bank_name]').val(json.dgls[i].bank_name);//银行
+						$(this).find('[name=water_begin_month]').val(json.dgls[i].water_begin_month);//流水开始月份
+						$(this).find('[name=water_end_month]').val(json.dgls[i].water_end_month);//流水结束月份
+						$(this).find('[name=account_balance]').val(json.dgls[i].account_balance);//余额
+						setRadioVal('is_repay',json.dgls[i].is_repay,this,true);//有无贷款还款体现
+						setRadioVal('is_pay_taxes',json.dgls[i].is_pay_taxes,this,true);//有无缴税体现
+						setRadioVal('is_late_pay_taxes',json.dgls[i].is_late_pay_taxes,this,true);//有无晚缴税
+						setRadioVal('is_pay_wages',json.dgls[i].is_pay_wages,this,true);//有无工资体现
+						setRadioVal('is_arrears',json.dgls[i].is_arrears,this,true);//有无工资拖欠
+						$(this).find('[name=late_pay_taxes_days]').val(json.dgls[i].late_pay_taxes_days);//晚缴天数
+						$(this).find('[name=arrears_days]').val(json.dgls[i].arrears_days);//拖欠工资天数
+						$(this).find('[name=remark]').val(json.dgls[i].remark);//其他
+						for(k=0;k<json.dgls[i].dglsGroup.length-1;k++){
+							createRecordForRead(this,'dgls_xz');
+						}
+						if(json.dgls[i].is_repay=='1'){
+							$(this).find('.dgls_xz').each(function(j){	
+								$(this).find('[name=repay_name]').val(json.dgls[i].dglsGroup[j].repay_name);//还款名
+								$(this).find('[name=loan_date]').val(json.dgls[i].dglsGroup[j].loan_date);//放款日期
+								$(this).find('[name=loan_amount]').val(json.dgls[i].dglsGroup[j].loan_amount);//放款金额
+								setRadioVal('is_overdue',json.dgls[i].dglsGroup[j].is_overdue,this,true);//有无逾期
+								$(this).find('[name=repay_date]').val(json.dgls[i].dglsGroup[j].repay_date);//还款日期
+								$(this).find('[name=repay_account]').val(json.dgls[i].dglsGroup[j].repay_account);//还款金额
+								$(this).find('[name=overdue_days]').val(json.dgls[i].dglsGroup[j].overdue_days);//逾期天数
+								$(this).find('[name=late_fee]').val(json.dgls[i].dglsGroup[j].late_fee);//滞纳金
+							});							
+						}				
+					});
+					fileArr = json.fjxx;
+					if(cktype=='ck'){
+						init_attr(0);		
+					}else{
+						init_attr(1);		
+					}								
+				}		
+				if(cktype!='ck'){
+					setFormStatus();
+				}else{
+					setReadOnly();
+				}
+	});
+}
+//设置表单控件的状态
+function setFormStatus(){
+	$('.class_dgls').each(function(i){
+		if($(this).find('[name^=is_repay]:checked').val()==1){
+			$(this).find('.dgls_xz:first').find('input').removeAttr('disabled');
+			$(this).find('.dgls_xz:first').find('label').css('display','none');
+			$(this).find('.dgls_xz:first').find('.groupnew').css('display','inline');
+		}		
+	});
+}
+//添加对私流水信息
+function add_dglsDiv(){
+	var outDiv = $('<div class="center-txt class_dgls clearfix" style="margin-bottom: 5px;padding:5px;border:1px solid #BFBFBF;height:auto"></div>');
+	outDiv.html($('#copy_dgls').html());
+	$(outDiv).find('[name^=is_repay]').attr('name','is_repay'+index);
+	$(outDiv).find('[name^=is_pay_taxes]').attr('name','is_pay_taxes'+index);
+	$(outDiv).find('[name^=is_late_pay_taxes]').attr('name','is_late_pay_taxes'+index);
+	$(outDiv).find('[name^=is_pay_wages]').attr('name','is_pay_wages'+index);
+	$(outDiv).find('[name^=is_arrears]').attr('name','is_arrears'+index);
+	$(outDiv).find('[name^=is_overdue]').attr('name','is_overdue'+index);
+	$('.class_dgls:last').after(outDiv);
+	index++;
+}
+//删除本组信息
+function delThisInfo(ele){
+	globalUtil.confirmMsg(globalErrorMsg['100035'],
+		    function(yes) { //确认删除
+		    	if(yes){
+		    		$(ele).parent().parent().parent().remove();
+		    	}
+		    });	
+}
+//组内新增
+function createRecord(ele,className){
+	var outDiv = $('<div class="float-l commonstyle clearboth class_group_xz '+className+'" style="margin-left:52px;height:60px"></div>');
+	outDiv.html($('#copy_dgls_xz').html());
+	$(ele).parent().parent().parent().find('.class_group_xz:last').after(outDiv);
+	$(ele).parent().parent().parent().find('.class_group_xz:last').find('[name=is_overdue]').attr('name','is_overdue'+index);
+	index++;
+}
+//组内新增(只读)
+function createRecordForRead(ele,className){
+	var outDiv = $('<div class="float-l commonstyle clearboth class_group_xz '+className+'" style="margin-left:52px;height:60px"></div>');
+	outDiv.html($('#copy_dgls_xz').html());
+	$(ele).find('.class_group_xz:last').after(outDiv);
+	$(ele).find('.class_group_xz:last').find('[name=is_overdue]').attr('name','is_overdue'+index);
+	index++;
+}
+//组内删除
+function delRecord(ele){
+	globalUtil.confirmMsg(globalErrorMsg['100036'],
+		    function(yes) { //确认删除
+		    	if(yes){
+		    		$(ele).parent().parent().remove();
+		    	}
+	});	
+}
+//根据name属性或class值获取控件的值（适用于没有新增功能的组）
+function getValue(nameValue,classValue){
+	if(classValue==null){
+		return document.getElementsByName(nameValue)[0].value;
+	}else{
+		return $('.'+classValue).val();
+	}
+}
+//获取单选按钮被选中的项的值
+function getRadioValue(nameValue,classValue){
+	var result;
+	if(classValue==null){
+		var eleArr = document.getElementsByName(nameValue);
+		$.each(eleArr,function(i,ele){
+			if($(ele).attr('checked')){
+				result = $(ele).val();
+				return false;
+			}
+		});
+	}else{
+		var eleArr = $('.'+classValue);
+		$.each(eleArr.get(),function(i,ele){
+			if($(ele).attr('checked')){
+				result = $(ele).val();
+				return false;
+			}
+		});
+	}
+	return result
+}
+//设置Radio控件的值
+function setRadioVal(nameVal,valFromDb,ele,flag){
+	if(flag){
+		$(ele).find("input[name^='"+nameVal+"']").each(function() {
+			if ($(this).val() == valFromDb) {
+				$(this).attr('checked', 'checked');
+				return false;
+			}
+		});
+		
+	}else{
+		$("input[name='"+nameVal+"']").each(function() {
+			if ($(this).val() == valFromDb) {
+				$(this).attr('checked', 'checked');
+				return false;
+			}
+		});
+	}	
+}
+//获取表单中控件的值，返回一个json对象
+function getFormValues(){
+	var resultJson = {};//最终返回结果的Json对象
+	var ztqk = {};
+	ztqk.is_standard = getValue('is_standard');//是否符合进件标准
+	ztqk.warter_copies = getValue('warter_copies');//流水份数
+	ztqk.comp_type = getRadioValue('comp_type');//企业或个体工商户
+	ztqk.evaluation = getValue('evaluation');//评价
+	ztqk.liabilities = getValue('liabilities');//负债	
+	ztqk.remark = getValue(null,'bz_remark');//备注
+	resultJson.ztqk = ztqk;
+	var dglsArr = [];
+	$('.class_dgls').each(function(i){
+		var dglsRecord = {};
+		dglsRecord.bank_name = $(this).find('[name=bank_name]').get(0).value;//银行名称
+		dglsRecord.water_begin_month = $(this).find('[name=water_begin_month]').get(0).value;//流水开始月份
+		dglsRecord.water_end_month = $(this).find('[name=water_end_month]').get(0).value;//流水结束月份
+		dglsRecord.account_balance = $(this).find('[name=account_balance]').get(0).value;//余额
+		dglsRecord.is_repay = $(this).find('[name^=is_repay]:checked').get(0).value;//有无贷款还款体现
+		dglsRecord.is_pay_taxes = $(this).find('[name^=is_pay_taxes]:checked').get(0).value;//有无缴税体现
+		dglsRecord.is_late_pay_taxes = $(this).find('[name^=is_late_pay_taxes]:checked').get(0).value;//有无晚缴税
+		dglsRecord.is_pay_wages = $(this).find('[name^=is_pay_wages]:checked').get(0).value;//有无工资体现
+		dglsRecord.is_arrears = $(this).find('[name^=is_arrears]:checked').get(0).value;//有无工资拖欠		
+		dglsRecord.late_pay_taxes_days = $(this).find('[name=late_pay_taxes_days]').get(0).value;//晚缴天数
+		dglsRecord.arrears_days = $(this).find('[name=arrears_days]').get(0).value;//拖欠工资天数
+		dglsRecord.remark = $(this).find('[name=remark]').get(0).value;//其他
+		var dglsGroupArr = [];
+		if(dglsRecord.is_repay==1){
+			$(this).find('.dgls_xz').each(function(j){	
+				var dglsGroupRecord = {};
+				dglsGroupRecord.repay_name = $(this).find('[name=repay_name]').get(0).value;//还款名
+				dglsGroupRecord.loan_date = $(this).find('[name=loan_date]').get(0).value;//放款日期
+				dglsGroupRecord.loan_amount = $(this).find('[name=loan_amount]').get(0).value;//放款金额
+				dglsGroupRecord.is_overdue = $(this).find('[name^=is_overdue]:checked').get(0).value;//有无逾期
+				dglsGroupRecord.repay_date = $(this).find('[name=repay_date]').get(0).value;//还款日期
+				dglsGroupRecord.repay_account = $(this).find('[name=repay_account]').get(0).value;//还款金额
+				dglsGroupRecord.overdue_days = $(this).find('[name=overdue_days]').get(0).value;//逾期天数
+				dglsGroupRecord.late_fee = $(this).find('[name=late_fee]').get(0).value;//滞纳金
+				dglsGroupArr.push(dglsGroupRecord);
+			});
+		}
+		dglsRecord.dglsGroup = dglsGroupArr;
+		dglsArr.push(dglsRecord);
+	});	
+	resultJson.dgls = dglsArr;
+	resultJson.fileArr = fileArr;//附件
+	return resultJson;
+}
+//获取上传附件内容，并且只能查看功能
+function init_attr(flag){
+	var filehtml = '';
+	for(var i=0;i<fileArr.length;i++){
+		var nnme=fileArr[i].attachment_new_name.replace('/','thxg1');
+		nnme=nnme.replace('/','thxg2');
+		filehtml += '<div id="delUploadDivId'+nnme+'">';
+		filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+fileArr[i].attachment_address+'">'+fileArr[i].attachment_old_name+'</a>';
+		if(flag==1){
+			filehtml += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\''+nnme+'\')"/>';
+		}
+		filehtml += '</div>'
+	}
+	$("#fileinfo").html(filehtml);   
+}
+//打开附件上传页面
+function openAddAttDialog(){
+	var url = globalUtil.getHtml("../creditManage/addFileForCre.html");
+	dialog_att = $.ligerDialog.open({
+        url: url,
+        title: '上传附件',
+        width: 650,
+        height: globalUtil.setDialogHeight(250),
+        onHiddenOrClose: function(){
+        	//alert('关闭或隐藏都调用的事件!');
+    	},
+        isResize: false
+	});
+}
+//添加上传文件的信息链接
+function addAttFile(newfileArr,objid){
+	fileArr = fileArr.concat(newfileArr);
+	var filehtml = $("#fileinfo").html();
+	for(var i=0;i<newfileArr.length;i++){
+		var nnme=newfileArr[i].attachment_new_name.replace('/','thxg1');
+		nnme=nnme.replace('/','thxg2');
+		filehtml += '<div id="delUploadDivId'+nnme+'">';
+		filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+newfileArr[i].attachment_address+'">'+newfileArr[i].attachment_old_name+'</a>';
+		filehtml += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\''+nnme+'\')"/>';
+		filehtml += '</div>'
+	}		
+	$("#fileinfo").html(filehtml);
+}
+//删除上传文件的信息链接
+function deleteFile(filename){
+   	$.ligerDialog.confirm(globalErrorMsg['100016'],
+    function(yes) {
+    	if (yes) {
+    		$("#delUploadDivId"+filename).remove();
+    		filename=filename.replace('thxg1','/');
+    		filename=filename.replace('thxg2','/');
+    		for(var i=0;i<fileArr.length;i++){
+    			if(filename == fileArr[i].attachment_new_name){
+    				fileArr.splice(i,1);
+    				break;
+    			}
+    		}
+    	}                                            
+	});
+}
+//toggle有无贷款还款体现
+function toggleYwdkhktx(ele){
+	if($(ele).val()==1 && $(ele).attr('checked')){
+		$.each($(ele).parent().parent().parent().find('.dgls_xz').get(),function(i,innerEle){
+			$(innerEle).find('input').removeAttr('disabled');
+			$(innerEle).find('a[class^=createa]').css('display','inline');
+			$(innerEle).find('label').css('display','none');
+		});
+	}else if($(ele).val()==0 && $(ele).attr('checked')){		
+		$.each($(ele).parent().parent().parent().find('.dgls_xz').get(),function(i,innerEle){
+			$(innerEle).find('input').attr('disabled','disabled');
+			$(innerEle).find('a[class^=createa]').css('display','none');
+			$(innerEle).find('label').css('display','inline');
+		});
+	}
+}
+//设置为只读模式
+function setReadOnly(){
+	$("input[type=text]").attr({
+		"disabled" : "disabled"
+	});
+	$("input[type=radio]").attr({
+		"disabled" : "disabled"
+	});	
+	$("select").attr({
+		"disabled" : "disabled"
+	});
+	$("textarea").attr({
+		"disabled" : "disabled"
+	});
+	$("#uploadButton").css({
+		"display" : "none"
+	});
+	$('.groupnew').css('display','none');
+	$('.groupdel').css('display','none');
+	$('.grouplabel').css('display','inline');
+	$('.delthisgroup').css('display','none');
+}
+</script>
+</body>
+</html>

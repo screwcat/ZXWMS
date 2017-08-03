@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveWagerulesHeadDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveWagerulesHead">
+		select
+        				wms_inve_wagerules_head_id,
+        				dept_id,
+        				post_id,
+        				base_wage,
+        				positive_wage,
+        				rule_state,
+						date_format(create_datetime,'%Y-%m-%d %H:%i:%s') as create_datetime_str,
+        				create_datetime,
+        				create_user_id,
+        				create_user_name,
+        				last_update_user_id,
+						date_format(last_update_datetime,'%Y-%m-%d %H:%i:%s') as last_update_datetime_str,
+        				last_update_datetime,
+        				enable_flag,
+        				start_date,
+        				date_format(start_date,'%Y-%m-%d') as start_date_str,
+        				stop_date,
+        				date_format(stop_date,'%Y-%m-%d') as stop_date_str,
+        				page_rule_state
+        	from
+        		wms_inve_wagerules_head
+        	where
+        				wms_inve_wagerules_head_id = #{wms_inve_wagerules_head_id}
+	</select>
+
+	<!-- list通过职务查询所有不同职务下的所有配置信息 -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_inve_wagerules_head_id,
+				dept_id,
+				post_id,
+				base_wage,
+				positive_wage,
+				rule_state,
+				date_format(create_datetime,'%Y-%m-%d') as create_datetime_str,
+				create_datetime,
+				create_user_id,
+				create_user_name,
+				last_update_user_id,
+				date_format(last_update_datetime,'%Y-%m-%d %H:%i:%s') as last_update_datetime_str,
+				last_update_datetime,
+				enable_flag,
+				start_date,
+        		date_format(start_date,'%Y-%m-%d') as start_date_str,
+        		stop_date,
+        		date_format(stop_date,'%Y-%m-%d') as stop_date_str,
+        		page_rule_state
+		from wms_inve_wagerules_head
+		<where>
+				enable_flag=1 
+			<if test="post_id != null">
+				and post_id =#{post_id}
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<!-- count num通过职务查询所有不同职务下的所有配置信息数 -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_wagerules_head_id) as count
+		from wms_inve_wagerules_head
+		<where>
+				enable_flag=1 
+			<if test="post_id != null">
+				and post_id =#{post_id}
+			</if>
+		</where>
+	</select>
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveWagerulesHead" useGeneratedKeys="true" keyProperty="wms_inve_wagerules_head_id">
+		INSERT INTO wms_inve_wagerules_head
+		(
+				wms_inve_wagerules_head_id,
+
+				dept_id,
+
+				post_id,
+
+				base_wage,
+
+				positive_wage,
+
+				rule_state,
+
+				create_datetime,
+
+				create_user_id,
+
+				create_user_name,
+
+				last_update_user_id,
+
+				last_update_datetime,
+
+				enable_flag,
+				
+				start_date,
+				
+				stop_date,
+				
+				page_rule_state
+		)
+		VALUES
+		(
+				#{wms_inve_wagerules_head_id},
+				#{dept_id},
+				#{post_id},
+				#{base_wage},
+				#{positive_wage},
+				#{rule_state},
+				#{create_datetime},
+				#{create_user_id},
+				#{create_user_name},
+				#{last_update_user_id},
+				#{last_update_datetime},
+				#{enable_flag},
+				#{start_date},
+				#{stop_date},
+				#{page_rule_state}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveWagerulesHead">
+		update wms_inve_wagerules_head
+		<set>
+					<if test="wms_inve_wagerules_head_id != null">
+						 wms_inve_wagerules_head_id = #{wms_inve_wagerules_head_id},
+					</if>
+					<if test="dept_id != null">
+						 dept_id = #{dept_id},
+					</if>
+					<if test="post_id != null">
+						 post_id = #{post_id},
+					</if>
+					<if test="base_wage != null">
+						 base_wage = #{base_wage},
+					</if>
+					<if test="positive_wage != null">
+						 positive_wage = #{positive_wage},
+					</if>
+					<if test="rule_state != null">
+						 rule_state = #{rule_state},
+					</if>
+					<if test="create_datetime != null">
+						 create_datetime = #{create_datetime},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="create_user_name != null">
+						 create_user_name = #{create_user_name},
+					</if>
+					<if test="last_update_user_id != null">
+						 last_update_user_id = #{last_update_user_id},
+					</if>
+					<if test="last_update_datetime != null">
+						 last_update_datetime = #{last_update_datetime},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+						start_date =#{start_date},
+						stop_date =#{stop_date},
+					<if test="page_rule_state != null">
+						page_rule_state =#{page_rule_state},
+					</if>
+	   </set>
+		 where 
+    				wms_inve_wagerules_head_id = #{wms_inve_wagerules_head_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveWagerulesHead" resultType="WmsInveWagerulesHead">
+		select 
+				wms_inve_wagerules_head_id,
+				dept_id,
+				post_id,
+				base_wage,
+				positive_wage,
+				rule_state,
+				date_format(create_datetime,'%Y-%m-%d %H:%i:%s') as create_datetime_str,
+				create_datetime,
+				create_user_id,
+				create_user_name,
+				last_update_user_id,
+				date_format(last_update_datetime,'%Y-%m-%d %H:%i:%s') as last_update_datetime_str,
+				last_update_datetime,
+				enable_flag,
+				start_date,
+				date_format(start_date,'%Y-%m-%d') as start_date_str,
+				stop_date,
+				date_format(stop_date,'%Y-%m-%d') as stop_date_str,
+				page_rule_state
+		from
+		wms_inve_wagerules_head
+		<where>
+					<if test="wms_inve_wagerules_head_id != null">
+						and wms_inve_wagerules_head_id = #{wms_inve_wagerules_head_id}
+					</if>
+					<if test="dept_id != null">
+						and dept_id = #{dept_id}
+					</if>
+					<if test="post_id != null">
+						and post_id = #{post_id}
+					</if>
+					<if test="base_wage != null">
+						and base_wage = #{base_wage}
+					</if>
+					<if test="positive_wage != null">
+						and positive_wage = #{positive_wage}
+					</if>
+					<if test="rule_state != null">
+						and rule_state = #{rule_state}
+					</if>
+					<if test="create_datetime != null">
+						and create_datetime = #{create_datetime}
+					</if>
+					<if test="create_user_id != null">
+						and create_user_id = #{create_user_id}
+					</if>
+					<if test="create_user_name != null">
+						and create_user_name = #{create_user_name}
+					</if>
+					<if test="last_update_user_id != null">
+						and last_update_user_id = #{last_update_user_id}
+					</if>
+					<if test="last_update_datetime != null">
+						and last_update_datetime = #{last_update_datetime}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+					<if test="start_date != null">
+						and start_date =#{start_date}
+					</if>
+					<if test="stop_date !=null">
+						and stop_date =#{stop_date}
+					</if>
+					<if test="page_rule_state !=null">
+						and page_rule_state =#{page_rule_state}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        		and wms_inve_wagerules_head_id != #{wms_inve_wagerules_head_id}
+					</if>
+		</where>
+	</select>
+	<!-- 实现查询系统中存在同部门 -->
+	<select id="getListByRepeat" parameterType="WmsInveWagerulesHead" resultType="WmsInveWagerulesHead">
+		select 
+					wms_inve_wagerules_head_id,
+					dept_id,
+					post_id,
+					base_wage,
+					positive_wage,
+					rule_state,
+					date_format(create_datetime,'%Y-%m-%d %H:%i:%s') as create_datetime_str,
+					create_datetime,
+					create_user_id,
+					create_user_name,
+					last_update_user_id,
+					date_format(last_update_datetime,'%Y-%m-%d %H:%i:%s') as last_update_datetime_str,
+					last_update_datetime,
+					enable_flag,
+					start_date,
+					date_format(start_date,'%Y-%m-%d') as start_date_str,
+					stop_date,
+					date_format(stop_date,'%Y-%m-%d') as stop_date_str,
+					page_rule_state
+			from
+			wms_inve_wagerules_head
+			<where>
+				enable_flag=1  
+				<if test="rule_state !=null and page_rule_state !=null">
+					and (rule_state=#{rule_state} or page_rule_state=#{page_rule_state})
+				</if>
+				<if test="rule_state !=null and page_rule_state==null">
+					and rule_state=#{rule_state}
+				</if>
+			</where> 
+			
+			
+	</select>
+</mapper> 

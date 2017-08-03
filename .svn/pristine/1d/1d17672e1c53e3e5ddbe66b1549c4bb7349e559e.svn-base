@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.telUserLoanInfo.persist.TelUserLoanInfoDao">
+	<!-- 根据客户姓名身份证号码  手机号码 查询客户贷款还款信息 用于手机端 ，-->
+	<select id="searchinfoloan" parameterType="map" resultType="java.util.HashMap">
+		select
+		r.wms_fina_cre_pay_id,
+		r.wms_cre_credit_head_id,
+		r.cre_type,
+		r.wms_cre_appro_borrow_protocol_id,
+		r.protocol_code,
+		r.protocol_type,
+		r.borrow_deadline,
+		r.borrow_interest,
+		date_format(r.protocol_creat_date,'%Y-%m-%d') as protocol_creat_date_str,
+		r.protocol_creat_date,
+		r.protocol_amount,
+		r.principal,
+		r.interest,
+		date_format(r.loan_date,'%Y-%m-%d') as loan_date_str,
+		r.loan_date,
+		r.loan_amount,
+		date_format(r.repay_begin_date,'%Y-%m-%d') as repay_begin_date_str,
+		r.repay_begin_date,
+		date_format(r.repay_end_date,'%Y-%m-%d') as repay_end_date_str,
+		r.repay_end_date,
+		date_format(r.current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		r.current_repay_date,
+		r.refund_limit_month,
+		r.liquidated_damages,
+		r.repay_period,
+		r.repay_principal,
+		r.repay_interest,
+		r.un_pay_period,
+		r.un_pay_principal,
+		r.un_pay_interest,
+		r.cur_overdue_type,
+		r.cur_overdue_day,
+		r.cur_late_fee,
+		r.total_overdue_period,
+		r.total_overdue_day,
+		r.total_late_fee,
+		r.total_pay_late_fee,
+		r.total_derate,
+		r.repay_status,
+		(case r.repay_status when '1' then '还款中' when '2' then '还款中' when '3' then '已完成' when '4' then '贷账' when '5' then '存档' when '6' then '诉讼' end) as repay_status_str,
+		date_format(r.clean_up_date,'%Y-%m-%d') as clean_up_date_str,
+		r.clean_up_date,
+		r.clean_up_status,
+		r.back_interest_period,
+		r.back_ammont,
+		r.customer_officer_id,
+		r.customer_officer_name,
+		r.is_upload,
+		r.create_user_id,
+		r.create_user_name,
+		date_format(r.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		r.create_timestamp,
+		r.last_update_user_id,
+		date_format(r.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		r.last_update_timestamp,
+		r.enable_flag,
+		r.salesman_id,
+		r.salesman_name,
+		r.migration_status,
+		r.pre_repay_status,
+		r.matching_creditor,
+		(select value_meaning from wms_sys_dict_data where wms_sys_dict_data_id=(select cre_loan_type from wms_cre_credit_head where wms_cre_credit_head_id=r.wms_cre_credit_head_id)) as type_cre_loan,
+    	(select  concat(protocol_id_year,protocol_id_num) from wms_cre_appro_borrow_protocol  where wms_cre_credit_head_id=r.wms_cre_credit_head_id) as protocol_id_num
+		from wms_cus_customer_head c,wms_cre_credit_line_customer_change_head g,wms_fina_cre_repay r
+		<where>
+				r.enable_flag=1
+			and c.wms_cus_customer_id=g.wms_cus_customer_head_id
+			and g.wms_cre_credit_head_id=r.wms_cre_credit_head_id
+			and c.customer_name=#{customer_name}
+			and c.id_card=#{id_card}
+			and (c.mobile_telephone1=#{mobile_telephone1}
+			or  c.mobile_telephone2=#{mobile_telephone1})
+			and r.repay_status in (1,2,3)
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+
+	</select>
+	<!-- 根据客户姓名身份证号码  手机号码 查询客户贷款还款信息 用于手机端 ，-->
+	<select id="searchisum" parameterType="map" resultType="java.util.HashMap">
+	select
+		sum(r.principal+r.interest) as principal_interest,
+		sum(r.repay_principal+r.repay_interest) as repay_principal_interest,
+		sum(r.un_pay_principal+r.un_pay_interest) as un_principal_interest
+		from wms_cus_customer_head c,wms_cre_credit_line_customer_change_head g,wms_fina_cre_repay r
+		<where>
+				r.enable_flag=1
+			and c.wms_cus_customer_id=g.wms_cus_customer_head_id
+			and g.wms_cre_credit_head_id=r.wms_cre_credit_head_id
+			and c.customer_name=#{customer_name}
+			and c.id_card=#{id_card}
+			and (c.mobile_telephone1=#{mobile_telephone1}
+			or  c.mobile_telephone2=#{mobile_telephone1})
+			and r.repay_status in (1,2,3)
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+
+	</select>
+	<!-- 根据客户姓名身份证号码  手机号码 查询客户贷款还款信息 用于手机端 ，-->
+	<select id="searchnum" parameterType="map" resultType="int">
+	select
+		 COUNT(r.wms_fina_cre_pay_id) as number
+		
+		from wms_cus_customer_head c,wms_cre_credit_line_customer_change_head g,wms_fina_cre_repay r
+		<where>
+				r.enable_flag=1
+			and c.wms_cus_customer_id=g.wms_cus_customer_head_id
+			and g.wms_cre_credit_head_id=r.wms_cre_credit_head_id
+			and c.customer_name=#{customer_name}
+			and c.id_card=#{id_card}
+			and (c.mobile_telephone1=#{mobile_telephone1}
+			or  c.mobile_telephone2=#{mobile_telephone1})
+			and r.repay_status in (1,2)
+			
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+
+	</select>
+	<!-- 根据贷款主表id查询期还款台账信息    wms_cre_credit_head_id，-->
+	<select id="searchPeriodRepay" parameterType="map" resultType="java.util.HashMap">
+	select
+		wms_fina_cre_period_pay_id,
+		wms_cre_credit_head_id,
+		repay_no,
+		date_format(current_repay_date,'%Y-%m-%d') as current_repay_date_str,
+		current_repay_date,
+		org_repay_principal,
+		org_repay_interest,
+		date_format(repay_date,'%Y-%m-%d') as repay_date_str,
+		repay_date,
+		repay_total,
+		repay_principal,
+		repay_interest,
+		is_overdue,
+		cur_overdue_day,
+		cur_late_fee,
+		derate,
+		is_upload,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		DATEDIFF(NOW(), current_repay_date) as interval_date
+		from wms_fina_cre_period_repay
+		<where>
+				enable_flag=1
+				and wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+
+	</select>
+</mapper> 

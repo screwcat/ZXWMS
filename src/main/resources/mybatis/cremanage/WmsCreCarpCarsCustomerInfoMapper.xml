@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.cremanage.persist.WmsCreCarpCarsCustomerInfoDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsCreCarpCarsCustomerInfo">
+		select
+        				wms_cre_carp_cars_customer_info_id,
+        				wms_cre_credit_head_id,
+        				wms_cre_customer_change_line_carpinfo_id,
+        				car_name,
+        				car_no,
+						date_format(car_purchase_time,'%Y-%m-%d') as car_purchase_time_str,
+        				car_purchase_time,
+        				create_user_id,
+						date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+        				create_timestamp,
+        				last_update_user_id,
+						date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+        				last_update_timestamp,
+        				enable_flag
+        	from
+        		wms_cre_carp_cars_customer_info
+        	where
+        				wms_cre_carp_cars_customer_info_id = #{wms_cre_carp_cars_customer_info_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cre_carp_cars_customer_info_id) as count
+		from wms_cre_carp_cars_customer_info
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_cre_carp_cars_customer_info_id,
+				wms_cre_credit_head_id,
+				wms_cre_customer_change_line_carpinfo_id,
+				car_name,
+				car_no,
+				date_format(car_purchase_time,'%Y-%m-%d') as car_purchase_time_str,
+				car_purchase_time,
+				create_user_id,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from wms_cre_carp_cars_customer_info
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreCarpCarsCustomerInfo" useGeneratedKeys="true" keyProperty="wms_cre_carp_cars_customer_info_id">
+		INSERT INTO wms_cre_carp_cars_customer_info
+		(
+				wms_cre_carp_cars_customer_info_id,
+
+				wms_cre_credit_head_id,
+
+				wms_cre_customer_change_line_carpinfo_id,
+
+				car_name,
+
+				car_no,
+
+				car_purchase_time,
+
+				create_user_id,
+
+				create_timestamp,
+
+				last_update_user_id,
+
+				last_update_timestamp,
+
+				enable_flag
+		)
+		VALUES
+		(
+				#{wms_cre_carp_cars_customer_info_id},
+				#{wms_cre_credit_head_id},
+				#{wms_cre_customer_change_line_carpinfo_id},
+				#{car_name},
+				#{car_no},
+				#{car_purchase_time},
+				#{create_user_id},
+				#{create_timestamp},
+				#{last_update_user_id},
+				#{last_update_timestamp},
+				#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreCarpCarsCustomerInfo">
+		update wms_cre_carp_cars_customer_info
+		<set>
+					<if test="wms_cre_carp_cars_customer_info_id != null">
+						 wms_cre_carp_cars_customer_info_id = #{wms_cre_carp_cars_customer_info_id},
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						 wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+					</if>
+					<if test="wms_cre_customer_change_line_carpinfo_id != null">
+						 wms_cre_customer_change_line_carpinfo_id = #{wms_cre_customer_change_line_carpinfo_id},
+					</if>
+					<if test="car_name != null">
+						 car_name = #{car_name},
+					</if>
+					<if test="car_no != null">
+						 car_no = #{car_no},
+					</if>
+					<if test="car_purchase_time != null">
+						 car_purchase_time = #{car_purchase_time},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="create_timestamp != null">
+						 create_timestamp = #{create_timestamp},
+					</if>
+					<if test="last_update_user_id != null">
+						 last_update_user_id = #{last_update_user_id},
+					</if>
+					<if test="last_update_timestamp != null">
+						 last_update_timestamp = #{last_update_timestamp},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+	   </set>
+		 where 
+    				wms_cre_carp_cars_customer_info_id = #{wms_cre_carp_cars_customer_info_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreCarpCarsCustomerInfo" resultType="WmsCreCarpCarsCustomerInfo">
+		select 
+				wms_cre_carp_cars_customer_info_id,
+				wms_cre_credit_head_id,
+				wms_cre_customer_change_line_carpinfo_id,
+				car_name,
+				car_no,
+				date_format(car_purchase_time,'%Y-%m-%d') as car_purchase_time_str,
+				car_purchase_time,
+				create_user_id,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from
+		wms_cre_carp_cars_customer_info
+		<where>
+					<if test="wms_cre_carp_cars_customer_info_id != null">
+						and wms_cre_carp_cars_customer_info_id = #{wms_cre_carp_cars_customer_info_id}
+					</if>
+					<if test="wms_cre_credit_head_id != null">
+						and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+					</if>
+					<if test="wms_cre_customer_change_line_carpinfo_id != null">
+						and wms_cre_customer_change_line_carpinfo_id = #{wms_cre_customer_change_line_carpinfo_id}
+					</if>
+					<if test="car_name != null">
+						and car_name = #{car_name}
+					</if>
+					<if test="car_no != null">
+						and car_no = #{car_no}
+					</if>
+					<if test="car_purchase_time != null">
+						and car_purchase_time = #{car_purchase_time}
+					</if>
+					<if test="create_user_id != null">
+						and create_user_id = #{create_user_id}
+					</if>
+					<if test="create_timestamp != null">
+						and create_timestamp = #{create_timestamp}
+					</if>
+					<if test="last_update_user_id != null">
+						and last_update_user_id = #{last_update_user_id}
+					</if>
+					<if test="last_update_timestamp != null">
+						and last_update_timestamp = #{last_update_timestamp}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_cre_carp_cars_customer_info_id != #{wms_cre_carp_cars_customer_info_id}
+					</if>
+		</where>
+	</select>
+	<!-- list -->
+	<select id="getInfo" parameterType="map" resultType="java.util.HashMap">
+		select 
+				c.car_name,
+				c.car_no,
+				c.car_model,
+				c.vi_type_info
+		from wms_cre_carp_cars_customer_info i,wms_cre_customer_change_line_carpinfo c
+		<where>
+			c.enable_flag=1 and i.enable_flag=1 
+			and	c.wms_cre_customer_change_line_carpinfo_id=i.wms_cre_customer_change_line_carpinfo_id
+			<if test="wms_cre_credit_head_id != null">
+				 and i.wms_cre_credit_head_id = #{wms_cre_credit_head_id} 
+			</if>
+		</where>
+	</select>
+	
+	<!-- 车贷抵押车产信息 -->
+	<select id="searchCarCBYMccid" parameterType="map" resultType="java.util.HashMap">
+		select
+		m1.wms_cre_carp_cars_customer_info_id,
+		m1.wms_cre_credit_head_id,
+		m1.wms_cre_customer_change_line_carpinfo_id,
+		m1.car_name,
+		m1.car_no,
+		m1.car_purchase_time,
+		date_format(m1.car_purchase_time,'%Y-%m-%d %H:%i:%s') as car_purchase_time_str,
+		m1.last_update_user_id,
+		m1.last_update_timestamp,
+		date_format(m1.last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		m2.car_type,
+		m2.car_model,
+		m2.car_driving_mode,
+		m2.car_exhaust_quantity,
+		m2.car_purchase_amount,
+		m2.vehicle_acq_mode,
+		m2.vehicle_idn_num,
+		m2.insurance_maturity,
+		date_format(m2.insurance_maturity,'%Y-%m-%d %H:%i:%s') as insurance_maturity_str,
+		m2.vi_type_info,
+		m2.other_vi_info
+		from wms_cre_carp_cars_customer_info m1, wms_cre_customer_change_line_carpinfo m2
+		<where>
+			m1.wms_cre_customer_change_line_carpinfo_id=m2.wms_cre_customer_change_line_carpinfo_id
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+			</if>
+		</where>
+	</select>
+	
+	<delete id="deleteByMap" parameterType="map">
+		delete from wms_cre_carp_cars_customer_info
+		<where>
+			<if test="dltIDArr !=null">
+				and wms_cre_credit_head_id in
+				<foreach collection="dltIDArr" item="wms_cre_credit_head_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_cre_credit_head_id}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+	
+	<!-- 车贷抵押车产重复性判断 -->
+	<select id="searchCarInfoExistCount" parameterType="map" resultType="java.lang.Integer">
+		select count(*)
+		from wms_cre_carp_cars_customer_info a, wms_cre_customer_change_line_carpinfo b
+		where a.wms_cre_customer_change_line_carpinfo_id = b.wms_cre_customer_change_line_carpinfo_id
+			and b.vehicle_idn_num = #{vehicle_idn_num} and b.wms_cre_credit_line_customer_change_head_id in (
+				select wms_cre_credit_line_customer_change_head_id
+				from wms_cre_credit_line_customer_change_head
+				where wms_cus_customer_head_id = #{wms_cus_customer_head_id}
+			)
+	</select>
+</mapper> 

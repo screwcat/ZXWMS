@@ -1,0 +1,698 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveCustomerDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveCustomer">
+		select
+		wms_inve_customer_id,
+		id_card,
+		cus_code,
+		cus_name,
+		date_format(cus_birthday,'%Y-%m-%d') as cus_birthday_str,
+		cus_birthday,
+		cus_gender,
+		cus_address,
+		post_code,
+		address_phone,
+		work_phone,
+		cus_fax,
+		contact_address,
+		customer_email,
+		salesman_name,
+		salesman_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		customer_source,
+		costomer_id,
+		salesman_city_code,
+		salesman_city,
+		salesman_dept_id,
+		department_manager_id,
+		department_manager_city_code,
+		department_manager_dept_id,
+		vice_general_manager_id,
+		vice_general_manager_city_code,
+		vice_general_manager_dept_id,
+		general_manager_id,
+		general_manager_city_code,
+		general_manager_dept_id,
+		customer_num,
+		certificate_type
+		from
+		wms_inve_customer
+		where
+		wms_inve_customer_id = #{wms_inve_customer_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_customer_id) as count
+		from wms_inve_customer
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		wms_inve_customer_id,
+		id_card,
+		cus_code,
+		cus_name,
+		date_format(cus_birthday,'%Y-%m-%d') as cus_birthday_str,
+		cus_birthday,
+		cus_gender,
+		cus_address,
+		post_code,
+		address_phone,
+		work_phone,
+		cus_fax,
+		contact_address,
+		customer_email,
+		salesman_name,
+		salesman_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		salesman_city_code,
+		salesman_city,
+		salesman_dept_id,
+		mobile_phone,
+		customer_source,
+		costomer_id,
+		department_manager_id,
+		department_manager_city_code,
+		department_manager_dept_id,
+		vice_general_manager_id,
+		vice_general_manager_city_code,
+		vice_general_manager_dept_id,
+		general_manager_id,
+		general_manager_city_code,
+		general_manager_dept_id,
+		customer_num,
+		certificate_type
+		from wms_inve_customer
+		<where>
+			enable_flag='1'
+			<if test="id_card != null">
+				and id_card=#{id_card}
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveCustomer"
+		useGeneratedKeys="true" keyProperty="wms_inve_customer_id">
+		INSERT INTO wms_inve_customer
+		(
+		id_card,
+
+		cus_code,
+
+		cus_name,
+
+		cus_birthday,
+
+		cus_gender,
+
+		cus_address,
+
+		post_code,
+
+		address_phone,
+
+		work_phone,
+
+		cus_fax,
+
+		contact_address,
+
+		customer_email,
+
+		salesman_name,
+
+		salesman_id,
+
+		salesman_city_code,
+
+		salesman_city,
+
+		salesman_dept_id,
+
+		create_user_dept_id,
+
+		create_user_id,
+
+		create_user_name,
+
+		create_timestamp,
+
+		last_update_user_id,
+
+		last_update_timestamp,
+
+		enable_flag,
+
+		mobile_phone,
+		
+		customer_source,
+		
+		costomer_id,
+		
+		department_manager_id,
+		
+		department_manager_city_code,
+		
+		department_manager_dept_id,
+		
+		vice_general_manager_id,
+		
+		vice_general_manager_city_code,
+		
+		vice_general_manager_dept_id,
+		
+		general_manager_id,
+		
+		general_manager_city_code,
+		
+		general_manager_dept_id,
+		
+		customer_num,
+		
+		certificate_type
+		)
+		VALUES
+		(
+		#{id_card},
+		#{cus_code},
+		#{cus_name},
+		#{cus_birthday},
+		#{cus_gender},
+		#{cus_address},
+		#{post_code},
+		#{address_phone},
+		#{work_phone},
+		#{cus_fax},
+		#{contact_address},
+		#{customer_email},
+		#{salesman_name},
+		#{salesman_id},
+		#{salesman_city_code},
+		#{salesman_city},
+		#{salesman_dept_id},
+		#{create_user_dept_id},
+		#{create_user_id},
+		#{create_user_name},
+		#{create_timestamp},
+		#{last_update_user_id},
+		#{last_update_timestamp},
+		#{enable_flag},
+		#{mobile_phone},
+		#{customer_source},
+		#{costomer_id},
+		#{department_manager_id},
+		#{department_manager_city_code},
+		#{department_manager_dept_id},
+		#{vice_general_manager_id},
+		#{vice_general_manager_city_code},
+		#{vice_general_manager_dept_id},
+		#{general_manager_id},
+		#{general_manager_city_code},
+		#{general_manager_dept_id},
+		#{customer_num},
+		#{certificate_type}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveCustomer">
+		update wms_inve_customer
+		<set>
+			<if test="wms_inve_customer_id != null">
+				wms_inve_customer_id = #{wms_inve_customer_id},
+			</if>
+			<if test="id_card != null">
+				id_card = #{id_card},
+			</if>
+			<if test="cus_code != null">
+				cus_code = #{cus_code},
+			</if>
+			<if test="cus_name != null">
+				cus_name = #{cus_name},
+			</if>
+			<if test="cus_birthday != null">
+				cus_birthday = #{cus_birthday},
+			</if>
+			<if test="cus_gender != null">
+				cus_gender = #{cus_gender},
+			</if>
+			<if test="cus_address != null">
+				cus_address = #{cus_address},
+			</if>
+			<if test="post_code != null">
+				post_code = #{post_code},
+			</if>
+			<if test="address_phone != null">
+				address_phone = #{address_phone},
+			</if>
+			<if test="work_phone != null">
+				work_phone = #{work_phone},
+			</if>
+			<if test="cus_fax != null">
+				cus_fax = #{cus_fax},
+			</if>
+			<if test="contact_address != null">
+				contact_address = #{contact_address},
+			</if>
+			<if test="customer_email != null">
+				customer_email = #{customer_email},
+			</if>
+			<if test="salesman_name != null">
+				salesman_name = #{salesman_name},
+			</if>
+			<if test="salesman_id != null">
+				salesman_id = #{salesman_id},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+			<if test="mobile_phone != null">
+				mobile_phone = #{mobile_phone},
+			</if>
+			<if test="salesman_city_code !=null">
+				salesman_city_code=#{salesman_city_code},
+			</if>
+			<if test="salesman_city !=null">
+				salesman_city=#{salesman_city},
+			</if>
+			<if test="salesman_dept_id !=null">
+				salesman_dept_id=#{salesman_dept_id},
+			</if>
+			<if test="department_manager_id !=null">
+				department_manager_id=#{department_manager_id},
+			</if>
+			<if test="department_manager_city_code !=null">
+				department_manager_city_code=#{department_manager_city_code},
+			</if>
+			<if test="department_manager_dept_id !=null">
+				department_manager_dept_id=#{department_manager_dept_id},
+			</if>
+			<if test="vice_general_manager_id !=null">
+				vice_general_manager_id=#{vice_general_manager_id},
+			</if>
+			<if test="vice_general_manager_city_code !=null">
+				vice_general_manager_city_code=#{vice_general_manager_city_code},
+			</if>
+			<if test="vice_general_manager_dept_id !=null">
+				vice_general_manager_dept_id=#{vice_general_manager_dept_id},
+			</if>
+			<if test="general_manager_id !=null">
+				general_manager_id=#{general_manager_id},
+			</if>
+			<if test="general_manager_city_code !=null">
+				general_manager_city_code=#{general_manager_city_code},
+			</if>
+			<if test="general_manager_dept_id !=null">
+				general_manager_dept_id=#{general_manager_dept_id},
+			</if>
+			<if test="customer_num !=null">
+			    customer_num =#{customer_num},
+			</if>
+			<if test="costomer_id !=null">
+			    costomer_id =#{costomer_id},
+			</if>
+			<if test="certificate_type !=null">
+			    certificate_type =#{certificate_type},
+			</if>
+			<if test="customer_source != null">
+				customer_source = #{customer_source }
+			</if>
+		</set>
+		where
+			enable_flag = '1'
+			<if test="wms_inve_customer_id != null">
+				and wms_inve_customer_id = #{wms_inve_customer_id}
+			</if>
+			<if test="costomer_id != null">
+				and costomer_id = #{costomer_id}
+			</if>
+			<if test="id_card != null">
+				and id_card = #{id_card}
+			</if>
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveCustomer"
+		resultType="WmsInveCustomer">
+		select
+		wms_inve_customer_id,
+		id_card,
+		cus_code,
+		cus_name,
+		date_format(cus_birthday,'%Y-%m-%d') as cus_birthday_str,
+		cus_birthday,
+		cus_gender,
+		cus_address,
+		post_code,
+		address_phone,
+		work_phone,
+		cus_fax,
+		contact_address,
+		customer_email,
+		salesman_name,
+		salesman_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		customer_source,
+		costomer_id,
+		mobile_phone,
+		salesman_city_code,
+		salesman_city,
+		salesman_dept_id,
+		department_manager_id,
+		department_manager_city_code,
+		department_manager_dept_id,
+		vice_general_manager_id,
+		vice_general_manager_city_code,
+		vice_general_manager_dept_id,
+		general_manager_id,
+		general_manager_city_code,
+		general_manager_dept_id,
+		customer_num,
+		certificate_type
+		from
+		wms_inve_customer
+		<where>
+			enable_flag = '1'
+			<if test="wms_inve_customer_id != null">
+				and wms_inve_customer_id = #{wms_inve_customer_id}
+			</if>
+			<if test="id_card != null">
+				and id_card = #{id_card}
+			</if>
+			<if test="cus_code != null">
+				and cus_code = #{cus_code}
+			</if>
+			<if test="cus_name != null">
+				and cus_name = #{cus_name}
+			</if>
+			<if test="cus_birthday != null">
+				and cus_birthday = #{cus_birthday}
+			</if>
+			<if test="cus_gender != null">
+				and cus_gender = #{cus_gender}
+			</if>
+			<if test="cus_address != null">
+				and cus_address = #{cus_address}
+			</if>
+			<if test="post_code != null">
+				and post_code = #{post_code}
+			</if>
+			<if test="address_phone != null">
+				and address_phone = #{address_phone}
+			</if>
+			<if test="work_phone != null">
+				and work_phone = #{work_phone}
+			</if>
+			<if test="cus_fax != null">
+				and cus_fax = #{cus_fax}
+			</if>
+			<if test="contact_address != null">
+				and contact_address = #{contact_address}
+			</if>
+			<if test="customer_email != null">
+				and customer_email = #{customer_email}
+			</if>
+			<if test="salesman_name != null">
+				and salesman_name = #{salesman_name}
+			</if>
+			<if test="salesman_id != null">
+				and salesman_id = #{salesman_id}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name = #{create_user_name}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id = #{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+			<if test="customer_source !=null">
+				and customer_source =#{customer_source}
+			</if>
+			<if test="costomer_id !=null">
+				and costomer_id=#{costomer_id}
+			</if>
+			<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+				and wms_inve_customer_id != #{wms_inve_customer_id}
+			</if>
+			<if test="salesman_city_code !=null">
+				and salesman_city_code=#{salesman_city_code}
+			</if>
+			<if test="salesman_city !=null">
+				and salesman_city=#{salesman_city}
+			</if>
+			<if test="salesman_dept_id !=null">
+				and salesman_dept_id=#{salesman_dept_id}
+			</if>
+			<if test="department_manager_id !=null">
+				and department_manager_id=#{department_manager_id}
+			</if>
+			<if test="department_manager_city_code !=null">
+				and department_manager_city_code=#{department_manager_city_code}
+			</if>
+			<if test="department_manager_dept_id !=null">
+				and department_manager_dept_id=#{department_manager_dept_id}
+			</if>
+			<if test="vice_general_manager_id !=null">
+				and vice_general_manager_id=#{vice_general_manager_id}
+			</if>
+			<if test="vice_general_manager_city_code !=null">
+				and vice_general_manager_city_code=#{vice_general_manager_city_code}
+			</if>
+			<if test="vice_general_manager_dept_id !=null">
+				and vice_general_manager_dept_id=#{vice_general_manager_dept_id}
+			</if>
+			<if test="general_manager_id !=null">
+				and general_manager_id=#{general_manager_id}
+			</if>
+			<if test="general_manager_city_code !=null">
+				and general_manager_city_code=#{general_manager_city_code}
+			</if>
+			<if test="general_manager_dept_id !=null">
+				and general_manager_dept_id=#{general_manager_dept_id}
+			</if>
+			<if test="customer_num !=null">
+			    and customer_num =#{customer_num}
+			</if>
+			<if test="certificate_type !=null">
+			    and certificate_type =#{certificate_type}
+			</if>
+			
+		</where>
+	</select>
+	<!-- get entity by pk -->
+	<select id="getByEntity" parameterType="map" resultType="WmsInveCustomer">
+		select
+		wms_inve_customer_id,
+		id_card,
+		cus_code,
+		cus_name,
+		date_format(cus_birthday,'%Y-%m-%d') as cus_birthday_str,
+		cus_birthday,
+		cus_gender,
+		cus_address,
+		post_code,
+		address_phone,
+		work_phone,
+		cus_fax,
+		contact_address,
+		customer_email,
+		salesman_name,
+		salesman_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag,
+		mobile_phone,
+		customer_source,
+		costomer_id,
+		salesman_city_code,
+		salesman_city,
+		salesman_dept_id,
+		department_manager_id,
+		department_manager_city_code,
+		department_manager_dept_id,
+		vice_general_manager_id,
+		vice_general_manager_city_code,
+		vice_general_manager_dept_id,
+		general_manager_id,
+		general_manager_city_code,
+		general_manager_dept_id,
+		customer_num,
+		certificate_type
+		from
+		wms_inve_customer
+		<where>
+			enable_flag = '1'
+			<if test="id_card != null">
+				and id_card = #{id_card}
+			</if>
+			<if test="costomer_id != null">
+				and costomer_id = #{costomer_id}
+			</if>
+			<if test="wms_inve_customer_id != null">
+				and wms_inve_customer_id = #{wms_inve_customer_id}
+			</if>
+		</where>
+	</select>
+	
+	<update id="updateCostomerIdByWmsInveTransaId" parameterType="WmsInveTransa">
+		UPDATE wms_inve_customer
+		<set>
+			<if test="id_card != null">
+				id_card = #{id_card},
+			</if>
+			<if test="cus_name != null">
+				cus_name = #{cus_name},
+			</if>
+			<if test="cus_birthday != null">
+				cus_birthday = #{cus_birthday},
+			</if>
+			<if test="cus_gender != null">
+				cus_gender = #{cus_gender},
+			</if>
+			<if test="cus_address != null">
+				cus_address = #{cus_address},
+			</if>
+			<if test="post_code != null">
+				post_code = #{post_code},
+			</if>
+			<if test="address_phone != null">
+				address_phone = #{address_phone},
+			</if>
+			<if test="mobile_phone != null">
+				mobile_phone = #{mobile_phone},
+			</if>
+			<if test="work_phone != null">
+				work_phone = #{work_phone},
+			</if>
+			<if test="cus_fax != null">
+				cus_fax = #{cus_fax},
+			</if>
+			<if test="contact_address != null">
+				contact_address = #{contact_address},
+			</if>
+			<if test="customer_email != null">
+				customer_email = #{customer_email},
+			</if>
+			<if test="salesman_name != null">
+				salesman_name = #{salesman_name},
+			</if>
+			<if test="salesman_id != null">
+				salesman_id = #{salesman_id},
+			</if>
+			<if test="salesman_city_code !=null">
+				salesman_city_code=#{salesman_city_code},
+			</if>
+			<if test="salesman_city !=null">
+				salesman_city=#{salesman_city},
+			</if>
+			<if test="salesman_dept_id !=null">
+				salesman_dept_id=#{salesman_dept_id},
+			</if>
+			<if test="department_manager_id !=null">
+				department_manager_id=#{department_manager_id},
+			</if>
+			<if test="department_manager_city_code !=null">
+				department_manager_city_code=#{department_manager_city_code},
+			</if>
+			<if test="department_manager_dept_id !=null">
+				department_manager_dept_id=#{department_manager_dept_id},
+			</if>
+			<if test="vice_general_manager_id !=null">
+				vice_general_manager_id=#{vice_general_manager_id},
+			</if>
+			<if test="vice_general_manager_city_code !=null">
+				vice_general_manager_city_code=#{vice_general_manager_city_code},
+			</if>
+			<if test="vice_general_manager_dept_id !=null">
+				vice_general_manager_dept_id=#{vice_general_manager_dept_id},
+			</if>
+			<if test="general_manager_id !=null">
+				general_manager_id=#{general_manager_id},
+			</if>
+			<if test="general_manager_city_code !=null">
+				general_manager_city_code=#{general_manager_city_code},
+			</if>
+			<if test="general_manager_dept_id !=null">
+				general_manager_dept_id=#{general_manager_dept_id},
+			</if>
+			<if test="customer_num !=null">
+			    customer_num =#{customer_num},
+			</if>
+			<if test="costomer_id !=null">
+			    costomer_id =#{costomer_id},
+			</if>
+		</set>
+		WHERE
+			enable_flag = '1'
+		AND wms_inve_customer_id = #{wms_inve_customer_id}
+			
+	</update>
+</mapper> 

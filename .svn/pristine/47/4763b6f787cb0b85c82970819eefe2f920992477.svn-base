@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>理财特批>业务理财特批</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+		<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+		<script src="../../js/zx-all.js" type="text/javascript"></script>
+		<style type="text/css">
+			textarea {
+				resize:none;
+			}
+			
+		</style>
+		<script type="text/javascript">
+			var wms_inve_transa_id = $.query.get('wms_inve_transa_id');
+			var wms_inve_transa_prod_id = $.query.get('wms_inve_transa_prod_id');
+			var wms_inve_transa_protocol_id = $.query.get('wms_inve_transa_protocol_id');
+			var data;
+		
+			$(function() {
+				$(".cannotudp").attr("disabled","disabled");
+				initForm();
+				
+			});
+			
+			//初始化表单
+			function initForm(){
+				$.getJSON(globalUtil.getTimestampUrl('/inve/getywlctpxx.do'),
+						{
+							"wms_inve_transa_id" : wms_inve_transa_id,
+							"wms_inve_transa_prod_id" : wms_inve_transa_prod_id,
+							"wms_inve_transa_protocol_id" : wms_inve_transa_protocol_id,
+						}, function(json) {
+							data = json;
+							setValForInputName(json);
+							setValForOthers(json);
+				});
+			}
+			
+			//关闭本页
+			function closeTab(){
+				globalUtil.closeCurrentTab();//关闭当前TAB页面
+			}
+			
+			//根据name设置input标签的值
+			function setValForInputName(json) {
+				$("input").each(function(i, k) {
+					$(k).val(json[$(k).attr("name")]);
+				});
+			}
+			//设置其他标签的值
+			function setValForOthers(json) {
+				$("#cpxx span").each(function(i, k) {
+					$(k).html(json[$(k).attr("id")]);
+				});
+				$("textarea").each(function(i, k) {
+					$(k).html(json[$(k).attr("id")]);
+				});
+			}
+			
+			//根据选择器获取ID对应的值
+			function getValBySelector(obj) {
+				var param = {};
+				$("#" + obj).find("input,textarea").each(function(i, k) {
+					if($(k).attr("id") != null && $(k).attr("id") != "") {
+						param[$(k).attr("id")] = $(k).val();
+					}
+				});
+				return param;
+			}
+		    var saveIdentification=false;//标记保存是否返回
+			//提交
+			function save() {
+				if($("#commission_coeff").val() == null || $("#commission_coeff").val() == "") {
+					globalUtil.warnMsg(globalErrorMsg['800516']); //提示：年化利率！
+					return;
+				} else if($("#remark").val() == null || $("#remark").val() == "") {
+					globalUtil.warnMsg(globalErrorMsg['800515']); //提示：年化利率！
+					return;
+				} 
+				
+				var paramJson = {};//要传递给后台的参数
+				paramJson = getValBySelector("transaUpdate");
+		        //判断是否可以点击（点击的提交或者保存的请求是否返回 ）
+		    	if(saveIdentification){
+		    		globalUtil.warnMsg(globalErrorMsg['1111111']); //请不要连续点击！
+		    		return;
+		    	}
+		    	saveIdentification=true;
+				$.post(globalUtil.getTimestampUrl('/inve/wmsinvecommissionbillspsave.do'), paramJson,
+					      function(data) {
+							saveIdentification=false;//标记保存是否返回
+					      	if(data == 'success') {//提交成功
+					      		globalUtil.successMsg(globalErrorMsg['100002'],
+				      	           		function(){   
+					      				closeTab();
+				      			});
+					      	}else {
+								globalUtil.errorMsg(globalErrorMsg['100012']); //保存失败
+					        }
+						});
+			}
+		</script>
+	</head>
+	<body>
+		<div class="pop-center overflow-au" style="top: 10px" id="transaUpdate">
+			<div id="khxx" class="center-content" style="min-width: 550px; height: auto">
+				<div class="center-title">
+						客户理财产品信息
+				</div>
+				<div id="khjbxxdiv" class="center-txt clearfix" style="margin-bottom: 5px; padding: 5px; border: 1px solid #BFBFBF; height: 100px;">
+					<div class="float-l commonstyle">
+						<div class="pop-form-title2">
+							客户姓名：
+						</div>
+						<div class="pop-form-item">
+							<input type="text" name="cus_name" id="cus_name" class="cannotudp" style="width: 196px" maxlength="50"/>
+						</div>
+					</div>
+					<div class="float-l commonstyle">
+						<div class="pop-form-title2">
+							身份证号：
+						</div>
+						<div class="pop-form-item">
+							<input type="text" name="id_card" id="id_card" class="cannotudp" style="width: 196px" maxlength="18" />
+						</div>
+					</div> 
+					<div class="float-l commonstyle ">
+						<div class="pop-form-title2">
+							移动电话：
+						</div>
+						<div class="pop-form-item">
+							<input type="text" name="mobile_phone" id="mobile_phone" style="width: 196px" maxlength="25" class="cannotudp" />
+						</div>
+					</div>
+					
+					<div class="float-l commonstyle clearboth">
+						<div class="pop-form-title2">
+							合同编号：
+						</div>
+						<div class="pop-form-item">
+							<input type="text" name="prot_code" id="prot_code" class="cannotudp" style="width: 196px" maxlength="50"/>
+						</div>
+					</div>
+					<div class="float-l commonstyle">
+						<div class="pop-form-title2">
+							理财产品：
+						</div>
+						<div class="pop-form-item">
+							<input type="text" name="category_name" id="category_name" class="cannotudp" style="width: 196px" maxlength="50"/>
+						</div>
+					</div>
+					<div class="float-l commonstyle">
+						<div class="pop-form-title2">
+							理财期限：
+						</div>
+						<div class="pop-form-item">
+							<input type="text" name="category_deadline" id="category_deadline" class="cannotudp" style="width: 196px" maxlength="18" />
+						</div>
+					</div> 
+					<div class="float-l commonstyle clearboth">
+						<div class="pop-form-title2">
+							投资金额：
+						</div>
+						<div class="pop-form-item">
+							<input type="text" name="product_account_million" style="width: 172px" maxlength="25" class="cannotudp" />万元
+							<input type="hidden" name="product_account" id="product_account" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="center-content" style="min-width: 550px; height: auto">
+				<div class="center-title">
+					当前执行佣金规则
+				</div>
+				<div class="center-txt clearfix" style="margin-bottom: 5px; padding: 5px; border: 1px solid #BFBFBF; height: 100px;">
+					<table id="lcsqxxtable" border="1" bordercolor="#BFBFBF" style="text-align: center; margin-left:60px; margin-bottom: 5px; margin-top: 3px">
+						<tr class="lcsqxxtr" style="background-color: #676b73; color: white; height: 35px" id="headtr">
+							<td width="200px" class="title">职务</td>
+							<td width="200px" class="title">员工状态</td>
+							<td width="200px" class="title">产品</td>
+							<td width="200px" class="title">提成系数(%)</td>
+						</tr>
+						<tr id="cpxx">
+							<td><span id="personnel_postName"></span></td>
+							<td><span id="personnel_state_name"></span></td>
+							<td><span id="category_name"></span></td>
+							<td><input name="commission_coeff" id="commission_coeff" /></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="center-content" style="min-width: 550px; height: auto">
+				<div class="pop-form-title">
+					<span style="color: red">*</span>备注：
+				</div>
+				<div class="pop-form-item">
+					<input type="hidden" name="wms_inve_commission_bill_sp_id" id="wms_inve_commission_bill_sp_id" />
+					<input type="hidden" name="wms_inve_pruduct_category_id" id="wms_inve_pruduct_category_id" />
+					<input type="hidden" name="wms_inve_transa_id" id="wms_inve_transa_id" />
+					<input type="hidden" name="wms_inve_transa_prod_id" id="wms_inve_transa_prod_id" />
+					<input type="hidden" name="post_id" id="post_id" />
+					<input type="hidden" name="personnel_state" id="personnel_state" />
+					<textarea id="remark" style="width: 896px;height: 65px;"></textarea>
+				</div>
+			</div>
+			
+		</div>
+		<!-- 提交功能按钮区 -->
+		<div style="margin-bottom: 6px;" class="pop-footer5 clearboth" id="tb_btn">
+			<input id="tjbtn" onclick="save();" class="btn-saveT"
+				onmouseover="this.className='btn-saveT-over'"
+				onmouseout="this.className='btn-saveT'"
+				onmousedown="this.className='btn-saveT-down'" type="button"
+				style="margin-right: 7px;" /> 
+			<input id="cancelBtnId" class="btn-cancel" onmouseover="this.className='btn-cancel-over'"
+				onmouseout="this.className='btn-cancel'"
+				onmousedown="this.className='btn-cancel-down'" type="button"
+				onclick="closeTab();" />
+		</div>
+	</body>
+</html>

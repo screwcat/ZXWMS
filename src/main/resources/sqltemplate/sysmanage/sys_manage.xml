@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sqls namespace="sysmanage">
+	<sqlElement key="login#sys_menu#allmenu" author="gx">  
+        <![CDATA[ 
+		 SELECT mn.id AS id, mn.menu_name, mn.menu_url, mn.menu_level, mn.p_menu_id AS p_menu_id,
+		 mn.menu_remark
+		 FROM sys_menu mn ORDER BY mn.menu_level,mn.menu_sort
+        ]]>
+	</sqlElement>
+	<sqlElement key="login#sys_func#allfunc" author="gx">  
+        <![CDATA[ 
+		 SELECT f.id AS id, f.func_name, f.func_method, f.menu_id AS menu_id,f.default_flag 
+		 FROM sys_function f  ORDER BY f.menu_id ,f.func_sort
+        ]]>
+	</sqlElement>
+	<sqlElement key="login#sys_user#checkuser" author="gx">  
+        <![CDATA[ 
+		  select *
+		   from  sys_user
+		   where user_code=:user_code 
+		   and enable_flag = '1'
+		   <#if user_passwd??> 
+		   		and user_passwd=:user_passwd
+		   <#else>
+		   		and user_passwd is null
+		   </#if> 
+        ]]>
+	</sqlElement>
+	<sqlElement key="login#sys_user#changeDefaultPasswd" author="gx">  
+        <![CDATA[ 
+		  update sys_user set user_passwd=:user_passwd
+		   where user_code=:user_code 
+        ]]>
+	</sqlElement>
+	<sqlElement key="login#getuserfunction" author="gx">  
+        <![CDATA[ 
+		  select * from sys_function 
+		  where id in (
+			select func_id from sys_user_menu_func where user_id=:user_id
+			union all 
+			select func_id from sys_role_menu_function t1, sys_user_role t2 
+			where t1.role_id=t2.role_id and user_id=:user_id
+			)
+        ]]>
+	</sqlElement>
+	<sqlElement key="login#sys_menu#menu_by_user" author="gx">  
+        <![CDATA[ 
+		 SELECT mn.id AS id, mn.menu_name, mn.menu_url, mn.menu_level, mn.p_menu_id AS p_menu_id,
+		 mn.menu_remark 
+		 FROM sys_menu mn
+		 <#if user_id??>  
+		 where id in (
+			select menu_id from sys_user_menu_func where user_id=:user_id
+			union all 
+			select menu_id from sys_role_menu_function t1, sys_user_role t2 
+			where t1.role_id=t2.role_id and user_id=:user_id
+			)
+		 </#if>
+		 ORDER BY mn.menu_level,mn.menu_sort
+        ]]>
+	</sqlElement>
+	<sqlElement key="login#sys_func#func_by_user" author="gx">  
+        <![CDATA[ 
+		 SELECT f.id AS id, f.func_name, f.func_method, f.menu_id AS menu_id,
+		 f.default_flag 
+		 FROM sys_function f
+		 <#if user_id??> 
+		   	where id in (
+			select func_id from sys_user_menu_func where user_id=:user_id
+			union all 
+			select func_id from sys_role_menu_function t1, sys_user_role t2 
+			where t1.role_id=t2.role_id and user_id=:user_id
+			) 
+		 </#if>
+		 ORDER BY f.menu_id ,f.func_sort
+        ]]>
+	</sqlElement>
+	<sqlElement key="sysrole#sys_menu#get_user_menu_check"
+		author="gx">  
+        <![CDATA[ 
+		  select CONCAT('M',mn.id) AS id, mn.menu_name, mn.menu_url, mn.menu_level, CONCAT('M',mn.p_menu_id) AS p_menu_id ,mn.menu_sort,0 as type,
+ 		 <#if current_role_id??>
+ 		 (select id from sys_role_menu_function  t where t.role_id=:current_role_id and t.menu_id=mn.id limit 1) as ischeck
+ 		 </#if> 
+		 <#if no_current_role_id??> 
+		        null as ischeck 
+		 </#if> 
+		 from sys_menu mn
+		 ORDER BY mn.menu_level,mn.menu_sort
+        ]]>
+	</sqlElement>
+	<sqlElement key="sysrole#sys_func#role#get_user_func_check"
+		author="gx">  
+        <![CDATA[ 
+		 SELECT CONCAT('F',f.id) AS id, f.func_name,f.func_method, CONCAT('M',f.menu_id) AS menu_id,f.default_flag ,1 as type,
+		 <#if current_role_id??>
+		 (select id from sys_role_menu_function  t where t.role_id=:current_role_id and t.func_id=f.id) as ischeck
+		 </#if> 
+		 <#if no_current_role_id??> 
+		        null as ischeck 
+		 </#if>  
+		 FROM sys_function f
+		ORDER BY f.menu_id ,f.func_sort
+        ]]>
+	</sqlElement>
+	<sqlElement key="sysrole#sys_role_menu_function#insert"
+		author="gx">  
+        <![CDATA[ 
+        insert into sys_role_menu_function (role_id,menu_id,func_id) values (:role_id,:menu_id,:func_id);
+        ]]>
+	</sqlElement>
+	<sqlElement key="sysuser#sys_user_menu_func#insert" author="gx">  
+        <![CDATA[ 
+        insert into sys_user_menu_func (user_id,menu_id,func_id) values (:user_id,:menu_id,:func_id);
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="sysuser#sys_menu#get_user_menu_check"
+		author="gx">  
+        <![CDATA[ 
+		  select CONCAT('M',mn.id) AS id, mn.menu_name, mn.menu_url, mn.menu_level, CONCAT('M',mn.p_menu_id) AS p_menu_id ,mn.menu_sort,0 as type,
+ 		 <#if user_id??>
+ 		 (select id from sys_user_menu_func  t where t.user_id=:user_id and t.menu_id=mn.id limit 1) as ischeck
+ 		 </#if> 
+		 from sys_menu mn
+		 ORDER BY mn.menu_level,mn.menu_sort
+        ]]>
+	</sqlElement>
+	<sqlElement key="sysuser#sys_func#role#get_user_func_check"
+		author="gx">  
+        <![CDATA[ 
+		 SELECT CONCAT('F',f.id) AS id, f.func_name,f.func_method, CONCAT('M',f.menu_id) AS menu_id,f.default_flag ,1 as type,
+		 <#if user_id??>
+		 (select id from sys_user_menu_func  t where t.user_id=:user_id and t.func_id=f.id) as ischeck
+		 </#if> 
+		 FROM sys_function f
+		ORDER BY f.menu_id ,f.func_sort
+        ]]>
+	</sqlElement>
+	<sqlElement key="syspub#wms_sys_sequence#select" author="gx">  
+        <![CDATA[ 
+		select seq('${code}') as code;
+        ]]>
+	</sqlElement>
+	<sqlElement key="syspub#wms_sys_sequence_repeat#select"
+		author="gx">  
+        <![CDATA[ 
+		select seqrepeat('${code}') as code;
+        ]]>
+	</sqlElement>
+</sqls>

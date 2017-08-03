@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveClerkRegionDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveClerkRegion">
+		select
+        				wms_inve_clerk_region_id,
+        				region_number,
+        				region_name,
+        				region_protocol_prefix,
+        				region_protocol_area,
+        				region_postcode,
+        				region_protocol_b_name,
+        				region_protocol_b_area,
+        				create_user_id,
+        				create_user_name,
+        				create_user_dept_id,
+						date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+        				create_timestamp,
+        				last_update_user_id,
+						date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+        				last_update_timestamp,
+        				enable_flag
+        	from
+        		wms_inve_clerk_region
+        	where
+        				wms_inve_clerk_region_id = #{wms_inve_clerk_region_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_clerk_region_id) as count
+		from wms_inve_clerk_region
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_inve_clerk_region_id,
+				region_number,
+				region_name,
+				region_protocol_prefix,
+				region_protocol_area,
+				region_postcode,
+				region_protocol_b_name,
+				region_protocol_b_area,
+				create_user_id,
+				create_user_name,
+				create_user_dept_id,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from wms_inve_clerk_region
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveClerkRegion" useGeneratedKeys="true" keyProperty="wms_inve_clerk_region_id">
+		INSERT INTO wms_inve_clerk_region
+		(
+				wms_inve_clerk_region_id,
+
+				region_number,
+
+				region_name,
+
+				region_protocol_prefix,
+
+				region_protocol_area,
+
+				region_postcode,
+
+				region_protocol_b_name,
+
+				region_protocol_b_area,
+
+				create_user_id,
+
+				create_user_name,
+
+				create_user_dept_id,
+
+				create_timestamp,
+
+				last_update_user_id,
+
+				last_update_timestamp,
+
+				enable_flag
+		)
+		VALUES
+		(
+				#{wms_inve_clerk_region_id},
+				#{region_number},
+				#{region_name},
+				#{region_protocol_prefix},
+				#{region_protocol_area},
+				#{region_postcode},
+				#{region_protocol_b_name},
+				#{region_protocol_b_area},
+				#{create_user_id},
+				#{create_user_name},
+				#{create_user_dept_id},
+				#{create_timestamp},
+				#{last_update_user_id},
+				#{last_update_timestamp},
+				#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveClerkRegion">
+		update wms_inve_clerk_region
+		<set>
+					<if test="wms_inve_clerk_region_id != null">
+						 wms_inve_clerk_region_id = #{wms_inve_clerk_region_id},
+					</if>
+					<if test="region_number != null">
+						 region_number = #{region_number},
+					</if>
+					<if test="region_name != null">
+						 region_name = #{region_name},
+					</if>
+					<if test="region_protocol_prefix != null">
+						 region_protocol_prefix = #{region_protocol_prefix},
+					</if>
+					<if test="region_protocol_area != null">
+						 region_protocol_area = #{region_protocol_area},
+					</if>
+					<if test="region_postcode != null">
+						 region_postcode = #{region_postcode},
+					</if>
+					<if test="region_protocol_b_name != null">
+						 region_protocol_b_name = #{region_protocol_b_name},
+					</if>
+					<if test="region_protocol_b_area != null">
+						 region_protocol_b_area = #{region_protocol_b_area},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="create_user_name != null">
+						 create_user_name = #{create_user_name},
+					</if>
+					<if test="create_user_dept_id != null">
+						 create_user_dept_id = #{create_user_dept_id},
+					</if>
+					<if test="create_timestamp != null">
+						 create_timestamp = #{create_timestamp},
+					</if>
+					<if test="last_update_user_id != null">
+						 last_update_user_id = #{last_update_user_id},
+					</if>
+					<if test="last_update_timestamp != null">
+						 last_update_timestamp = #{last_update_timestamp},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+	   </set>
+		 where 
+    				wms_inve_clerk_region_id = #{wms_inve_clerk_region_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveClerkRegion" resultType="WmsInveClerkRegion">
+		select 
+				wms_inve_clerk_region_id,
+				region_number,
+				region_name,
+				region_protocol_prefix,
+				region_protocol_area,
+				region_postcode,
+				region_protocol_b_name,
+				region_protocol_b_area,
+				create_user_id,
+				create_user_name,
+				create_user_dept_id,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from
+		wms_inve_clerk_region
+		<where>
+					<if test="wms_inve_clerk_region_id != null">
+						and wms_inve_clerk_region_id = #{wms_inve_clerk_region_id}
+					</if>
+					<if test="region_number != null">
+						and region_number = #{region_number}
+					</if>
+					<if test="region_name != null">
+						and region_name = #{region_name}
+					</if>
+					<if test="region_protocol_prefix != null">
+						and region_protocol_prefix = #{region_protocol_prefix}
+					</if>
+					<if test="region_protocol_area != null">
+						and region_protocol_area = #{region_protocol_area}
+					</if>
+					<if test="region_postcode != null">
+						and region_postcode = #{region_postcode}
+					</if>
+					<if test="region_protocol_b_name != null">
+						and region_protocol_b_name = #{region_protocol_b_name}
+					</if>
+					<if test="region_protocol_b_area != null">
+						and region_protocol_b_area = #{region_protocol_b_area}
+					</if>
+					<if test="create_user_id != null">
+						and create_user_id = #{create_user_id}
+					</if>
+					<if test="create_user_name != null">
+						and create_user_name = #{create_user_name}
+					</if>
+					<if test="create_user_dept_id != null">
+						and create_user_dept_id = #{create_user_dept_id}
+					</if>
+					<if test="create_timestamp != null">
+						and create_timestamp = #{create_timestamp}
+					</if>
+					<if test="last_update_user_id != null">
+						and last_update_user_id = #{last_update_user_id}
+					</if>
+					<if test="last_update_timestamp != null">
+						and last_update_timestamp = #{last_update_timestamp}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_inve_clerk_region_id != #{wms_inve_clerk_region_id}
+					</if>
+		</where>
+	</select>
+	
+	<select id="getWmsInveClerkRegionColumnList" resultType="com.zx.emanage.util.gen.entity.ColumnInfo">
+		select 
+				wms_inve_clerk_region_id,
+				region_number,
+				region_name as display,
+				enable_flag
+		from wms_inve_clerk_region
+		where enable_flag = 1	
+		ORDER BY wms_inve_clerk_region_id 	
+	</select>
+	
+	<select id="getWmsInveSaleLimitVoList" resultType="com.zx.emanage.inve.vo.WmsInveSaleLimitVo">
+		select 
+				wms_inve_clerk_region_id,
+				region_number,
+				region_name,
+				enable_flag
+		from wms_inve_clerk_region
+		where enable_flag = 1	
+		ORDER BY wms_inve_clerk_region_id 	
+	</select>
+	
+	<select id="getWmsInveClerkRegionByRegion" parameterType="string" resultType="WmsInveClerkRegion">
+		select 
+			*
+		from
+			wms_inve_clerk_region
+		where
+			region_number = #{region }
+	</select>
+</mapper> 

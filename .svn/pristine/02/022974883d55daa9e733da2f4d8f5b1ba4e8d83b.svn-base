@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.loanfina.persist.WmsFinaAuditorPersonDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsFinaAuditorPerson">
+		select
+        				auditor_person_id,
+        				person_id,
+        				person_name,
+        				auditor_remark
+        	from
+        		wms_fina_auditor_person
+        	where
+        				auditor_person_id = #{auditor_person_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(auditor_person_id) as count
+		from wms_fina_auditor_person
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				auditor_person_id,
+				person_id,
+				person_name,
+				auditor_remark
+		from wms_fina_auditor_person
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsFinaAuditorPerson" useGeneratedKeys="true" keyProperty="auditor_person_id">
+		INSERT INTO wms_fina_auditor_person
+		(
+				auditor_person_id,
+
+				person_id,
+
+				person_name,
+
+				auditor_remark
+		)
+		VALUES
+		(
+				#{auditor_person_id},
+				#{person_id},
+				#{person_name},
+				#{auditor_remark}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsFinaAuditorPerson">
+		update wms_fina_auditor_person
+		<set>
+					<if test="auditor_person_id != null">
+						 auditor_person_id = #{auditor_person_id},
+					</if>
+					<if test="person_id != null">
+						 person_id = #{person_id},
+					</if>
+					<if test="person_name != null">
+						 person_name = #{person_name},
+					</if>
+					<if test="auditor_remark != null">
+						 auditor_remark = #{auditor_remark},
+					</if>
+	   </set>
+		 where 
+    				auditor_person_id = #{auditor_person_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsFinaAuditorPerson" resultType="WmsFinaAuditorPerson">
+		select 
+				auditor_person_id,
+
+				person_id,
+
+				person_name,
+
+				auditor_remark
+		from
+		wms_fina_auditor_person
+		<where>
+					<if test="auditor_person_id != null">
+						and auditor_person_id = #{auditor_person_id}
+					</if>
+					<if test="person_id != null">
+						and person_id = #{person_id}
+					</if>
+					<if test="person_name != null">
+						and person_name = #{person_name}
+					</if>
+					<if test="auditor_remark != null">
+						and auditor_remark = #{auditor_remark}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and auditor_person_id != #{auditor_person_id}
+					</if>
+		</where>
+		
+	</select>
+	<select id="getList" parameterType="WmsFinaAuditorPerson" resultType="java.util.HashMap">
+		select 
+				(person_id) as auditor_name,
+
+				person_name
+
+		from
+		wms_fina_auditor_person
+		<where>
+					<if test="auditor_person_id != null">
+						and auditor_person_id = #{auditor_person_id}
+					</if>
+					<if test="person_id != null">
+						and person_id = #{person_id}
+					</if>
+					<if test="person_name != null">
+						and person_name = #{person_name}
+					</if>
+					<if test="auditor_remark != null">
+						and auditor_remark = #{auditor_remark}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and auditor_person_id != #{auditor_person_id}
+					</if>
+		</where>
+		
+	</select>
+</mapper> 

@@ -1,0 +1,272 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>服务管理-贷后管理-贷后查询-催缴确认</title>
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script language="Javascript" src="../../js/zx-all.js"> </script>
+
+<style type="text/css">
+.textright {
+	text-align: right;
+}
+.textleft {
+	text-align: left;
+}
+/*input_tb css*/
+.input_tb_new {
+	/*border:1px solid #dfdfdf;*/
+	width: 100%;
+	margin-bottom: 10px;
+}
+.input_tb_new a {
+	color: #056aff;
+	text-decoration: none;
+	font-weight: normal;
+}
+.input_tb_new td {
+	height: 35px;
+	line-height: 25px;
+	/*border-bottom:1px dashed #d5d5d5;*/
+	padding-top: 3px;
+}
+.input_tb_new .tr_title td {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	/*border-bottom:1px solid #dfdfdf;*/
+}
+.input_tb_new .tr_last td {
+	border-bottom: 0;
+}
+.input_tb_new .title {
+	text-align: right;
+}
+.input_tb_new .subtitle {
+	text-align: left;
+	background-color: #d2e1fd;
+	border-top: 1px solid #fff;
+}
+.input_tb_new .tr_btn_input td {
+	background-color: #fbfbfb;
+}
+.title_tb {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	/*border:1px solid #dfdfdf;*/
+	border-bottom:0;
+}
+.title_tb .title_txt{
+float:left;
+}
+.title_tb .title_btn{
+float:right;
+margin-top:2px;
+font-weight:normal;
+}
+.input_tb_new td {
+    /*border-bottom: 1px dashed #D5D5D5;*/
+	height: 35px;
+	line-height: 25px;
+	padding-top: 3px;
+}
+.data_tb td {
+	height: 30px;
+	line-height: 24px;
+	padding-left: 10px;
+	border-bottom: 1px dashed #e3e4e6;
+	text-align: left;
+}
+#huankuan {
+	text-align: left;
+}
+</style>
+</head>
+<body>
+	<div class="pop-center overflow-au">
+		<!--查询条件  begin-->
+   <!--<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr valign="bottom" id='trtab1'>
+				<td class="tabbody1" id="tabbody1"
+					onclick="changeTab('reminder');" tabname='mytab'
+					style="width: 30%"><div align="center">催缴单</div></td>
+				<td class="tabbody2" id="tabbody2"
+					onclick="changeTab('processingoftracking');" tabname='mytab'
+					style="width: 30%"><div align="center">跟踪处理结果</div></td>
+				<td class="tabbody3" id="tabbody3"
+					onclick="changeTab('repaymenthistory');" tabname='mytab'
+					style="width: 30%"><div align="center">还款历史</div></td>
+			</tr>
+		</table>-->
+		<!--------------------------------------------------------------------催缴单 begin----------------------------------------------------------------  -->
+		<div id="reminder" class="pop-formDiv clearfix" style="margin: 5px; margin-top: 5px; text-align:center;">
+				<div class="float-l clearboth">
+					<div class="pop-form-title">贷后专员:</div>
+					<div class="pop-form-item">
+						<input type="text" id="dunning_name" />
+					</div>
+				</div>
+				<div class="float-l clearboth" style="left: 50px;">
+					<div class="pop-form-title">可分配单据数:</div>
+					<div class="pop-form-item">
+						<input type="text" id="debtor_number" readonly="readonly" disabled="disabled"/>
+					</div>
+				</div>
+				<div class="float-l clearboth">
+					<div class="pop-form-title">本次分配数:</div>
+					<div class="pop-form-item">
+						<input type="text" id="allocation_number" onchange="checkNumber()"/>
+					</div>
+				</div>
+				<div class="float-l clearboth">
+					<div class="pop-form-title">该专员已有单据数:</div>
+					<div class="pop-form-item">
+						<input type="text" id="dunning_number" readonly="readonly" disabled="disabled"/>
+					</div>
+				</div>
+		</div>
+		<!-- -----------------------------------------------------------------催缴单 end------------------------------------------------------------------ -->
+	</div>
+	<!-- 提交功能按钮区 -->
+	<div class="pop-footer5 clearboth" style="bottom: 1px;">
+		<input id="tjbtn"
+			class="btn-saveT" onmouseover="this.className='btn-saveT-over'"
+			onmouseout="this.className='btn-saveT'"
+			onmousedown="this.className='btn-saveT-down'" type="button"
+			style="margin-right: 7px;" onclick="save()" /> <input
+			id="cancelBtnId" class="btn-cancel"
+			onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" type="button"
+			onclick="closePage();" />
+	</div>
+	<script type="text/javascript">
+	var wms_cre_credit_head_id ="";
+	var wms_fina_cre_pay_id ="";
+	var selectval = $.query.get('selectval');
+	var grid_top;
+	var result=[];
+	$(function(){
+		init_dunning_name();//初始化催缴人员
+		//根据还款信息表主键和单据主键获取相关信息
+		$.getJSON(globalUtil.getTimestampUrl('/loanpost/wmspostdunningheadnamelist.do'),
+		function(json) {
+				result=json;//记录
+			});
+		if(selectval=="false"){//没有选择单据
+			//获取单据数量
+			$.getJSON(globalUtil.getTimestampUrl('/loanpost/seachCount.do'),parent.params,
+			function(json) {
+					$("#debtor_number").val(json);
+				});
+		}else{
+			$("#debtor_number").val("1");
+			$("#allocation_number").attr("disabled","disabled");
+			wms_cre_credit_head_id = $.query.get("wms_cre_credit_head_id");
+			wms_fina_cre_pay_id = $.query.get('wms_fina_cre_pay_id');
+		}
+	});
+	//初始化催缴人员
+	function init_dunning_name(json){
+		var dunning_name_params ={
+				dest_url:'/loanpost/wmspostdunningheadnamelist.do',
+				t_col_name:'dunning_name',
+				valueField:'personnel_id',   //下拉框value对应的值，默认为id
+				textField:'personnel_name',    //下拉框text对应的值，默认为text
+				def_val:'first'
+				};
+		global_ligerui_extend.initCombox("dunning_name",function(value){
+			for(var i=0;i<result.length;i++){
+				if(result[i].personnel_id==value){
+					$("#dunning_number").val(result[i].sumval);
+				}
+			}
+		},dunning_name_params);
+		if(json){
+			//把值装载设定
+			global_ligerui_extend.syncRequestInitComboxData(json,"dunning_name");
+			//让其不可编辑
+			global_ligerui_extend.disabledCombox("dunning_name");
+		}else{	
+		    global_ligerui_extend.initComboxDefVal("dunning_name");
+		}
+	}
+	//检查分配单据数量的
+	function checkNumber(){//parseint()
+		var dunning_name=global_ligerui_extend.getComboxVal("dunning_name");//人员id
+		var	allocation_number=	parseInt($("#allocation_number").val()|0);//要分配的数量
+		var debtor_number=	parseInt($("#debtor_number").val()|0);//当前单据数量
+		if(dunning_name==""||dunning_name==null){
+			$("#allocation_number").val("");//要分配的数量
+			globalUtil.warnMsg(globalErrorMsg['900130']);//请先选择催缴人员
+			return; 
+		}
+		if(allocation_number>debtor_number){
+			globalUtil.warnMsg(globalErrorMsg['900129']);//分配数量不能超过总数
+			return; 
+		}
+	}
+	var resultval={};
+	//催缴单据分配
+	function save(){
+		if(selectval=="true"){
+			resultval.wms_fina_cre_pay_id=wms_fina_cre_pay_id;//id
+			resultval.wms_cre_credit_head_id=wms_cre_credit_head_id;//id
+		}else{
+			if($("#allocation_number").val()==""||$("#allocation_number").val()==null){
+				globalUtil.successMsg(globalErrorMsg['900133']);//请填写需要分配的数量
+			}
+			resultval.allocation_number=$("#allocation_number").val();//要分配的数量
+			resultval.debtor_number=$("#debtor_number").val();//当前单据数量
+			//查询列表参数
+			resultval.protocol_code=parent.params.protocol_code;
+			resultval.debtor_tel=parent.params.debtor_tel;
+			resultval.debtor_name=parent.params.debtor_name;
+			resultval.salesman_name=parent.params.salesman_name;
+			resultval.cre_type=parent.params.cre_type;
+			resultval.dunning_name=parent.params.dunning_name;
+		}
+		resultval.selectval=selectval;//操作标识
+		resultval.dunning_id=global_ligerui_extend.getComboxVal("dunning_name");//人员id
+		$.post(parent.globalUtil.getTimestampUrl("/loanpost/allocationNnumber.do"),
+				resultval, function(data) {
+    				if (data === 'success') {
+    					globalUtil.successMsg("保存成功！");
+    					//关闭
+    					refreshAndClosePage();
+    				}
+    				if(data==="error"){
+    					globalUtil.errorMsg("保存失败！");
+    				}
+    				if(data==="errorid"){
+    					globalUtil.errorMsg("获取催缴人错误！");
+    				}
+    				if(data==="errornumber"){
+    					globalUtil.errorMsg("获取单据数量错误!");
+    				}
+    				if(data==="errorpayid"){
+    					globalUtil.errorMsg("获取催缴单据错误！");
+    				}
+    		});
+		
+	}
+	//关闭本页并刷新查询页面 
+    function refreshAndClosePage(){   
+    	window.parent.location.reload();
+    	closePage();
+    }
+    //关闭页面
+    function closePage(){
+    	window.parent.dialog.hide();
+    }
+</script>
+</body>
+</html>

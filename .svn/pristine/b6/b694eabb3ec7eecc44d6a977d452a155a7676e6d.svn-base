@@ -1,0 +1,698 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveSalaryDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveSalary">
+		select
+        				wms_inve_salary_id,
+        				personnel_id,
+        				personnel_deptid,
+        				personnel_postid,
+        				personnel_state,
+        				base_salary,
+        				performance_salary,
+        				train_salary,
+        				post_salary,
+        				adjust_amount,
+        				statics_month,
+						date_format(statics_time,'%Y-%m-%d %H:%i:%s') as statics_time_str,
+        				statics_time,
+        				per_add_base,
+        				per_add_deal,
+        				per_add_base_querter,
+        				per_add_deal_querter,
+        				per_stock_all,
+        				per_stock_new,
+        				team_clear_add,
+        				team_clear_add_quarter,
+        				team_staff_num_regular_quarter,
+						date_format(personnel_trialstarttime,'%Y-%m-%d %H:%i:%s') as personnel_trialstarttime_str,
+        				personnel_trialstarttime
+        	from
+        		wms_inve_salary
+        	where
+        		wms_inve_salary_id = #{wms_inve_salary_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_salary_id) as count
+		from wms_inve_salary
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_inve_salary_id,
+				personnel_id,
+				personnel_deptid,
+				personnel_postid,
+				personnel_state,
+				base_salary,
+				performance_salary,
+				train_salary,
+				post_salary,
+				adjust_amount,
+				statics_month,
+				date_format(statics_time,'%Y-%m-%d %H:%i:%s') as statics_time_str,
+				statics_time,
+				per_add_base,
+				per_add_deal,
+				per_add_base_querter,
+				per_add_deal_querter,
+				per_stock_all,
+				per_stock_new,
+				team_clear_add,
+				team_clear_add_quarter,
+				team_staff_num_regular_quarter,
+				date_format(personnel_trialstarttime,'%Y-%m-%d %H:%i:%s') as personnel_trialstarttime_str,
+				personnel_trialstarttime
+		from wms_inve_salary
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveSalary" useGeneratedKeys="true" keyProperty="wms_inve_salary_id">
+		INSERT INTO wms_inve_salary
+		(
+				wms_inve_salary_id,
+
+				personnel_id,
+
+				personnel_deptid,
+
+				personnel_postid,
+
+				personnel_state,
+
+				base_salary,
+
+				performance_salary,
+
+				train_salary,
+
+				post_salary,
+
+				adjust_amount,
+
+				statics_month,
+
+				statics_time,
+
+				per_add_base,
+
+				per_add_deal,
+
+				per_add_base_querter,
+
+				per_add_deal_querter,
+
+				per_stock_all,
+
+				per_stock_new,
+
+				team_clear_add,
+
+				team_clear_add_quarter,
+
+				team_staff_num_regular_quarter,
+
+				personnel_trialstarttime
+		)
+		VALUES
+		(
+				#{wms_inve_salary_id},
+				#{personnel_id},
+				#{personnel_deptid},
+				#{personnel_postid},
+				#{personnel_state},
+				#{base_salary},
+				#{performance_salary},
+				#{train_salary},
+				#{post_salary},
+				#{adjust_amount},
+				#{statics_month},
+				#{statics_time},
+				#{per_add_base},
+				#{per_add_deal},
+				#{per_add_base_querter},
+				#{per_add_deal_querter},
+				#{per_stock_all},
+				#{per_stock_new},
+				#{team_clear_add},
+				#{team_clear_add_quarter},
+				#{team_staff_num_regular_quarter},
+				#{personnel_trialstarttime}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveSalary">
+		update wms_inve_salary
+		<set>
+					<if test="wms_inve_salary_id != null">
+						 wms_inve_salary_id = #{wms_inve_salary_id},
+					</if>
+					<if test="personnel_id != null">
+						 personnel_id = #{personnel_id},
+					</if>
+					<if test="personnel_deptid != null">
+						 personnel_deptid = #{personnel_deptid},
+					</if>
+					<if test="personnel_postid != null">
+						 personnel_postid = #{personnel_postid},
+					</if>
+					<if test="personnel_state != null">
+						 personnel_state = #{personnel_state},
+					</if>
+					<if test="base_salary != null">
+						 base_salary = #{base_salary},
+					</if>
+					<if test="performance_salary != null">
+						 performance_salary = #{performance_salary},
+					</if>
+					<if test="train_salary != null">
+						 train_salary = #{train_salary},
+					</if>
+					<if test="post_salary != null">
+						 post_salary = #{post_salary},
+					</if>
+					<if test="adjust_amount != null">
+						 adjust_amount = #{adjust_amount},
+					</if>
+					<if test="statics_month != null">
+						 statics_month = #{statics_month},
+					</if>
+					<if test="statics_time != null">
+						 statics_time = #{statics_time},
+					</if>
+					<if test="per_add_base != null">
+						 per_add_base = #{per_add_base},
+					</if>
+					<if test="per_add_deal != null">
+						 per_add_deal = #{per_add_deal},
+					</if>
+					<if test="per_add_base_querter != null">
+						 per_add_base_querter = #{per_add_base_querter},
+					</if>
+					<if test="per_add_deal_querter != null">
+						 per_add_deal_querter = #{per_add_deal_querter},
+					</if>
+					<if test="per_stock_all != null">
+						 per_stock_all = #{per_stock_all},
+					</if>
+					<if test="per_stock_new != null">
+						 per_stock_new = #{per_stock_new},
+					</if>
+					<if test="team_clear_add != null">
+						 team_clear_add = #{team_clear_add},
+					</if>
+					<if test="team_clear_add_quarter != null">
+						 team_clear_add_quarter = #{team_clear_add_quarter},
+					</if>
+					<if test="team_staff_num_regular_quarter != null">
+						 team_staff_num_regular_quarter = #{team_staff_num_regular_quarter},
+					</if>
+					<if test="personnel_trialstarttime != null">
+						 personnel_trialstarttime = #{personnel_trialstarttime},
+					</if>
+	   </set>
+		 where 
+    				wms_inve_salary_id = #{wms_inve_salary_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveSalary" resultType="WmsInveSalary">
+		select 
+				wms_inve_salary_id,
+				personnel_id,
+				personnel_deptid,
+				personnel_postid,
+				personnel_state,
+				base_salary,
+				performance_salary,
+				train_salary,
+				post_salary,
+				adjust_amount,
+				statics_month,
+				date_format(statics_time,'%Y-%m-%d %H:%i:%s') as statics_time_str,
+				statics_time,
+				per_add_base,
+				per_add_deal,
+				per_add_base_querter,
+				per_add_deal_querter,
+				per_stock_all,
+				per_stock_new,
+				team_clear_add,
+				team_clear_add_quarter,
+				team_staff_num_regular_quarter,
+				date_format(personnel_trialstarttime,'%Y-%m-%d %H:%i:%s') as personnel_trialstarttime_str,
+				personnel_trialstarttime
+		from
+		wms_inve_salary
+		<where>
+					<if test="wms_inve_salary_id != null">
+						and wms_inve_salary_id = #{wms_inve_salary_id}
+					</if>
+					<if test="personnel_id != null">
+						and personnel_id = #{personnel_id}
+					</if>
+					<if test="personnel_deptid != null">
+						and personnel_deptid = #{personnel_deptid}
+					</if>
+					<if test="personnel_postid != null">
+						and personnel_postid = #{personnel_postid}
+					</if>
+					<if test="personnel_state != null">
+						and personnel_state = #{personnel_state}
+					</if>
+					<if test="base_salary != null">
+						and base_salary = #{base_salary}
+					</if>
+					<if test="performance_salary != null">
+						and performance_salary = #{performance_salary}
+					</if>
+					<if test="train_salary != null">
+						and train_salary = #{train_salary}
+					</if>
+					<if test="post_salary != null">
+						and post_salary = #{post_salary}
+					</if>
+					<if test="adjust_amount != null">
+						and adjust_amount = #{adjust_amount}
+					</if>
+					<if test="statics_month != null">
+						and statics_month = #{statics_month}
+					</if>
+					<if test="statics_time != null">
+						and statics_time = #{statics_time}
+					</if>
+					<if test="per_add_base != null">
+						and per_add_base = #{per_add_base}
+					</if>
+					<if test="per_add_deal != null">
+						and per_add_deal = #{per_add_deal}
+					</if>
+					<if test="per_add_base_querter != null">
+						and per_add_base_querter = #{per_add_base_querter}
+					</if>
+					<if test="per_add_deal_querter != null">
+						and per_add_deal_querter = #{per_add_deal_querter}
+					</if>
+					<if test="per_stock_all != null">
+						and per_stock_all = #{per_stock_all}
+					</if>
+					<if test="per_stock_new != null">
+						and per_stock_new = #{per_stock_new}
+					</if>
+					<if test="team_clear_add != null">
+						and team_clear_add = #{team_clear_add}
+					</if>
+					<if test="team_clear_add_quarter != null">
+						and team_clear_add_quarter = #{team_clear_add_quarter}
+					</if>
+					<if test="team_staff_num_regular_quarter != null">
+						and team_staff_num_regular_quarter = #{team_staff_num_regular_quarter}
+					</if>
+					<if test="personnel_trialstarttime != null">
+						and personnel_trialstarttime = #{personnel_trialstarttime}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_inve_salary_id != #{wms_inve_salary_id}
+					</if>
+		</where>
+	</select>
+	<!-- 	导出列表数据 -->
+	<select id="getWmsInveSalaryInfoByDate" parameterType="String" resultType="map">
+		SELECT
+			(SELECT dept_name FROM sys_dept WHERE dept_id = d1.dept_pid) as
+			one_level_dept_name,
+			d1.dept_name as two_level_dept_name,
+			CONCAT(p1.personnel_name,' ',p1.personnel_shortCode) as personnel_name,
+			DATE_FORMAT(w1.personnel_trialStartTime,'%Y/%m/%d') as personnel_trialStartTime,
+			s1.post_name,
+			CASE when (w1.personnel_state=0) then '试用'
+				when (w1.personnel_state=1) then '在职'
+				when (w1.personnel_state=2) then '实习'
+				when (w1.personnel_state=5) then '异动'
+				when (w1.personnel_state=3) then '离职'
+				when (w1.personnel_state=7) then '兼职'
+		  	END as personnel_state ,
+			w1.base_salary,
+			floor(w1.performance_salary) as performance_salary,
+			'--' as train_salary,
+			w1.post_salary,
+			w1.adjust_amount,
+			CASE
+				WHEN locate('见习', s1.post_name) > 0 OR s1.post_name = '财富助理' THEN
+					'--'
+				WHEN s1.post_name = '客户经理' THEN
+					CASE
+						WHEN w1.post_salary = 0 THEN '无'
+						WHEN w1.post_salary = 1000 THEN '一星理财规划师'
+						WHEN w1.post_salary = 2000 THEN '二星理财规划师'
+						WHEN w1.post_salary = 3000 THEN '三星理财规划师'
+						WHEN w1.post_salary = 5000 THEN '资深理财规划师'
+				END
+				WHEN s1.post_name = '部门经理' THEN
+					CASE		
+						WHEN w1.post_salary = 0 THEN '部门经理'
+						WHEN w1.post_salary = 2000 THEN '一星部门经理'
+						WHEN w1.post_salary = 3000 THEN '二星部门经理'
+						WHEN w1.post_salary = 5000 THEN '三星部门经理'
+						WHEN w1.post_salary = 6000 THEN '资深部门经理'
+				END
+			END AS post,
+			(IFNULL(w1.base_salary,0) + IFNULL(w1.performance_salary,0) + IFNULL(w1.train_salary,0) + IFNULL(w1.post_salary,0) + IFNULL(w1.adjust_amount,0)) AS total
+		FROM wms_inve_salary w1, sys_post s1, sys_dept d1, pm_personnel p1
+		WHERE w1.personnel_postId = s1.post_id
+		AND w1.personnel_deptId = d1.dept_id
+		AND w1.personnel_id = p1.personnel_id
+		AND w1.statics_month=DATE_FORMAT(CONCAT(#{date},'-','01'),'%Y-%m')
+		ORDER BY w1.personnel_trialStartTime desc,p1.personnel_name	
+	</select>
+
+	<select id="getSalaryPersonnelPerformanceByDate" parameterType="String" resultType="map">
+		SELECT
+				(SELECT dept_name FROM sys_dept WHERE dept_id = d1.dept_pid) as one_level_dept_name,
+				d1.dept_name as two_level_dept_name,
+				CONCAT(p1.personnel_name,' ',p1.personnel_shortCode) as personnel_name,
+				DATE_FORMAT(w1.personnel_trialStartTime,'%Y/%m/%d') as personnel_trialStartTime,
+				s1.post_name,
+				w1.per_add_base,
+				w1.per_add_deal,
+				CASE WHEN getLastSeasonMonth(CONCAT(#{date},'-','01'),'1') &gt;= DATE_FORMAT(w1.personnel_trialStartTime,'%Y-%m')
+						THEN sjdsy.sjdsy_per_clear_add_deal
+					ELSE '--'
+				END AS sjdsy_per_clear_add_deal,
+	
+				CASE WHEN getLastSeasonMonth(CONCAT(#{date},'-','01'),'2') &gt;= DATE_FORMAT(w1.personnel_trialStartTime,'%Y-%m')
+						THEN sjdzy.sjdzy_per_clear_add_deal
+					ELSE '--'
+				END AS sjdzy_per_clear_add_deal,
+				
+				CASE WHEN getLastSeasonMonth(CONCAT(#{date},'-','01'),'3') &gt;= DATE_FORMAT(w1.personnel_trialStartTime,'%Y-%m')
+						THEN sjdmy.sjdmy_per_clear_add_deal
+					ELSE '--'
+				END AS sjdmy_per_clear_add_deal,
+		
+				bjdsy.bjdsy_per_clear_add_deal,
+				bjdzy.bjdzy_per_clear_add_deal,
+				bjdmy.bjdmy_per_clear_add_deal,
+				w1.per_stock_all,
+				w1.per_stock_new
+		FROM wms_inve_salary w1
+
+				LEFT JOIN sys_post s1 ON w1.personnel_postId = s1.post_id
+				LEFT JOIN sys_dept d1 ON w1.personnel_deptId = d1.dept_id
+				LEFT JOIN pm_personnel p1 ON w1.personnel_id = p1.personnel_id
+				LEFT JOIN (
+							SELECT w1.personnel_id,SUM(ifnull(w1.per_add_deal,0)-ifnull(w1.per_back_deal,0)+ifnull(w1.per_special_add,0)) as sjdsy_per_clear_add_deal
+								FROM wms_personnel_achievement_his w1
+								WHERE
+									CASE WHEN QUARTER (CONCAT(#{date},'-','01')) = 1 THEN
+											YEAR (
+												CONCAT(w1.statics_month, '-01')
+											) = YEAR (
+												date_sub(CONCAT(#{date},'-','01'), INTERVAL 1 YEAR)
+											) 
+									ELSE
+										YEAR (
+											CONCAT(w1.statics_month, '-01')
+										) = YEAR (
+											CONCAT(#{date},'-','01')
+										) 
+									END 
+									AND QUARTER(CONCAT(w1.statics_month,'-','01')) = QUARTER(DATE_SUB(CONCAT(#{date},'-','01'),interval 1 QUARTER))
+									AND CASE  WHEN (MONTH(CONCAT(w1.statics_month,'-','01')) % 3 = 1) THEN w1.statics_month=w1.statics_month END
+								GROUP BY w1.personnel_id
+							) sjdsy
+				ON w1.personnel_id = sjdsy.personnel_id
+				LEFT JOIN	(
+							SELECT w1.personnel_id,SUM(ifnull(w1.per_add_deal,0)-ifnull(w1.per_back_deal,0)+ifnull(w1.per_special_add,0)) as sjdzy_per_clear_add_deal
+								FROM wms_personnel_achievement_his w1
+								WHERE								 
+									CASE WHEN QUARTER (CONCAT(#{date},'-','01')) = 1 THEN
+											YEAR (
+												CONCAT(w1.statics_month, '-01')
+											) = YEAR (
+												date_sub(CONCAT(#{date},'-','01'), INTERVAL 1 YEAR)
+											) 
+									ELSE
+										YEAR (
+											CONCAT(w1.statics_month, '-01')
+										) = YEAR (
+											CONCAT(#{date},'-','01')
+										) 
+									END 
+									AND QUARTER(CONCAT(w1.statics_month,'-','01')) = QUARTER(DATE_SUB(CONCAT(#{date},'-','01'),interval 1 QUARTER))
+									AND CASE  WHEN (MONTH(CONCAT(w1.statics_month,'-','01')) % 3 = 2) THEN w1.statics_month=w1.statics_month END
+								GROUP BY w1.personnel_id
+							) sjdzy
+				ON w1.personnel_id = sjdzy.personnel_id
+				LEFT JOIN(
+							SELECT w1.personnel_id,SUM(ifnull(w1.per_add_deal,0)-ifnull(w1.per_back_deal,0)+ifnull(w1.per_special_add,0)) as sjdmy_per_clear_add_deal
+								FROM wms_personnel_achievement_his w1
+								WHERE
+									CASE WHEN QUARTER (CONCAT(#{date},'-','01')) = 1 THEN
+											YEAR (
+												CONCAT(w1.statics_month, '-01')
+											) = YEAR (
+												date_sub(CONCAT(#{date},'-','01'), INTERVAL 1 YEAR)
+											) 
+									ELSE
+										YEAR (
+											CONCAT(w1.statics_month, '-01')
+										) = YEAR (
+											CONCAT(#{date},'-','01')
+										) 
+									END  
+									AND QUARTER(CONCAT(w1.statics_month,'-','01')) = QUARTER(DATE_SUB(CONCAT(#{date},'-','01'),interval 1 QUARTER))
+									AND CASE WHEN (MONTH(CONCAT(w1.statics_month,'-','01')) % 3 = 0) THEN w1.statics_month=w1.statics_month END
+								GROUP BY w1.personnel_id
+							) sjdmy
+				ON w1.personnel_id = sjdmy.personnel_id
+
+				LEFT JOIN	(
+							SELECT w1.personnel_id,SUM(ifnull(w1.per_add_deal,0)-ifnull(w1.per_back_deal,0)+ifnull(w1.per_special_add,0)) as bjdsy_per_clear_add_deal
+								FROM wms_personnel_achievement_his w1
+								WHERE 
+									QUARTER(CONCAT(w1.statics_month,'-','01')) = QUARTER(CONCAT(#{date},'-','01'))
+									AND CASE  WHEN (MONTH(CONCAT(w1.statics_month,'-','01')) % 3 = 1) THEN w1.statics_month=w1.statics_month END
+								GROUP BY w1.personnel_id
+							) bjdsy
+				ON w1.personnel_id = bjdsy.personnel_id
+				LEFT JOIN	(
+							SELECT w1.personnel_id,SUM(ifnull(w1.per_add_deal,0)-ifnull(w1.per_back_deal,0)+ifnull(w1.per_special_add,0)) as bjdzy_per_clear_add_deal
+								FROM wms_personnel_achievement_his w1
+								WHERE
+									QUARTER(CONCAT(w1.statics_month,'-','01')) = QUARTER(CONCAT(#{date},'-','01'))
+									AND CASE  WHEN (MONTH(CONCAT(w1.statics_month,'-','01')) % 3 = 2) THEN w1.statics_month=w1.statics_month END
+								GROUP BY w1.personnel_id
+							) bjdzy
+				ON w1.personnel_id = bjdzy.personnel_id
+				LEFT JOIN	(
+							SELECT w1.personnel_id,SUM(ifnull(w1.per_add_deal,0)-ifnull(w1.per_back_deal,0)+ifnull(w1.per_special_add,0)) as bjdmy_per_clear_add_deal
+								FROM wms_personnel_achievement_his w1
+								WHERE
+									QUARTER(CONCAT(w1.statics_month,'-','01')) = QUARTER(CONCAT(#{date},'-','01'))
+									AND CASE WHEN (MONTH(CONCAT(w1.statics_month,'-','01')) % 3 = 0) THEN w1.statics_month=w1.statics_month END
+								GROUP BY w1.personnel_id
+							) bjdmy
+				ON w1.personnel_id = bjdmy.personnel_id
+		WHERE 
+			w1.statics_month= #{date}
+		ORDER BY w1.personnel_trialStartTime desc,p1.personnel_name				 		
+	</select>
+	
+	<select id="getSalaryDeptPerformanceByDate" parameterType="String" resultType="map">
+		SELECT
+			(SELECT dept_name FROM sys_dept WHERE dept_id = d1.dept_pid) as one_level_dept_name,
+			d1.dept_name as two_level_dept_name,
+			CONCAT(p1.personnel_name,' ',p1.personnel_shortCode) as personnel_name,
+			DATE_FORMAT(w1.personnel_trialStartTime,'%Y/%m/%d') as personnel_trialStartTime,
+			s1.post_name,
+			(select s1.team_sea_staff_num from wms_personnel_achievement_his_seasta s1 where s1.dept_id = w1.personnel_deptId and s1.statics_season = #{statics_season}) as team_staff_num,
+			(select s2.team_sea_clear_add from wms_personnel_achievement_his_seasta s2 where s2.dept_id = w1.personnel_deptId and s2.statics_season = #{statics_season}) as total_dept_per_quarter,
+		    w1.team_clear_add_quarter,
+		    w1.team_staff_num_regular_quarter,
+		    w1.team_clear_add,
+			w1.per_stock_all,
+		    w1.per_stock_new,
+		    team.team_stock_all,
+		    team.team_stock_new
+		FROM wms_inve_salary w1
+		LEFT JOIN sys_post s1 ON w1.personnel_postId = s1.post_id
+		LEFT JOIN sys_dept d1 ON  w1.personnel_deptId = d1.dept_id
+		LEFT JOIN pm_personnel p1 ON w1.personnel_id = p1.personnel_id
+		LEFT JOIN 	(
+				  SELECT wh.personnel_id,wh.dept_id,wh.statics_month,wh.team_stock_all,team_stock_new_deal as team_stock_new
+						FROM wms_personnel_achievement_his wh
+				) team
+		ON w1.personnel_id = team.personnel_id AND  w1.statics_month = team.statics_month AND w1.personnel_deptId = team.dept_id
+	WHERE 
+		 w1.statics_month= #{statics_month}
+		and locate('部门经理', s1.post_name) > 0
+	ORDER BY w1.personnel_trialStartTime desc,p1.personnel_name	 
+	</select>
+		<!-- 	查询列表数据【分页查询】 -->
+	<select id="selectWmsInveSalaryInfoByDate" parameterType="com.zx.emanage.inve.vo.WmsInveSalarySearchBeanVO" resultType="map">
+	
+	select * from (
+		SELECT
+			if(if(i1.is_pay_general is not null,i1.is_pay_general,if(i1.is_pay_vice_general is not null,i1.is_pay_vice_general,i1.is_pay_department))=1,"是","否") as is_pay, 
+			(SELECT dept_name FROM sys_dept WHERE dept_id = d1.dept_pid) as
+			one_level_dept_name,
+			d1.dept_name as two_level_dept_name,
+			CONCAT(p1.personnel_name,' ',p1.personnel_shortCode) as personnel_name,
+			DATE_FORMAT(w1.personnel_trialStartTime,'%Y-%m-%d') as personnel_trialStartTime,
+			s1.post_name,
+			CASE when (w1.personnel_state=0) then '试用'
+				when (w1.personnel_state=1) then '在职'
+				when (w1.personnel_state=2) then '实习'
+				when (w1.personnel_state=5) then '异动'
+				when (w1.personnel_state=3) then '离职'
+				when (w1.personnel_state=7) then '兼职'
+		  	END as personnel_state ,
+			w1.base_salary,
+			floor(w1.performance_salary) as performance_salary,
+			'--' as train_salary,
+			w1.post_salary,
+			w1.adjust_amount,
+			CASE
+				WHEN locate('见习', s1.post_name) > 0 OR s1.post_name = '财富助理' THEN
+					'--'
+				WHEN s1.post_name = '客户经理' THEN
+					CASE
+						WHEN w1.post_salary = 0 THEN '无'
+						WHEN w1.post_salary = 1000 THEN '一星理财规划师'
+						WHEN w1.post_salary = 2000 THEN '二星理财规划师'
+						WHEN w1.post_salary = 3000 THEN '三星理财规划师'
+						WHEN w1.post_salary = 5000 THEN '资深理财规划师'
+				END
+				WHEN s1.post_name = '部门经理' THEN
+					CASE		
+						WHEN w1.post_salary = 0 THEN '部门经理'
+						WHEN w1.post_salary = 2000 THEN '一星部门经理'
+						WHEN w1.post_salary = 3000 THEN '二星部门经理'
+						WHEN w1.post_salary = 5000 THEN '三星部门经理'
+						WHEN w1.post_salary = 6000 THEN '资深部门经理'
+				END
+			END AS post,
+			(IFNULL(w1.base_salary,0) + IFNULL(w1.performance_salary,0) + IFNULL(w1.train_salary,0) + IFNULL(w1.post_salary,0) + IFNULL(w1.adjust_amount,0)) AS total
+		FROM wms_inve_salary w1, sys_post s1, sys_dept d1, pm_personnel p1 , wms_inve_salary_pre_item i1
+		WHERE w1.personnel_postId = s1.post_id
+		AND w1.personnel_deptId = d1.dept_id
+		AND w1.personnel_id = p1.personnel_id
+		AND w1.personnel_id = i1.personnel_id
+	
+		<if test="personnel_name != null and personnel_name != ''">
+			and (personnel_name like "%"#{personnel_name}"%" or
+			personnel_shortCode = #{personnel_name})
+		</if>
+		<if test="personnel_state != null and personnel_state!=-1">
+			and w1.personnel_state = #{personnel_state}
+		</if>
+		<if test="statics_month != null and statics_month != ''">
+			AND w1.statics_month=#{statics_month}
+		</if>
+		ORDER BY one_level_dept_name ,two_level_dept_name,CONVERT(p1.personnel_name USING gbk)COLLATE gbk_chinese_ci 
+		
+		) as ac
+		where
+		1=1
+		<if test="dept_name != null and dept_name !=''">
+			and (ac.one_level_dept_name like "%"#{dept_name}"%" or 
+			ac.two_level_dept_name like "%"#{dept_name}"%")
+		</if>
+		<if test="page !=null and pagesize !=null and exportExcel_flag !=1">
+		limit #{page},#{pagesize}
+		</if>
+	</select>
+	
+<!-- 	查询列表总数【分页查询】 -->
+	<select id="countWmsInveSalaryInfoByDate" parameterType="com.zx.emanage.inve.vo.WmsInveSalarySearchBeanVO" resultType="int">
+	select count(*) from (
+		SELECT
+			if(if(i1.is_pay_general is not null,i1.is_pay_general,if(i1.is_pay_vice_general is not null,i1.is_pay_vice_general,i1.is_pay_department))=1,"是","否") as is_pay, 
+			(SELECT dept_name FROM sys_dept WHERE dept_id = d1.dept_pid) as
+			one_level_dept_name,
+			d1.dept_name as two_level_dept_name,
+			CONCAT(p1.personnel_name,' ',p1.personnel_shortCode) as personnel_name,
+			DATE_FORMAT(w1.personnel_trialStartTime,'%Y-%m-%d') as personnel_trialStartTime,
+			s1.post_name,
+			CASE when (w1.personnel_state=0) then '试用'
+				when (w1.personnel_state=1) then '在职'
+				when (w1.personnel_state=2) then '实习'
+				when (w1.personnel_state=5) then '异动'
+				when (w1.personnel_state=3) then '离职'
+				when (w1.personnel_state=7) then '兼职'
+		  	END as personnel_state ,
+			w1.base_salary,
+			floor(w1.performance_salary) as performance_salary,
+			'--' as train_salary,
+			w1.post_salary,
+			w1.adjust_amount,
+			CASE
+				WHEN locate('见习', s1.post_name) > 0 OR s1.post_name = '财富助理' THEN
+					'--'
+				WHEN s1.post_name = '客户经理' THEN
+					CASE
+						WHEN w1.post_salary = 0 THEN '无'
+						WHEN w1.post_salary = 1000 THEN '一星理财规划师'
+						WHEN w1.post_salary = 2000 THEN '二星理财规划师'
+						WHEN w1.post_salary = 3000 THEN '三星理财规划师'
+						WHEN w1.post_salary = 5000 THEN '资深理财规划师'
+				END
+				WHEN s1.post_name = '部门经理' THEN
+					CASE		
+						WHEN w1.post_salary = 0 THEN '部门经理'
+						WHEN w1.post_salary = 2000 THEN '一星部门经理'
+						WHEN w1.post_salary = 3000 THEN '二星部门经理'
+						WHEN w1.post_salary = 5000 THEN '三星部门经理'
+						WHEN w1.post_salary = 6000 THEN '资深部门经理'
+				END
+			END AS post,
+			(IFNULL(w1.base_salary,0) + IFNULL(w1.performance_salary,0) + IFNULL(w1.train_salary,0) + IFNULL(w1.post_salary,0) + IFNULL(w1.adjust_amount,0)) AS total
+		FROM wms_inve_salary w1, sys_post s1, sys_dept d1, pm_personnel p1 , wms_inve_salary_pre_item i1
+		WHERE w1.personnel_postId = s1.post_id
+		AND w1.personnel_deptId = d1.dept_id
+		AND w1.personnel_id = p1.personnel_id
+		AND w1.personnel_id = i1.personnel_id
+		<if test="personnel_name != null and personnel_name != ''">
+			and (personnel_name like "%"#{personnel_name}"%" or
+			personnel_shortCode = #{personnel_name})
+		</if>
+		<if test="personnel_state != null and personnel_state!=-1">
+			and w1.personnel_state = #{personnel_state}
+		</if>
+		<if test="statics_month != null and statics_month != ''">
+			AND w1.statics_month=#{statics_month}
+		</if>
+		ORDER BY one_level_dept_name ,two_level_dept_name,CONVERT(p1.personnel_name USING gbk)COLLATE gbk_chinese_ci 
+		) as ac
+		where
+		1=1
+		<if test="dept_name != null and dept_name !=''">
+			and (ac.one_level_dept_name like "%"#{dept_name}"%" or 
+			ac.two_level_dept_name like "%"#{dept_name}"%")
+		</if>
+		
+	</select>
+	
+</mapper> 

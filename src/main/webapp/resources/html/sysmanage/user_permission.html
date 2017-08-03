@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script language="Javascript" src="../../js/zx-all.js"> </script>
+<title>部门管理</title>
+
+</head>
+<style>
+.l-layout-left {
+	border: 1px solid #bfbfbf;
+}
+</style>
+<body style="padding: 10px;">
+	<div id="left-center" leftwidth="320">
+		<!-- 左侧div-->
+		<div position="left" title="部门结构" style="overflow: auto;">
+			<!-- 左侧菜单树div-->
+			<div id='treeDivId'>
+				<ul id="tree_div_id">
+				</ul>
+			</div>
+		</div>
+		<div position="center" title="人员信息" style="overflow: auto;">
+			<!-- 工具栏 -->
+			<div id="centertoolbar" class="minwidth400 position-re clearboth">
+			</div>
+			<!-- 表格div-->
+			<div id="grid" style="margin: 0; padding: 0"></div>
+		</div>
+	</div>
+</body>
+</html>
+<!-- 上侧工具条按钮事件 -->
+<script type="text/javascript">
+	var deptTreeManage;
+	var grid;
+	var personnel_info = [];
+    var grid_personnel_data = {};
+    $(function() {
+        initDeptTree();
+        init_top_grid();
+        
+        var layout = $("#left-center").ligerLayout({
+        	minLeftWidth:320,
+            onHeightChanged: function(options) {
+                $('#treeDivId').height(options.middleHeight - 58);
+            },
+            onEndResize: function(options) {
+                deptTreeManage.setTreeWidth($(".l-layout-left").width() - globalUtil.getTreeMaxLevel(deptTreeManage) * 22);
+            }
+        });
+        var toolbarItemData = [];
+        toolbarItemData.push({
+            text: '角色分配',
+            click: addRole,
+            icon: 'add'
+        });
+	   $("#centertoolbar").ligerToolBar({
+	       items: toolbarItemData
+	   	});
+    });
+
+	var initDeptTree = function(){
+		deptTreeManage = $("#tree_div_id").ligerTree({
+            url: globalUtil.getTimestampUrl("/sysmanage/getdepttree.do"),
+            //是否动画显示
+            slide: true,
+            checkbox: false,
+            onSelect: onSelect,
+            onBeforeCancelSelect:onCancle,
+            nodeWidth: 120,
+            single: true,
+            parentIcon: null,	
+            childIcon: null,
+            onExpand: function(node) {
+                changeTreeHeight();
+            },
+            onSuccess: function() {
+                changeTreeHeight();
+                this.setTreeWidth($(".l-layout-left").width() - globalUtil.getTreeMaxLevel(this) * 22);
+            },
+            onCollapse: function(node) {
+                changeTreeHeight();
+            }
+        });
+	};
+    var changeTreeHeight = function() {
+        $('#treeDivId').height($(".l-layout-left").height() - 58);
+    };   
+	var params = {};
+	function onCancle(){
+		//隐藏右侧显示内容
+		params = {};
+		params._filterParms = '-1';
+		global_ligerui_extend.search(grid, params);
+		//$("#maingrid").hide();
+	}
+    function onSelect() {
+        search();
+    }
+
+	function closeDialog() {
+		dialog.hidden();
+	};
+    //树的刷新
+    function treeClear() {
+    	deptTreeManage.destroy();
+    	var treeDivId = document.getElementById("treeDivId");
+    	treeDivId.innerHTML = '<div id="tree_div_id"></div>';
+    	initDeptTree();
+    }
+    
+    function init_top_grid(){
+    	columns = [{
+            display: '部门',
+            name: 'personnel_deptname',
+            width: 150,
+        },{
+            display: '姓名',
+            name: 'personnel_name',
+            width: 150,
+            minWidth: 150
+        },{
+        	display:'职务',
+        	name:'personnel_postname',
+        	width:120,
+        	minWidth:120
+        }];
+    	 grid = $("#grid").ligerGrid({
+    		columns: columns,
+    		url: global_param.context_name + '/sysmanage/getListByDeptId.do',
+    		sortName: '', // 排序列名
+			sortOrder: 'asc', // 排序方式
+    		rownumbers: true,
+    		allowUnSelectRow: true,
+    		usePager: false,
+    		width: '100%',
+    		height: '100%',
+    		heightDiff: -4,
+    		parms: {
+    			_filterParms: -1
+    		}
+
+        });
+    }
+    function addRole(){
+    	var row = grid.getSelectedRow();
+	    if (row == null || row.length == 0 || row.length > 1) {
+        	globalUtil.warnMsg(globalErrorMsg['100031']);//请选择一行记录进行修改
+            return;
+		}
+    	var url = globalUtil.getHtml("user_permission_role_dialog.html?id="+row.personnel_id);
+    	dialog = $.ligerDialog.open({
+	        url: url,
+	        title: '角色分配',
+	        width: 650,
+	        height: globalUtil.setDialogHeight(650),
+	        onHiddenOrClose: function(){
+	    	},
+	        isResize: false
+    	});
+    }
+    function initParams() {
+    	params = {};
+    	var node = deptTreeManage.getSelected();
+    	params.deptId=node.data.id;
+    }
+    //查询
+    var search= function() {
+        initParams();
+        global_ligerui_extend.search(grid, params);
+    }
+    function save(){
+    	//选择某一行的操作
+        var row = grid.getSelectedRow();
+    	//判断是否为空    
+    	if (row == null) {
+           	globalUtil.warnMsg(globalErrorMsg['100031']);//请选择一行记录进行修改
+            return;
+    	}
+    	personnel_info = grid.getSelectedRow();
+    	window.parent.getCheckedPersonnelAll(personnel_info);
+    	window.parent.spfcDialog.close();
+    }
+    function closeDialog(){
+    	window.parent.spfcDialog.close();
+    }
+    
+    
+</script>

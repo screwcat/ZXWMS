@@ -1,0 +1,881 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>服务管理-贷后管理-贷后查询-催缴确认</title>
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script language="Javascript" src="../../js/zx-all.js"> </script>
+
+<style type="text/css">
+.textright {
+	text-align: right;
+}
+.textleft {
+	text-align: left;
+}
+/*input_tb css*/
+.input_tb_new {
+	/*border:1px solid #dfdfdf;*/
+	width: 100%;
+	margin-bottom: 10px;
+}
+.input_tb_new a {
+	color: #056aff;
+	text-decoration: none;
+	font-weight: normal;
+}
+.input_tb_new td {
+	height: 35px;
+	line-height: 25px;
+	/*border-bottom:1px dashed #d5d5d5;*/
+	padding-top: 3px;
+}
+.input_tb_new .tr_title td {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	/*border-bottom:1px solid #dfdfdf;*/
+}
+.input_tb_new .tr_last td {
+	border-bottom: 0;
+}
+.input_tb_new .title {
+	text-align: right;
+}
+.input_tb_new .subtitle {
+	text-align: left;
+	background-color: #d2e1fd;
+	border-top: 1px solid #fff;
+}
+.input_tb_new .tr_btn_input td {
+	background-color: #fbfbfb;
+}
+.title_tb {
+	background-color: #f5f8ff;
+	padding-left: 16px;
+	font-weight: bold;
+	height: 30px;
+	line-height: 30px;
+	/*border:1px solid #dfdfdf;*/
+	border-bottom:0;
+}
+.title_tb .title_txt{
+float:left;
+}
+.title_tb .title_btn{
+float:right;
+margin-top:2px;
+font-weight:normal;
+}
+.input_tb_new td {
+    /*border-bottom: 1px dashed #D5D5D5;*/
+	height: 35px;
+	line-height: 25px;
+	padding-top: 3px;
+}
+.data_tb td {
+	height: 30px;
+	line-height: 24px;
+	padding-left: 10px;
+	border-bottom: 1px dashed #e3e4e6;
+	text-align: left;
+}
+#huankuan {
+	text-align: left;
+}
+</style>
+</head>
+<body>
+	<div class="pop-center overflow-au">
+		<!--查询条件  begin-->
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr valign="bottom" id='trtab1'>
+				<td class="tabbody1" id="tabbody1"
+					onclick="changeTab('reminder');" tabname='mytab'
+					style="width: 30%"><div align="center">催缴单</div></td>
+				<td class="tabbody2" id="tabbody2"
+					onclick="changeTab('processingoftracking');" tabname='mytab'
+					style="width: 30%"><div align="center">跟踪处理结果</div></td>
+				<td class="tabbody3" id="tabbody3"
+					onclick="changeTab('repaymenthistory');" tabname='mytab'
+					style="width: 30%"><div align="center">还款历史</div></td>
+			</tr>
+		</table>
+		<!--------------------------------------------------------------------催缴单 begin----------------------------------------------------------------  -->
+		<div class="pop-center overflow-au" style="top: 30px;">
+		<div id="reminder" class="pop-formDiv clearfix" style="margin: 5px; margin-top: 5px;">
+				<div class="float-l">
+					<div class="pop-form-title">客户名称:</div>
+					<div class="pop-form-item">
+						<input type="text" id="debtor_name" readonly="readonly"  disabled="disabled"/>
+					</div>
+				</div>
+				<div class="float-l" style="left: 50px;">
+					<div class="pop-form-title">联系电话:</div>
+					<div class="pop-form-item">
+						<input type="text" id="debtor_tel"  readonly="readonly" disabled="disabled" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">贷款种类:</div>
+					<div class="pop-form-item">
+						<input type="text" id="cre_loan_type" readonly="readonly" disabled="disabled"/>
+					</div>
+				</div>
+				<div class="float-l clearboth">
+					<div class="pop-form-title">合同编号:</div>
+					<div class="pop-form-item">
+						<input type="text" id="protocol_code" readonly="readonly" disabled="disabled"/>
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">签约日期:</div>
+					<div class="pop-form-item">
+						<input type="text" id="protocol_date" readonly="readonly" disabled="disabled"/>
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">合同金额:</div>
+					<div class="pop-form-item">
+						<input type="text" id="protocol_amount" readonly="readonly" style="width: 120px;" disabled="disabled"/>元
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">违约日期:</div>
+					<div class="pop-form-item">
+						<input type="text" id="current_repay_date_str" 
+							maxlength="50" readonly="readonly" disabled="disabled"/>
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">已还期数:</div>
+					<div class="pop-form-item">
+						<input type="text" id="repay_period" 
+							maxlength="50" readonly="readonly" disabled="disabled"/>
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">期数:</div>
+					<div class="pop-form-item">
+						<input type="text" id="borrow_deadline" 
+							maxlength="50" readonly="readonly" disabled="disabled"/>
+					</div>
+				</div>
+				<div class="float-l clearboth">
+					<div class="pop-form-title">剩余债权:</div>
+					<div class="pop-form-item">
+						<input type="text" id="matching_creditor"  readonly="readonly" disabled="disabled"/>
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title"><span style="color: red;">*</span>逾期天数:</div>
+					<div class="pop-form-item">
+						<input type="text" id="cur_overdue_day" style="width: 120px;"/>天
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">每日滞纳金额:</div>
+					<div class="pop-form-item">
+						<input type="text" id="liquidated_damages" readonly="readonly" style="width: 120px;" disabled="disabled"/>元
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title"><span style="color: red;">*</span>违约金额:</div>
+					<div class="pop-form-item">
+						<input type="text" id="cur_late_fee" 
+							maxlength="50"  style="width: 120px;"/>元
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">客户经理:</div>
+					<div class="pop-form-item">
+						<input type="text" id="salesman_name" 
+							maxlength="50" readonly="readonly" disabled="disabled"/>
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">团队经理:</div>
+					<div class="pop-form-item">
+						<input type="text" id="team_manager_name" 
+							maxlength="50" readonly="readonly" disabled="disabled"/>
+					</div>
+				</div>
+				<div class="float-l clearboth">
+					<div class="pop-form-title">还款银行:</div>
+					<div class="pop-form-item">
+						<input type="text" id="refund_bank" 
+							maxlength="50" readonly="readonly" disabled="disabled"/>
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">还款账号:</div>
+					<div class="pop-form-item">
+						<input type="text" id="refund_number" 
+							maxlength="70" readonly="readonly"  disabled="disabled" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title">抵押情况:</div>
+					<div class="pop-form-item">
+					<input type="text" id="mortgrage"  />
+						<!--<select id="mortgrage">
+						
+							<option value="">请选择</option>
+							<option value="1">支票</option>
+							<option value="2">房产</option>
+						</select>-->
+					</div>
+				</div>
+				<!--  
+				<div class="float-l clearboth">
+					<div class="pop-form-title">缴回违约金金额:</div>
+					<div class="pop-form-item">
+						<input type="text" id="" 
+							maxlength="50" readonly="readonly" style="width: 120px;" />元
+					</div>
+				</div>
+				<div class="float-l ">
+					<div class="pop-form-title">缴回比例:</div>
+					<div class="pop-form-item">
+						<input type="text" id="" 
+							maxlength="50" readonly="readonly" style="width: 120px;"/>%
+					</div>
+				</div>
+				<div class="float-l ">
+					<div class="pop-form-title">提成:</div>
+					<div class="pop-form-item">
+						<input type="text" id="" 
+							maxlength="50" readonly="readonly" />
+					</div>
+				</div>
+				-->
+				<div class="float-l clearboth">
+					<div class="pop-form-title">备注:</div>
+					<textarea rows="" cols="" id="dunning_remark" style="width: 700px;height: 80px;resize:none;" ></textarea>
+				</div>
+		</div>
+		<!-- -----------------------------------------------------------------催缴单 end------------------------------------------------------------------ -->
+		<!--------------------------------------------------------------------跟踪处理结果 begin----------------------------------------------------------------  -->
+		<div id="processingoftracking" class="pop-formDiv clearfix" style="margin: 5px; margin-top: 5px; display: none;">
+			<div class="float-l">
+				<div class="pop-form-title">贷后专员:</div>
+				<div class="pop-form-item">
+					<input type="text" id="final_dunning_name" readonly="readonly" disabled="disabled"/>
+				</div>
+			</div>
+			<div class="float-l">
+				<div class="pop-form-title"><span style="color: red;">*</span>催缴结果:</div>
+				<div class="pop-form-item">
+				<input type="text" id="final_dunning_result"  />
+					<!--<select	id="final_dunning_result">
+						<option value="1">催缴成功</option>
+						<option value="0">催缴失败</option>
+						<option value="2">催缴分配</option>
+					</select>-->
+				</div>
+			</div>
+			<!--<div class="float-l">
+				<div class="pop-form-title">催缴状态:</div>
+				<div class="pop-form-item">
+					<input type="checkbox" name="unpaid_status" value="1" class="radio3" />内部催缴
+					<input type="checkbox" name="unpaid_status" value="2" class="radio3"/>外包催缴
+					<input type="checkbox" name="unpaid_status" value="3" class="radio3"/>法务上诉
+					<input type="checkbox" name="unpaid_status" value="4" class="radio3"/>呆账
+				</div>
+			</div>-->
+			<div ></div>
+			<div class="center-content clearboth" style="min-width: 500px;"
+				id="info_fz">
+				<div class="center-title3 position-re">
+					催缴跟踪
+					<div name="suofang" class="show-hide l-icon-hide"></div>
+				</div>
+				  
+				<div id="toolbar" class="minwidth400"
+					style="border: 1px solid #bfbfbf; background-color: #e6f4ff; margin-bottom: 10px;">
+				</div>
+					<div class="class_cjgz">
+				<!--<div class="center-txt  class_cjgz"
+					style="margin-bottom: 5px; height: 150px; border: 1px solid #bfbfbf; padding: 5px;">
+					   <div class="float-l">
+						<div class="pop-form-title"><span style="color: red;">*</span>催缴日期:</div>
+						<div class="pop-form-item">
+							<input id="dunning_datetime" name="dunning_datetime"
+								class="Wdate" type="text"
+								onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+								style="vertical-align: top; width: 133px;" />
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">贷后专员:</div>
+						<div class="pop-form-item">
+							<input type="text" id="final_dunning_name1" name="dunning_name"/>
+						</div>
+					</div>
+					<div class="float-l clearboth">
+						<div class="pop-form-title"><span style="color: red;">*</span>催缴详情:</div>
+						<div class="pop-form-item">
+							<textarea rows="" cols="" name="dunning_remark" id="dunning_remark1" style="width: 750px;height: 100px;resize:none;" ></textarea>
+						</div>
+					</div>-->
+				</div>
+			</div>
+			<!-- 催缴跟踪备份 -->
+			<div class="center-txt " id="copy_class_cjgz"
+				style="margin-bottom: 5px; height: 150px; border: 1px solid #bfbfbf; padding: 5px; display: none;">
+				<div class="float-l">
+						<div class="pop-form-title">催缴日期:</div>
+						<div class="pop-form-item">
+							<input name="dunning_datetime"
+								class="Wdate" type="text"
+								onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+								style="vertical-align: top; width: 133px;"  />
+						</div>
+					</div>
+					<div class="float-l">
+						<div class="pop-form-title">实时催缴人:</div>
+						<div class="pop-form-item">
+							<input type="text" name="dunning_name" id="dhzy"/>
+						</div>
+					</div>
+					<div class="float-l clearboth">
+						<div class="pop-form-title">催缴详情:</div>
+						<div class="pop-form-item">
+							<textarea rows="" cols="" name="dunning_remark" style="width: 750px;height: 80px;resize:none;" ></textarea>
+						</div>
+					</div>
+			</div>
+		</div>
+
+		<!-- -----------------------------------------------------------------跟中处理结果 end------------------------------------------------------------------ -->
+		<!-- ------------------------------------------------------------------还款历史 begin------------------------------------------------------------------ -->
+		<div id="repaymenthistory" class="pop-formDiv clearfix" style="margin: 5px; margin-top: 5px; display: none;">		
+			<div class="center-content clearboth" style="min-width: 500px;margin-top: 35px;">
+				<div class="center-txt" style="margin-bottom: 10px;">
+					<div id="grid-top"></div>
+				</div>
+			</div>
+		</div>
+		<!-- ------------------------------------------------------------------还款历史 end------------------------------------------------------------------ -->
+		<div>
+			<span style="color: red;">友情提示：</span>  <br />
+			<span style="color: red;">暂存按钮：在催缴过程中若不能确定欠款已追回的情况下，对催缴情况进行保存，单据停留在电话催缴跟踪页面&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>   <br />                
+			<span style="color: red;">提交按钮：在确定欠款已追回的情况下，提交已追回单据的催缴情况，提交后单据离开电话催缴跟踪页面，**提交后无法更改 </span><br /> 
+		</div>
+		</div>
+	</div>
+	<!-- 提交功能按钮区 -->
+	<div class="pop-footer5 clearboth" style="bottom: 1px; heigt:auto">
+		<input id="zcbtn" class="btn-saveZ"
+			onmouseover="this.className='btn-saveZ-over'"
+			onmouseout="this.className='btn-saveZ'"
+			onmousedown="this.className='btn-saveZ-down'" type="button"
+			style="margin-right: 7px;" onclick="savePro0(0)" /> <input id="tjbtn"
+			class="btn-saveT" onmouseover="this.className='btn-saveT-over'"
+			onmouseout="this.className='btn-saveT'"
+			onmousedown="this.className='btn-saveT-down'" type="button"
+			style="margin-right: 7px;" onclick="savePro1(1)" /> <input
+			id="cancelBtnId" class="btn-cancel"
+			onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" type="button"
+			onclick="closePage();" />
+	</div>
+	<script type="text/javascript">
+	var wms_cre_credit_head_id = $.query.get("wms_cre_credit_head_id");
+	var wms_fina_cre_pay_id = $.query.get('wms_fina_cre_pay_id');
+	var grid_top;
+	var result={};
+	$(function(){
+		init_mortgrage();
+		init_final_dunning_result();
+		    //根据还款信息表主键和单据主键获取相关信息
+			$.getJSON(globalUtil.getTimestampUrl('/loanpost/wmsfinacrerepaybypk.do'),
+			{
+				"wms_cre_credit_head_id" : wms_cre_credit_head_id,
+				"wms_fina_cre_pay_id":wms_fina_cre_pay_id
+			},
+			function(json) {	
+				result=json;//记录
+				globalUtil.setFormVal("reminder", json);
+				$("#final_dunning_name").val(json.dunning_name);
+				init_cre_loan_type(json);
+				//init_unpaid_status(json);
+				});
+	//初始化贷款还款表中的数据
+	$('#repayhistory :input').attr("disabled","disabled");
+	//还款历史
+	init_top_grid();
+	lookpage();	
+	getInfodetailed();
+	getinfo();
+	});
+	function getinfo(){
+		$.getJSON(globalUtil.getTimestampUrl('/loanpost/getListByEntityHead.do'),
+				{
+					"wms_cre_credit_head_id" : wms_cre_credit_head_id,
+					"wms_fina_cre_pay_id":wms_fina_cre_pay_id
+				},function(json) {
+					if(json!=null&&json!=""){
+						for(var i=0;i<json.length;i++){
+						init_mortgrage(json[i]);
+						$("#dunning_remark").val(json[i].dunning_remark);
+						}
+					}
+				});
+	}
+	//催缴详情
+	function getInfodetailed(){
+		 //根据还款信息表主键和单据主键获取相关信息
+		$.getJSON(globalUtil.getTimestampUrl('/loanpost/getListByEntity.do'),
+		{
+			"wms_cre_credit_head_id" : wms_cre_credit_head_id,
+			"wms_fina_cre_pay_id":wms_fina_cre_pay_id
+		},function(json) {
+			if(json!=null&&json!=""){
+			var htmlval="";
+			for(var i=0;i<json.length;i++){
+				if(json[i].dunning_remark=="null"||json[i].dunning_remark==null){
+					json[i].dunning_remark="";
+				}
+					htmlval+= "<div class='center-txt' style='margin-bottom: 5px; height: 150px; border: 1px solid #bfbfbf; padding: 5px;'>";
+					htmlval+=	"<div class='float-l'>";
+					htmlval+=		"<div class='pop-form-title'>催缴日期:</div>";
+					htmlval+=			"<div class='pop-form-item'>";
+					htmlval+=				"<input class='Wdate' type='text'  style='vertical-align: top; width: 133px;' readonly='readonly' disabled='disabled' value="+json[i].dunning_datetime+">";
+					htmlval+=		"</div>";
+					htmlval+=	"</div>";
+					htmlval+=	"<div class='float-l'>";
+					htmlval+=		"<div class='pop-form-title'>实时催缴人:</div>";
+					htmlval+=		"<div class='pop-form-item'>";
+					htmlval+=			"<input type='text' readonly='readonly' disabled='disabled' value="+json[i].dunning_name+">";
+					htmlval+=		"</div>";
+					htmlval+=	"</div>";
+					htmlval+=	"<div class='float-l clearboth'>";
+					htmlval+=		"<div class='pop-form-title'>催缴详情:</div>";
+					htmlval+=		"<div class='pop-form-item'>";
+					htmlval+=			"<textarea rows='' cols='' style='width: 750px;height: 100px; resize:none;' readonly='readonly' disabled='disabled'>"+json[i].dunning_remark+"</textarea>";
+					htmlval+=		"</div>";
+					htmlval+=	"</div>";
+					htmlval+="</div>";
+				}
+				$('.class_cjgz:first').before(htmlval);
+			}else{
+				add();
+			}
+		});
+	} 
+	//催缴情况
+	function init_final_dunning_result(json){
+		var final_dunning_result_params ={
+				dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=66',
+				t_col_name:'final_dunning_result',
+				valueField:'value_code',   //下拉框value对应的值，默认为id
+				textField:'value_meaning',    //下拉框text对应的值，默认为text
+				def_val:'first'
+				};
+		global_ligerui_extend.initCombox("final_dunning_result",null,final_dunning_result_params);
+		if(json){
+			//把值装载设定
+			global_ligerui_extend.syncRequestInitComboxData(json,"final_dunning_result");
+			//让其不可编辑
+			global_ligerui_extend.disabledCombox("final_dunning_result");
+		}else{			
+		    global_ligerui_extend.initComboxDefVal("final_dunning_result");
+		}
+	}
+	//抵押情况
+	function init_mortgrage(json){
+		var mortgrage_params ={
+				dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=65',
+				t_col_name:'mortgrage',
+				valueField:'value_code',   //下拉框value对应的值，默认为id
+				textField:'value_meaning',    //下拉框text对应的值，默认为text
+				def_val:'first'
+				};
+		global_ligerui_extend.initCombox("mortgrage",function (value){
+		},mortgrage_params);
+		if(json){
+			//把值装载设定
+			global_ligerui_extend.syncRequestInitComboxData(json,"mortgrage");
+			//让其不可编辑
+			//global_ligerui_extend.disabledCombox("mortgrage");
+		}else{	
+		    global_ligerui_extend.initComboxDefVal("mortgrage");
+		}
+	}
+	//信用贷款产品类型
+	function init_cre_loan_type(json){
+		if(json.cre_type==1){
+			var cre_loan_type_params ={
+					dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=26',
+					t_col_name:'cre_loan_type',
+					valueField:'wms_sys_dict_data_id',   //下拉框value对应的值，默认为id
+					textField:'value_meaning',    //下拉框text对应的值，默认为text
+					def_val:'first'
+					};
+		}else if(json.cre_type==2){
+			var cre_loan_type_params ={
+					dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=27',
+					t_col_name:'cre_loan_type',
+					valueField:'wms_sys_dict_data_id',   //下拉框value对应的值，默认为id
+					textField:'value_meaning',    //下拉框text对应的值，默认为text
+					def_val:'first'
+					};
+		}
+		global_ligerui_extend.initCombox("cre_loan_type",null,cre_loan_type_params);
+		if(json){
+			//把值装载设定
+			global_ligerui_extend.syncRequestInitComboxData(json,"cre_loan_type");
+			//让其不可编辑
+			global_ligerui_extend.disabledCombox("cre_loan_type");
+		}else{			
+		    global_ligerui_extend.initComboxDefVal("cre_loan_type");
+		}
+	}
+	var dunning_id="";
+	var jsid="";
+	//初始化催缴人员
+	function init_dunning_name(json){
+		window.isPrototypeOf(jsid);
+		dunning_id="";
+		var dunning_name_params ={
+				dest_url:'/loanpost/wmspostdunningheadnamelist.do',
+				t_col_name:'dhzy',
+				valueField:'personnel_id',   //下拉框value对应的值，默认为id
+				textField:'personnel_name',    //下拉框text对应的值，默认为text
+				def_val:'first'
+				};
+		jsid=global_ligerui_extend.initCombox("dhzy",function(value){
+			dunning_id=value;
+		},dunning_name_params);
+		if(json){
+			//把值装载设定
+			global_ligerui_extend.syncRequestInitComboxData(json,"dhzy");
+			//让其不可编辑
+			global_ligerui_extend.disabledCombox("dhzy");
+		}else{	
+		    global_ligerui_extend.initComboxDefVal("dhzy");
+		}
+	}
+	//跟踪处理结果
+	$("#toolbar").ligerToolBar({
+		 items: [{
+		        text: '新增',
+		        click:add,
+		        icon:'add'
+		    }
+		 /*,{ text: '删除', click: del,icon:'delete' },{
+		            line: true
+		    }*/]
+	});
+	var num=0;
+	//实现增加处理结果div
+	function add(){
+		if(num>0){
+			return;
+		}
+		var outDiv=$('<div class="center-txt  class_cjgz" style="margin-bottom: 5px; height: 150px; border: 1px solid #bfbfbf; padding: 5px;"></div>');
+		outDiv.html($('#copy_class_cjgz').html());
+		$('.class_cjgz:last').after(outDiv);
+		init_dunning_name();
+		num++;
+	}
+	//实现删除处理结果div
+	function del(){
+		if(num<1){
+			return;
+		}
+		//$.ligerui.remove(jsid);
+		num--;
+		$('.class_cjgz:last').remove();
+	}
+	//还款历史
+	function init_top_grid(){
+		var columns = [{
+			display: '还款期数',
+	        name: 'repay_no',
+	        resizable: false,
+	        width: 21,
+	        minWidth: 120
+	    }, {
+	        display: '还款日期',
+	        name: 'repay_date',
+	        resizable: false,
+	        width: 21,
+	        minWidth: 120	
+	    }, {
+	        display: '还款总额（元）',
+	        name: 'repay_total',
+	        resizable: false,
+	        width: 21,
+	        minWidth: 120
+	    }, {
+	        display: '其中，本金（元）',
+	        name: 'repay_principal',
+	        resizable: false,
+	        width: 21,
+	        minWidth: 120
+	    },{
+	        display: '利息（元）',
+	        name: 'repay_interest',
+	        resizable: false,
+	        width: 21,
+	        minWidth: 120
+	    },{
+	        display: '滞纳金（元）',
+	        name: 'cur_late_fee',
+	        resizable: false,
+	        width: 21,
+	        minWidth: 120
+	    },{
+        	display: '减免额（元）',
+            name: 'derate',
+            width: 100,
+            minWidth: 120
+	        }];
+		
+	    grid_top = $("#grid-top").ligerGrid({
+	    	columns: columns,
+	    	url: global_param.context_name + '/loanpost/wmsfinacreperiodrepaywithoutpaginglist.do?wms_cre_credit_head_id='+wms_cre_credit_head_id,
+	    	sortName: 'create_timestamp', // 排序列名
+			sortOrder: 'asc', // 排序方式
+    		rownumbers: true,
+    		allowUnSelectRow: true,
+    		usePager: false,
+    		width: '100%',
+    		height: 300,
+    		heightDiff: -4
+	    });
+	}
+	 //设置text文本 radio 为不可编辑模式
+	function lookpage() {			
+		/*$("input[type=text]").attr({
+			"disabled" : "disabled"
+		});*/
+		$("input[type=radio]").attr({
+			"disabled" : "disabled"
+		});
+		//设置文本域不可编辑
+		$("textarea[name='overdue_status']").attr({
+			"disabled" : "disabled"
+		});
+		//设置文本域不可编辑
+		$("textarea[name='info_update']").attr({
+			"disabled" : "disabled"
+		});
+		//设置多选择框不可编辑
+		$("input[type=checkbox]").attr({
+			"disabled" : "disabled"
+		});
+	}
+	//获取多选按钮的值选中的值
+	function getCheckBoxValues(nameValue,classValue){
+		var result=[];
+		if(classValue==null){
+			var eleArr = document.getElementsByName(nameValue);
+			$.each(eleArr,function(i,ele){
+				if($(ele).attr('checked')){
+					result.push($(ele).val());
+				}
+			});
+		}else{
+			var eleArr = $('.'+classValue);
+			$.each(eleArr.get(),function(i,ele){
+				if($(ele).attr('checked')){
+					result.push($(ele).val());
+				}
+			});
+		}
+		return result.join('#');
+	}
+ 
+ 	//关闭页面
+    function closePage(){
+    	window.parent.dialog.hide();
+    }
+    //页面切换
+	function changeTab(id) {
+	    var reminder = document.getElementById("reminder"); //催缴单
+	    var processingoftracking = document.getElementById("processingoftracking"); //跟踪处理结果
+	    var repaymenthistory =document.getElementById("repaymenthistory"); //还款历史
+	    if (id == 'reminder') {
+	    			document.getElementById("tabbody1").className = "tabbody1";
+	    			document.getElementById("tabbody2").className = "tabbody2";
+	    			document.getElementById("tabbody3").className = "tabbody2";
+	    			reminder.style.display = '';
+	    			processingoftracking.style.display = 'none';
+	    			repaymenthistory.style.display = 'none';
+	     } 
+	     else if (id == 'processingoftracking') 
+	     {
+	    			document.getElementById("tabbody1").className = "tabbody2";
+	    			document.getElementById("tabbody2").className = "tabbody1";
+	    			document.getElementById("tabbody3").className = "tabbody2";
+	    			reminder.style.display = 'none';
+	    			processingoftracking.style.display = '';
+	    			repaymenthistory.style.display = 'none';
+	    			clearLigerTip("der");
+	     }
+	     else if(id == 'repaymenthistory')
+	     {
+			    	document.getElementById("tabbody1").className = "tabbody2";
+		 			document.getElementById("tabbody2").className = "tabbody2";
+		 			document.getElementById("tabbody3").className = "tabbody1";
+		 			reminder.style.display = 'none';
+		 			processingoftracking.style.display = 'none';
+		 			repaymenthistory.style.display = '';
+		 			clearLigerTip("der");
+	     }
+	  } 
+		//清理指定DIV下的所有LigerTip控件
+		function clearLigerTip(divId){
+			var elementArr = $("#"+divId+" *");
+			jQuery.each(elementArr.get(), function(i, element){
+				$(element).ligerHideTip();
+			});
+		}
+		var windowName=window.name;//记录那么值
+		//删除产品
+		function savePro1(val){
+			 globalUtil.confirmMsg("确定保存吗？",
+			    function(yes) { //确认删除
+			    	if(yes){
+			    		save(val);
+			    	}
+			    });
+		}
+		//删除产品
+		function savePro0(val){
+			 globalUtil.confirmMsg("确定暂存吗？",
+			    function(yes) { //确认删除
+			    	if(yes){
+			    		save(val);
+			    	}
+			    });
+		}
+		var resultMe=[];
+		var lov="";
+		//获取催缴跟踪信息
+		function getInfoval(){	
+			$("input[name=dunning_datetime]").each(function(i){
+				if(i==0){
+					if($(this).val()==""||$(this).val()==null){
+						lov="dunning_datetime";
+						return false;
+					}
+					resultMe.push({"number":i});
+					resultMe[i].dunning_datetime=$(this).val();
+				}
+			});
+			if(lov!=""){
+				return;
+			}
+			$("input[name=dunning_name]").each(function(i){
+				if(i==0){
+					if($(this).val()==""||$(this).val()==null){
+						lov="dunning_name";
+						return false;
+					}
+					if($(this).val()=="请选择"){
+						resultMe[i].dunning_name="";
+					}else{
+						resultMe[i].dunning_name=$(this).val();
+					}
+				}
+			});
+			if(lov!=""){
+				return;
+			}
+			$("textarea[name=dunning_remark]").each(function(i){
+				if(i==0){
+					if($(this).val()==""||$(this).val()==null){
+						lov="dunning_remark";
+						return false;
+					}
+					resultMe[i].dunning_remark=$(this).val();
+					resultMe[i].dunning_id=dunning_id;
+					resultMe[i].dunning_deptid=120;//催缴部门id
+				}
+			});
+		}
+		//保存页面信息--催缴信息   val==1 为保存 val==0 暂存
+		function save(val){
+			result.mortgrage=global_ligerui_extend.getComboxVal("mortgrage");//有无抵押global_ligerui_extend.getComboxVal("final_dunning_result")
+			result.final_dunning_name=$("#final_dunning_name").val();//代后专员
+			result.dunning_remark=$("#dunning_remark").val();//备注
+			result.final_dunning_result=global_ligerui_extend.getComboxVal("final_dunning_result");//催缴结果
+			result.dunning_datetime="";//催缴日期
+			//result.final_dunning_name1=$("#final_dunning_name1").val();//代后专员1
+			//result.dunning_remark1=$("#dunning_remark1").val();//
+			result.val=val;//保存类型
+			result.cur_overdue_day=$("#cur_overdue_day").val();//逾期天数
+			//result.total_pay_late_fee=$("#total_pay_late_fee").val();//逾期金额
+			result.default_date=$("#current_repay_date_str").val();//违约日期
+			result.default_amount=$("#cur_late_fee").val();//逾期金额
+			getInfoval();//var lov=
+			/*if(lov=="dunning_datetime"){
+				globalUtil.warnMsg("催缴时间未填！");
+				lov="";
+				return;
+			}
+			if(lov=="dunning_name"){
+				globalUtil.warnMsg("实时催缴人未填！");	
+				lov="";
+				return;
+			}
+			if(lov=="dunning_remark"){
+				globalUtil.warnMsg("催缴详情未填！");
+				lov="";
+				return;
+			}*/
+			result.resultMe=JSON.stringify(resultMe);//用户输入的信息
+			if(checkall(result,val)){
+				return ;	
+			}
+			$.post(parent.globalUtil.getTimestampUrl("/loanpost/wmspostdunningheadsaveupdate.do"),
+					result, function(data) {
+	    				if (data === 'success') {
+	    					globalUtil.successMsg("保存成功！");
+	    					//关闭打开的剪切头像页面
+	    					refreshAndClosePage();
+	    				}
+	    				if(data==="error"){
+	    					globalUtil.errorMsg("保存失败！");
+	    				}
+	    		});
+		}
+		function checkall(result,val){
+			if(!globalUtil.isNum(result.cur_overdue_day)){
+				globalUtil.warnMsg("请正确填写逾期天数！");
+				return true;
+			}
+			if(!globalUtil.isNum(result.cur_late_fee)){
+				globalUtil.warnMsg("请正确填写违约金额！");
+				return true;
+			}
+
+			if(val==1){
+				if(result.final_dunning_result=="-1"||result.final_dunning_result==null){
+					globalUtil.warnMsg("请填写催缴结果！");
+					return true;
+				}
+			}
+		}
+		//关闭本页并刷新查询页面 
+	    function refreshAndClosePage(){   
+	    	window.parent.location.reload();
+	    	closePage();
+	    }
+	    //关闭页面
+	    function closePage(){
+	    	window.parent.dialog.hide();
+	    }
+</script>
+</body>
+</html>

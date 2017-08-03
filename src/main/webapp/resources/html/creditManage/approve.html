@@ -1,0 +1,245 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-
+
+transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<link href="../../css/ligerui-main.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<title>贷款复核审批</title>
+<style type="text/css">
+.td_title {
+	background: none repeat scroll 0 0 #EAF0FB;
+}
+
+.tb_input TD {
+	background: none repeat scroll 0 0 #FFFFFF;
+	padding: 3px 1px 1px 4px;
+}
+</style>
+
+<script type="text/javascript">
+	var wmsCreHeadIds;
+	var wmsTaskIds;
+	var wmsCreditLimits;
+	var wmsCreHeadId;
+	var wmsTaskId;
+	var wmsCreditLimit;
+	
+	var wmsCreditCreLoanTypes;
+	var wmsCreditCreLoanType;
+	$(function() {
+		//获取贷款信息的单据id
+		wmsCreHeadIds = $.query.get('checkedCreditIDs');
+		//获取对应表单的TaskId
+		wmsTaskIds    =$.query.get('checkedCreditTaskIDs');
+		//获取多条申请贷款金额
+		wmsCreditLimits =$.query.get('checkedCreditLimits');
+		//获取贷款产品类型
+		wmsCreditCreLoanTypes =$.query.get('checkedCreLoanTypes');
+		//判断checkedCredit长度如果是1说明只选中一条 如果是大于1，说明选中了多条数据
+		var creditIDs =[]; 
+		creditIDs=wmsCreHeadIds.split(",");
+		var creditTaskIds=[];
+		creditTaskIds=wmsTaskIds.split(",");
+		var creditLimits=[];
+		creditLimits=wmsCreditLimits.split(",");
+		var creditLoanTypes=[];
+		creditLoanTypes=wmsCreditCreLoanTypes.split(",");
+		//当生产单据大于1时,不显示流程历程
+		if(creditIDs.length>1){
+			document.getElementById("grid").style.display='none';
+		}
+		if(creditIDs.length==1){
+			wmsCreHeadId =creditIDs[0];
+			wmsTaskId =creditTaskIds[0];
+			wmsCreditLimit=wmsCreditLimits[0];
+			wmsCreditCreLoanType=wmsCreditCreLoanTypes[0];
+			//当获取字段等于1的时候加载工具栏
+			initGrid();
+			//当获取字段等于1的时候执行查询功能
+			search();
+		}
+		
+	});
+	function save(){
+		$("input[name='pass']").each(function() {
+			if ($(this).is(':checked')) {
+				if( $(this).val()!="true"){
+					if(document.getElementById("advice").value==""){
+						globalUtil.errorMsg("请填写审批意见！！"); //提示x
+					}else{
+						submitapprove();
+					}	
+				}else{
+					submitapprove();
+				}
+			}
+		});
+	}
+	
+	//贷款复核--->提交处理
+	function submitapprove(){
+		var paramJson = globalUtil.getFormParam("grid_idea");
+		//把提交结果和意见加载到paramJson
+		getOtherVal(paramJson);
+		//需要传过来的多个主表id和多个审批流节点taskId 加载到paramJson里面
+		paramJson.wmsCreHeadIds=wmsCreHeadIds;
+		paramJson.wmsTaskIds=wmsTaskIds;
+		paramJson.wmsCreditLimits=wmsCreditLimits;
+		paramJson.wmsCreditCreLoanTypes=wmsCreditCreLoanTypes;
+		$.post(globalUtil.getTimestampUrl("/cremanage/creditCheckApproveSave.do"),
+				paramJson, function(data) {
+					if (data === 'OK') {
+						globalUtil.successMsg(globalErrorMsg['100019'],
+								function() {
+									window.parent.search();
+									closeDialog();
+								});//保存成功
+					}else if(data==='error'){
+						globalUtil.errorMsg(globalErrorMsg['300109']); //请刷新页面,您当前审批的单据已经被审批过。
+					}else {
+						globalUtil.errorMsg(globalErrorMsg['100020']); //保存失败
+					}
+				});
+	}
+	//获审批结论和意见
+	function getOtherVal(jsonStr) {
+		$("input[name='pass']").each(function() {
+			if ($(this).is(':checked')) {
+				jsonStr.pass = $(this).val();
+				return false;//退出each循环
+			}
+		});
+		$("textarea[name='advice']").each(function(){
+			jsonStr.advice=$(this).val();
+			return false;
+		});
+	}
+	//实现窗口关闭
+	function closeDialog(){
+		window.parent.dialog.hide();
+	}
+	<!-- 工具条初始化 -->
+		var grid;
+		var dialog;
+		var columns;
+		function initGrid() {
+			columns = [ {
+				display : '节点名称',
+				name : 'taskName',
+				width : 140,
+				minWidth : 140,
+				render: function (rowdata, rowindex, value) { 
+					if(rowdata.taskName == '证信审批'){
+						return  '征信审批';
+					}else if(rowdata.taskName == '信息审批'){
+						return  '信息调查';
+					}
+					return value;
+        		}
+			}, {
+				display : '审批人',
+				name : 'approvers',
+				width : 100,
+				minWidth : 100
+			}, {
+				display : '审批人部门',
+				name : 'personnel_deptName',
+				width : 150,
+				minWidth : 150
+			}, {
+				display : '职务',
+				name : 'personnel_postName',
+				width : 100,
+				minWidth : 100
+			},{
+				display : '审批结果',
+				name : 'approveResult',
+				width : 100,
+				minWidth :100
+			}, {
+				display : '审批意见',
+				name : 'approveAdvice',
+				width : 180,
+				minWidth : 180
+			}, {
+				display : '审批时间',
+				name : 'approveTime',
+				width : 155,
+				minWidth : 155
+			} ];
+
+			grid = $("#grid").ligerGrid({
+				columns : columns,
+				url : global_param.context_name + '/cremanage/approvalProcessView.do?wms_cre_credit_head_id='+wmsCreHeadId,
+				rownumbers : true,
+				allowUnSelectRow : true,
+				usePager : false,
+				width : '100%',
+				height : 150,
+				heightDiff : -4,
+				parms : {
+					_filterParms : -1
+				}
+			});
+		}
+		//查询
+		function search() {
+			global_ligerui_extend.search(grid);
+		}
+		function close(){
+			dialog.close();
+			search();
+		}
+</script>
+</head>
+<body>
+	<!-- 页面加载的时候，审批流程为显示 -->
+	<hr />
+	<div class="float-l clearboth" style="height: 10px;"></div>
+	<div class="center-content clearboth" style="min-width: 300px;">
+		<div class="center-title">流程历程</div>
+		<div class="center-txt" style="margin-bottom: 10px;">
+			<div id="grid"></div>
+		</div>
+	</div>
+	<div class="center-content clearboth"
+		style="min-width: 600px; margin-top: 0px">
+		<div class="center-title">审批信息</div>
+		<div id="grid_idea">
+			<table align="center" border="1" cellpadding="0" cellspacing="2"
+				width="100%" style="font-size: 10.5pt;">
+				<tr>
+					<td class="td_title" width="14%" rowspan="2" align="center">审批意见</td>
+					<td><input type="radio" id="transition_pass" name="pass"
+						class="radio5" value="true" checked="checked" />同意 <input
+						type="radio" id="transition_reject" class="radio5" name="pass"
+						value="false" />不同意</td>
+				</tr>
+				<tr>
+					<td><textarea id="advice" name="advice" rows="50"
+							style="width: 100%; height: 110px; resize: none;"></textarea></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="pop-footer5 clearboth" style="bottom: 1px;">
+		<input id="tjbtn" class="btn-saveT"
+			onmouseover="this.className='btn-saveT-over'"
+			onmouseout="this.className='btn-saveT'"
+			onmousedown="this.className='btn-saveT-down'" type="button"
+			style="margin-right: 7px;" onclick="save();" /> <input
+			id="cancelBtnId" class="btn-cancel"
+			onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" type="button"
+			onclick="closeDialog();" />
+	</div>
+	</div>
+</body>
+
+
+</html>

@@ -1,0 +1,1144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zx.emanage.reportmanage.persist.WmsInveSalesmanCommissionAndCusIncomeDao">
+
+	<!-- 实时查询佣金及客户收益统计数据 -->
+	<!-- 查询收益中，已完成（当月已完成）数据 -->
+	<!-- 查询收益中和赎回中数据UNION ALL查询已完成（当月已完成）数据 -->
+	<!-- 以上单表为基础表，扩展关联或左联接其他表获得其他数据 -->
+	<select id="queryWmsInveSalesmanCommissionAndCusIncome" parameterType="map" resultType="map">
+		SELECT 
+			ta.*
+		FROM (
+			SELECT
+				t.wms_inve_transa_id,
+				getParentDeptIdByDeptId(t.bel_salesman_dept_id) as company_id,
+				getParenetDeptNameByDeptId(t.bel_salesman_dept_id) as company_name,
+				bel_salesman_dept_id as dept_id,
+				(select dept_name from sys_dept where dept_id=t.bel_salesman_dept_id) as dept_name,
+				 case when c.bel_personnel_id is not null then CONCAT((select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_salesman_id_id),'(转)') 
+				 else (select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_salesman_id_id) end as salesman_name,
+				(select case when x.personnel_state != '7' then '在职' else '兼职' end from pm_personnel x where x.personnel_id = t.bel_salesman_id_id) as salesman_status,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_department_manager_id) as department_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_vice_general_manager_id) as vice_general_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_general_manager_id) as general_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_center_manager_id) as center_manager_name,
+				t.bill_code,
+				t.cus_name,
+				t.date_of_payment,
+				(DATE_FORMAT(t.date_of_payment,'%Y/%m/%d')) as date_of_payment2,
+				NULL as redeem_date,
+				NULL as redeem_date2,
+				NULL as redeem_amount,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_basic_income, 0) ELSE 0 END AS payable_basic_income,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_reward_income, 0) ELSE 0 END AS payable_reward_income,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.extend_income, 0) ELSE 0 END AS extend_income,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_basic_income, 0) + IFNULL(ti.payable_reward_income, 0) + IFNULL(ti.extend_income, 0) ELSE 0 END AS total_income,
+				tp.product_account as product_account,
+				tp.category_name,
+				tp.wms_inve_pruduct_category_id,
+				tp.product_deadline,
+				t.create_user_id,
+				t.create_user_dept_id,
+				t.bel_salesman_id_id,
+				t.bel_salesman_dept_id
+			FROM
+				wms_inve_transa t
+			LEFT JOIN (
+				SELECT
+					wms_inve_customer_id,
+					bel_personnel_id,
+					max(end_of_date) AS end_date
+				FROM
+					wms_inve_customer_remove_his
+				WHERE
+					data_type = '1'
+				GROUP BY
+					wms_inve_customer_id,
+					bel_personnel_id
+			) c ON t.wms_inve_customer_id = c.wms_inve_customer_id
+			LEFT JOIN (
+				SELECT
+					i.wms_inve_transa_id,
+					SUM(IFNULL(i.payable_basic_income, 0)) as payable_basic_income,
+					SUM(IFNULL(i.payable_reward_income, 0)) as payable_reward_income,
+					SUM(IFNULL(i.extend_income, 0)) as extend_income
+				FROM
+					wms_inve_transa_income i
+				WHERE
+					DATE_FORMAT(i.return_date, '%Y-%m') = #{query_month}
+				AND i.pay_type IN ('2', '3')
+				AND i.pay_status not in ('2','5')
+				GROUP BY i.wms_inve_transa_id
+			) ti ON t.wms_inve_transa_id = ti.wms_inve_transa_id,
+			wms_inve_transa_prod tp
+			WHERE	
+				t.wms_inve_transa_id = tp.wms_inve_transa_id
+				AND t.data_status = '4'
+				AND t.enable_flag = '1'
+		
+			UNION ALL
+		
+			SELECT
+				t.wms_inve_transa_id,
+				getParentDeptIdByDeptId(t.bel_salesman_dept_id) as company_id,
+				getParenetDeptNameByDeptId(t.bel_salesman_dept_id) as company_name,
+				bel_salesman_dept_id as dept_id,
+				(select dept_name from sys_dept where dept_id=t.bel_salesman_dept_id) as dept_name,
+				 case when c.bel_personnel_id is not null then CONCAT((select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_salesman_id_id),'(转)') 
+				 else (select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_salesman_id_id) end as salesman_name,
+				(select case when x.personnel_state != '7' then '在职' else '兼职' end from pm_personnel x where x.personnel_id = t.bel_salesman_id_id) as salesman_status,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_department_manager_id) as department_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_vice_general_manager_id) as vice_general_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_general_manager_id) as general_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_center_manager_id) as center_manager_name,
+				t.bill_code,
+				t.cus_name,
+				t.date_of_payment,
+				(DATE_FORMAT(t.date_of_payment,'%Y/%m/%d')) as date_of_payment2,
+				t.redeem_date,
+				(DATE_FORMAT(t.redeem_date,'%Y/%m/%d')) as redeem_date2,
+				t.redeem_amount,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_basic_income, 0) ELSE 0 END AS payable_basic_income,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_reward_income, 0) ELSE 0 END AS payable_reward_income,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.extend_income, 0) ELSE 0 END AS extend_income,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_basic_income, 0) + IFNULL(ti.payable_reward_income, 0) + IFNULL(ti.extend_income, 0) ELSE 0 END AS total_income,
+				t.redeem_amount as product_account,
+				tp.category_name,
+				tp.wms_inve_pruduct_category_id,
+				tp.product_deadline,
+				t.create_user_id,
+				t.create_user_dept_id,
+				t.bel_salesman_id_id,
+				t.bel_salesman_dept_id
+			FROM
+			(
+				SELECT
+					tt.wms_inve_transa_id,
+					tt.old_wms_inve_transa_id,
+					tt.bel_salesman_id_id,
+					tt.bel_salesman_dept_id,
+					tt.bel_department_manager_id,
+					tt.bel_vice_general_manager_id,
+					tt.bel_general_manager_id,
+					tt.bel_center_manager_id,
+					tt.bill_code,
+					tt.cus_name,
+					tt.date_of_payment,
+					tt.wms_inve_customer_id,
+					tt.create_user_id,
+					tt.create_user_dept_id,
+					r.redeem_date,
+					r.redeem_apply_total_amount as redeem_amount
+				FROM
+					wms_inve_transa tt,
+					wms_inve_redeem r,
+					wms_inve_redeem_detail d
+				WHERE
+					tt.wms_inve_transa_id = d.wms_inve_transa_id
+					AND r.wms_inve_redeem_id = d.wms_inve_redeem_id
+					AND r.data_status = '6'
+					AND tt.data_status = '6'
+					AND tt.enable_flag = '1'
+					AND r.enable_flag = '1'
+					AND d.is_fully_redeemed = '1'
+					AND (
+						DATE_FORMAT(r.create_timestamp, '%Y-%m') = #{query_month}
+						OR
+						DATE_FORMAT(r.redeem_date, '%Y-%m') = #{query_month}
+					)
+			) t
+			LEFT JOIN (
+				SELECT
+					wms_inve_customer_id,
+					bel_personnel_id,
+					max(end_of_date) AS end_date
+				FROM
+					wms_inve_customer_remove_his
+				WHERE
+					data_type = '1'
+				GROUP BY
+					wms_inve_customer_id,
+					bel_personnel_id
+			) c ON t.wms_inve_customer_id = c.wms_inve_customer_id
+			LEFT JOIN (
+				SELECT
+					i.wms_inve_transa_id,
+					SUM(IFNULL(i.payable_basic_income, 0)) as payable_basic_income,
+					SUM(IFNULL(i.payable_reward_income, 0)) as payable_reward_income,
+					SUM(IFNULL(i.extend_income, 0)) as extend_income
+				FROM
+					wms_inve_transa_income i
+				WHERE
+					DATE_FORMAT(i.return_date, '%Y-%m') = #{query_month}
+				AND i.pay_type IN ('2', '3')
+				AND i.pay_status not in ('2','5')
+				GROUP BY i.wms_inve_transa_id
+			) ti ON t.wms_inve_transa_id = ti.wms_inve_transa_id,
+			wms_inve_transa_prod tp
+			WHERE
+				t.wms_inve_transa_id = tp.wms_inve_transa_id
+		) ta
+		WHERE 1=1
+		and (2>(SELECT COUNT(DISTINCT(p.group_info)) from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id in(ta.create_user_id,#{user_id}) and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id) 
+		or 1=(SELECT p.group_info from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id =#{user_id} and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id))
+		and (
+			1=2
+			<if test="create_user_id !=null">
+				or ta.create_user_id = #{create_user_id}
+			</if>
+	
+			<if test="create_user_dept_id !=null">
+				or ta.create_user_dept_id = #{create_user_dept_id}
+			</if>
+	
+			<if test="salesman_id !=null">
+				or ta.bel_salesman_id_id = #{salesman_id}
+			</if>
+	
+			<if test="salesman_dept_id !=null">
+				or ta.bel_salesman_dept_id = #{salesman_dept_id}
+			</if>
+	
+			<if test="deptIds !=null">
+				or ta.bel_salesman_dept_id in
+				<foreach collection="deptIds" item="dept_id" index="index"
+					open="(" separator="," close=")">
+					#{dept_id}
+				</foreach>
+			</if>
+			<if test="deptIds_user_id !=null">
+				or FIND_IN_SET(ta.bel_salesman_dept_id,getMenuData(${deptIds_user_id},${deptIds_menu}))
+			</if>
+	
+			<if test="financial_services !=null">
+				or 1= #{financial_services}
+			</if>
+	
+			<if test="super_user !=null">
+				or 1 = #{super_user}
+			</if>
+			)
+		<if test="product_account_begin !=null">
+			AND ta.product_account &gt;= #{product_account_begin}
+		</if>
+		<if test="product_account_end !=null">
+			AND ta.product_account &lt;= #{product_account_end}
+		</if>
+		<if test="date_of_payment_begin !=null">
+			AND ta.date_of_payment &gt;= #{date_of_payment_begin}
+		</if>
+		<if test="date_of_payment_end !=null">
+			AND ta.date_of_payment &lt;= #{date_of_payment_end}
+		</if>
+		<if test="deptNameList != null and deptNameList.size > 0">
+			AND ( 1=2
+			<foreach collection="deptNameList" item="dept_name">
+				OR ta.dept_name like CONCAT('%',#{dept_name },'%')
+			</foreach>
+			)
+		</if>
+		<if test="salesman_name != null">
+			AND ta.salesman_name LIKE CONCAT('%',#{salesman_name},'%')
+		</if>
+		<if test="cus_name !=null">
+			AND ta.cus_name LIKE CONCAT('%',#{cus_name },'%')
+		</if>
+		<if test="category_name != null">
+			AND ta.wms_inve_pruduct_category_id = #{category_name}
+		</if>
+		ORDER BY ta.dept_id,ta.salesman_name,ta.cus_name,ta.date_of_payment
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	
+	<select id="queryWmsInveSalesmanCommissionAndCusIncomeCount" parameterType="map" resultType="int">
+		SELECT 
+			COUNT(1)
+		FROM (
+			SELECT
+				t.wms_inve_transa_id,
+				getParentDeptIdByDeptId(t.bel_salesman_dept_id) as company_id,
+				getParenetDeptNameByDeptId(t.bel_salesman_dept_id) as company_name,
+				bel_salesman_dept_id as dept_id,
+				(select dept_name from sys_dept where dept_id=t.bel_salesman_dept_id) as dept_name,
+				 case when c.bel_personnel_id is not null then CONCAT((select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_salesman_id_id),'(转)') 
+				 else (select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_salesman_id_id) end as salesman_name,
+				(select case when x.personnel_state != '7' then '在职' else '兼职' end from pm_personnel x where x.personnel_id = t.bel_salesman_id_id) as salesman_status,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_department_manager_id) as department_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_vice_general_manager_id) as vice_general_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_general_manager_id) as general_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_center_manager_id) as center_manager_name,
+				t.bill_code,
+				t.cus_name,
+				t.date_of_payment,
+				(DATE_FORMAT(t.date_of_payment,'%Y/%m/%d')) as date_of_payment2,
+				NULL as redeem_date,
+				NULL as redeem_date2,
+				NULL as redeem_amount,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_basic_income, 0) ELSE 0 END AS payable_basic_income,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_reward_income, 0) ELSE 0 END AS payable_reward_income,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.extend_income, 0) ELSE 0 END AS extend_income,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_basic_income, 0) + IFNULL(ti.payable_reward_income, 0) + IFNULL(ti.extend_income, 0) ELSE 0 END AS total_income,
+				tp.product_account as product_account,
+				tp.category_name,
+				tp.wms_inve_pruduct_category_id,
+				tp.product_deadline,
+				t.create_user_id,
+				t.create_user_dept_id,
+				t.bel_salesman_id_id,
+				t.bel_salesman_dept_id
+			FROM
+				wms_inve_transa t
+			LEFT JOIN (
+				SELECT
+					wms_inve_customer_id,
+					bel_personnel_id,
+					max(end_of_date) AS end_date
+				FROM
+					wms_inve_customer_remove_his
+				WHERE
+					data_type = '1'
+				GROUP BY
+					wms_inve_customer_id,
+					bel_personnel_id
+			) c ON t.wms_inve_customer_id = c.wms_inve_customer_id
+			LEFT JOIN (
+				SELECT
+					i.wms_inve_transa_id,
+					SUM(IFNULL(i.payable_basic_income, 0)) as payable_basic_income,
+					SUM(IFNULL(i.payable_reward_income, 0)) as payable_reward_income,
+					SUM(IFNULL(i.extend_income, 0)) as extend_income
+				FROM
+					wms_inve_transa_income i
+				WHERE
+					DATE_FORMAT(i.return_date, '%Y-%m') = '2016-12'
+				AND i.pay_type IN ('2', '3')
+				AND i.pay_status not in ('2','5')
+				GROUP BY i.wms_inve_transa_id
+			) ti ON t.wms_inve_transa_id = ti.wms_inve_transa_id,
+			wms_inve_transa_prod tp
+			WHERE	
+				t.wms_inve_transa_id = tp.wms_inve_transa_id
+				AND t.data_status = '4'
+				AND t.enable_flag = '1'
+		
+			UNION ALL
+		
+			SELECT
+				t.wms_inve_transa_id,
+				getParentDeptIdByDeptId(t.bel_salesman_dept_id) as company_id,
+				getParenetDeptNameByDeptId(t.bel_salesman_dept_id) as company_name,
+				bel_salesman_dept_id as dept_id,
+				(select dept_name from sys_dept where dept_id=t.bel_salesman_dept_id) as dept_name,
+				 case when c.bel_personnel_id is not null then CONCAT((select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_salesman_id_id),'(转)') 
+				 else (select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_salesman_id_id) end as salesman_name,
+				(select case when x.personnel_state != '7' then '在职' else '兼职' end from pm_personnel x where x.personnel_id = t.bel_salesman_id_id) as salesman_status,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_department_manager_id) as department_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_vice_general_manager_id) as vice_general_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_general_manager_id) as general_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel x where x.personnel_id=t.bel_center_manager_id) as center_manager_name,
+				t.bill_code,
+				t.cus_name,
+				t.date_of_payment,
+				(DATE_FORMAT(t.date_of_payment,'%Y/%m/%d')) as date_of_payment2,
+				t.redeem_date,
+				(DATE_FORMAT(t.redeem_date,'%Y/%m/%d')) as redeem_date2,
+				t.redeem_amount,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_basic_income, 0) ELSE 0 END AS payable_basic_income,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_reward_income, 0) ELSE 0 END AS payable_reward_income,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.extend_income, 0) ELSE 0 END AS extend_income,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_basic_income, 0) + IFNULL(ti.payable_reward_income, 0) + IFNULL(ti.extend_income, 0) ELSE 0 END AS total_income,
+				t.redeem_amount as product_account,
+				tp.category_name,
+				tp.wms_inve_pruduct_category_id,
+				tp.product_deadline,
+				t.create_user_id,
+				t.create_user_dept_id,
+				t.bel_salesman_id_id,
+				t.bel_salesman_dept_id
+			FROM
+			(
+				SELECT
+					tt.wms_inve_transa_id,
+					tt.old_wms_inve_transa_id,
+					tt.bel_salesman_id_id,
+					tt.bel_salesman_dept_id,
+					tt.bel_department_manager_id,
+					tt.bel_vice_general_manager_id,
+					tt.bel_general_manager_id,
+					tt.bel_center_manager_id,
+					tt.bill_code,
+					tt.cus_name,
+					tt.date_of_payment,
+					tt.wms_inve_customer_id,
+					tt.create_user_id,
+					tt.create_user_dept_id,
+					r.redeem_date,
+					r.redeem_apply_total_amount as redeem_amount
+				FROM
+					wms_inve_transa tt,
+					wms_inve_redeem r,
+					wms_inve_redeem_detail d
+				WHERE
+					tt.wms_inve_transa_id = d.wms_inve_transa_id
+					AND r.wms_inve_redeem_id = d.wms_inve_redeem_id
+					AND r.data_status = '6'
+					AND tt.data_status = '6'
+					AND tt.enable_flag = '1'
+					AND r.enable_flag = '1'
+					AND d.is_fully_redeemed = '1'
+					AND (
+						DATE_FORMAT(r.create_timestamp, '%Y-%m') = #{query_month}
+						OR
+						DATE_FORMAT(r.redeem_date, '%Y-%m') = #{query_month}
+					)
+			) t
+			LEFT JOIN (
+				SELECT
+					wms_inve_customer_id,
+					bel_personnel_id,
+					max(end_of_date) AS end_date
+				FROM
+					wms_inve_customer_remove_his
+				WHERE
+					data_type = '1'
+				GROUP BY
+					wms_inve_customer_id,
+					bel_personnel_id
+			) c ON t.wms_inve_customer_id = c.wms_inve_customer_id
+			LEFT JOIN (
+				SELECT
+					i.wms_inve_transa_id,
+					SUM(IFNULL(i.payable_basic_income, 0)) as payable_basic_income,
+					SUM(IFNULL(i.payable_reward_income, 0)) as payable_reward_income,
+					SUM(IFNULL(i.extend_income, 0)) as extend_income
+				FROM
+					wms_inve_transa_income i
+				WHERE
+					DATE_FORMAT(i.return_date, '%Y-%m') = '2016-12'
+				AND i.pay_type IN ('2', '3')
+				AND i.pay_status not in ('2','5')
+				GROUP BY i.wms_inve_transa_id
+			) ti ON t.wms_inve_transa_id = ti.wms_inve_transa_id,
+			wms_inve_transa_prod tp
+			WHERE
+				t.wms_inve_transa_id = tp.wms_inve_transa_id
+		) ta
+		WHERE 1=1
+		and (2>(SELECT COUNT(DISTINCT(p.group_info)) from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id in(ta.create_user_id,#{user_id}) and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id) 
+		or 1=(SELECT p.group_info from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id =#{user_id} and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id))
+		and (
+			1=2
+			<if test="create_user_id !=null">
+				or ta.create_user_id = #{create_user_id}
+			</if>
+	
+			<if test="create_user_dept_id !=null">
+				or ta.create_user_dept_id = #{create_user_dept_id}
+			</if>
+	
+			<if test="salesman_id !=null">
+				or ta.bel_salesman_id_id = #{salesman_id}
+			</if>
+	
+			<if test="salesman_dept_id !=null">
+				or ta.bel_salesman_dept_id = #{salesman_dept_id}
+			</if>
+	
+			<if test="deptIds !=null">
+				or ta.bel_salesman_dept_id in
+				<foreach collection="deptIds" item="dept_id" index="index"
+					open="(" separator="," close=")">
+					#{dept_id}
+				</foreach>
+			</if>
+			<if test="deptIds_user_id !=null">
+				or FIND_IN_SET(ta.bel_salesman_dept_id,getMenuData(${deptIds_user_id},${deptIds_menu}))
+			</if>
+	
+			<if test="financial_services !=null">
+				or 1= #{financial_services}
+			</if>
+	
+			<if test="super_user !=null">
+				or 1 = #{super_user}
+			</if>
+			)
+		<if test="product_account_begin !=null">
+			AND ta.product_account &gt;= #{product_account_begin}
+		</if>
+		<if test="product_account_end !=null">
+			AND ta.product_account &lt;= #{product_account_end}
+		</if>
+		<if test="date_of_payment_begin !=null">
+			AND ta.date_of_payment &gt;= #{date_of_payment_begin}
+		</if>
+		<if test="date_of_payment_end !=null">
+			AND ta.date_of_payment &lt;= #{date_of_payment_end}
+		</if>
+		<if test="deptNameList != null and deptNameList.size > 0">
+			AND ( 1=2
+			<foreach collection="deptNameList" item="dept_name">
+				OR ta.dept_name like CONCAT('%',#{dept_name },'%')
+			</foreach>
+			)
+		</if>
+		<if test="salesman_name != null">
+			AND ta.salesman_name LIKE CONCAT('%',#{salesman_name},'%')
+		</if>
+		<if test="cus_name !=null">
+			AND ta.cus_name LIKE CONCAT('%',#{cus_name },'%')
+		</if>
+		<if test="category_name != null">
+			AND ta.wms_inve_pruduct_category_id = #{category_name}
+		</if>
+	</select>
+	
+	<!-- ************************************当月实时查询和老数据查询分割线************************************ -->
+	
+	
+	<!-- 查询佣金及客户收益统计数据（查以前月份） -->
+	<!-- 查询收益中，赎回中，已完成（当月已完成）数据 -->
+	<!-- 查询收益中和赎回中数据UNION ALL查询已完成（当月已完成）数据 -->
+	<!-- 关联新佣金统计历史表时排除上单当月赎回且未收违约金的数据 -->
+	<!-- 以上单表为基础表，扩展关联或左联接其他表获得其他数据 -->
+	<select id="queryWmsInveSalesmanCommissionAndCusIncomeOtherMonth" parameterType="map" resultType="map">
+		SELECT 
+			ta.*,
+			IFNULL(ta.product_account_tmp,tp.product_account) as product_account 
+		FROM
+			(SELECT
+				b.wms_inve_transa_id,
+				getParentDeptIdByDeptId(b.bel_salesman_dept_id) as company_id,
+				getParenetDeptNameByDeptId(b.bel_salesman_dept_id) as company_name,
+				IFNULL(oh.salesman_id, b.bel_salesman_id_id) as old_comm_salesman_id,
+				b.bel_salesman_dept_id as dept_id,
+				(select dept_name from sys_dept where dept_id=b.bel_salesman_dept_id) as dept_name,
+				 case when c.bel_personnel_id is not null then CONCAT((select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_salesman_id_id),'(转)') 
+				 else (select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_salesman_id_id) end as salesman_name,
+				(select case when x.personnel_state != '7' then '在职' else '兼职' end from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id = b.bel_salesman_id_id) as salesman_status,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_department_manager_id) as department_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_vice_general_manager_id) as vice_general_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_general_manager_id) as general_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_center_manager_id) as center_manager_name,
+				t.bill_code,
+				t.cus_name,
+				b.date_of_payment,
+				(DATE_FORMAT(t.date_of_payment,'%Y/%m/%d')) as date_of_payment2,
+				CASE WHEN h.redeem_date is not null THEN h.investredemp_amount
+				WHEN oh.redeem_date is not null THEN oh.redeem_amount
+				ELSE IFNULL(h.investredemp_amount,oh.product_account) END as product_account_tmp,
+				c.wms_inve_pruduct_category_id,
+				c.category_name,
+				IFNULL(h.redeem_date,oh.redeem_date) as redeem_date,
+				(DATE_FORMAT(IFNULL(h.redeem_date,oh.redeem_date),'%Y/%m/%d')) as redeem_date2,
+				CASE WHEN h.redeem_date is not null THEN h.investredemp_amount
+				WHEN oh.redeem_date is not null THEN oh.redeem_amount
+				ELSE 0 END as redeem_amount,
+				b.product_deadline,
+				
+				CASE WHEN h.redeem_date is not null THEN 0
+				WHEN oh.redeem_date is not null THEN 0
+				ELSE CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_basic_income, 0) ELSE 0 END END AS payable_basic_income,
+				CASE WHEN h.redeem_date is not null THEN 0
+				WHEN oh.redeem_date is not null THEN 0
+				ELSE CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_reward_income, 0) ELSE 0 END END AS payable_reward_income,
+				CASE WHEN h.redeem_date is not null THEN 0
+				WHEN oh.redeem_date is not null THEN 0
+				ELSE CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.extend_income, 0) ELSE 0 END END AS extend_income,
+				CASE WHEN h.redeem_date is not null THEN 0
+				WHEN oh.redeem_date is not null THEN 0
+				ELSE CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_basic_income, 0) + IFNULL(ti.payable_reward_income, 0) + IFNULL(ti.extend_income, 0) ELSE 0 END END AS total_income,
+				
+				CASE WHEN b.bel_salesman_id_id != IFNULL(oh.salesman_id, b.bel_salesman_id_id) THEN SUBSTRING(CONCAT('(发放他人)',IFNULL(oh.old_stock_comm_mon,0)) FROM 1 FOR LENGTH(CONCAT('(发放他人)',IFNULL(oh.old_stock_comm_mon,0)))-14)
+				ELSE SUBSTR(IFNULL(oh.old_stock_comm_mon,0) FROM 1 FOR LENGTH(IFNULL(oh.old_stock_comm_mon,0)) - 6) END as old_stock_comm_mon,
+				IFNULL(oh.tax_mon,0) as old_tax_mon,
+				IFNULL(h.add_comm_mon,0) as add_comm_mon,
+				IFNULL(h.tax_mon,0) as tax_mon,
+				IFNULL(h.stock_comm_mon,0) as stock_comm_mon,
+				IFNULL(h.add_comm_mon,0)+IFNULL(h.stock_comm_mon,0)+IFNULL(oh.old_stock_comm_mon,0)-IFNULL(oh.tax_mon,0)-IFNULL(h.tax_mon,0) as total_comm_mon,
+				t.create_user_id,
+				t.create_user_dept_id,
+				t.bel_salesman_id_id,
+				t.bel_salesman_dept_id
+			FROM
+				((
+					(
+						SELECT
+							*
+						FROM
+							wms_inve_transa_backup tb
+						WHERE
+							tb.backup_month = #{query_month}
+						AND tb.data_status IN ('4', '5')
+					) b
+					LEFT JOIN (
+						SELECT
+							i.wms_inve_transa_id,
+							SUM(IFNULL(i.payable_basic_income, 0)) as payable_basic_income,
+							SUM(IFNULL(i.payable_reward_income, 0)) as payable_reward_income,
+							SUM(IFNULL(i.extend_income, 0)) as extend_income
+						FROM
+							wms_inve_transa_income i
+						WHERE
+							DATE_FORMAT(i.return_date, '%Y-%m') = #{query_month}
+						AND i.pay_type IN ('2', '3')
+						AND i.pay_status not in ('2','5')
+						GROUP BY
+							i.wms_inve_transa_id
+					) ti ON b.wms_inve_transa_id = ti.wms_inve_transa_id
+				)
+			LEFT JOIN (
+				SELECT
+					*
+				FROM
+					wms_inve_commission_performance_his
+				WHERE
+					statics_month = #{query_month}
+				AND (DATE_FORMAT(date_of_payment,'%Y-%m') != DATE_FORMAT(redeem_date,'%Y-%m') OR inve_type != '0' OR is_take_off_damages != '0')
+				AND enable_flag = '1'
+			) h ON b.wms_inve_transa_id = h.wms_inve_transa_id)
+			LEFT JOIN (
+				SELECT
+					*
+				FROM
+					wms_inve_old_comm_his
+				WHERE
+					statics_month = #{query_month}
+			) oh ON b.wms_inve_transa_id = oh.wms_inve_transa_id,
+			 wms_inve_transa t
+			LEFT JOIN (
+				SELECT
+					wms_inve_customer_id,
+					bel_personnel_id,
+					max(end_of_date) AS end_date
+				FROM
+					wms_inve_customer_remove_his
+				WHERE
+					data_type = '1'
+				GROUP BY
+					wms_inve_customer_id,
+					bel_personnel_id
+			) c ON t.wms_inve_customer_id = c.wms_inve_customer_id,
+			 wms_inve_pruduct_category c
+			WHERE
+				b.wms_inve_transa_id = t.wms_inve_transa_id
+			AND b.wms_inve_pruduct_category_id = c.wms_inve_pruduct_category_id
+			
+			UNION ALL
+			
+			SELECT
+				b.wms_inve_transa_id,
+				getParentDeptIdByDeptId(b.bel_salesman_dept_id) as company_id,
+				getParenetDeptNameByDeptId(b.bel_salesman_dept_id) as company_name,
+				IFNULL(oh.salesman_id, b.bel_salesman_id_id) as old_comm_salesman_id,
+				b.bel_salesman_dept_id as dept_id,
+				(select dept_name from sys_dept where dept_id=b.bel_salesman_dept_id) as dept_name,
+				 case when c.bel_personnel_id is not null then CONCAT((select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_salesman_id_id),'(转)') 
+				 else (select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_salesman_id_id) end as salesman_name,
+				(select case when x.personnel_state != '7' then '在职' else '兼职' end from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id = b.bel_salesman_id_id) as salesman_status,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_department_manager_id) as department_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_vice_general_manager_id) as vice_general_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_general_manager_id) as general_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_center_manager_id) as center_manager_name,
+				t.bill_code,
+				t.cus_name,
+				b.date_of_payment,
+				(DATE_FORMAT(t.date_of_payment,'%Y/%m/%d')) as date_of_payment2,
+				CASE WHEN h.redeem_date is not null THEN h.investredemp_amount
+				WHEN oh.redeem_date is not null THEN oh.redeem_amount
+				ELSE IFNULL(h.investredemp_amount,oh.product_account) END as product_account_tmp,
+				c.wms_inve_pruduct_category_id,
+				c.category_name,
+				IFNULL(h.redeem_date,oh.redeem_date) as redeem_date,
+				(DATE_FORMAT(IFNULL(h.redeem_date,oh.redeem_date),'%Y/%m/%d')) as redeem_date2,
+				CASE WHEN h.redeem_date is not null THEN h.investredemp_amount
+				WHEN oh.redeem_date is not null THEN oh.redeem_amount
+				ELSE 0 END as redeem_amount,
+				b.product_deadline,
+				
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_basic_income, 0) ELSE 0 END AS payable_basic_income,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_reward_income, 0) ELSE 0 END AS payable_reward_income,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.extend_income, 0) ELSE 0 END AS extend_income,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_basic_income, 0) + IFNULL(ti.payable_reward_income, 0) + IFNULL(ti.extend_income, 0) ELSE 0 END AS total_income,
+				
+				CASE WHEN b.bel_salesman_id_id != IFNULL(oh.salesman_id, b.bel_salesman_id_id) THEN SUBSTRING(CONCAT('(发放他人)',IFNULL(oh.old_stock_comm_mon,0)) FROM 1 FOR LENGTH(CONCAT('(发放他人)',IFNULL(oh.old_stock_comm_mon,0)))-14)
+				ELSE SUBSTR(IFNULL(oh.old_stock_comm_mon,0) FROM 1 FOR LENGTH(IFNULL(oh.old_stock_comm_mon,0)) - 6) END as old_stock_comm_mon,
+				IFNULL(oh.tax_mon,0) as old_tax_mon,
+				IFNULL(h.add_comm_mon,0) as add_comm_mon,
+				IFNULL(h.tax_mon,0) as tax_mon,
+				IFNULL(h.stock_comm_mon,0) as stock_comm_mon,
+				IFNULL(h.add_comm_mon,0)+IFNULL(h.stock_comm_mon,0)+IFNULL(oh.old_stock_comm_mon,0)-IFNULL(oh.tax_mon,0)-IFNULL(h.tax_mon,0) as total_comm_mon,
+				t.create_user_id,
+				t.create_user_dept_id,
+				t.bel_salesman_id_id,
+				t.bel_salesman_dept_id
+			FROM
+				(((
+					SELECT
+						tb.*,
+						r.redeem_apply_total_amount redeem_amount,
+						r.redeem_date
+					FROM
+						wms_inve_transa_backup tb,
+						wms_inve_redeem r,
+						wms_inve_redeem_detail d
+					WHERE
+						tb.wms_inve_transa_id = d.wms_inve_transa_id
+					AND r.wms_inve_redeem_id = d.wms_inve_redeem_id
+					AND r.data_status = '6'
+					AND tb.data_status = '6'
+					AND r.enable_flag = '1'
+					AND d.is_fully_redeemed = '1'
+					AND tb.backup_month = #{query_month}
+					AND (
+						DATE_FORMAT(r.create_timestamp, '%Y-%m') = #{query_month}
+						OR
+						DATE_FORMAT(r.redeem_date, '%Y-%m') = #{query_month}
+					)
+				) b
+			LEFT JOIN (
+				SELECT
+					i.wms_inve_transa_id,
+					SUM(IFNULL(i.payable_basic_income, 0)) as payable_basic_income,
+					SUM(IFNULL(i.payable_reward_income, 0)) as payable_reward_income,
+					SUM(IFNULL(i.extend_income, 0)) as extend_income
+				FROM
+					wms_inve_transa_income i
+				WHERE
+					DATE_FORMAT(i.return_date, '%Y-%m') = #{query_month}
+				AND i.pay_type IN ('2', '3')
+				AND i.pay_status not in ('2','5')
+				GROUP BY
+					i.wms_inve_transa_id
+			) ti on b.wms_inve_transa_id = ti.wms_inve_transa_id)
+			LEFT JOIN (
+				SELECT
+					*
+				FROM
+					wms_inve_commission_performance_his
+				WHERE
+					statics_month = #{query_month}
+				AND (DATE_FORMAT(date_of_payment,'%Y-%m') != DATE_FORMAT(redeem_date,'%Y-%m') OR inve_type != '0' OR is_take_off_damages != '0')
+				AND enable_flag = '1'
+			) h ON b.wms_inve_transa_id = h.wms_inve_transa_id)
+			LEFT JOIN (
+				SELECT
+					*
+				FROM
+					wms_inve_old_comm_his
+				WHERE
+					statics_month = #{query_month}
+			) oh ON b.wms_inve_transa_id = oh.wms_inve_transa_id,
+			 wms_inve_transa t
+			LEFT JOIN (
+				SELECT
+					wms_inve_customer_id,
+					bel_personnel_id,
+					max(end_of_date) AS end_date
+				FROM
+					wms_inve_customer_remove_his
+				WHERE
+					data_type = '1'
+				GROUP BY
+					wms_inve_customer_id,
+					bel_personnel_id
+			) c ON t.wms_inve_customer_id = c.wms_inve_customer_id,
+			 wms_inve_pruduct_category c
+			WHERE
+				b.wms_inve_transa_id = t.wms_inve_transa_id
+			AND b.wms_inve_pruduct_category_id = c.wms_inve_pruduct_category_id) ta, wms_inve_transa_prod tp
+		WHERE
+			ta.wms_inve_transa_id = tp.wms_inve_transa_id
+			and (2>(SELECT COUNT(DISTINCT(p.group_info)) from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id in(ta.create_user_id,#{user_id}) and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id) 
+			or 1=(SELECT p.group_info from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id =#{user_id} and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id))
+			and (
+				1=2
+				<if test="create_user_id !=null">
+					or ta.create_user_id = #{create_user_id}
+				</if>
+		
+				<if test="create_user_dept_id !=null">
+					or ta.create_user_dept_id = #{create_user_dept_id}
+				</if>
+		
+				<if test="salesman_id !=null">
+					or ta.bel_salesman_id_id = #{salesman_id}
+				</if>
+		
+				<if test="salesman_dept_id !=null">
+					or ta.bel_salesman_dept_id = #{salesman_dept_id}
+				</if>
+		
+				<if test="deptIds !=null">
+					or ta.bel_salesman_dept_id in
+					<foreach collection="deptIds" item="dept_id" index="index"
+						open="(" separator="," close=")">
+						#{dept_id}
+					</foreach>
+				</if>
+				<if test="deptIds_user_id !=null">
+					or FIND_IN_SET(ta.bel_salesman_dept_id,getMenuData(${deptIds_user_id},${deptIds_menu}))
+				</if>
+		
+				<if test="financial_services !=null">
+					or 1= #{financial_services}
+				</if>
+		
+				<if test="super_user !=null">
+					or 1 = #{super_user}
+				</if>
+				)
+			<if test="product_account_begin !=null">
+				AND ta.product_account &gt;= #{product_account_begin}
+			</if>
+			<if test="product_account_end !=null">
+				AND ta.product_account &lt;= #{product_account_end}
+			</if>
+			<if test="date_of_payment_begin !=null">
+				AND ta.date_of_payment &gt;= #{date_of_payment_begin}
+			</if>
+			<if test="date_of_payment_end !=null">
+				AND ta.date_of_payment &lt;= #{date_of_payment_end}
+			</if>
+			<if test="deptNameList != null and deptNameList.size > 0">
+				AND ( 1=2
+				<foreach collection="deptNameList" item="dept_name">
+					OR ta.dept_name like CONCAT('%',#{dept_name },'%')
+				</foreach>
+				)
+			</if>
+			<if test="salesman_name != null">
+				AND ta.salesman_name LIKE CONCAT('%',#{salesman_name},'%')
+			</if>
+			<if test="cus_name !=null">
+				AND ta.cus_name LIKE CONCAT('%',#{cus_name },'%')
+			</if>
+			<if test="category_name != null">
+				AND ta.wms_inve_pruduct_category_id = #{category_name}
+			</if>
+			ORDER BY ta.dept_id,ta.ta.salesman_name,ta.cus_name,ta.date_of_payment
+			<if test="offset != null and pagesize !=null">
+				LIMIT ${offset} , ${pagesize}
+			</if>
+	</select>
+
+	<select id="queryWmsInveSalesmanCommissionAndCusIncomeOtherMonthCount" parameterType="map" resultType="int">
+		SELECT 
+			COUNT(1) 
+		FROM
+			(SELECT
+				b.wms_inve_transa_id,
+				getParentDeptIdByDeptId(b.bel_salesman_dept_id) as company_id,
+				getParenetDeptNameByDeptId(b.bel_salesman_dept_id) as company_name,
+				IFNULL(oh.salesman_id, b.bel_salesman_id_id) as old_comm_salesman_id,
+				b.bel_salesman_dept_id as dept_id,
+				(select dept_name from sys_dept where dept_id=b.bel_salesman_dept_id) as dept_name,
+				 case when c.bel_personnel_id is not null then CONCAT((select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_salesman_id_id),'(转)') 
+				 else (select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_salesman_id_id) end as salesman_name,
+				(select case when x.personnel_state != '7' then '在职' else '兼职' end from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id = b.bel_salesman_id_id) as salesman_status,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_department_manager_id) as department_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_vice_general_manager_id) as vice_general_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_general_manager_id) as general_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_center_manager_id) as center_manager_name,
+				t.bill_code,
+				t.cus_name,
+				b.date_of_payment,
+				(DATE_FORMAT(t.date_of_payment,'%Y/%m/%d')) as date_of_payment2,
+				CASE WHEN h.redeem_date is not null THEN h.investredemp_amount
+				WHEN oh.redeem_date is not null THEN oh.redeem_amount
+				ELSE IFNULL(h.investredemp_amount,oh.product_account) END as product_account,
+				c.wms_inve_pruduct_category_id,
+				c.category_name,
+				IFNULL(h.redeem_date,oh.redeem_date) as redeem_date,
+				(DATE_FORMAT(IFNULL(h.redeem_date,oh.redeem_date),'%Y/%m/%d')) as redeem_date2,
+				CASE WHEN h.redeem_date is not null THEN h.investredemp_amount
+				WHEN oh.redeem_date is not null THEN oh.redeem_amount
+				ELSE 0 END as redeem_amount,
+				b.product_deadline,
+				
+				CASE WHEN h.redeem_date is not null THEN 0
+				WHEN oh.redeem_date is not null THEN 0
+				ELSE CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_basic_income, 0) ELSE 0 END END AS payable_basic_income,
+				CASE WHEN h.redeem_date is not null THEN 0
+				WHEN oh.redeem_date is not null THEN 0
+				ELSE CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_reward_income, 0) ELSE 0 END END AS payable_reward_income,
+				CASE WHEN h.redeem_date is not null THEN 0
+				WHEN oh.redeem_date is not null THEN 0
+				ELSE CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.extend_income, 0) ELSE 0 END END AS extend_income,
+				CASE WHEN h.redeem_date is not null THEN 0
+				WHEN oh.redeem_date is not null THEN 0
+				ELSE CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_basic_income, 0) + IFNULL(ti.payable_reward_income, 0) + IFNULL(ti.extend_income, 0) ELSE 0 END END AS total_income,
+				
+				CASE WHEN b.bel_salesman_id_id != IFNULL(oh.salesman_id, b.bel_salesman_id_id) THEN SUBSTRING(CONCAT('(发放他人)',IFNULL(oh.old_stock_comm_mon,0)) FROM 1 FOR LENGTH(CONCAT('(发放他人)',IFNULL(oh.old_stock_comm_mon,0)))-14)
+				ELSE SUBSTR(IFNULL(oh.old_stock_comm_mon,0) FROM 1 FOR LENGTH(IFNULL(oh.old_stock_comm_mon,0)) - 6) END as old_stock_comm_mon,
+				IFNULL(oh.tax_mon,0) as old_tax_mon,
+				IFNULL(h.add_comm_mon,0) as add_comm_mon,
+				IFNULL(h.tax_mon,0) as tax_mon,
+				IFNULL(h.stock_comm_mon,0) as stock_comm_mon,
+				IFNULL(h.add_comm_mon,0)+IFNULL(h.stock_comm_mon,0)+IFNULL(oh.old_stock_comm_mon,0)-IFNULL(oh.tax_mon,0)-IFNULL(h.tax_mon,0) as total_comm_mon,
+				t.create_user_id,
+				t.create_user_dept_id,
+				t.bel_salesman_id_id,
+				t.bel_salesman_dept_id
+			FROM
+				((
+					(
+						SELECT
+							*
+						FROM
+							wms_inve_transa_backup tb
+						WHERE
+							tb.backup_month = #{query_month}
+						AND tb.data_status IN ('4', '5')
+					) b
+					LEFT JOIN (
+						SELECT
+							i.wms_inve_transa_id,
+							SUM(IFNULL(i.payable_basic_income, 0)) as payable_basic_income,
+							SUM(IFNULL(i.payable_reward_income, 0)) as payable_reward_income,
+							SUM(IFNULL(i.extend_income, 0)) as extend_income
+						FROM
+							wms_inve_transa_income i
+						WHERE
+							DATE_FORMAT(i.return_date, '%Y-%m') = #{query_month}
+						AND i.pay_type IN ('2', '3')
+						AND i.pay_status not in ('2','5')
+						GROUP BY
+							i.wms_inve_transa_id
+					) ti ON b.wms_inve_transa_id = ti.wms_inve_transa_id
+				)
+			LEFT JOIN (
+				SELECT
+					*
+				FROM
+					wms_inve_commission_performance_his
+				WHERE
+					statics_month = #{query_month}
+				AND (DATE_FORMAT(date_of_payment,'%Y-%m') != DATE_FORMAT(redeem_date,'%Y-%m') OR inve_type != '0' OR is_take_off_damages != '0')
+				AND enable_flag = '1'
+			) h ON b.wms_inve_transa_id = h.wms_inve_transa_id)
+			LEFT JOIN (
+				SELECT
+					*
+				FROM
+					wms_inve_old_comm_his
+				WHERE
+					statics_month = #{query_month}
+			) oh ON b.wms_inve_transa_id = oh.wms_inve_transa_id,
+			 wms_inve_transa t
+			LEFT JOIN (
+				SELECT
+					wms_inve_customer_id,
+					bel_personnel_id,
+					max(end_of_date) AS end_date
+				FROM
+					wms_inve_customer_remove_his
+				WHERE
+					data_type = '1'
+				GROUP BY
+					wms_inve_customer_id,
+					bel_personnel_id
+			) c ON t.wms_inve_customer_id = c.wms_inve_customer_id,
+			 wms_inve_pruduct_category c
+			WHERE
+				b.wms_inve_transa_id = t.wms_inve_transa_id
+			AND b.wms_inve_pruduct_category_id = c.wms_inve_pruduct_category_id
+			
+			UNION ALL
+			
+			SELECT
+				b.wms_inve_transa_id,
+				getParentDeptIdByDeptId(b.bel_salesman_dept_id) as company_id,
+				getParenetDeptNameByDeptId(b.bel_salesman_dept_id) as company_name,
+				IFNULL(oh.salesman_id, b.bel_salesman_id_id) as old_comm_salesman_id,
+				b.bel_salesman_dept_id as dept_id,
+				(select dept_name from sys_dept where dept_id=b.bel_salesman_dept_id) as dept_name,
+				 case when c.bel_personnel_id is not null then CONCAT((select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_salesman_id_id),'(转)') 
+				 else (select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_salesman_id_id) end as salesman_name,
+				(select case when x.personnel_state != '7' then '在职' else '兼职' end from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id = b.bel_salesman_id_id) as salesman_status,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_department_manager_id) as department_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_vice_general_manager_id) as vice_general_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_general_manager_id) as general_manager_name,
+				(select CONCAT(x.personnel_name,' ',x.personnel_shortCode) from pm_personnel_maininfo_backup x where x.backup_month=#{query_month} and x.personnel_id=b.bel_center_manager_id) as center_manager_name,
+				t.bill_code,
+				t.cus_name,
+				b.date_of_payment,
+				(DATE_FORMAT(t.date_of_payment,'%Y/%m/%d')) as date_of_payment2,
+				CASE WHEN h.redeem_date is not null THEN h.investredemp_amount
+				WHEN oh.redeem_date is not null THEN oh.redeem_amount
+				ELSE IFNULL(h.investredemp_amount,oh.product_account) END as product_account,
+				c.wms_inve_pruduct_category_id,
+				c.category_name,
+				IFNULL(h.redeem_date,oh.redeem_date) as redeem_date,
+				(DATE_FORMAT(IFNULL(h.redeem_date,oh.redeem_date),'%Y/%m/%d')) as redeem_date2,
+				CASE WHEN h.redeem_date is not null THEN h.investredemp_amount
+				WHEN oh.redeem_date is not null THEN oh.redeem_amount
+				ELSE 0 END as redeem_amount,
+				b.product_deadline,
+				
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_basic_income, 0) ELSE 0 END AS payable_basic_income,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_reward_income, 0) ELSE 0 END AS payable_reward_income,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.extend_income, 0) ELSE 0 END AS extend_income,
+				CASE WHEN IFNULL(t.old_wms_inve_transa_id,t.wms_inve_transa_id) NOT IN (SELECT wms_inve_transa_id FROM wms_inve_transa_income_special) THEN IFNULL(ti.payable_basic_income, 0) + IFNULL(ti.payable_reward_income, 0) + IFNULL(ti.extend_income, 0) ELSE 0 END AS total_income,
+				
+				CASE WHEN b.bel_salesman_id_id != IFNULL(oh.salesman_id, b.bel_salesman_id_id) THEN SUBSTRING(CONCAT('(发放他人)',IFNULL(oh.old_stock_comm_mon,0)) FROM 1 FOR LENGTH(CONCAT('(发放他人)',IFNULL(oh.old_stock_comm_mon,0)))-14)
+				ELSE SUBSTR(IFNULL(oh.old_stock_comm_mon,0) FROM 1 FOR LENGTH(IFNULL(oh.old_stock_comm_mon,0)) - 6) END as old_stock_comm_mon,
+				IFNULL(oh.tax_mon,0) as old_tax_mon,
+				IFNULL(h.add_comm_mon,0) as add_comm_mon,
+				IFNULL(h.tax_mon,0) as tax_mon,
+				IFNULL(h.stock_comm_mon,0) as stock_comm_mon,
+				IFNULL(h.add_comm_mon,0)+IFNULL(h.stock_comm_mon,0)+IFNULL(oh.old_stock_comm_mon,0)-IFNULL(oh.tax_mon,0)-IFNULL(h.tax_mon,0) as total_comm_mon,
+				t.create_user_id,
+				t.create_user_dept_id,
+				t.bel_salesman_id_id,
+				t.bel_salesman_dept_id
+			FROM
+				(((
+					SELECT
+						tb.*,
+						r.redeem_apply_total_amount redeem_amount,
+						r.redeem_date
+					FROM
+						wms_inve_transa_backup tb,
+						wms_inve_redeem r,
+						wms_inve_redeem_detail d
+					WHERE
+						tb.wms_inve_transa_id = d.wms_inve_transa_id
+					AND r.wms_inve_redeem_id = d.wms_inve_redeem_id
+					AND r.data_status = '6'
+					AND tb.data_status = '6'
+					AND r.enable_flag = '1'
+					AND d.is_fully_redeemed = '1'
+					AND tb.backup_month = #{query_month}
+					AND (
+						DATE_FORMAT(r.create_timestamp, '%Y-%m') = #{query_month}
+						OR
+						DATE_FORMAT(r.redeem_date, '%Y-%m') = #{query_month}
+					)
+				) b
+			LEFT JOIN (
+				SELECT
+					i.wms_inve_transa_id,
+					SUM(IFNULL(i.payable_basic_income, 0)) as payable_basic_income,
+					SUM(IFNULL(i.payable_reward_income, 0)) as payable_reward_income,
+					SUM(IFNULL(i.extend_income, 0)) as extend_income
+				FROM
+					wms_inve_transa_income i
+				WHERE
+					DATE_FORMAT(i.return_date, '%Y-%m') = #{query_month}
+				AND i.pay_type IN ('2', '3')
+				AND i.pay_status not in ('2','5')
+				GROUP BY
+					i.wms_inve_transa_id
+			) ti on b.wms_inve_transa_id = ti.wms_inve_transa_id)
+			LEFT JOIN (
+				SELECT
+					*
+				FROM
+					wms_inve_commission_performance_his
+				WHERE
+					statics_month = #{query_month}
+				AND (DATE_FORMAT(date_of_payment,'%Y-%m') != DATE_FORMAT(redeem_date,'%Y-%m') OR inve_type != '0' OR is_take_off_damages != '0')
+				AND enable_flag = '1'
+			) h ON b.wms_inve_transa_id = h.wms_inve_transa_id)
+			LEFT JOIN (
+				SELECT
+					*
+				FROM
+					wms_inve_old_comm_his
+				WHERE
+					statics_month = #{query_month}
+			) oh ON b.wms_inve_transa_id = oh.wms_inve_transa_id,
+			 wms_inve_transa t
+			LEFT JOIN (
+				SELECT
+					wms_inve_customer_id,
+					bel_personnel_id,
+					max(end_of_date) AS end_date
+				FROM
+					wms_inve_customer_remove_his
+				WHERE
+					data_type = '1'
+				GROUP BY
+					wms_inve_customer_id,
+					bel_personnel_id
+			) c ON t.wms_inve_customer_id = c.wms_inve_customer_id,
+			 wms_inve_pruduct_category c
+			WHERE
+				b.wms_inve_transa_id = t.wms_inve_transa_id
+			AND b.wms_inve_pruduct_category_id = c.wms_inve_pruduct_category_id) ta
+		WHERE
+			1=1
+			and (2>(SELECT COUNT(DISTINCT(p.group_info)) from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id in(ta.create_user_id,#{user_id}) and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id) 
+			or 1=(SELECT p.group_info from wms_inve_transa_user t,wms_inve_transa_pruduct_user p where t.enable_flag=1 and p.enable_flag=1 and t.personnel_id =#{user_id} and t.wms_inve_transa_pruduct_user_id=p.wms_inve_transa_pruduct_user_id))
+			and (
+				1=2
+				<if test="create_user_id !=null">
+					or ta.create_user_id = #{create_user_id}
+				</if>
+		
+				<if test="create_user_dept_id !=null">
+					or ta.create_user_dept_id = #{create_user_dept_id}
+				</if>
+		
+				<if test="salesman_id !=null">
+					or ta.bel_salesman_id_id = #{salesman_id}
+				</if>
+		
+				<if test="salesman_dept_id !=null">
+					or ta.bel_salesman_dept_id = #{salesman_dept_id}
+				</if>
+		
+				<if test="deptIds !=null">
+					or ta.bel_salesman_dept_id in
+					<foreach collection="deptIds" item="dept_id" index="index"
+						open="(" separator="," close=")">
+						#{dept_id}
+					</foreach>
+				</if>
+				<if test="deptIds_user_id !=null">
+					or FIND_IN_SET(ta.bel_salesman_dept_id,getMenuData(${deptIds_user_id},${deptIds_menu}))
+				</if>
+		
+				<if test="financial_services !=null">
+					or 1= #{financial_services}
+				</if>
+		
+				<if test="super_user !=null">
+					or 1 = #{super_user}
+				</if>
+				)
+			<if test="product_account_begin !=null">
+				AND ta.product_account &gt;= #{product_account_begin}
+			</if>
+			<if test="product_account_end !=null">
+				AND ta.product_account &lt;= #{product_account_end}
+			</if>
+			<if test="date_of_payment_begin !=null">
+				AND ta.date_of_payment &gt;= #{date_of_payment_begin}
+			</if>
+			<if test="date_of_payment_end !=null">
+				AND ta.date_of_payment &lt;= #{date_of_payment_end}
+			</if>
+			<if test="deptNameList != null and deptNameList.size > 0">
+				AND ( 1=2
+				<foreach collection="deptNameList" item="dept_name">
+					OR ta.dept_name like CONCAT('%',#{dept_name },'%')
+				</foreach>
+				)
+			</if>
+			<if test="salesman_name != null">
+				AND ta.salesman_name LIKE CONCAT('%',#{salesman_name},'%')
+			</if>
+			<if test="cus_name !=null">
+				AND ta.cus_name LIKE CONCAT('%',#{cus_name },'%')
+			</if>
+			<if test="category_name != null">
+				AND ta.wms_inve_pruduct_category_id = #{category_name}
+			</if>
+	</select>
+</mapper>

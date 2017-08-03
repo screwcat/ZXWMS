@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper
+	namespace="com.zx.emanage.loancheck.persist.WmsCreCreditLineEnteSuppPurchaDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="long" resultType="WmsCreCreditLineEnteSuppPurcha">
+		select
+		wms_cre_credit_line_ente_supp_purcha_id,
+		ente_type,
+		ente_name,
+		prod_name,
+		prod_price,
+		settlement_cycle,
+		settlement_ratio,
+		cooperation_period,
+		wms_cre_credit_head_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_cre_credit_line_ente_supp_purcha
+		where
+		wms_cre_credit_line_ente_supp_purcha_id = #{wms_cre_credit_line_ente_supp_purcha_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cre_credit_line_ente_supp_purcha_id) as count
+		from
+		wms_cre_credit_line_ente_supp_purcha
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		wms_cre_credit_line_ente_supp_purcha_id,
+		ente_type,
+		ente_name,
+		prod_name,
+		prod_price,
+		settlement_cycle,
+		settlement_ratio,
+		cooperation_period,
+		wms_cre_credit_head_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		wms_cre_credit_line_ente_supp_purcha
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreCreditLineEnteSuppPurcha"
+		useGeneratedKeys="true" keyProperty="wms_cre_credit_line_ente_supp_purcha_id">
+		INSERT INTO
+		wms_cre_credit_line_ente_supp_purcha
+		(
+		wms_cre_credit_line_ente_supp_purcha_id,
+
+		ente_type,
+
+		ente_name,
+
+		prod_name,
+
+		prod_price,
+
+		settlement_cycle,
+
+		settlement_ratio,
+
+		cooperation_period,
+
+		wms_cre_credit_head_id,
+
+		create_user_id,
+
+		create_user_name,
+
+		create_timestamp,
+
+		last_update_user_id,
+
+		last_update_timestamp,
+
+		enable_flag
+		)
+		VALUES
+		(
+		#{wms_cre_credit_line_ente_supp_purcha_id},
+		#{ente_type},
+		#{ente_name},
+		#{prod_name},
+		#{prod_price},
+		#{settlement_cycle},
+		#{settlement_ratio},
+		#{cooperation_period},
+		#{wms_cre_credit_head_id},
+		#{create_user_id},
+		#{create_user_name},
+		#{create_timestamp},
+		#{last_update_user_id},
+		#{last_update_timestamp},
+		#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreCreditLineEnteSuppPurcha">
+		update wms_cre_credit_line_ente_supp_purcha
+		<set>
+			<if test="wms_cre_credit_line_ente_supp_purcha_id != null">
+				wms_cre_credit_line_ente_supp_purcha_id = #{wms_cre_credit_line_ente_supp_purcha_id},
+			</if>
+			<if test="ente_type != null">
+				ente_type = #{ente_type},
+			</if>
+			<if test="ente_name != null">
+				ente_name = #{ente_name},
+			</if>
+			<if test="prod_name != null">
+				prod_name = #{prod_name},
+			</if>
+			<if test="prod_price != null">
+				prod_price = #{prod_price},
+			</if>
+			<if test="settlement_cycle != null">
+				settlement_cycle = #{settlement_cycle},
+			</if>
+			<if test="settlement_ratio != null">
+				settlement_ratio = #{settlement_ratio},
+			</if>
+			<if test="cooperation_period != null">
+				cooperation_period = #{cooperation_period},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+		</set>
+		where
+		wms_cre_credit_line_ente_supp_purcha_id = #{wms_cre_credit_line_ente_supp_purcha_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreCreditLineEnteSuppPurcha"
+		resultType="WmsCreCreditLineEnteSuppPurcha">
+		select
+		wms_cre_credit_line_ente_supp_purcha_id,
+		ente_type,
+		ente_name,
+		prod_name,
+		prod_price,
+		settlement_cycle,
+		settlement_ratio,
+		cooperation_period,
+		wms_cre_credit_head_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_cre_credit_line_ente_supp_purcha
+		<where>
+			<if test="wms_cre_credit_line_ente_supp_purcha_id != null">
+				and wms_cre_credit_line_ente_supp_purcha_id =
+				#{wms_cre_credit_line_ente_supp_purcha_id}
+			</if>
+			<if test="ente_type != null">
+				and ente_type = #{ente_type}
+			</if>
+			<if test="ente_name != null">
+				and ente_name = #{ente_name}
+			</if>
+			<if test="prod_name != null">
+				and prod_name = #{prod_name}
+			</if>
+			<if test="prod_price != null">
+				and prod_price = #{prod_price}
+			</if>
+			<if test="settlement_cycle != null">
+				and settlement_cycle = #{settlement_cycle}
+			</if>
+			<if test="settlement_ratio != null">
+				and settlement_ratio = #{settlement_ratio}
+			</if>
+			<if test="cooperation_period != null">
+				and cooperation_period = #{cooperation_period}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name = #{create_user_name}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id = #{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+
+		</where>
+	</select>
+</mapper> 

@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper
+	namespace="com.zx.emanage.loancheck.persist.WmsCreCreditLineInventoryGoodMaterialDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="long"
+		resultType="WmsCreCreditLineInventoryGoodMaterial">
+		select
+		wms_cre_credit_line_inventory_goods_materials_id,
+		good_material_type,
+		good_material_name,
+		inventory_quantity,
+		purchase_price,
+		daily_consumption,
+		storage_location,
+		date_format(storage_time,'%Y-%m-%d') as storage_time_str,
+		storage_time,
+		material_ratio,
+		wms_cre_credit_head_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_cre_credit_line_inventory_good_material
+		where
+		wms_cre_credit_line_inventory_goods_materials_id = #{wms_cre_credit_line_inventory_goods_materials_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_cre_credit_line_inventory_goods_materials_id) as
+		count
+		from wms_cre_credit_line_inventory_good_material
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		wms_cre_credit_line_inventory_goods_materials_id,
+		good_material_type,
+		good_material_name,
+		inventory_quantity,
+		purchase_price,
+		daily_consumption,
+		storage_location,
+		date_format(storage_time,'%Y-%m-%d') as storage_time_str,
+		storage_time,
+		material_ratio,
+		wms_cre_credit_head_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		wms_cre_credit_line_inventory_good_material
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreCreditLineInventoryGoodMaterial"
+		useGeneratedKeys="true" keyProperty="wms_cre_credit_line_inventory_goods_materials_id">
+		INSERT INTO
+		wms_cre_credit_line_inventory_good_material
+		(
+		wms_cre_credit_line_inventory_goods_materials_id,
+
+		good_material_type,
+
+		good_material_name,
+
+		inventory_quantity,
+
+		purchase_price,
+
+		daily_consumption,
+
+		storage_location,
+
+		storage_time,
+
+		material_ratio,
+
+		wms_cre_credit_head_id,
+
+		create_user_id,
+
+		create_user_name,
+
+		create_timestamp,
+
+		last_update_user_id,
+
+		last_update_timestamp,
+
+		enable_flag
+		)
+		VALUES
+		(
+		#{wms_cre_credit_line_inventory_goods_materials_id},
+		#{good_material_type},
+		#{good_material_name},
+		#{inventory_quantity},
+		#{purchase_price},
+		#{daily_consumption},
+		#{storage_location},
+		#{storage_time},
+		#{material_ratio},
+		#{wms_cre_credit_head_id},
+		#{create_user_id},
+		#{create_user_name},
+		#{create_timestamp},
+		#{last_update_user_id},
+		#{last_update_timestamp},
+		#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreCreditLineInventoryGoodMaterial">
+		update wms_cre_credit_line_inventory_good_material
+		<set>
+			<if test="wms_cre_credit_line_inventory_goods_materials_id != null">
+				wms_cre_credit_line_inventory_goods_materials_id = #{wms_cre_credit_line_inventory_goods_materials_id},
+			</if>
+			<if test="good_material_type != null">
+				good_material_type = #{good_material_type},
+			</if>
+			<if test="good_material_name != null">
+				good_material_name = #{good_material_name},
+			</if>
+			<if test="inventory_quantity != null">
+				inventory_quantity = #{inventory_quantity},
+			</if>
+			<if test="purchase_price != null">
+				purchase_price = #{purchase_price},
+			</if>
+			<if test="daily_consumption != null">
+				daily_consumption = #{daily_consumption},
+			</if>
+			<if test="storage_location != null">
+				storage_location = #{storage_location},
+			</if>
+			<if test="storage_time != null">
+				storage_time = #{storage_time},
+			</if>
+			<if test="material_ratio != null">
+				material_ratio = #{material_ratio},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+			<if test="enable_flag != null">
+				enable_flag = #{enable_flag},
+			</if>
+		</set>
+		where
+		wms_cre_credit_line_inventory_goods_materials_id = #{wms_cre_credit_line_inventory_goods_materials_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreCreditLineInventoryGoodMaterial"
+		resultType="WmsCreCreditLineInventoryGoodMaterial">
+		select
+		wms_cre_credit_line_inventory_goods_materials_id,
+		good_material_type,
+		good_material_name,
+		inventory_quantity,
+		purchase_price,
+		daily_consumption,
+		storage_location,
+		date_format(storage_time,'%Y-%m-%d') as storage_time_str,
+		storage_time,
+		material_ratio,
+		wms_cre_credit_head_id,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp,
+		enable_flag
+		from
+		wms_cre_credit_line_inventory_good_material
+		<where>
+			<if test="wms_cre_credit_line_inventory_goods_materials_id != null">
+				and wms_cre_credit_line_inventory_goods_materials_id =
+				#{wms_cre_credit_line_inventory_goods_materials_id}
+			</if>
+			<if test="good_material_type != null">
+				and good_material_type = #{good_material_type}
+			</if>
+			<if test="good_material_name != null">
+				and good_material_name = #{good_material_name}
+			</if>
+			<if test="inventory_quantity != null">
+				and inventory_quantity = #{inventory_quantity}
+			</if>
+			<if test="purchase_price != null">
+				and purchase_price = #{purchase_price}
+			</if>
+			<if test="daily_consumption != null">
+				and daily_consumption = #{daily_consumption}
+			</if>
+			<if test="storage_location != null">
+				and storage_location = #{storage_location}
+			</if>
+			<if test="storage_time != null">
+				and storage_time = #{storage_time}
+			</if>
+			<if test="material_ratio != null">
+				and material_ratio = #{material_ratio}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name = #{create_user_name}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id = #{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="enable_flag != null">
+				and enable_flag = #{enable_flag}
+			</if>
+
+		</where>
+	</select>
+</mapper> 

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.sysmanage.persist.SysFunctionDao">
+	<select id="getAllFunc" resultType="SysFunction">
+		SELECT f.id AS id,
+		f.func_name, f.func_method, f.menu_id AS menu_id,f.default_flag
+		FROM sys_function f ORDER BY f.menu_id ,f.func_sort
+	</select>
+
+
+	<select id="queryForList" parameterType="map" resultType="java.util.HashMap">
+		SELECT f.id AS id, f.func_name, f.func_method, f.menu_id AS menu_id,
+		f.default_flag
+		FROM sys_function f
+		<if test="user_id!=null">
+			where id in (
+			select func_id from sys_user_menu_func where
+			user_id=#{user_id}
+			union all
+			select func_id from sys_role_menu_function t1, sys_user_role t2
+			where t1.role_id=t2.role_id and user_id=#{user_id}
+			)
+		</if>
+		ORDER BY f.menu_id ,f.func_sort
+	</select>
+</mapper> 

@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInvePadPowerDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInvePadPower">
+		select
+        				wms_inve_pad_power_id,
+        				device_num,
+        				personnel_id,
+        				personnel_shortcode,
+						date_format(end_time,'%Y-%m-%d %H:%i:%s') as end_time_str,
+        				end_time,
+						date_format(start_time,'%Y-%m-%d %H:%i:%s') as start_time_str,
+        				start_time,
+        				create_user_id,
+						date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+        				create_timestamp,
+        				last_update_user_id,
+						date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+        				last_update_timestamp,
+        				enable_flag
+        	from
+        		wms_inve_pad_power
+        	where
+        				wms_inve_pad_power_id = #{wms_inve_pad_power_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_pad_power_id) as count
+		from wms_inve_pad_power
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_inve_pad_power_id,
+				device_num,
+				personnel_id,
+				personnel_shortcode,
+				date_format(end_time,'%Y-%m-%d %H:%i:%s') as end_time_str,
+				end_time,
+				date_format(start_time,'%Y-%m-%d %H:%i:%s') as start_time_str,
+				start_time,
+				create_user_id,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from wms_inve_pad_power
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInvePadPower" useGeneratedKeys="true" keyProperty="wms_inve_pad_power_id">
+		INSERT INTO wms_inve_pad_power
+		(
+				wms_inve_pad_power_id,
+
+				device_num,
+
+				personnel_id,
+
+				personnel_shortcode,
+
+				end_time,
+
+				start_time,
+
+				create_user_id,
+
+				create_timestamp,
+
+				last_update_user_id,
+
+				last_update_timestamp,
+
+				enable_flag
+		)
+		VALUES
+		(
+				#{wms_inve_pad_power_id},
+				#{device_num},
+				#{personnel_id},
+				#{personnel_shortcode},
+				#{end_time},
+				#{start_time},
+				#{create_user_id},
+				#{create_timestamp},
+				#{last_update_user_id},
+				#{last_update_timestamp},
+				#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInvePadPower">
+		update wms_inve_pad_power
+		<set>
+					<if test="wms_inve_pad_power_id != null">
+						 wms_inve_pad_power_id = #{wms_inve_pad_power_id},
+					</if>
+					<if test="device_num != null">
+						 device_num = #{device_num},
+					</if>
+					<if test="personnel_id != null">
+						 personnel_id = #{personnel_id},
+					</if>
+					<if test="personnel_shortcode != null">
+						 personnel_shortcode = #{personnel_shortcode},
+					</if>
+					<if test="end_time != null">
+						 end_time = #{end_time},
+					</if>
+					<if test="start_time != null">
+						 start_time = #{start_time},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="create_timestamp != null">
+						 create_timestamp = #{create_timestamp},
+					</if>
+					<if test="last_update_user_id != null">
+						 last_update_user_id = #{last_update_user_id},
+					</if>
+					<if test="last_update_timestamp != null">
+						 last_update_timestamp = #{last_update_timestamp},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+	   </set>
+		 where 
+    				wms_inve_pad_power_id = #{wms_inve_pad_power_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInvePadPower" resultType="WmsInvePadPower">
+		select 
+				wms_inve_pad_power_id,
+				device_num,
+				personnel_id,
+				personnel_shortcode,
+				date_format(end_time,'%Y-%m-%d %H:%i:%s') as end_time_str,
+				end_time,
+				date_format(start_time,'%Y-%m-%d %H:%i:%s') as start_time_str,
+				start_time,
+				create_user_id,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from
+		wms_inve_pad_power
+		<where>
+					<if test="wms_inve_pad_power_id != null">
+						and wms_inve_pad_power_id = #{wms_inve_pad_power_id}
+					</if>
+					<if test="device_num != null">
+						and device_num = #{device_num}
+					</if>
+					<if test="personnel_id != null">
+						and personnel_id = #{personnel_id}
+					</if>
+					<if test="personnel_shortcode != null">
+						and personnel_shortcode = #{personnel_shortcode}
+					</if>
+					<if test="end_time != null">
+						and end_time = #{end_time}
+					</if>
+					<if test="start_time != null">
+						and start_time = #{start_time}
+					</if>
+					<if test="create_user_id != null">
+						and create_user_id = #{create_user_id}
+					</if>
+					<if test="create_timestamp != null">
+						and create_timestamp = #{create_timestamp}
+					</if>
+					<if test="last_update_user_id != null">
+						and last_update_user_id = #{last_update_user_id}
+					</if>
+					<if test="last_update_timestamp != null">
+						and last_update_timestamp = #{last_update_timestamp}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_inve_pad_power_id != #{wms_inve_pad_power_id}
+					</if>
+		</where>
+	</select>
+	
+	<select id="getWmsInvePadAuthorList" parameterType="WmsInvePadPower" resultType="WmsInvePadPower">
+		select 
+				wms_inve_pad_power_id,
+				device_num,
+				personnel_id,
+				personnel_shortcode,
+				date_format(end_time,'%Y-%m-%d %H:%i:%s') as end_time_str,
+				end_time,
+				date_format(start_time,'%Y-%m-%d %H:%i:%s') as start_time_str,
+				start_time,
+				create_user_id,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from
+		wms_inve_pad_power
+		<where>	
+				enable_flag= 1	
+				and now() &gt;=start_time
+				and now() &lt;=end_time		
+				<if test="device_num != null">
+					and device_num = #{device_num}
+				</if>
+			
+				<if test="personnel_shortcode != null">
+					and personnel_shortcode = #{personnel_shortcode}
+				</if>				
+		</where>
+	</select>
+	
+	<!-- 失效时间 -->
+	<update id="updateEndTime" parameterType="WmsInvePadPower">
+		update wms_inve_pad_power
+		set					
+				 end_time = now(),
+				 last_update_timestamp = now(),
+				 enable_flag = 0
+		 where 
+		 		enable_flag = 1
+    			and device_num = #{device_num}
+    			and personnel_id = #{personnel_id}
+	</update>
+</mapper> 

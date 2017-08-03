@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>业务管理>理财管理>金额管理>金额支付>单据选择</title>
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script language="Javascript" src="../../js/zx-all.js"> </script>
+<style>
+.textright{
+	text-align:right;
+}
+.textleft{
+	text-align:left;
+}
+/*input_tb css*/
+.input_tb_new{
+/*border:1px solid #dfdfdf;*/
+	width:100%;
+	margin-bottom:10px;
+}
+.input_tb_new a{
+	color:#056aff;
+	text-decoration:none;
+	font-weight:normal;
+}
+.input_tb_new td{
+	height:35px;
+	line-height:25px;
+	/*border-bottom:1px dashed #d5d5d5;*/
+	padding-top:3px;
+}
+.input_tb_new .tr_title td{
+	background-color:#f5f8ff;
+	padding-left:16px;
+	font-weight:bold;
+	height:30px;
+	line-height:30px;
+/*border-bottom:1px solid #dfdfdf;*/
+}
+.input_tb_new .tr_last td{
+	border-bottom:0;
+}
+.input_tb_new .title{
+	text-align:right;
+}
+.input_tb_new .subtitle{
+	text-align:left;
+	background-color:#d2e1fd;
+	border-top:1px solid #fff;
+/*border-left:1px solid #fff;*/
+}
+
+.input_tb_new .tr_btn_input td{
+	background-color:#fbfbfb;
+/*border-top:1px solid #dbdbdb;*/
+/*height:40px;*/
+
+}
+
+.title_tb{
+	background-color:#f5f8ff;
+	padding-left:16px;
+	font-weight:bold;
+	height:30px;
+	line-height:30px;
+/*border:1px solid #dfdfdf;8/
+border-bottom:0;
+}
+.title_tb .title_txt{
+float:left;
+}
+.title_tb .title_btn{
+float:right;
+margin-top:2px;
+font-weight:normal;
+}
+.input_tb_new td {
+    /*border-bottom: 1px dashed #D5D5D5;*/
+    height: 35px;
+    line-height: 25px;
+    padding-top: 3px;
+}
+
+.data_tb td{
+	height:30px;
+	line-height:24px;
+	padding-left:10px;
+	border-bottom:1px dashed #e3e4e6;
+	text-align:left;
+}
+</style>
+</head>
+<body style="overflow-y: hidden;">
+	<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<!--查询条件-->
+			<div class="l-panel-search-cond clearfix">
+				<div class="float-l">
+					<div class="l-panel-search-title" style="margin-left: 16px">产品名称：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="category_name"></input>
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title" style="margin-left: 16px"><input type="button" class="btn-search" onmouseover="this.className='btn-search-over'" onmouseout="this.className='btn-search'" onmousedown="this.className='btn-search-down'" type="button" style="margin-right: 7px;" onclick="searchClick();"></input></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 列表 -->
+	<div id="category_grid"></div>
+	<!-- 按钮 -->
+	<div class="pop-footer5 clearboth" style="bottom: 1px;">
+		<input id="saveBillBtnId" class="btn-saveT" onmouseover="this.className='btn-saveT-over'" onmouseout="this.className='btn-saveT'" onmousedown="this.className='btn-saveT-down'" type="button" style="margin-right: 7px;" onclick="save()" /> 
+		<input id="cancelBillBtnId" class="btn-cancel" onmouseover="this.className='btn-cancel-over'" onmouseout="this.className='btn-cancel'" onmousedown="this.className='btn-cancel-down'" type="button" onclick="closePage();" />
+	</div>
+	<script>
+		var categoryGrid;
+		var params={};
+		var wms_inve_pruduct_category_id = $.query.get("wms_inve_pruduct_category_id");
+		
+		$(function(){
+			init_category_name();
+			initGrid();
+		});
+		
+		//初始化列表信息
+		function initGrid(){
+			var billColumns = [{
+				display: '产品名称',
+				name: 'category_name',
+				resizable: false,
+				width: 150,
+				minWidth: 150,
+				render: function (rowdata, nowRowIndex, value, column) {
+					return value;
+				}
+			},{
+				display: '投资期限(月)',
+				name: 'category_deadline',
+				width: 150,
+				minWidth: 150,
+				resizable: false,
+				render: function (rowdata, nowRowIndex, value, column) {
+					return value;
+				} 
+			},{
+				display: '年化利率(%)',
+				name: 'category_return_rate',
+				resizable: false,
+				width: 150,
+				minWidth: 150,
+				render:function(rowdata, nowRowIndex, value, column){
+					return value;
+				}
+			},{
+				display: '收益支付',
+				name: 'category_interest_pay_method',
+				resizable: false,
+				width: 150,
+				minWidth: 150,
+				render:function(rowdata, nowRowIndex, value, column){
+					if(value == 1)
+					{
+						return "月返";
+					}
+					if(value == 2)
+					{
+						return "年返";
+					}
+				}
+			},{
+				display: '产品表主键',
+				name: 'wms_inve_pruduct_category_id',
+				resizable: false,
+				width: 150,
+				minWidth: 150,
+				hide:1,
+				render:function(rowdata, nowRowIndex, value, column){
+					return value;
+				}
+			}];
+			
+			categoryGrid = $("#category_grid").ligerGrid({
+				url : globalUtil.getTimestampUrl("/inve/getAllCategoryInfos.do"),
+				columns: billColumns,
+				checkbox: false,
+				rownumbers: true,
+        		allowUnSelectRow: true,
+        		usePager: false,
+        		width: '100%',
+        		height: '85%',
+        		heightDiff: -4,
+        		enabledEdit: true,
+        		onAfterShowData:function(data)
+        		{
+        			var rows = data.Rows;
+        			
+        			for(var i = 0; i < rows.length; i++)
+        			{
+        				if(rows[i].wms_inve_pruduct_category_id == wms_inve_pruduct_category_id)
+        				{
+        					categoryGrid.select(rows[i]);
+        				}
+        			}
+        		}
+			});
+		}
+		
+		/*
+		 * 产品类型
+		 */
+    	function init_category_name(json){
+    		var category_name_params ={
+    				dest_url:'/inve/getCategorySelect.do',
+    				t_col_name:'category_name',
+    				valueField:'wms_inve_pruduct_category_id',   //下拉框value对应的值，默认为id
+    				textField:'category_name',    //下拉框text对应的值，默认为text
+    				input_width:133,
+    				def_val:'first'
+    				};
+    		global_ligerui_extend.initCombox("category_name",null,category_name_params);
+   		    global_ligerui_extend.initComboxDefVal("category_name");
+    	}
+		
+		//将选中的单据添加到客户支付信息列表页面
+		function save(){
+			var rows = categoryGrid.getCheckedRows();
+			if(rows.length == 0){
+				globalUtil.warnMsg("请选择一条记录！");
+				return;
+			}
+			
+			var obj = {
+				category_name:rows[0].category_name,
+				category_deadline:rows[0].category_deadline,
+				category_return_rate:rows[0].category_return_rate,
+				category_rebate_way:rows[0].category_rebate_way,
+				wms_inve_pruduct_category_id:rows[0].wms_inve_pruduct_category_id,
+				category_interest_pay_method:rows[0].category_interest_pay_method,
+				buy_month_limit:rows[0].buy_month_limit,
+				has_paper_protocol:rows[0].has_paper_protocol
+			}
+			
+			window.parent.saveCategory(obj);
+			closePage();//关闭选择产品dialog
+		}
+		
+		//关闭当前页面
+		function closePage(){
+	    	window.parent.dialog.hide();
+	    }
+		
+		//条件查询
+		function searchClick(){
+			params = globalUtil.getFormParam("searchbar");
+        	params.wms_inve_pruduct_category_id=params.category_name;
+			global_ligerui_extend.search(categoryGrid, params);
+		}
+	</script>
+</body>
+</html>

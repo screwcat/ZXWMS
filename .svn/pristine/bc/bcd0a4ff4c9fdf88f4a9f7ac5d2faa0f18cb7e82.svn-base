@@ -1,0 +1,641 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-
+
+transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<link href="../../css/ligerui-main.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<title>赎回查看</title>
+<style type="text/css">
+.td_title {
+	background: none repeat scroll 0 0 #EAF0FB;
+}
+
+.tb_input TD {
+	background: none repeat scroll 0 0 #FFFFFF;
+	padding: 3px 1px 1px 4px;
+}
+</style>
+
+<script type="text/javascript">
+	var wms_inve_redeem_id;
+	var wms_inve_transa_id;
+	var data_status_name;
+	var wms_inve_transa_prod_id;
+	//用于打印功能 判断是否到期
+	var is_over_date;
+	var cktype;
+	
+	var is_take_off_damages;// 是否收取违约费
+	//活期收益
+	var days_of_current_income = 0;
+	var current_income_rate = 0;
+	var current_income = 0;
+
+	$(function() {
+		//获取单据ID
+		wms_inve_redeem_id=$.query.get('wms_inve_redeem_id');
+		wms_inve_transa_id=$.query.get('wms_inve_transa_id');
+		data_status_name=$.query.get('data_status_name');
+		//赎回查询页面跳转  其他跳转隐藏打印按钮 
+		cktype=$.query.get('cktype');
+
+		//初始化赎回明细信息
+		init_redeem_info();
+		//初始化回款凭证信息
+		init_fileinfo();
+		if(cktype!="ckxq"){
+			document.getElementById("printbtn").style.display='none';
+		}
+	});
+
+	
+	//初始化申请数据
+	
+	function init_redeem_info(){
+		$.getJSON(globalUtil.getTimestampUrl('/inve/getredeemapplyinfoByPk.do'),
+	    		{
+	    			"wms_inve_transa_id" : wms_inve_transa_id,
+	    			"wms_inve_redeem_id" : wms_inve_redeem_id
+	    		},
+	    		function(json) {
+	    			//初始化赎回申请表
+	    			init_redeem_table(json);
+	    			//活期收益
+	    			days_of_current_income = json.redeemDetailInfo[0].days_current_income;
+	    			current_income_rate = json.redeemDetailInfo[0].current_income_rate;
+	    			current_income = json.redeemDetailInfo[0].current_income;
+	    			//初始化页面（到期/未到期）
+	    			init_redeem_div(json);	    			    			
+	    			//赎回基础信息
+	    			$('[name=b_name]').val(json.redeemApplyInfo[0].b_name);
+	    			$('[name=prot_code]').val(json.redeemApplyInfo[0].bill_code);
+	    			$("#prot_code").text(json.redeemApplyInfo[0].bill_code);
+	    			$("#financial_bill_code").text(json.redeemApplyInfo[0].financial_bill_code);
+	    			$('[name=b_id_card]').val(json.redeemApplyInfo[0].b_id_card);
+	    			$('[name=bonus_rate]').val(json.redeemApplyInfo[0].bonus_rate);
+	    			$('[name=product_account]').val(parseFloat(json.redeemApplyInfo[0].product_account)/10000);
+	    			$('[name=category_name]').val(json.redeemApplyInfo[0].category_name);
+	    			$('[name=product_deadline_name]').val(json.redeemApplyInfo[0].product_deadline_name);
+	    			$('[name=product_interest]').val(json.redeemApplyInfo[0].product_interest);
+	    			$('[name=create_timestamp_str]').val(json.redeemApplyInfo[0].date_of_payment);
+	    			$('[name=end_of_date]').val(json.redeemApplyInfo[0].end_of_date);
+	    			$('[name=card_no]').val(json.redeemApplyInfo[0].card_no);
+	    			$('[name=bank_of_deposit]').val(json.redeemApplyInfo[0].bank_of_deposit+"|"+json.redeemApplyInfo[0].bank_of_deposit_pro+json.redeemApplyInfo[0].bank_of_deposit_city+json.redeemApplyInfo[0].bank_branch);
+	    			$('[name=redeem_date]').val(json.redeemDetailInfo[0].redeem_date);
+	    			//赎回详细信息
+	    			$('[name=management_fee]').val(json.redeemDetailInfo[0].total_management_fee);
+	    			$('[name=redeem_reason]').val(json.redeemDetailInfo[0].redeem_reason);
+	    			//$('[name=deduct_money]').val(json.redeemDetailInfo[0].total_deduct_money);
+	    			$('[name=deduct_tax_point]').val(json.redeemDetailInfo[0].total_deduct_tax_point);
+	    			$('[name=due_income]').val(json.redeemDetailInfo[0].total_due_income);
+	    			$('[name=redeem_reality_total_amount]').val(json.redeemDetailInfo[0].redeem_reality_total_amount);
+	    			//$("[name='is_handle_self'][value="+json.redeemDetailInfo[0].is_handle_self+"]").attr("checked",true);
+	    			$("[name='redeem_reality_total_amount_upper']").val(json.redeemDetailInfo[0].redeem_reality_total_amount_upper);	    			
+	    			//合计
+	    			$('[name=sum_redeem_amount]').val(json.redeemDetailInfo[0].redeem_amount/10000);
+	    			$('[name=sum_due_reward_income]').val(json.redeemDetailInfo[0].payable_reward_income);
+	    			$('[name=sum_due_basic_income]').val(json.redeemDetailInfo[0].payable_basic_income);
+	    			$('[name=sum_paid_income]').val(json.redeemDetailInfo[0].paid_income);
+	    			$('[name=sum_public_income]').val(json.redeemDetailInfo[0].extend_income);
+	    			$('[name=sum_current_income]').val(json.redeemDetailInfo[0].current_income);
+	    			$('[name=sum_management_fee]').val(json.redeemDetailInfo[0].total_management_fee);
+	    			
+	    			// 是否收取违约费
+	    			is_take_off_damages = json.redeemDetailInfo[0].is_take_off_damages;
+	    			
+	    			//用于单据编号超链接
+	    			wms_inve_transa_prod_id = json.redeemApplyInfo[0].wms_inve_transa_prod_id;
+	    			    			
+	    			//初始化单据详情超链接
+	    			init_href();
+	    		});
+    }
+	
+	//初始化查看单据详情超链接
+	function init_href() {
+		//单据编号超链接
+		var status;
+    	$.post(globalUtil.getTimestampUrl('/inve/wmsinvetransadSearchStatus.do'), 
+ 				{'wms_inve_transa_id': wms_inve_transa_id},
+     		function(data) {
+     			status = data;
+     			if(status == "1" || status == "2" || status == "7" || status == "9" || status == "10"){            	
+	    			document.getElementById("prot_code").href="addFinancialManagement.html?wms_inve_transa_id="+wms_inve_transa_id+"&wms_inve_transa_prod_id="+wms_inve_transa_prod_id+"&cktype=ck"
+     			}else{
+	    			document.getElementById("prot_code").href="addFinancialManagement.html?zftype=zf&wms_inve_transa_id="+wms_inve_transa_id+"&wms_inve_transa_prod_id="+wms_inve_transa_prod_id+"&cktype=ck"
+     			}
+     		}); 
+	}	
+	
+	//初始化div结构(单据是否到期)
+	function init_redeem_div(json){
+		//赎回类型(到期/未到期)
+		var redeem_type_flag = json.redeemDetailInfo[0].redeem_type;
+		//单据到期
+		if((json.redeemApplyInfo[0].old_date_of_payment < '2016-07-01' && json.redeemApplyInfo[0].end_of_date <= json.redeemDetailInfo[0].redeem_date) ||
+					(json.redeemApplyInfo[0].old_date_of_payment >= '2016-07-01'&& json.redeemApplyInfo[0].end_of_date < json.redeemDetailInfo[0].redeem_date)){
+			//到期 打印功能到期标识设置为1
+			is_over_date = 1;
+			$("td[name=is_over_date]").each(function(i){
+				 this.style.display = "";	 			 
+			});
+			$("td[name=isn_over_date]").each(function(i){
+				 this.style.display = "none";	 			 
+			}); 
+			$("#real_income_tip").html("实际回收（小写）：<br/>A+H-D-G");
+			$("#income_tip").html("合计收益(H)：<br/>(B1+B2)+E-C");
+			$("#title_tip").html("出借人债权转让申请表（到期/超期）");
+			//$("#deduct_money_tip").html("其他扣款(F)：");
+			$("#tax_point_tip").html("税点(G)：");
+			//$("#damages_tip")[0].style.display="none";
+			$("#management_fee_tip")[0].style.display="";
+			$('[name=redeem_company_reason]')[0].value= json.redeemDetailInfo[0].redeem_company_reason;					
+		}else{
+			//未到期 打印功能到期标识设置为0
+			is_over_date = 0;
+			//未到期
+			 $("td[name=is_over_date]").each(function(i){
+				 this.style.display = "none";	 			 
+			});
+			$("td[name=isn_over_date]").each(function(i){
+				 this.style.display = "";	 			 
+			});
+			$("#real_income_tip").html("实际回收（小写）：<br/>A+G-D-F");
+			$("#income_tip").html("合计收益(G)：<br/>(B1+B2)-C");
+			$("#title_tip").html("出借人债权转让申请表（未到期）");
+			//$("#deduct_money_tip").html("其他扣款(E)：");
+			$("#tax_point_tip").html("税点(F)：");
+			//$("#damages_tip")[0].style.display="";
+			$("#management_fee_tip")[0].style.display="none";
+			$('[name=redeem_company_reason]')[0].value= json.redeemDetailInfo[0].redeem_company_reason;
+			$("[name='is_take_off_damages'][value="+json.redeemDetailInfo[0].is_take_off_damages+"]").attr("checked",true); 
+		}
+		//初始化活期收益td
+		init_current_td();
+	}
+	
+	//初始化赎回申请表
+	function init_redeem_table(json){	
+		var redeemTr = "";
+		for (var i = 0; i < json.redeemPrincipalDetailInfo.length; i++) {
+			redeemTr = "";
+			redeemTr+="<tr><td width='120px' style='text-align:center;'>"
+						+"	<select name='principal_type' style='width: 120px;border:0;' disabled='disabled'>"
+						+"		<option value='1'>本金收益全打</option>"
+			            +"		<option value='2'>只打收益不打本金</option>"
+			            +"	</select>"									
+						+"</td>"
+						+"<td width='120px' style='text-align:center;' >"
+						+"	<input type='text' name='sub_redeem_amount' style='width:120px; border:0px;color:#FF0000;text-align:center' value='"+json.redeemPrincipalDetailInfo[i].principal_amount/10000+"' readonly='readonly'/>"
+						+"</td>"
+						+"<td width='120px' style='text-align:center;' >"
+						+"	<input type='text' name='sub_due_basic_income' style='width:120px; border:0px;color:#FF0000;text-align:center' value='"+json.redeemPrincipalDetailInfo[i].income_amount+"' readonly='readonly'/>"
+						+"</td>"
+						+"<td width='120px' style='text-align:center;' >"
+						+"	<input type='text' name='sub_due_reward_income' style='width:120px; border:0px;color:#FF0000;text-align:center' value='"+(json.redeemPrincipalDetailInfo[i].reward_income!=undefined?json.redeemPrincipalDetailInfo[i].reward_income:0)+"' readonly='readonly'/>"
+						+"</td>"
+						+"<td width='120px' style='text-align:center;' >"
+						+"	<input type='text' name='sub_paid_income' style='width:120px; border:0px;color:#FF0000;text-align:center' value='"+json.redeemPrincipalDetailInfo[i].paid_income_amount+"' readonly='readonly'/>"
+						+"</td>"																												
+						+"<td name='is_over_date' width='120px' style='text-align:center;' >"
+						+"	<input type='text' name='sub_public_income' style='width:120px; border:0px;color:#FF0000;text-align:center' value='"+json.redeemPrincipalDetailInfo[i].extend_amount+"' readonly='readonly'/>"
+						+"</td>"
+						+"<td name='is_current' width='120px' style='text-align:center;' >"
+						+"	<input type='text' name='sub_current_income' style='width:120px; border:0px;color:#FF0000;text-align:center' value='"+json.redeemPrincipalDetailInfo[i].current_income+"' readonly='readonly'/>"
+						+"</td>"
+						+"<td name='isn_over_date' width='120px' style='text-align:center;' >"
+						+"	<input type='text' name='sub_management_fee' style='width:120px; border:0px;color:#FF0000;text-align:center' value='"+(json.redeemPrincipalDetailInfo[i].total_management_fee!=undefined?json.redeemPrincipalDetailInfo[i].total_management_fee:0)+"' readonly='readonly'/>"
+						+"</td>"
+	  	 				+"</tr>";
+			$("#redeem_table tr:eq("+(i)+")").after(redeemTr);		
+			$('[name=principal_type]')[i].value = json.redeemPrincipalDetailInfo[i].principal_type;	
+		}
+	}
+	
+	//初始化活期收益td
+	function init_current_td(){			
+			//处于活期标识为1  设置活期td为显示
+			if(current_income >0 ){
+				$("td[name=is_current]").each(function(i){
+					 this.style.display = "";	 			 
+				});
+				$("#current_notice").html("注：当前执行的央行活期利率为"+current_income_rate+"%，持有活期天数为"+days_of_current_income+"天。");
+				$("#income_tip").html("合计收益(H)：<br/>(B1+B2)+E+I-C");
+			}else{
+				//处于活期列设置为不显示
+				$("td[name=is_current]").each(function(i){
+					 this.style.display = "none";	 			 
+				}); 
+				$("#current_notice").html("");
+			}		
+	}
+	
+	//获取上传附件内容，并且只能查看功能
+	function init_fileinfo(){
+		if($.trim(data_status_name)=="已完成"){			
+			document.getElementById('bzdiv').style.display = ""; 
+			$.getJSON(globalUtil.getTimestampUrl('/inve/getAttList.do?wms_inve_redeem_id='+wms_inve_redeem_id),
+					{},
+					function(jsonArr) {
+						var filehtml = $("#fileinfo").html();
+						for(var i=0;i<jsonArr.length;i++){
+							var nnme=jsonArr[i].attachment_new_name.replace('/','thxg1');
+							nnme=nnme.replace('/','thxg2');
+							filehtml += '<div id="delUploadDivId'+nnme+'">';
+							filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+jsonArr[i].attachment_address+'">'+jsonArr[i].attachment_old_name+'</a>';
+							filehtml += '</div>'
+						}
+						$("#fileinfo").html(filehtml);
+					});	    
+		}
+	}
+
+	/**
+	*关闭窗口
+	*/
+	function closeDialog() {
+		try{
+ 			window.parent.dialog.hide();
+ 		}catch(e){
+ 			globalUtil.closeCurrentTab();
+ 		}
+	}
+	
+	//打印
+	function doPrint(){
+		var	really_amount = 0;
+		var	repurchase_amount = 0;
+		pdfJson = {};//要传递给后台的参数
+		//是否超期
+		pdfJson.is_over_date = is_over_date+"";
+		pdfJson.title_tip = $("#title_tip").html();						//标题
+		pdfJson.financial_bill_code = $("#financial_bill_code").html();	//合同编号
+		pdfJson.year = $('[name=redeem_date]').val().substring(0,4);	//年	
+		pdfJson.month = $('[name=redeem_date]').val().substring(5,7);	//月
+		pdfJson.day = $('[name=redeem_date]').val().substring(8,10);		//日
+		pdfJson.b_name = $('[name=b_name]').val();
+		pdfJson.prot_code = $('[name=prot_code]').val();
+		pdfJson.create_timestamp = $('[name=create_timestamp_str]').val();
+		pdfJson.category_name = $('[name=category_name]').val();
+		pdfJson.end_of_date = $('[name=end_of_date]').val();
+		pdfJson.card_type = "身份证";
+		pdfJson.b_id_card = $('[name=b_id_card]').val();
+		pdfJson.bank_of_deposit = $('[name=bank_of_deposit]').val();
+		pdfJson.wms_inve_transa_id = wms_inve_transa_id;
+		pdfJson.redeem_reason = document.getElementsByName("redeem_reason")[0].value;
+		
+		pdfJson.sum_redeem_amount = $('[name=sum_redeem_amount]').val()*10000+"元";	//赎回本金A
+
+		pdfJson.sum_paid_income = $('[name=sum_paid_income]').val()+"元";			//已付收益C
+		//到期
+		if(is_over_date == 1){
+			pdfJson.management_fee = "出借协议到期后实现转让 | 不收取服务费";				//管理费D
+			pdfJson.management_fee_remark = "出借协议到期后实现转让，按照年化收益6%计算超期天数的额外收益";				
+		}else{
+			//未到期
+			if($.trim($('[name=management_fee]').val())==""){
+				pdfJson.management_fee = "0元";	
+			}else{
+				pdfJson.management_fee = $('[name=management_fee]').val()+"元";
+			}
+			//0请选择  remark=""
+			if($('[name=redeem_company_reason]').val()==0){
+				pdfJson.management_fee_remark = "";
+			}else{				
+				if($('[name=redeem_company_reason]').val()==2){
+					//用金额判断是否收取服务费remark			
+					if($('[name=management_fee]').val()>0){
+						pdfJson.management_fee_remark = $('[name=redeem_company_reason]').find("option:selected").text() +" | 收取服务费";
+					}else{
+						pdfJson.management_fee_remark = $('[name=redeem_company_reason]').find("option:selected").text() +" | 不收取服务费";
+					}
+				}else{
+					pdfJson.management_fee_remark = $('[name=redeem_company_reason]').find("option:selected").text() +" | 不收取服务费";
+				}
+			}	
+		}
+		//应付收益
+		pdfJson.due_pay_income = (parseFloat($('[name=sum_due_basic_income]').val())+parseFloat($('[name=sum_due_reward_income]').val())).toFixed(2)+"元";		
+		//公益收益
+		pdfJson.public_income = $('[name=sum_public_income]').val()+"元";
+		//已付收益
+		pdfJson.paid_income = $('[name=sum_paid_income]').val()+"元";
+		//合计收益
+		pdfJson.due_income = $('[name=due_income]').val()+"元";					
+		
+		pdfJson.deduct_tax_point = $('[name=deduct_tax_point]').val()+"元";
+		
+		//实际回收
+		$("input[name=sub_redeem_amount]").each(function(i){
+			//本金收益全打 
+			if($("[name=principal_type]:eq("+i+")").val()==1){
+				really_amount+=parseFloat(this.value!=""?this.value:0)*10000;				
+			}else{
+				repurchase_amount+=parseFloat(this.value!=""?this.value:0)*10000;
+			}														
+		});	
+		//本金收益全打
+		pdfJson.really_amount = really_amount+"元";
+		//本金收益全打
+		pdfJson.repurchase_amount = repurchase_amount+"元";
+		
+		pdfJson.redeem_reality_total_amount = $('[name=redeem_reality_total_amount]').val()+"元";
+		pdfJson.redeem_reality_total_amount_upper = "大写:"+$('[name=redeem_reality_total_amount_upper]').val();
+	
+
+		window.open("printPreview.html");
+	}
+</script>
+</head>
+<body>
+	<div class="pop-center" id="bill_info">
+		<div class="pop-center overflow-au">
+			<div class="center-content" style="min-width: 550px;">
+				<div class="clearboth">
+					<h2><span id="title_tip"></span></h2>
+				</div>
+				<div class="float-l">
+					<div class="pop-form-title2" >单据编号：</div>
+					<div class="l-panel-search-item">
+						<a id="prot_code" target="_Blank"></a>
+					</div>
+				</div>
+				<div style="margin-left:330px">
+					<div class="pop-form-title2" >合同编号：</div>
+					<div class="l-panel-search-item">
+						<span id="financial_bill_code"></span>
+					</div>
+				</div>  
+				<div class="float-r">
+					<div class="pop-form-title2" ><span style="color: #FF0000;">*</span>赎回申请时间：</div>
+					<div class="l-panel-search-item">
+						<input type="text" class="Wdate" name="redeem_date"
+					onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+					onchange="calculateIncomeManageFee()"
+					style="width: 133px; vertical-align: top;"  class="input-H4" disabled="disabled"/>
+					</div>
+				</div>
+				
+				<div class="clearboth"></div>
+						
+				<div id="redeem_info" class="class_redeem">
+					<div class="center-title">
+					<!--  
+						协议编号：--><input name="prot_code" type="hidden" disabled="disabled"
+							style="border-style: none;"/>
+					
+					</div>
+					<div class="center-txt clearfix"
+						style="margin-bottom: 5px; padding: 5px; border: 1px solid #BFBFBF; height: auto;">
+						<br/>
+						<div class="float-l">
+							<div class="pop-form-title2">客户姓名：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="b_name" readonly="readonly"
+									class="input-H4 input-read" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">证件类型：</div>
+							<div class="l-panel-search-item">
+								<input type="text" class="input-H4 input-read" readonly="readonly" value="身份证"/>
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">身份证号：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="b_id_card" readonly="readonly"
+									class="input-H4 input-read" />
+								<input type="hidden" name="bonus_rate" readonly="readonly"
+									class="input-H4 input-read" />
+							</div>
+						</div>
+						
+						<div class="float-l">
+							<div class="pop-form-title2">产品名称：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="category_name" readonly="readonly"
+									class="input-H4 input-read" />
+							</div>
+						</div>
+						
+						
+						<div class="float-l">
+							<div class="pop-form-title2">理财期限：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="product_deadline_name"
+									readonly="readonly" class="input-H4 input-read" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">年化利率：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="product_interest" readonly="readonly"
+									class="input-H4 input-read" /> %
+							</div>
+						</div>
+						
+						<div class="float-l">
+							<div class="pop-form-title2">投资金额：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="product_account" readonly="readonly" style="width:105px" 
+									class="input-H4 input-read" /> 万元
+							</div>
+						</div>
+						
+						<div class="float-l">
+							<div class="pop-form-title2">购买时间：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="create_timestamp_str"
+									readonly="readonly" class="input-H4 input-read" />
+								<input type="hidden" name="protocol_create_timestamp" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">到期时间：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="end_of_date" readonly="readonly"
+									class="input-H4 input-read" />
+							</div>
+						</div>
+						
+						<div class="float-l">
+							<div class="pop-form-title2">银行账号：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="card_no"
+									readonly="readonly" class="input-H4 input-read" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2">开户银行：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="bank_of_deposit" readonly="readonly" style="width:220px" 
+									class="input-H4 input-read" />
+							</div>
+						</div>
+						
+				
+						<div class="clearboth" style="text-align: center;font-size:15px">
+							<h4>出借资金回收申请</h4>
+						</div>
+						<div class="clearboth" style="text-align: right;font-size:10px">
+							<span id="current_notice"></span>
+						</div>							
+					 	<div class="center-content" style="text-align:center">
+							<table id="redeem_table" style="border-collapse: collapse;margin:auto" borderColor=#BFBFBF height=25 cellPadding=1 border=1>
+								<tr>
+									<td class="input-H4 input-read" width="120px" style="text-align:center;" >赎回类型</td>
+									<td class="input-H4 input-read" width="120px" style="text-align:center;">赎回本金(A)万元</td>
+								  	<td class="input-H4 input-read" width="120px" style="text-align:center;">应付基本收益(B1)元</td>
+								    <td class="input-H4 input-read" width="120px" style="text-align:center;">应付奖励收益(B2)元</td>
+								    <td class="input-H4 input-read" width="120px" style="text-align:center;">已付收益(C)元</td>
+								    <td class="input-H4 input-read" name="is_over_date" width="120px" style="text-align:center;">公益产品收益(E)元</td>								    
+							   		<td class="input-H4 input-read" name="is_current" width="120px" style="text-align:center;">应付活期收益(I)元</td>								    																   		
+							   		<td class="input-H4 input-read" name="isn_over_date" width="120px" style="text-align:center;">转让服务费(D)元</td>								    																   
+							    </tr>
+							
+							    <tr>
+									<td width="120px" style="text-align:center;" >
+										合计						
+									</td>
+									<td width="120px" style="text-align:center;" >
+										<input type="text" name="sum_redeem_amount" style="width:120px; border:0px;color:#FF0000;text-align:center" readonly="readonly"/>
+									</td>
+									<td width="120px" style="text-align:center;" >
+										<input type="text" name="sum_due_basic_income" style="width:120px; border:0px;color:#FF0000;text-align:center" readonly='readonly' onchange='calculateSum(3)'/>
+									</td>
+									<td width="120px" style="text-align:center;" >
+										<input type="text" name="sum_due_reward_income" style="width:120px; border:0px;color:#FF0000;text-align:center" readonly='readonly' onchange='calculateSum(3)'/>
+									</td>
+									<td width="120px" style="text-align:center;" >
+										<input type="text" name="sum_paid_income" style="width:120px; border:0px;color:#FF0000;text-align:center" readonly="readonly"/>
+									</td>
+									<td name="is_over_date" width="120px" style="text-align:center;" >
+										<input type="text" name="sum_public_income" style="width:120px; border:0px;color:#FF0000;text-align:center" readonly="readonly"/>
+									</td>
+									<td name="is_current" width="120px" style="text-align:center;" >
+										<input type="text" name="sum_current_income" style="width:120px; border:0px;color:#FF0000;text-align:center" readonly="readonly"/>
+									</td>
+									<td name="isn_over_date" width="120px" style="text-align:center;" >
+										<input type="text" name="sum_management_fee" style="width:120px; border:0px;color:#FF0000;text-align:center" readonly="readonly"/>
+									</td>
+							    </tr>
+							</table>
+						</div> 
+						
+						<div class="clearboth" style="text-align: center;font-size:15px"></div>
+						
+						<div class="float-l">						
+							<div class="pop-form-title2" ><span style="color: #FF0000;">*</span>赎回事由：</div>
+							<div class="l-panel-search-item">
+								<select name="redeem_company_reason" style="width: 135px;" disabled="disabled">
+	                                <option value="1">公司原因</option>
+	                                <option value="2">个人原因</option>
+	                                <option value="3">协议到期</option>
+                            	</select>
+							</div>
+						</div>
+						<!-- 1.95版本去掉
+						<div class="float-l" id="damages_tip">
+							<div class="pop-form-title2" >服务费：</div>
+							<div class="l-panel-search-item">
+								<input type="radio" style="width:30px;height:18px;vertical-align: middle;" name="is_take_off_damages" id="is_take_off_damages_1" value="1" onclick="changeFeeDefault();" disabled="disabled"/>收取
+								<input type="radio" style="width:30px;height:18px;vertical-align: middle;" name="is_take_off_damages" id="is_take_off_damages_0" value="0" onclick="changeFee();" disabled="disabled"/>不收
+							</div>
+						</div> 
+						-->
+						<div class="float-l"  id="management_fee_tip">
+							<div class="pop-form-title2" style="margin-left: 25px">转让服务费(D)：</div>
+							<div class="l-panel-search-item">
+								<input type="text" name="management_fee" class="input-H4" onchange='calculateSum()' readonly="readonly"/> 元
+							</div>
+						</div>
+						
+						<div class="float-l" style="padding:5px">
+							<div class="pop-form-title2"><span style="color: #FF0000;">*</span>事由补充：</div>
+								<div id="shsy" class="pop-form-item clearfix" style="height: auto">
+									<textarea name="redeem_reason" class="bz_remark" 
+										style="resize: none; width: 700px; height: 60px;" maxlength="400" readonly="readonly"></textarea>
+								</div>
+						</div>
+						
+						<!-- 其他扣款取消	
+						<div class="float-l">
+							<div class="pop-form-title2"><span id="deduct_money_tip"></span></div>
+							<div class="l-panel-search-item">
+								<input type="text"  name="deduct_money"  value="0" onchange='calculateSum()' readonly="readonly"/> 元
+							</div>
+						</div>
+						 -->
+						<div class="float-l">
+							<div class="pop-form-title2"><span id="tax_point_tip"></span></div>
+							<div class="l-panel-search-item">
+								<input type="text"  name="deduct_tax_point"  value="0" onchange='calculateSum()' readonly="readonly"/> 元
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title2" style="margin-left: -12px"><span id="income_tip"></span></div>
+							<div class="l-panel-search-item">
+								<input type="text"  name="due_income"  value="0" readonly="readonly"/> 元
+							</div>
+						</div>
+						<div class="clearboth" style="text-align: center;font-size:15px"></div>						
+						<br/>
+						<div class="float-l">
+							<div class="pop-form-title2"><span id="real_income_tip"></span></div>
+							<div class="l-panel-search-item">
+								<input type="text"  name="redeem_reality_total_amount"  value="0" readonly="readonly"/> 元
+							</div>
+						</div>
+
+						<div class="float-l">
+							<div class="pop-form-title2" style="margin-left: -12px">大写：</div>
+							<div class="l-panel-search-item">
+								<input type="text"  name="redeem_reality_total_amount_upper"  value="" style="width:220px"  readonly="readonly"/>
+							</div>
+						</div>
+						
+						<!-- 
+						<div class="clearboth" style="text-align: center;font-size:15px"></div>						
+						<div class="float-r" style="padding-right:60px">
+							<div class="pop-form-title"></div>
+							<div class="l-panel-search-item">
+								客户确认：<input type="radio" style="width:30px;height:18px;vertical-align: middle;" name="is_handle_self"  value="1" disabled="disabled"/>客户亲自办理
+								<input type="radio" style="width:30px;height:18px;vertical-align: middle;" name="is_handle_self" value="0" disabled="disabled"/>客户经理代办							
+							</div>
+						</div>	
+						 -->
+						 <div class="clearboth float-l" style="height:26px"></div>									
+					</div>
+				</div>
+				<div class="center-txt clearfix" style="display:none;margin-bottom: 5px; padding: 5px; border: 1px solid #BFBFBF; height: auto; margin-top: 10px" id="bzdiv">
+					<div class="float-l commonstyle clearfix"
+						style="height: 50px; height: auto">
+						<div class="pop-form-title2">回款凭证：</div>
+						
+						<div class="pop-form-item clearfix" id="fileinfo"
+							style="height: auto"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="pop-footer5">
+		<input id="cancelBtnId" class="btn-cancel"
+			onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" type="button"
+			style="margin-right: 7px;" onclick="closeDialog();" />
+		<input id="printbtn" class="btn-print"
+			onmouseover="this.className='btn-print-over'"
+			onmouseout="this.className='btn-print'"
+			onmousedown="this.className='btn-print-down'" type="button"
+			onclick="doPrint()"/>
+	</div>
+</body>
+</html>

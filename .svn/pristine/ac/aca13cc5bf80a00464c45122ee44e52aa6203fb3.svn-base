@@ -1,0 +1,338 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-
+
+transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<link href="../../css/ligerui-main.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<title>终审面签审批</title>
+<style type="text/css">
+.td_title {
+	background: none repeat scroll 0 0 #EAF0FB;
+}
+
+.tb_input TD {
+	background: none repeat scroll 0 0 #FFFFFF;
+	padding: 3px 1px 1px 4px;
+}
+.text1{
+	   border-bottom:#666 0px solid;
+	   border-left-width:0px;
+	   border-right-width:0px;
+	   border-top-width:0px;
+	   text-align: center}
+
+</style>
+</head>
+<body>
+	<!-- 页面加载的时候，审批流程为显示 -->
+	<hr />
+	<!--<div id="grid"></div>-->
+<div class="pop-center overflow-au"  style="top: 1px;">
+	<div id="lclc"class="float-l clearboth" style="height: 10px;"></div>
+	<div class="center-content clearboth" style="min-width: 400px;overflow:auto">
+		<div class="center-title">流程历程</div>
+		<div class="center-txt" style="margin-bottom: 10px;">
+			<div id="grid"></div>
+		</div>
+	</div>
+	<div class="center-content clearboth"
+		style="min-width: 770px; margin-top: -25px;overflow:auto">
+		<div id="grid_idea">
+			<div  id="zhddiv" class="float-l clearboth"style="border: 1px solid #BFBFBF; width: 100%;" >
+				  <div class="clearboth">
+					<table align="center" border="1" cellpadding="0" cellspacing="2"
+						width="100%" style="font-size: 10.5pt;">
+						<tr>
+							<td class="td_title" width="14%" rowspan="2"align="center">面签备注</td>
+						</tr>
+						<tr>
+							<td><textarea id="visa_remark" name="visa_remark" rows="50"
+									style="width: 100%; height: 80px; resize: none;" maxlength="250"></textarea>
+							</td>
+						</tr>
+					</table>
+				</div>
+		    </div>	
+		    
+		    <div id="copyMain" style="margin-bottom: 10px;">
+				<div class="float-l" style="border: 1px solid #BFBFBF; width: 100%;">
+					<div class="pop-form-title">原终审金额：</div>
+					<div class="pop-form-item">
+						<input type="text" class="text1" id="old_appro_limit" style="width: 80px;" readonly="true"/><span>万元</span>
+					</div>
+					<div class="pop-form-title">终审金额：</div>
+					<div class="pop-form-item">
+						<input type="text" id="appro_limit"   style="width: 80px;"
+							isRequired="1" isFloat="1" maxVal="10000" minVal="0" />万元
+					</div>
+					<div class="pop-form-title"></div>
+					<div class="pop-form-item">
+						 <input type="radio" name="is_guarantee" class="radio5" value="1" checked="checked" />
+						 <span>需担保 </span>
+					     <input type="radio" class="radio5" name="is_guarantee" value="0" />
+					     <span>无需担保</span>	
+					</div>
+				</div>
+			</div>
+			<div class="clearboth" id="spyj">
+				<table align="center" border="1" cellpadding="0" cellspacing="2"
+					width="100%" style="font-size: 10.5pt;">
+					<tr>
+						<td id="apprpve" class="td_title" width="14%" rowspan="2"
+							align="center">审批意见</td>
+						<td align="left"><input type="radio"
+							name="pass" class="radio5" value="true"
+							checked="checked" /><span id="sp">通过 </span>
+							<input type="radio"
+							 name="pass" class="radio5" value="false" /><span
+							id="sp">拒件</span>
+						</td>
+					</tr>
+					<tr>
+						<td><textarea id="advice" name="advice" rows="50"
+								style="width: 100%; height: 80px; resize: none;" maxlength="250"></textarea>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="center-content clearboth" style="overflow:auto">
+	</div>
+</div>
+	<div class="pop-footer5 clearboth" style="bottom: 1px;">
+		<input id="tjbtn" class="btn-saveT"
+			onmouseover="this.className='btn-saveT-over'"
+			onmouseout="this.className='btn-saveT'"
+			onmousedown="this.className='btn-saveT-down'" type="button"
+			style="margin-right: 7px;" onclick="save()" /> <input
+			id="cancelBtnId" class="btn-cancel"
+			onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" type="button"
+			onclick="closeDialog();" />
+	</div>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+	 	var gridTop;//审批流程数据显示
+		var dialog;
+		var columns;		
+		var approve_type;
+		var wms_cre_credit_head_id ;
+		var wms_cre_credit_visa_appl_id;
+		var cktype;
+		$(function() {
+			wms_cre_credit_head_id = $.query.get("wms_cre_credit_head_id");//wms_cre_credit_head_id 为选择审批的记录id
+			
+			initGrid();
+			search();
+			//初始化面签信息
+			init_wms_cre_credit_head(wms_cre_credit_head_id);
+		});
+		
+		//单选按钮获取值
+		function changeRadio(obj){
+			var chechValue="";
+			$("input[name='"+obj+"']").each(function() {
+				if ($(this).is(':checked')) {
+					chechValue = $(this).val();
+					return false;//退出each循环
+				}
+			});				
+			return chechValue;
+		}
+		//单选按钮赋值
+		function setRadio(obj){
+			$("[name=is_guarantee]").each(function() {
+				if ($(this).val() == obj) {
+					$(this).attr('checked', 'checked');
+					return false;
+				}
+			});
+		}
+		
+		//初始化终审面签信息
+		function init_wms_cre_credit_head(wms_cre_credit_head_id) {
+			var wmsInfo = globalUtil.syncGetJson('/cremanage/getWmsCusCreditFinalVisalInfo.do',{
+				'wms_cre_credit_head_id': wms_cre_credit_head_id 
+	            },'POST');	
+			$("#old_appro_limit").val(wmsInfo.appro_limit);//终审金额
+			$("#appro_limit").val(wmsInfo.appro_limit);//终审金额
+			$("#visa_remark").val(wmsInfo.visa_remark);//备注
+			wms_cre_credit_visa_appl_id=wmsInfo.wms_cre_credit_visa_appl_id;//终审表主键
+		}
+		
+		var dialog;
+		//初始化审批流程
+        function initGrid() {
+        	var columns_top = [{
+                display: '节点名称',
+                name: 'taskName',
+                width: 110,
+                minWidth: 110,
+                render: function (rowdata, rowindex, value) { 
+					if(rowdata.taskName == '证信审批'){
+						return  '征信审批';
+					}else if(rowdata.taskName == '信息审批'){
+						return  '信息调查';
+					}
+					return value;
+        		}
+            }, {
+                display: '审批人',
+                name: 'approvers',
+                width: 130,
+                minWidth: 130
+            },{
+                display: '审批人部门',
+                name: 'personnel_deptName',
+                width: 130,
+                minWidth: 130
+            },{
+                display: '职务',
+                name: 'personnel_postName',
+                width: 100,
+                minWidth: 100	
+            },{
+                display: '审批结果',
+                name: 'approveResult',
+                width: 100,
+                minWidth: 120
+            },{
+                display: '审批意见',
+                name: 'approveAdvice',
+                width: 135,
+                minWidth: 155
+            },{
+                display: '审批时间',
+                name: 'approveTime',
+                width: 130,
+                minWidth: 150
+            }];
+        	
+            gridTop = $("#grid").ligerGrid({
+        		columns: columns_top,
+        		url: global_param.context_name + '/loancheck/houseCreditWorkFlowView.do?wms_cre_credit_head_id='+wms_cre_credit_head_id,
+        		rownumbers: true,
+        		allowUnSelectRow: true,
+        		usePager: false,
+        		width: '100%',
+        		height: '40%',
+        		heightDiff: -4,
+        		parms: {
+        			_filterParms: -1
+        		}
+            });
+        }
+		//保存方法	
+		function save(){
+			if(globalVali.checkForm("copyMain", true)){
+				return;
+			}
+			var pass= changeRadio("pass");//pass
+			
+			var paramJson={};
+			paramJson.pass=pass;
+			//paramJson.credit_limit=$("#old_appro_limit").val();//申请金额
+			paramJson.appro_limit=$("#appro_limit").val();//终审金额
+			paramJson.old_appro_limit=$("#old_appro_limit").val();//终审金额
+			paramJson.visa_remark=$("#visa_remark").val();//终审备注
+			paramJson.advice=$("#advice").val().trim();//意见
+			paramJson.is_guarantee = $('input[name=is_guarantee]:checked').val();
+			//判断是否是通过
+			if("true"==pass){
+				if(paramJson.appro_limit==null||paramJson.appro_limit==""||paramJson.appro_limit==undefined){
+					globalUtil.warnMsg(globalErrorMsg['500600']);//终审金额不能为空
+					return;
+				}
+			}else {
+				if(paramJson.advice==null||paramJson.advice==""||paramJson.advice==undefined){
+					globalUtil.warnMsg(globalErrorMsg['500601']);//审批意见不能为空
+					return;
+				}
+			}
+			//paramJson.wms_cre_credit_visa_appl_id=wms_cre_credit_visa_appl_id;
+			if(paramJson.advice==undefined||paramJson.advice==""||paramJson.advice=='undefined'){
+				paramJson.advice="同意";
+			}
+			//3、面签：拒贷不显示终审金额（包括汉字）
+			if("true"==pass){
+				paramJson.advice = paramJson.advice+"   面签金额为:"+paramJson.appro_limit+"万元"; 
+			}
+			$('body').startLoading("正在处理中.....");
+			$.post(globalUtil.getTimestampUrl("/loanappro/wmscrevisaappforHousesave.do?wms_cre_credit_head_id="+wms_cre_credit_head_id), paramJson,
+				function(data) {
+		        	if (data === 'success') {
+		            	 globalUtil.successMsg(globalErrorMsg['100002'],
+		            			 function(){            		 		
+		            		      closePage();
+		            	 });//保存成功
+		            	 
+		            }else if(data==="statusError"){
+		                globalUtil.errorMsg(globalErrorMsg['500602']); //数据可能被其他人操作过请刷新重试
+		            }else {
+		                globalUtil.errorMsg(globalErrorMsg['100012']); //保存失败
+		            }
+		        	$('body').stopLoading();
+	        });
+		}
+		//关闭页面
+	    function closePage(){
+	    	window.parent.dialog.hide();
+	    	window.parent.search();
+	    }
+		//弹窗
+		function alertMsg(){
+			 globalUtil.errorMsg(globalErrorMsg['500112']); //保存失败
+		}
+		//查询
+		function search() {
+			 global_ligerui_extend.search(gridTop);
+		}
+		function close(){
+			dialog.close();
+			search();
+		}
+		function closeDialog(){
+			window.parent.dialog.hide();
+		}
+		function isContinueVal(jsonStr) {
+			$("input[id='transition']").each(function() {
+				if ($(this).is(':checked')) {
+					jsonStr.iscontinue = $(this).val();
+					return false;//退出each循环
+				}
+			});		
+				
+		}
+		function getOtherVal(jsonStr) {
+			$("input[name='pass']").each(function() {
+				if ($(this).is(':checked')) {
+					jsonStr.pass = $(this).val();
+					return false;//退出each循环
+				}
+			});		
+				
+		}
+	
+		function getRadioVal_Assure(paramJson) {
+			$("input[name='assure']").each(function() {
+				if ($(this).is(':checked')) {
+					paramJson.is_guarantee = $(this).val();
+					return false;//退出each循环
+				}
+			});		
+				
+		}
+
+
+	</script>
+
+</body>
+
+
+</html>

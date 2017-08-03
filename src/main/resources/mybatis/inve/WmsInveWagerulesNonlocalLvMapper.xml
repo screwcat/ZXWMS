@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveWagerulesNonlocalLvDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveWagerulesNonlocalLv">
+		select
+        				wms_inve_wagerules_nonlocal_lv_id,
+        				wms_inve_wagerules_nonlocal_head_id,
+        				count_type,
+        				cumulate_begin,
+        				cumulate_end,
+        				wage_money,
+        				enable_flag
+        	from
+        		wms_inve_wagerules_nonlocal_lv
+        	where
+        				wms_inve_wagerules_nonlocal_lv_id = #{wms_inve_wagerules_nonlocal_lv_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(wms_inve_wagerules_nonlocal_lv_id) as count
+		from wms_inve_wagerules_nonlocal_lv
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select 
+				wms_inve_wagerules_nonlocal_lv_id,
+				wms_inve_wagerules_nonlocal_head_id,
+				count_type,
+				cumulate_begin,
+				cumulate_end,
+				wage_money,
+				enable_flag
+		from wms_inve_wagerules_nonlocal_lv
+		<where>
+		    1 = 1
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+		<if test="wms_inve_wagerules_nonlocal_head_id != null and wms_inve_wagerules_nonlocal_head_id != ''">
+		    and wms_inve_wagerules_nonlocal_head_id = #{wms_inve_wagerules_nonlocal_head_id}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveWagerulesNonlocalLv" useGeneratedKeys="true" keyProperty="wms_inve_wagerules_nonlocal_lv_id">
+		INSERT INTO wms_inve_wagerules_nonlocal_lv
+		(
+				wms_inve_wagerules_nonlocal_lv_id,
+
+				wms_inve_wagerules_nonlocal_head_id,
+
+				count_type,
+
+				cumulate_begin,
+
+				cumulate_end,
+
+				wage_money,
+
+				enable_flag
+		)
+		VALUES
+		(
+				#{wms_inve_wagerules_nonlocal_lv_id},
+				#{wms_inve_wagerules_nonlocal_head_id},
+				#{count_type},
+				#{cumulate_begin},
+				#{cumulate_end},
+				#{wage_money},
+				#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveWagerulesNonlocalLv">
+		update wms_inve_wagerules_nonlocal_lv
+		<set>
+					<if test="wms_inve_wagerules_nonlocal_lv_id != null">
+						 wms_inve_wagerules_nonlocal_lv_id = #{wms_inve_wagerules_nonlocal_lv_id},
+					</if>
+					<if test="wms_inve_wagerules_nonlocal_head_id != null">
+						 wms_inve_wagerules_nonlocal_head_id = #{wms_inve_wagerules_nonlocal_head_id},
+					</if>
+					<if test="count_type != null">
+						 count_type = #{count_type},
+					</if>
+					<if test="cumulate_begin != null">
+						 cumulate_begin = #{cumulate_begin},
+					</if>
+					<if test="cumulate_end != null">
+						 cumulate_end = #{cumulate_end},
+					</if>
+					<if test="wage_money != null">
+						 wage_money = #{wage_money},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+	   </set>
+		 where 
+    				wms_inve_wagerules_nonlocal_lv_id = #{wms_inve_wagerules_nonlocal_lv_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveWagerulesNonlocalLv" resultType="WmsInveWagerulesNonlocalLv">
+		select 
+				wms_inve_wagerules_nonlocal_lv_id,
+				wms_inve_wagerules_nonlocal_head_id,
+				count_type,
+				cumulate_begin,
+				cumulate_end,
+				wage_money,
+				enable_flag
+		from
+		wms_inve_wagerules_nonlocal_lv
+		<where>
+					<if test="wms_inve_wagerules_nonlocal_lv_id != null">
+						and wms_inve_wagerules_nonlocal_lv_id = #{wms_inve_wagerules_nonlocal_lv_id}
+					</if>
+					<if test="wms_inve_wagerules_nonlocal_head_id != null">
+						and wms_inve_wagerules_nonlocal_head_id = #{wms_inve_wagerules_nonlocal_head_id}
+					</if>
+					<if test="count_type != null">
+						and count_type = #{count_type}
+					</if>
+					<if test="cumulate_begin != null">
+						and cumulate_begin = #{cumulate_begin}
+					</if>
+					<if test="cumulate_end != null">
+						and cumulate_end = #{cumulate_end}
+					</if>
+					<if test="wage_money != null">
+						and wage_money = #{wage_money}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_inve_wagerules_nonlocal_lv_id != #{wms_inve_wagerules_nonlocal_lv_id}
+					</if>
+		</where>
+	</select>
+	<delete id="deleteHeadLv" parameterType="int">
+	    delete from
+	    	wms_inve_wagerules_nonlocal_lv
+	    where 
+	    wms_inve_wagerules_nonlocal_head_id = #{id}
+	    
+	</delete>
+	
+	
+</mapper> 

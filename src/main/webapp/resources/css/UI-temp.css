@@ -1,0 +1,30 @@
+/* UI展示平台中盒模型样式 */
+.UI-box1 {
+	border:#727272 1px solid; background-color:#eeeeee; padding:10px; max-width:700px;
+}
+.UI-box2 {
+	border:#3794db 1px solid; background-color:#dbebf8; padding:10px;
+}
+.UI-box3 {
+	border:#ff9200 1px solid; background-color:#f5e3c9; padding:10px;
+}
+.UI-box4 {
+	border:#00b81f 1px solid; background-color:#d2f3d8; padding:10px;
+}
+
+/*UI展示平台布局类型*/
+.layout-type-div {
+	border:#d1d1d1 1px solid; margin:10px; background-color:#f5f5f5; line-height:22px; word-break:break-all; word-wrap:break-word; width:140px; height:162px; padding:10px;
+}
+.layout-type-div a {
+	color:#09F; text-decoration:none;
+}
+.layout-type-div a:hover {
+	text-decoration:underline;
+}
+.img-over {
+	border:#09F 1px solid;
+}
+.img-border {
+	border:#f5f5f5 1px solid;
+}

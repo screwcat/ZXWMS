@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-
+
+transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<link href="../../css/ligerui-main.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<title>审批提示</title>
+<style type="text/css">
+.td_title {
+	background: none repeat scroll 0 0 #EAF0FB;
+}
+
+.tb_input TD {
+	background: none repeat scroll 0 0 #FFFFFF;
+	padding: 3px 1px 1px 4px;
+}
+
+table td {
+	border-color: #BFBFBF;
+}
+</style>
+</head>
+<body>
+	<!-- 页面加载的时候，审批流程为显示 -->
+	<div class="float-l clearboth" style="height: 10px;"></div>
+	<div class="center-content clearboth" style="min-width: 500px; margin-top: 0px">
+		<div id="grid_idea">
+			<span style="font-family: serif; font-size: 20px; font-weight: bold;padding-left:20px; text-align: center;" id="approve_title">
+			</span>
+			<div style="height: 20px;">
+			</div>
+			<table align="center" border="1" cellpadding="0" cellspacing="2" style="border-color: #BFBFBF" width="100%" style="font-size: 10.5pt;">
+				<tr>
+					<td class="td_title" width="14%" rowspan="2" align="center">
+						<font color="red">*</font>审批意见
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<textarea id="advice" name="advice" rows="100" style="width:500px; height: 130px; resize: none;"></textarea>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="pop-footer5 clearboth" style="bottom: 1px;">
+		<input 
+			id="tjbtn" 
+			class="btn-saveT"
+			onmouseover="this.className='btn-saveT-over'"
+			onmouseout="this.className='btn-saveT'"
+			onmousedown="this.className='btn-saveT-down'" 
+			type="button"
+			style="margin-right: 7px;" 
+			onclick="save()" /> 
+			
+		<input
+			id="cancelBtnId" 
+			class="btn-cancel"
+			onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" 
+			type="button"
+			onclick="cancel()" />
+	</div>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+		var dialog;
+		var inveSalaryPreTotalIds=$.query.get('inveSalaryPreTotalIds');
+		var detpIds = $.query.get('deptIds');
+		var gridData=$.query.get('gridData');
+		var statics_month=$.query.get('statics_month');
+		var dept_ids=$.query.get('dept_ids');
+
+		$(function(){
+			var title_str = "请确认是否驳回审核单";
+			
+			var deptIdCount = detpIds.split(",").length;
+			
+			if(deptIdCount > 1)
+			{
+				title_str = "请确认是否将"+deptIdCount+"个团队的单据均驳回";
+			}
+			
+			$("#approve_title").text(title_str);
+		});
+		
+		//审核通过
+		function save(){	
+			var adviceValue = $("#advice").val();
+			if(adviceValue == "")
+			{
+				globalUtil.errorMsg("审批意见不允许为空!");
+				return;
+			}	
+			
+			var params = {};
+			params.businessId = inveSalaryPreTotalIds;
+			params.pass = "false";
+			params.advice = adviceValue;
+			params.gridData=gridData;
+	    	params.statics_month = statics_month;      		    		
+	    	params.dept_ids = dept_ids;
+	    	 
+	    	//添加遮罩
+	  		globalUtil.addMask();
+	  	    globalUtil.showLoading();
+		    $.post(globalUtil.getTimestampUrl("/inve/approvePerformanceSalaryPre.do"), params,
+  	  		        function(data) {
+  	  		        	if (data === 'success') {
+  	  		            	 globalUtil.successMsg(globalErrorMsg['100002'],
+  	  		            	 function(){            		 		
+  	  		            		window.parent.parent.search1();
+  	  	  		    			closeDialog();	   	  		            	
+  	  	  		    		});	            	 
+  	  		            }else{
+  	  		            	  globalUtil.errorMsg(globalErrorMsg['100012']);
+  	  		            }
+  	  		        	globalUtil.delMask();
+  	  					globalUtil.closeLoading();
+  	  		});		  
+		}	
+		
+		//取消
+		function cancel(){
+			window.parent.dialog.hide();
+		}
+		
+		
+		function closeDialog(){
+			window.parent.dialog.hide();
+			window.parent.parent.dialog.hide();
+		}
+		
+		function getOtherVal(jsonStr) {
+			$("input[name='pass']").each(function() 
+			{
+				if ($(this).is(':checked')) {
+					jsonStr.pass = $(this).val();
+					return false;//退出each循环
+				}
+			});				
+		}
+		
+		//去除空格
+		function change(val){
+			var valle=val.split(" ");
+			var k=0;
+			for(var i=0 ;i<valle.length;i++){
+				if(valle[i]==""){
+					k++;
+				}
+			}
+			if(k==valle.length){
+				return true;	
+			}
+			return false;
+		 }
+	</script>
+
+</body>
+
+
+</html>

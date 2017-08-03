@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>财富管理系统</title>
+<link href="../css/index.css" type="text/css" rel="stylesheet" />
+<script src="../js/zx-all.js"></script>
+<script type="text/javascript">
+        $(function() {
+        	setUserMenu();       
+        });
+        function setUserMenu(){
+        	 $.getJSON(globalUtil.getTimestampUrl("/sysmanage/getcurrentuserinfo.do"),{}, 
+                		function(data) {
+                 		  if(data.error == '100092'){
+                 			  $('#ssc_login').css('display','block');
+                 			  $('#ssc_logout').css('display','none');
+                 			  $('#ul_menu').html('<li class="first current"><a href="#" onclick="openindex()">首   页</a></li>');
+                 			  //2015-08-17日作废 判断当前登录电脑IP
+                 			  /*$.getJSON(globalUtil.getTimestampUrl("/getIP.do"),{},function(IPData){
+                 				  if(IPData=="show"){
+                 					 //先弹广告
+                       			     //window.parent.openDialogOnline();
+                 					 window.parent.openDialog(); 
+                 				 }else if(IPData=="hide"){
+                 					//在弹登录框
+                        			window.parent.openDialog(); 
+                 				 }
+                 			  });
+                 			  */
+                 			//在弹登录框
+                  			window.parent.openDialog();
+                 		  }else{
+                 			  $('#ssc_logout').css('display','block');
+                 			  $('#ssc_login').css('display','none');
+                 			  var obj = document.getElementById("real_name");
+                 			  $('#sys_info').css('display','block');
+                 			  document.getElementById("real_name").innerHTML = data.realname;
+                 			  //获取主菜单
+	               	            $.getJSON(globalUtil.getTimestampUrl("/sysmanage/getmenus.do"),{}, 
+	               	           		function(jsonArr) {
+	               	            	$('#ul_menu').html('<li class="first current"><a href="#" onclick="openindex()">首   页</a></li>');
+	               	            	$.each(jsonArr, function(i,json){      
+	               	            	      $('#ul_menu').append('<li><a href="#" onclick="openframe(this,'+json.id+','+i+')">'+json.menu_name+'</a></li>');
+	               	            	}); 
+	               	            	$('#ul_menu').append('<li class="back"><div class="left"></div></li>');
+	               	           	});
+                 		  }           	    	 
+                	});  
+        }
+        function resetCurrent(el){
+        	$("li").removeClass('current');
+        	$(el).addClass('current');
+        	$(".back").css({ "left": el.offsetLeft+"px", "width": el.offsetWidth+"px" });
+        }
+        function openDialog(){
+        	window.parent.openDialog();
+        }
+        function openframe(obj,p_menu_id,index){
+        	window.parent.loadMenu(obj.parentElement,p_menu_id,index);      	
+        }
+        function openindex(){
+	        $("li").removeClass('current');
+        	$(".first").addClass('current');
+        	$(".back").css({ "left": "0px", "width": "120px" });
+        	window.parent.document.getElementById("main_frame").src ="resources/html/index.html";
+        }
+        function logout(){
+        	window.parent.logout();
+        }
+    </script>
+</head>
+<body>
+
+	<div id="header" class="headerDiv">
+		 <!--<div id="top_login">
+			<div class="sys_infoL">
+				<a href="#" id="ssc_login" onclick="openDialog()">登录</a> <a href="#"
+					id="ssc_logout" onclick="logout()" style="display: none">退出</a>
+			</div>
+			<div id="sys_info" class="sys_info" style="display: none">
+				欢迎您，<span id="real_name"></span>
+			</div>
+		</div>--> 
+		<div id="top">
+			<div class="logo">
+				<a href="#"><img src="../images/index/logo1.png" /></a>
+			</div>
+			<div class="clear"></div>
+			<!--<div id="menu" class="menu">
+				<div class="leftSqr"></div>
+				<ul class="ul_menu" id="ul_menu">
+					<li class="first current"><a href="#" onclick="openindex()">首
+							页</a></li>
+					<li class="back"><div class="left"></div></li>
+				</ul>
+				<div class="rightSqr"></div> 
+			</div>-->
+		    <div class="top_right_con">
+			<div class="sys_infoL">
+				<a href="#" id="ssc_login" onclick="openDialog()">登录</a> <a href="#"
+					id="ssc_logout" onclick="logout()" style="display: none">退出</a>
+			</div>	
+			</div>	
+		</div>
+	    <!--一级导航 -->
+	    <div class="nav-bg">
+	       <div class="nav-main">
+	       <div class="nav-left">
+	          <div id="sys_info" class="sys_info" style="display: none">
+				欢迎您，<span id="real_name"></span>
+			  </div>
+	       </div>
+	       <div id="menu" class="ul_menu" style="width:1500px;">
+	         <ul class="ul_menu" id="ul_menu">
+	         <li class="current"><a href="#" onclick="openindex()">首页</a></li>
+	         <li><a href="#">客户管理</a></li>
+	         <li><a href="#">业务管理</a></li>
+	         <li><a href="#">审核管理 </a></li>
+	         <li><a href="#">终审管理</a></li>
+	         <li><a href="#">财务管理</a></li>
+	         <li><a href="#">报表管理</a></li>
+	         <li><a href="#">服务管理</a></li>
+	         <li><a href="#">产品管理</a></li>
+	         <li><a href="#">系统管理</a></li>
+	         <li><a href="#">帮助指南</a></li>
+	         </ul>
+	       
+	     </div>
+	  
+    </div>
+	</div><!--一级导航结束 -->
+	</div> 
+
+</body>
+</html>

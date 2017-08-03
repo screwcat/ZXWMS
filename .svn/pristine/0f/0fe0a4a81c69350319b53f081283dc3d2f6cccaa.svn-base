@@ -1,0 +1,306 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script type="text/javascript" charset="utf-8"
+	src="../../js/media/js/ZeroClipboard.js"></script>
+<title>客户查询</title>
+</head>
+<body>
+	<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<div class="l-panel-search clearfix centertoolbar-w">
+										<div id="searchbar" class="l-searchbar clearfix">
+											<!--查询条件-->
+											<div class="l-panel-search-cond clearfix">
+													<div class="float-l">
+														<div class="pop-form-title">抵押物日期查询:</div>
+														<div class="pop-form-item">
+															起始日期:&nbsp;&nbsp;&nbsp;<input id="mortgage_date_start" class="Wdate" type="text"
+																	onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+																	style="width: 100px; vertical-align: top;" />
+															结束日期:&nbsp;&nbsp;&nbsp;<input id="mortgage_date_end" class="Wdate" type="text"
+																	onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+																	style="width: 100px; vertical-align: top;" />
+														</div>
+													</div>
+											</div>
+										</div>
+								</div>
+		</div>
+	</div>
+	<div id="centertoolbar" class="minwidth400"></div>
+	<div id="grid"></div>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+	var wms_cre_credit_head_id = $.query.get("wms_cre_credit_head_id");//wms_cre_credit_head_id 为选择审批的记录id
+        var grid;
+		var toolbar;
+		var params;
+		var dialog;
+		var columns;
+		var checkedCustomer = []; // 保存自选行id（id可替换为任意字段值，但字段值需唯一）
+	    var checkedCustomerall = []; // 保存rowdata
+        $(function() {//
+        	checkedCustomerall=window.parent.checkedCustomerall;
+        	checkedCustomer=window.parent.checkedCustomer;
+        	//获取抵押物清单
+        	initGrid();
+    		searchRows();//抵押物查询条件
+        	var toolbarItemData = [];
+        	 toolbarItemData.push({
+                 text: '查询',
+                 click:searchRows,
+                 icon: 'search'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+        	 toolbarItemData.push({
+                 text: '保存',
+                 click: saveCheckdRowsForJosn,
+                 icon: 'save'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             toolbarItemData.push({
+                 text: '清空',
+                 click:clear,
+                 icon: 'empty'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+        $("#centertoolbar").ligerToolBar({
+            items: toolbarItemData
+        	});
+        });
+  	  	//查询
+        function searchRows() {
+        	var param={};
+    		//param.wms_cre_credit_head_id=wms_cre_credit_head_id;
+    		param.mortgage_date_start=$("#mortgage_date_start").val();
+    		param.mortgage_date_end=$("#mortgage_date_end").val();
+    		param.mortgage_status="1";
+            global_ligerui_extend.search(grid, param);
+        }
+        //表格初始化
+        function initGrid() {
+        	var isEnableArr=[{"mortgage_status":"1","mortgage_status_val":'已抵押'},{"mortgage_status":"0","mortgage_status_val":'未抵押'}];
+    		var isPass=[{"auditor_result":"1","auditor_result_val":'通过'},{"auditor_result":"0","auditor_result_val":'未通过'}];
+    		var auditorPerson=searchPerson();
+    		var columns_mortgagelist = [{
+    			display: '抵押物编号',
+    			name: 'mortgage_code',
+    			resizable: false,
+    			width: 125,
+    			minWidth: 125
+    		},{
+    			display: '抵押物名称',
+    			name: 'mortgage_name',
+    			resizable: false,
+    			width: 100,
+    			minWidth: 100,
+    			editor: {
+    				type: 'text'
+    			}
+    		},{
+    			display: '抵押时间',
+    		    name: 'mortgage_date',
+    	        type: 'date', //日期类型必备
+    	        format: "yyyy-MM-dd",//日期类型必备
+    	        resizable: false,
+    	        width: 90,
+    	        minWidth: 90
+    		},{
+    			display: '抵押数量',
+    			name: 'mortgage_count',
+    			resizable: false,
+    			width: 60,
+    			minWidth:60,
+    			editor: {
+    				type: 'text'
+    			}
+    		},{
+    			display: '预估价值(元)',
+    			name: 'should_mortgage_price',
+    			resizable: false,
+    			width: 100,
+    			minWidth: 100,
+    			editor: {
+    				type: 'text'
+    			}
+    		},{
+    			display: '实际价值(元)',
+    			name: 'real_mortgage_price',
+    			resizable: false,
+    			width: 100,
+    			minWidth: 100,
+    			editor: {
+    				type: 'text'
+    			}
+    		},{
+    			display: '差值',
+    			name: 'd_value',
+    			resizable: false,
+    			width: 80,
+    			minWidth: 80,
+    			editor: {
+    				type: 'text'
+    			}
+    		},{
+    			display: '审核人',
+    			name: 'auditor_name',//auditorPerson
+    			resizable: false,
+    			width: 60,
+    			minWidth: 60,
+    			editor: {
+    				type: 'select', // 该列为可编辑状态
+    				data: auditorPerson, 
+    				valueField: 'auditor_name', 
+    				textField: 'person_name' 
+    			},
+    			render: function (rowdata, nowRowIndex, value, column) {
+    					return global_ligerui_extend.gridRenderSelectedValue(rowdata, nowRowIndex, value, column);	
+    			}
+    		},{
+    			display: '审核结果',
+    			name: 'auditor_result',
+    			resizable: false,
+    			width: 60,
+    			minWidth:60,
+    			editor: { 
+    				type: 'select', // 该列为可编辑状态
+    				data: isPass, 
+    				valueField: 'auditor_result', 
+    				textField: 'auditor_result_val' 
+    			},
+    			render: function (rowdata, nowRowIndex, value, column) {
+    					return global_ligerui_extend.gridRenderSelectedValue(rowdata, nowRowIndex, value, column);	
+    			}
+    		},{
+    			display: '审核时间',
+    		    name: 'auditor_datetime_str',
+    	        type: 'date', //日期类型必备
+    	        format: "yyyy-MM-dd hh:mm",//日期类型必备
+    	        resizable: false,
+    	        width: 130,
+    	        minWidth:130
+    		},{
+    			display: '抵押状态',
+    			name: 'mortgage_status',
+    			resizable: false,
+    			width: 50,
+    			minWidth: 50,
+    			editor: { 
+    				type: 'select', // 该列为可编辑状态
+    				data: isEnableArr, 
+    				valueField: 'mortgage_status', 
+    				textField: 'mortgage_status_val' 
+    			},
+    			render: function (rowdata, nowRowIndex, value, column) {
+    				return global_ligerui_extend.gridRenderSelectedValue(rowdata, nowRowIndex, value, column);	
+    			}
+    		}];
+            grid = $("#grid").ligerGrid({
+        		columns: columns_mortgagelist,
+        		url: global_param.context_name +'/loanfina/WmsFinaCreMortgageListgetListByEntity.do?wms_cre_credit_head_id='+wms_cre_credit_head_id,
+        		sortName: 'mortgage_date', // 排序列名
+				sortOrder: 'desc', // 排序方式
+        		rownumbers: true,
+        		allowUnSelectRow: true,
+        		checkbox: true,
+        		isChecked: isCheckedFunc,
+        		onCheckRow: onCheckRowFunc,
+        		onCheckAllRow: onCheckAllRowFunc,
+        		usePager: true,
+        		width: '100%',
+        		height:'460',
+        		heightDiff: -4,
+        		parms: {
+        			_filterParms: -1
+        		},
+        		clickToEdit:false
+            });
+        }
+    	//查询时间范围内所有的抵押物信息-中的审批人
+    	function searchPerson(){
+    		//获取抵押物清单-中的审批人
+    		wmsfinaauditorperson= globalUtil.syncGetJson("/loanfina/wmsfinaauditorpersongetListByEntity.do");//同步获取需要导出的数据内容
+    		return wmsfinaauditorperson;
+    	}
+        /*--------实现清空按钮事件-----*/
+        function clear(){
+        	$('#mortgage_date_start').val("");
+        	$('#mortgage_date_end').val("");
+        }
+        /*-------------------------------------------------------------checkbox 方法-------------------------------------------------------------*/
+     	// 初始化复选框方法
+        function isCheckedFunc(rowdata) {
+        	if (findCheckedCustomer(rowdata.wms_fina_cre_mortgage_list_id) == -1) {
+        		return false;
+        	}
+        	return true;
+        };
+     	// 选中、取消复选框事件方法
+        function onCheckRowFunc(checked, data) {
+        	if (checked) {
+        		addCheckedCustomer(data.wms_fina_cre_mortgage_list_id,data);
+        	} else {
+        		removeCheckedCustomer(data.wms_fina_cre_mortgage_list_id);
+        	}
+        };
+     	// 选中、取消全部选项事件方法 在全选的时候 必须要客户主键查询 否则会报错。
+        function onCheckAllRowFunc(checked,data) {
+        	for (var rowid in this.records) {
+        		if (checked) {
+        			addCheckedCustomer(this.records[rowid]['wms_fina_cre_mortgage_list_id'],this.records[rowid]);
+        		} else {
+        			removeCheckedCustomer(this.records[rowid]['wms_fina_cre_mortgage_list_id']);
+        		}
+        	}
+        };
+       // 在checkedCustomer中查找是否已存在id的方法
+        function findCheckedCustomer(id) {
+        	for(var i = 0, l = checkedCustomer.length; i < l; i++) {
+        		if(checkedCustomer[i] == id) { 
+        			return i;
+        		}
+        	}
+        	return -1;
+        };
+     
+        // 向checkedCustomer中添加id的方法
+        function addCheckedCustomer(id,data) {
+        	if (findCheckedCustomer(id) == -1) {
+        		checkedCustomer.push(id);
+        		checkedCustomerall.push(data);
+        	}
+        };
+        // 从checkedCustomer中移除id的方法
+        function removeCheckedCustomer(id,data) {
+        	var i = findCheckedCustomer(id);
+        	if (i == -1) {
+        		return;
+        	}
+        	checkedCustomer.splice(i, 1);
+        	checkedCustomerall.splice(i, 1);
+        };
+        
+        //获取checkd选择的数据
+        function saveCheckdRowsForJosn(){
+        	window.parent.getCheckedCustomerAll(checkedCustomerall,checkedCustomer);
+        	window.parent.scfcDialog.close();
+        };
+        /*-------------------------------------------------------------checkbox 方法-------------------------------------------------------------*/
+
+        </script>
+
+</body>
+</html>

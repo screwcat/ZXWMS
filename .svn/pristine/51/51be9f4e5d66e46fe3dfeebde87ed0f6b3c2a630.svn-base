@@ -1,0 +1,703 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveCommionRecordDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveCommionRecord">
+		select
+        				wms_inve_commion_record_id,
+        				compay_id,
+        				dept_id,
+        				team_id,
+        				salesman_name,
+        				salesman_id,
+        				salesman_shortcode,
+        				trans_salesman_status,
+        				personnel_postid,
+        				add_inve_mon,
+        				add_comm_coeff,
+        				add_comm_mon,
+        				stock_inve_mon,
+        				stock_comm_coeff,
+        				stock_comm_mon,
+        				team_stock_mon,
+        				team_add_mon,
+        				team_comm_coeff,
+        				team_comm_mon,
+        				redeem_mon,
+        				statics_month,
+        				is_lssue,
+						date_format(lssue_date,'%Y-%m-%d') as lssue_date_str,
+        				lssue_date,
+        				remark,
+						date_format(statics_time,'%Y-%m-%d %H:%i:%s') as statics_time_str,
+        				statics_time,
+        				tax_point,
+        				tax_mon,
+        				last_untake_tax,
+        				enable_flag,
+        				is_with_per,
+        				add_inve_mon_base,      					
+						adjust_amount,
+						adjust_remark,
+						adjust_datetime,
+						pm_personnel_id
+        				
+        	from
+        		wms_inve_commion_record
+        	where
+        				wms_inve_commion_record_id = #{wms_inve_commion_record_id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		SELECT
+			count(1)
+		FROM
+			wms_inve_commion_record a,pm_personnel d,sys_post e
+		<where>
+		    d.personnel_id=a.salesman_id
+			AND e.post_id = a.personnel_postId
+			<if test="dept_id != null">
+				and FIND_IN_SET(a.dept_id,getDeptTreeChildrenNodes(#{dept_id}))>0 
+			</if>
+			<if test="personnel_info != null">
+				and (d.personnel_name like '%${personnel_info}%' or d.personnel_shortCode like  '%${personnel_info}%')
+			</if>
+			<if test="statics_month != null">
+				and a.statics_month=#{statics_month}
+			</if>
+			<if test="post_number_list != null">
+			    and
+			     <foreach collection="post_number_list" item="post_number" open="(" close=")" separator="OR">  
+				  e.post_number like #{post_number} 
+				 </foreach>  
+			</if>
+			<if test="compay_id != null">
+				and a.dept_id  in (${compay_id})
+			</if>
+			<if test="personnel_state != null">
+				and d.personnel_state=#{personnel_state}
+			</if>
+			<if test="hxld != null">
+				and a.salesman_id in (select DISTINCT personnel_id from wms_inve_comm_rate where enable_flag='1' and wms_inve_comm_rule_id=5)
+			</if>
+			<if test="other != null">
+				and d.personnel_state!='7'
+				 and
+			    <foreach collection="post_id_list" item="post_number" open="(" close=")" separator="and">  
+				  e.post_number not like #{post_number} 
+				</foreach> 
+				and a.salesman_id not in (select DISTINCT personnel_id from wms_inve_comm_rate where enable_flag='1'  and wms_inve_comm_rule_id=5)
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			a.wms_inve_commion_record_id,
+			ifnull(a.adjust_amount,0) as adjust_amount,
+			getCompanyName(a.dept_id) as compay_name,
+			(select c.dept_name from  sys_dept c where c.dept_id=a.dept_id) as dept_name,
+			CONCAT(d.personnel_name,d.personnel_shortCode) as personnel_info,
+			case when d.personnel_state='7' then '兼职' else e.post_name end as personnel_post_number,
+			ifnull(a.add_comm_mon,0) as add_comm_mon,
+			ifnull(a.stock_comm_mon,0) as stock_comm_mon,
+			ifnull(a.team_comm_mon,0) as team_comm_mon,
+			ifnull(a.tax_mon,0) as tax_mon,
+			REPLACE(a.statics_month,"-","")  as statics_month,
+			a.salesman_id,
+			a.dept_id,
+			ifnull(a.old_stock_comm_mon,0) as old_stock_comm_mon,
+			ifnull(a.old_team_comm_mon,0) as old_team_comm_mon,
+			ifnull(a.old_tax_mon,0) as old_tax_mon,
+			ifnull(a.add_comm_mon,0)+ifnull(a.stock_comm_mon,0)+ifnull(a.team_comm_mon,0)-ifnull(a.tax_mon,0)+ifnull(a.adjust_amount,0) + ifnull(a.old_stock_comm_mon,0) + ifnull(a.old_team_comm_mon,0) - ifnull(a.old_tax_mon,0)  as all_mon
+		FROM
+			wms_inve_commion_record a,
+			pm_personnel d,
+			sys_post e
+		<where>
+		    d.personnel_id=a.salesman_id
+		    and e.post_id=a.personnel_postId
+			<if test="dept_id != null">
+				and FIND_IN_SET(a.dept_id,getDeptTreeChildrenNodes(#{dept_id}))>0 
+			</if>
+			<if test="personnel_info != null">
+				and (d.personnel_name like '%${personnel_info}%' or d.personnel_shortCode like  '%${personnel_info}%')
+			</if>
+			<if test="statics_month != null">
+				and a.statics_month=#{statics_month}
+			</if>
+			<if test="post_number_list != null">
+			    and
+			     <foreach collection="post_number_list" item="post_number" open="(" close=")" separator="OR">  
+				  e.post_number like #{post_number} 
+				 </foreach>  
+			</if>
+			<if test="compay_id != null">
+				and a.dept_id  in (${compay_id})
+			</if>
+			<if test="personnel_state != null">
+				and d.personnel_state=#{personnel_state}
+			</if>
+			<if test="hxld != null">
+				and a.salesman_id in (select DISTINCT personnel_id from wms_inve_comm_rate where enable_flag='1' and wms_inve_comm_rule_id=5)
+			</if>
+			<if test="other != null">
+				and d.personnel_state!='7'
+				 and
+			    <foreach collection="post_id_list" item="post_number" open="(" close=")" separator="and">  
+				  e.post_number not like #{post_number} 
+				</foreach> 
+				and a.salesman_id not in (select DISTINCT personnel_id from wms_inve_comm_rate where enable_flag='1' and wms_inve_comm_rule_id=5)
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveCommionRecord" useGeneratedKeys="true" keyProperty="wms_inve_commion_record_id">
+		INSERT INTO wms_inve_commion_record
+		(
+				wms_inve_commion_record_id,
+
+				compay_id,
+
+				dept_id,
+
+				team_id,
+
+				salesman_name,
+
+				salesman_id,
+
+				salesman_shortcode,
+
+				trans_salesman_status,
+
+				personnel_postid,
+
+				add_inve_mon,
+
+				add_comm_coeff,
+
+				add_comm_mon,
+
+				stock_inve_mon,
+
+				stock_comm_coeff,
+
+				stock_comm_mon,
+
+				team_stock_mon,
+
+				team_add_mon,
+
+				team_comm_coeff,
+
+				team_comm_mon,
+
+				redeem_mon,
+
+				statics_month,
+
+				is_lssue,
+
+				lssue_date,
+
+				remark,
+
+				statics_time,
+
+				tax_point,
+
+				tax_mon,
+
+				last_untake_tax,
+
+				enable_flag,
+
+				is_with_per,
+
+				add_inve_mon_base
+		)
+		VALUES
+		(
+				#{wms_inve_commion_record_id},
+				#{compay_id},
+				#{dept_id},
+				#{team_id},
+				#{salesman_name},
+				#{salesman_id},
+				#{salesman_shortcode},
+				#{trans_salesman_status},
+				#{personnel_postid},
+				#{add_inve_mon},
+				#{add_comm_coeff},
+				#{add_comm_mon},
+				#{stock_inve_mon},
+				#{stock_comm_coeff},
+				#{stock_comm_mon},
+				#{team_stock_mon},
+				#{team_add_mon},
+				#{team_comm_coeff},
+				#{team_comm_mon},
+				#{redeem_mon},
+				#{statics_month},
+				#{is_lssue},
+				#{lssue_date},
+				#{remark},
+				#{statics_time},
+				#{tax_point},
+				#{tax_mon},
+				#{last_untake_tax},
+				#{enable_flag},
+				#{is_with_per},
+				#{add_inve_mon_base}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveCommionRecord">
+		update wms_inve_commion_record
+		<set>
+					<if test="wms_inve_commion_record_id != null">
+						 wms_inve_commion_record_id = #{wms_inve_commion_record_id},
+					</if>
+					<if test="compay_id != null">
+						 compay_id = #{compay_id},
+					</if>
+					<if test="dept_id != null">
+						 dept_id = #{dept_id},
+					</if>
+					<if test="team_id != null">
+						 team_id = #{team_id},
+					</if>
+					<if test="salesman_name != null">
+						 salesman_name = #{salesman_name},
+					</if>
+					<if test="salesman_id != null">
+						 salesman_id = #{salesman_id},
+					</if>
+					<if test="salesman_shortcode != null">
+						 salesman_shortcode = #{salesman_shortcode},
+					</if>
+					<if test="trans_salesman_status != null">
+						 trans_salesman_status = #{trans_salesman_status},
+					</if>
+					<if test="personnel_postid != null">
+						 personnel_postid = #{personnel_postid},
+					</if>
+					<if test="add_inve_mon != null">
+						 add_inve_mon = #{add_inve_mon},
+					</if>
+					<if test="add_comm_coeff != null">
+						 add_comm_coeff = #{add_comm_coeff},
+					</if>
+					<if test="add_comm_mon != null">
+						 add_comm_mon = #{add_comm_mon},
+					</if>
+					<if test="stock_inve_mon != null">
+						 stock_inve_mon = #{stock_inve_mon},
+					</if>
+					<if test="stock_comm_coeff != null">
+						 stock_comm_coeff = #{stock_comm_coeff},
+					</if>
+					<if test="stock_comm_mon != null">
+						 stock_comm_mon = #{stock_comm_mon},
+					</if>
+					<if test="team_stock_mon != null">
+						 team_stock_mon = #{team_stock_mon},
+					</if>
+					<if test="team_add_mon != null">
+						 team_add_mon = #{team_add_mon},
+					</if>
+					<if test="team_comm_coeff != null">
+						 team_comm_coeff = #{team_comm_coeff},
+					</if>
+					<if test="team_comm_mon != null">
+						 team_comm_mon = #{team_comm_mon},
+					</if>
+					<if test="redeem_mon != null">
+						 redeem_mon = #{redeem_mon},
+					</if>
+					<if test="statics_month != null">
+						 statics_month = #{statics_month},
+					</if>
+					<if test="is_lssue != null">
+						 is_lssue = #{is_lssue},
+					</if>
+					<if test="lssue_date != null">
+						 lssue_date = #{lssue_date},
+					</if>
+					<if test="remark != null">
+						 remark = #{remark},
+					</if>
+					<if test="statics_time != null">
+						 statics_time = #{statics_time},
+					</if>
+					<if test="tax_point != null">
+						 tax_point = #{tax_point},
+					</if>
+					<if test="tax_mon != null">
+						 tax_mon = #{tax_mon},
+					</if>
+					<if test="last_untake_tax != null">
+						 last_untake_tax = #{last_untake_tax},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+					<if test="is_with_per != null">
+						 is_with_per = #{is_with_per},
+					</if>
+					<if test="add_inve_mon_base != null">
+						 add_inve_mon_base = #{add_inve_mon_base},
+					</if>
+					<if test="adjust_amount != null">
+						 adjust_amount = #{adjust_amount},
+					</if>
+					<if test="adjust_remark != null">
+						 adjust_remark = #{adjust_remark},
+					</if>
+					<if test="adjust_datetime != null">
+						 adjust_datetime = #{adjust_datetime},
+					</if>
+					<if test="pm_personnel_id != null">
+						 pm_personnel_id = #{pm_personnel_id}
+					</if>
+	   </set>
+		 where 
+    				wms_inve_commion_record_id = #{wms_inve_commion_record_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveCommionRecord" resultType="WmsInveCommionRecord">
+		select 
+				wms_inve_commion_record_id,
+				compay_id,
+				dept_id,
+				team_id,
+				salesman_name,
+				salesman_id,
+				salesman_shortcode,
+				trans_salesman_status,
+				personnel_postid,
+				add_inve_mon,
+				add_comm_coeff,
+				add_comm_mon,
+				stock_inve_mon,
+				stock_comm_coeff,
+				stock_comm_mon,
+				team_stock_mon,
+				team_add_mon,
+				team_comm_coeff,
+				team_comm_mon,
+				redeem_mon,
+				statics_month,
+				is_lssue,
+				date_format(lssue_date,'%Y-%m-%d') as lssue_date_str,
+				lssue_date,
+				remark,
+				date_format(statics_time,'%Y-%m-%d %H:%i:%s') as statics_time_str,
+				statics_time,
+				tax_point,
+				tax_mon,
+				last_untake_tax,
+				enable_flag,
+				is_with_per,
+				add_inve_mon_base
+		from
+		wms_inve_commion_record
+		<where>
+					<if test="wms_inve_commion_record_id != null">
+						and wms_inve_commion_record_id = #{wms_inve_commion_record_id}
+					</if>
+					<if test="compay_id != null">
+						and compay_id = #{compay_id}
+					</if>
+					<if test="dept_id != null">
+						and dept_id = #{dept_id}
+					</if>
+					<if test="team_id != null">
+						and team_id = #{team_id}
+					</if>
+					<if test="salesman_name != null">
+						and salesman_name = #{salesman_name}
+					</if>
+					<if test="salesman_id != null">
+						and salesman_id = #{salesman_id}
+					</if>
+					<if test="salesman_shortcode != null">
+						and salesman_shortcode = #{salesman_shortcode}
+					</if>
+					<if test="trans_salesman_status != null">
+						and trans_salesman_status = #{trans_salesman_status}
+					</if>
+					<if test="personnel_postid != null">
+						and personnel_postid = #{personnel_postid}
+					</if>
+					<if test="add_inve_mon != null">
+						and add_inve_mon = #{add_inve_mon}
+					</if>
+					<if test="add_comm_coeff != null">
+						and add_comm_coeff = #{add_comm_coeff}
+					</if>
+					<if test="add_comm_mon != null">
+						and add_comm_mon = #{add_comm_mon}
+					</if>
+					<if test="stock_inve_mon != null">
+						and stock_inve_mon = #{stock_inve_mon}
+					</if>
+					<if test="stock_comm_coeff != null">
+						and stock_comm_coeff = #{stock_comm_coeff}
+					</if>
+					<if test="stock_comm_mon != null">
+						and stock_comm_mon = #{stock_comm_mon}
+					</if>
+					<if test="team_stock_mon != null">
+						and team_stock_mon = #{team_stock_mon}
+					</if>
+					<if test="team_add_mon != null">
+						and team_add_mon = #{team_add_mon}
+					</if>
+					<if test="team_comm_coeff != null">
+						and team_comm_coeff = #{team_comm_coeff}
+					</if>
+					<if test="team_comm_mon != null">
+						and team_comm_mon = #{team_comm_mon}
+					</if>
+					<if test="redeem_mon != null">
+						and redeem_mon = #{redeem_mon}
+					</if>
+					<if test="statics_month != null">
+						and statics_month = #{statics_month}
+					</if>
+					<if test="is_lssue != null">
+						and is_lssue = #{is_lssue}
+					</if>
+					<if test="lssue_date != null">
+						and lssue_date = #{lssue_date}
+					</if>
+					<if test="remark != null">
+						and remark = #{remark}
+					</if>
+					<if test="statics_time != null">
+						and statics_time = #{statics_time}
+					</if>
+					<if test="tax_point != null">
+						and tax_point = #{tax_point}
+					</if>
+					<if test="tax_mon != null">
+						and tax_mon = #{tax_mon}
+					</if>
+					<if test="last_untake_tax != null">
+						and last_untake_tax = #{last_untake_tax}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+					<if test="is_with_per != null">
+						and is_with_per = #{is_with_per}
+					</if>
+					<if test="add_inve_mon_base != null">
+						and add_inve_mon_base = #{add_inve_mon_base}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_inve_commion_record_id != #{wms_inve_commion_record_id}
+					</if>
+		</where>
+	</select>
+	
+	<!-- list -->
+	<select id="findwmsinvepruductcategorySumMoney" parameterType="map" resultType="java.lang.String">
+		SELECT
+			sum(ifnull(a.add_comm_mon,0)+ifnull(a.stock_comm_mon,0)+ifnull(a.team_comm_mon,0)-ifnull(a.tax_mon,0)+ifnull(a.adjust_amount,0) + ifnull(a.old_stock_comm_mon,0) + ifnull(a.old_team_comm_mon,0) - ifnull(a.old_tax_mon,0) ) as all_mon
+		FROM
+			wms_inve_commion_record a,pm_personnel d,sys_post e
+		<where>
+		    d.personnel_id=a.salesman_id
+		    and e.post_id=a.personnel_postId
+			<if test="dept_id != null">
+				and FIND_IN_SET(a.dept_id,getDeptTreeChildrenNodes(#{dept_id}))>0 
+			</if>
+			<if test="personnel_info != null">
+				and (d.personnel_name like '%${personnel_info}%' or d.personnel_shortCode like  '%${personnel_info}%')
+			</if>
+			<if test="statics_month != null">
+				and a.statics_month=#{statics_month}
+			</if>
+			<if test="post_number_list != null">
+			    and
+			     <foreach collection="post_number_list" item="post_number" open="(" close=")" separator="OR">  
+				  e.post_number like #{post_number} 
+				 </foreach>  
+			</if>
+			<if test="compay_id != null">
+				and a.dept_id in (${compay_id})
+			</if>
+			<if test="personnel_state != null">
+				and d.personnel_state=#{personnel_state}
+			</if>
+			<if test="hxld != null">
+				and a.salesman_id in (select DISTINCT personnel_id from wms_inve_comm_rate where enable_flag='1'  and wms_inve_comm_rule_id=5)
+			</if>
+			<if test="other != null">
+				and d.personnel_state!='7'
+				 and
+			    <foreach collection="post_id_list" item="post_number" open="(" close=")" separator="and">  
+				  e.post_number not like #{post_number} 
+				</foreach> 
+				and a.salesman_id not in (select DISTINCT personnel_id from wms_inve_comm_rate where enable_flag='1' and wms_inve_comm_rule_id=5)
+			</if>
+		</where>
+	</select>
+	
+	
+	<!-- 新增奖及税费 -->
+	<select id="getWmsInveTaxationByCondition" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			getCompanyName(a.bel_salesman_dept_id) as 'company',
+			-- (select b.compay_name from wms_inve_compay b where b.dept_id=a.compay_id and b.def_asc=1) as 'company',
+			(select CONCAT(c.personnel_name,' ',c.personnel_shortCode) from pm_personnel c where c.personnel_id=a.bel_salesman_id_id) as 'accountManager',
+			(select p.personnel_name from pm_personnel p where p.personnel_id=t.bel_department_manager_id) as 'deptManager',
+			(select p.personnel_name from pm_personnel p where p.personnel_id=t.bel_vice_general_manager_id) as 'generalManager',
+			(select p.personnel_name from pm_personnel p where p.personnel_id=t.bel_general_manager_id) as 'manager',
+			(select e.post_name from sys_post e,v_personnel_all x where e.post_id=x.personnel_postid and x.personnel_id=a.bel_salesman_id_id and x.personnel_deptid=a.bel_salesman_dept_id) as 'post',
+			a.bill_code as 'bill_code',
+			a.cus_name as 'cus_name',
+			date_format(a.date_of_payment,'%Y-%m-%d') as 'date_of_payment',
+			TRUNCATE(a.investredemp_amount,0) as 'investredemp_amount',
+			(select f.category_name from wms_inve_pruduct_category f where f.wms_inve_pruduct_category_id=a.wms_inve_pruduct_category_id) as 'category_name',
+			a.product_deadline as 'product_deadline',
+			TRUNCATE(a.tax_mon,0) as 'req_deduction_tax',
+			TRUNCATE(a.add_comm_coeff,4) as 'add_comm_coeff',
+			date_format((select g.redeem_date from wms_inve_redeem g where g.wms_inve_redeem_id=a.wms_inve_redeem_id),'%Y-%m-%d') as 'redeem_date',
+			TRUNCATE((select i.redeem_amount from wms_inve_redeem h,wms_inve_redeem_detail i where h.wms_inve_redeem_id=a.wms_inve_redeem_id and h.wms_inve_redeem_id=i.wms_inve_redeem_id),0) as 'redeem_amount',
+			CONCAT(a.commission_days,'/',a.redeem_back_days) as 'commission_days',
+			TRUNCATE(a.add_comm_mon,2) as 'add_comm_mon',
+			TRUNCATE(a.tax_mon,0) as 'real_deduction_mon',
+			ifnull(TRUNCATE(a.add_comm_mon-a.tax_mon,2),TRUNCATE(a.add_comm_mon,2)) as 'real_payment_mon'
+		FROM
+			wms_inve_commission_performance_his a,wms_inve_transa t
+		<where>
+			a.wms_inve_transa_id=t.wms_inve_transa_id		
+			<if test="export_month != null and export_month != ''">
+				and a.statics_month = #{export_month}
+			</if>
+  			and ifnull(a.add_comm_mon,0) !=0			
+  			order by a.salesman_id,a.date_of_payment;
+		</where>
+	</select>
+	
+	<!-- 存量奖 -->
+	<select id="getWmsInveStockByCondition" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			getCompanyName(a.bel_salesman_dept_id) as 'company',
+			-- (select b.compay_name from wms_inve_compay b where b.dept_id=a.compay_id and b.def_asc=1) as 'company',
+			(select CONCAT(c.personnel_name,' ',c.personnel_shortCode) from pm_personnel c where c.personnel_id=a.bel_salesman_id_id) as 'accountManager',
+			(select p.personnel_name from pm_personnel p where p.personnel_id=t.bel_department_manager_id) as 'deptManager',
+			(select p.personnel_name from pm_personnel p where p.personnel_id=t.bel_vice_general_manager_id) as 'generalManager',
+			(select p.personnel_name from pm_personnel p where p.personnel_id=t.bel_general_manager_id) as 'manager',
+			(select e.post_name from sys_post e,v_personnel_all x where e.post_id=x.personnel_postid and x.personnel_id=a.bel_salesman_id_id and x.personnel_deptid=a.bel_salesman_dept_id) as 'post',
+			a.bill_code as 'bill_code',
+			a.cus_name as 'cus_name',
+			date_format(a.date_of_payment,'%Y-%m-%d') as 'date_of_payment',
+			TRUNCATE(a.investredemp_amount,0) as 'investredemp_amount',
+			(select f.category_name from wms_inve_pruduct_category f where f.wms_inve_pruduct_category_id=a.wms_inve_pruduct_category_id) as 'category_name',
+			a.product_deadline as 'product_deadline',
+			'' as 'req_deduction_tax',
+			TRUNCATE(a.stock_comm_coeff,4) as 'add_comm_coeff',
+			date_format((select g.redeem_date from wms_inve_redeem g where g.wms_inve_redeem_id=a.wms_inve_redeem_id),'%Y-%m-%d') as 'redeem_date',
+			TRUNCATE((select i.redeem_amount from wms_inve_redeem h,wms_inve_redeem_detail i where h.wms_inve_redeem_id=a.wms_inve_redeem_id and h.wms_inve_redeem_id=i.wms_inve_redeem_id),0)  as 'redeem_amount',
+			CONCAT(a.commission_days,'/',a.redeem_back_days) as 'commission_days',
+			TRUNCATE(a.stock_comm_mon,2) as 'add_comm_mon',
+			'' as 'real_deduction_mon',
+			TRUNCATE(a.stock_comm_mon,2)  as 'real_payment_mon'
+		FROM
+			wms_inve_commission_performance_his a,wms_inve_transa t
+		<where>
+			a.wms_inve_transa_id=t.wms_inve_transa_id		
+			<if test="export_month != null and export_month != ''">
+				and a.statics_month = #{export_month}
+			</if>
+			and a.stock_comm_mon>0
+  			order by a.salesman_id,a.date_of_payment;
+  
+  		</where>
+	</select>
+	
+	<!-- 管理提成奖 -->
+	<select id="getWmsInveCommionByCondition" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			getCompanyName(a.bel_salesman_dept_id) as 'company',
+			-- (select b.compay_name from wms_inve_compay b where b.dept_id=a.compay_id and b.def_asc=1) as 'company',
+			(select CONCAT(c.personnel_name,' ',c.personnel_shortCode) from pm_personnel c where c.personnel_id=a.bel_salesman_id_id) as 'accountManager',
+			(select p.personnel_name from pm_personnel p where p.personnel_id=t.bel_department_manager_id) as 'deptManager',
+			(select p.personnel_name from pm_personnel p where p.personnel_id=t.bel_vice_general_manager_id) as 'generalManager',
+			(select p.personnel_name from pm_personnel p where p.personnel_id=t.bel_general_manager_id) as 'manager',
+			(select  CONCAT(j.personnel_name,' ',j.personnel_shortCode) from pm_personnel j where j.personnel_id=a.team_personnel_id) as 'award_person',
+			(select e.post_name from sys_post e,v_personnel_all x where e.post_id=x.personnel_postid and x.personnel_id=a.bel_salesman_id_id and x.personnel_deptid=a.bel_salesman_dept_id) as 'post',
+			a.bill_code as 'bill_code',
+			a.cus_name as 'cus_name',
+			date_format(a.date_of_payment,'%Y-%m-%d') as 'date_of_payment',
+			TRUNCATE(a.investredemp_amount,0) as 'investredemp_amount',
+			(select f.category_name from wms_inve_pruduct_category f where f.wms_inve_pruduct_category_id=a.wms_inve_pruduct_category_id) as 'category_name',
+			a.product_deadline as 'product_deadline',
+			'' as 'req_deduction_tax',
+			TRUNCATE(a.team_comm_coeff,4) as 'add_comm_coeff',
+			date_format((select g.redeem_date from wms_inve_redeem g where g.wms_inve_redeem_id=a.wms_inve_redeem_id),'%Y-%m-%d') as 'redeem_date',
+			TRUNCATE((select i.redeem_amount from wms_inve_redeem h,wms_inve_redeem_detail i where h.wms_inve_redeem_id=a.wms_inve_redeem_id and h.wms_inve_redeem_id=i.wms_inve_redeem_id),0)  as 'redeem_amount',
+			CONCAT(a.commission_days,'/',a.redeem_back_days) as 'commission_days',
+			TRUNCATE(a.team_comm_mon,2) as 'add_comm_mon',
+			'' as 'real_deduction_mon',
+			TRUNCATE(a.team_comm_mon,2)  as 'real_payment_mon'
+		FROM
+			wms_inve_commission_performance_his a,wms_inve_transa t
+		<where>
+			a.wms_inve_transa_id=t.wms_inve_transa_id
+			<if test="export_month != null and export_month != ''">
+				and a.statics_month = #{export_month}
+			</if>
+			and a.team_comm_mon>0
+  			order by a.salesman_id,a.date_of_payment;
+  
+  		</where>
+	</select>
+	
+	<!-- 打款 -->
+	<select id="getWmsInvePaymentByCondition" parameterType="map" resultType="java.util.HashMap">
+		SELECT
+			t2.personnel_bankCardCode,
+			CONCAT(t2.personnel_name," ",t2.personnel_shortCode) as personnel_name,
+			TRUNCATE(ifnull(t1.add_comm_mon,0)+ifnull(t1.stock_comm_mon,0)+ifnull(t1.team_comm_mon,0)-ifnull(t1.tax_mon,0)-ifnull(t1.old_tax_mon,0)+ifnull(t1.adjust_amount,0)+ifnull(t1.old_stock_comm_mon,0)+ifnull(t1.old_team_comm_mon,0),2) as all_mon,			
+			t2.personnel_bankName,
+			t2.personnel_bank_title,
+			t2.bank_province,
+			t2.bank_city,
+			TRUNCATE(ifnull(t1.add_comm_mon,0),2) as add_comm_mon,
+			TRUNCATE(ifnull(t1.tax_mon,0),2) as tax_mon,
+			TRUNCATE(ifnull(t1.old_tax_mon,0),2) as old_tax_mon,
+			TRUNCATE(ifnull(t1.stock_comm_mon,0),2) as stock_comm_mon,
+			TRUNCATE(ifnull(t1.team_comm_mon,0),2) as team_comm_mon,
+			TRUNCATE(ifnull(t1.old_stock_comm_mon,0),2) as old_comm_mon,
+			TRUNCATE(ifnull(t1.old_team_comm_mon,0),2) as old_team_comm_mon,
+			TRUNCATE(t1.adjust_amount,2) as adjust_amount,
+			TRUNCATE(ifnull(t1.add_comm_mon,0)+ifnull(t1.stock_comm_mon,0)+ifnull(t1.team_comm_mon,0)-ifnull(t1.tax_mon,0)-ifnull(t1.old_tax_mon,0)+ifnull(t1.adjust_amount,0)+ifnull(t1.old_stock_comm_mon,0)+ifnull(t1.old_team_comm_mon,0),2) as total_mon,		
+			CONCAT(t1.statics_month,'财富佣金') as remark
+		FROM
+			wms_inve_commion_record t1,pm_personnel t2
+		<where>
+			t1.salesman_id=t2.personnel_id
+			and ifnull(t1.add_comm_mon,0)+ifnull(t1.stock_comm_mon,0)+ifnull(t1.team_comm_mon,0)-ifnull(t1.tax_mon,0)-ifnull(t1.old_tax_mon,0)+ifnull(t1.adjust_amount,0)+ifnull(t1.old_stock_comm_mon,0)+ifnull(t1.old_team_comm_mon,0)!=0			
+			<if test="export_month != null and export_month != ''">
+			   and t1.statics_month = #{export_month}
+			</if>  
+  		</where>
+	</select>
+</mapper> 

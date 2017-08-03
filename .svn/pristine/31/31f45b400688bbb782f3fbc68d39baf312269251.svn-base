@@ -1,0 +1,1279 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>房贷申请</title>
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<style type="text/css">
+.textright {
+    text-align: right;
+}
+
+.textleft {
+    text-align: left;
+}
+.input_tb_new {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.input_tb_new a {
+    color: #056aff;
+    text-decoration: none;
+    font-weight: normal;
+}
+
+.input_tb_new td {
+    height: 35px;
+    line-height: 25px;
+    padding-top: 3px;
+}
+
+.input_tb_new .tr_title td {
+    background-color: #f5f8ff;
+    padding-left: 16px;
+    font-weight: bold;
+    height: 30px;
+    line-height: 30px;
+}
+
+.input_tb_new .tr_last td {
+    border-bottom: 0;
+}
+
+.input_tb_new .title {
+    text-align: right;
+}
+
+.input_tb_new .subtitle {
+    text-align: left;
+    background-color: #d2e1fd;
+    border-top: 1px solid #fff;
+}
+
+.input_tb_new .tr_btn_input td {
+    background-color: #fbfbfb;
+    /*border-top:1px solid #dbdbdb;*/
+    /*height:40px;*/
+}
+
+.title_tb {
+    background-color: #f5f8ff;
+    padding-left: 16px;
+    font-weight: bold;
+    height: 30px;
+    line-height: 30px;
+    height: 35px;
+    line-height: 25px;
+    padding-top: 3px;
+}
+
+.data_tb td {
+    height: 30px;
+    line-height: 24px;
+    padding-left: 10px;
+    border-bottom: 1px dashed #e3e4e6;
+    text-align: left;
+}
+
+.td_selected {
+    background: #f7f6cf;
+    border-top: 2px solid #0064ad;
+    border-bottom: 2px solid #0064ad;
+}
+</style>
+</head>
+<body>
+    <div class="tab_titleT">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr valign="bottom" id="trtab1">
+                <td width="50%" class="tabbody1" id="tabbody1"
+                    onclick="changeTab('dkinfo');" tabname="mytab">
+                    <div align="center">贷款信息</div>
+                </td>
+                <td width="50%" class="tabbody2" id="tabbody2"
+                    onclick="changeTab('khinfo');" tabname="mytab">
+                    <div align="center">客户信息</div>
+                </td>
+                <td width="33%" class="tabbody3" id="tabbody3" style="display: none;"  
+                    onclick="changeTab('cspginfo');" tabname="mytab">
+                    <div align="center">初审评估信息</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="pop-center overflow-au" style="top: 30px;" id="waicengdiv">
+        <!-- 贷款信息 -->
+        <div id="dkinfo" class="pop-formDiv clearfix" style="margin: 5px; margin-top: 5px;">
+            <div class="l-panel-search-cond clearfix" id="info_l1">
+                <div class="float-l">
+                    <div class="l-panel-search-item">
+                        <font>*可以通过新增<font style="color: red;">贷款客户</font>精确选择客户，通过新增抵押房产信息精确选择抵押房产，选择之后，需添加联系人信息、抵押房产用途，之后提交。
+	                        <br />
+	                        <font style="color: blue;">注：联系人信息必须填写三个亲属、一位担保人信息，且确保号码真实有效并能打通，外地号码前加“0”。</font>
+                        </font>
+                    </div>
+                </div>
+            </div>
+            <!-- 空白区域 -->
+            <div class="l-panel-search-cond clearfix" id="info_l2">
+                <div class="float-l">
+                    <div class="l-panel-search-item"></div>
+                </div>
+            </div>
+            <!-- 添加的虚线 -->
+            <div class="line clearboth" id="info_l3"></div>
+            <div class="l-panel-search-cond clearfix" id="main_t">
+            	<div class="float-l">
+                    <div class="l-panel-search-title" style="margin-top: 3px;">&nbsp;&nbsp;申请贷款金额：</div>
+                    <div class="l-panel-search-item">
+                        <input type="text" id="credit_limit" style="width: 95px" disabled="disabled" /> (万元)
+                    </div>
+                </div>
+                <div class="float-l">
+                    <div class="l-panel-search-title" style="margin-top: 3px;">贷款期限：</div>
+                    <div class="l-panel-search-item">
+                        <input type="text" id="max_repayment_time_limit" style="width: 95px" disabled="disabled" /> (月)
+                    </div>
+                </div>
+                <div class="float-l">
+                    <div class="l-panel-search-title" style="margin-top: 3px;">业务员：</div>
+                    <div class="l-panel-search-item">
+                    	<input type="text" id="salesman_name_str" style="width: 95px" readonly="readonly" />
+                    	<div style="display: none;">
+                            <input type="text" id="salesman_name" style="width: 95px" />
+                        </div>
+                        <a href="#" id="searchPersonnelId" onclick="searchPersonnel()">选择</a>
+                        <div style="display: none;">
+                            <input id="salesman_id" type="text" style="width: 150px" />
+                        </div>
+                        <div style="display: none;">
+                            <input id="salesman_code" type="text" style="width: 150px" />
+                        </div>
+                        <div style="display: none;">
+                            <input id="city" type="text" style="width: 150px" />
+                        </div>
+                        <div style="display: none;">
+                            <input id="salesman_city_code" type="text" style="width: 150px" />
+                        </div>
+                        <div style="display: none;">
+                            <input id="salesman_dept_id" type="text" style="width: 150px" />
+                        </div>
+                        <div style="display: none;">
+                            <input id="salesman_shortcode" type="text" style="width: 150px" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 贷款客户-->
+            <div class="center-content clearboth" style="min-width: 500px;">
+                <div id="centertoolbar" class="minwidth400"></div>
+                <div class="center-title">贷款客户</div>
+                <div class="center-txt" style="margin-bottom: 5px;">
+                    <div id="grid"></div>
+                </div>
+            </div>
+            <!-- 抵押房产信息 -->
+            <div class="center-content clearboth" style="min-width: 500px;">
+                <div class="center-title">抵押房产信息</div>
+                <div class="center-txt" style="margin-bottom: 5px;">
+                    <div id="centertoolbardyfc" class="minwidth400"></div>
+                    <div id="griddyfc"></div>
+                </div>
+            </div>
+            <!-- 联系人 -->
+            <div id="allLinkManDiv" class="l-tab" style="height: 400px;">
+                <div class="l-tab-links-sub">
+                    <ul style="left: 0px;" id="allLinkPeopleUl">
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- 客户资料 -->
+        <div id="khinfo" style="margin-left: 300px; margin-top: 60px; display: none;">
+			<input type="button" onclick="globalUtil.openShowAllImg(fileArr)" class="btn" value ="查看全部图片"style="margin-top: 0px" />
+			<input type="button" onclick="globalUtil.downloadAllImg(fileArr)" class="btn" value ="下载全部图片"style="margin-top: 0px" />
+            <table cellspacing="1" cellpadding="1" class="input_tb" id="att_tb" style="margin-left: -155px;margin-bottom: 40px;margin-top: 20px">
+                <tr>
+                    <td colspan="3" align="left" id="SCtitle">客户资料上传：</td>
+                    <td align="right"><div id="khzlscatt"></div></td>
+                </tr>
+            </table>
+        </div>
+        <!-- 初审评估 -->
+        <div id="cspginfo" class="pop-formDiv clearfix"
+            style="margin: 5px; margin-top: 5px; display: none">
+            <div>
+                <table cellspacing="1" cellpadding="1" class="input_tb" id="att_tb">
+                    <tr>
+                        <td colspan="2" align="left">初审评估</td>
+                        <td align="right">
+                            <div id="plswpic"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left">
+                            <span style="color: #333333;">初审评估表：</span>
+                        </td>
+                        <td id="tdshowPic"></td>
+                        <td id="tdupdPicBtn" class="textleft" align="left">
+                            <input class="btn-uploadF"
+	                            onmouseover="this.className='btn-uploadF-over'"
+	                            onmouseout="this.className='btn-uploadF'"
+	                            onmousedown="this.className='btn-uploadF-down'" type="button"
+	                            style="margin-right: 7px;"
+	                            onclick="openAddAttDialog('none','tdshowPic')"
+	                            style="display:none" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- 提交功能按钮区 -->
+    <div class="pop-footer5 clearboth" style="bottom: 1px;" id="tb_btn">
+        <input id="tjbtn" onclick="save(1);" class="btn-saveT"
+            onmouseover="this.className='btn-saveT-over'"
+            onmouseout="this.className='btn-saveT'"
+            onmousedown="this.className='btn-saveT-down'" type="button"
+            style="margin-right: 7px;" />
+         <input id="cancelBtnId" onclick="cancel();" class="btn-cancel" 
+            onmouseover="this.className='btn-cancel-over'"
+            onmouseout="this.className='btn-cancel'"
+            onmousedown="this.className='btn-cancel-down'" type="button" />   
+    </div>
+<script type="text/javascript">
+    
+var reqVO = {};    
+var p_wms_sys_dict_id = 91;
+var wms_sys_dict_id =  92;
+var fileArr = [];//上传附件列表
+var wms_cre_credit_head_id = $.query.get('wms_cre_credit_head_id');   
+var type = $.query.get('type');
+var allHouseInfo = [];//所有客户的房产信息(用于实时展示本页面的抵押房产信息)
+var index;//修改用户的索引
+var houseLoanInfo = {};
+var deleteContactIdArray = [];//删除的联系人id
+var data_type_name = 843;//图片大类
+var deleteAttIds = [];//附件删除的主键
+jQuery(function($){
+	
+	//初始化贷款单据信息
+    houseLoanInfo = initHouseLoanInfo();
+	
+	//初始化申请房贷产品
+    init_cre_loan_type(houseLoanInfo);
+	
+	//初始化申请贷款额度
+	$('#credit_limit').val(houseLoanInfo.credit_limit);
+	
+	//初始化还款期限
+	$('#max_repayment_time_limit').val(houseLoanInfo.max_repayment_time_limit);
+	
+	//初始化贷款利率
+	$('#loan_interest_rate').val(houseLoanInfo.loan_interest_rate);
+	
+	//初始化业务员
+    initSalesman();
+	
+	//初始化借款用途
+	$('#credit_purpose').val(houseLoanInfo.credit_purpose);
+    
+	//初始化客户信息
+    var customerList = initCustomerList();
+	
+	//获取为主贷人的客户
+	var majorCustomer = getMajorCustomer(customerList);
+
+    //根据贷款主表id进行数据的显示
+    initGrid(customerList);
+    
+    //初始化抵押房产信息(主贷人的)
+    var majorHouseInfo = initMajorHouseInfo(majorCustomer);
+    
+    //初始化联系人tab页控件
+    initLinkTab(customerList.Rows);
+    
+    //初始化抵押房产信息
+    initHouseInfo(majorHouseInfo);
+    
+    //初始化上传附件表格
+    initAttTable(); 
+    
+    //查看/修改
+    if(type == '0') {
+    	//修改
+    } else if(type == '1') {
+    	//查看
+    	$('input').attr('readonly', true);
+    	$('input[id!=cancelBtnId]').attr('disabled', 'disabled');
+    	$('select').attr('disabled', true);
+    	$('#searchPersonnelId').remove();//移除选择业务员按钮
+    	$('#centertoolbar').remove();//移除客户相关操作
+    	$('.addContact').remove();//移除联系人相关操作
+    	$('#tjbtn').hide();//隐藏提交按钮
+    	$('.deleteLinkPeople').hide();//隐藏删除
+    }
+    
+    //切换联系人tab页效果
+    $(document).on('click', '.l-unselected-sub', function() {
+    	$(this).removeClass('l-unselected-sub').addClass('l-selected-sub').
+    	    siblings().removeClass('l-selected-sub').addClass('l-unselected-sub');
+    	$("div[class='center-content clearboth changeContact'][id='" + $(this).attr('id') + "']").show();
+    	$("div[class='center-content clearboth changeContact'][id!='" + $(this).attr('id') + "']").hide();
+    });
+    
+    $(document).on('mouseover', '.addContact', function() {
+    	$(this).addClass('l-panel-btn-over');
+    });
+    
+    $(document).on('mouseout', '.addContact', function() {
+        $(this).removeClass('l-panel-btn-over');
+    });
+    
+    //添加联系人
+    $(document).on('click', '.addContact', function() {
+    	$(this).parent().next().find('table:first').append(
+    	    '<tr>' +
+    	        '<td align="left" class="left_title">' +
+    			    '<input type="radio" class="radio5 contact_type" value="1" checked="checked" />是' +
+    			    '<input type="radio" class="radio5 contact_type" value="0" />否' +
+    			'</td>' +
+   			    '<td>' +
+    			    '<input name="contact_name" type="text" style="width: 150px;" />' +
+    		    '</td>' +
+    		    '<td>' +
+    		        getContactTypeSelectStr(1) +
+    		    '</td>' +
+    		    '<td>' +
+    		        '<input name="contact_mobile_phone" type="text" style="width: 150px;" class="check_mobile" />-' +
+                    '<input name="contact_mobile_phone_short" type="text" style="width: 50px;"maxlength="8" />' +
+    		        '<input type="hidden" name="wms_cre_customer_change_line_contact_id" />' +
+                    '<input type="hidden" name="wms_cre_credit_line_customer_change_head_id" value="' + $(this).attr('customer_id') + '" />' +
+    		    '</td>' +
+            '</tr>'
+    	);
+    });
+    
+    //阻止tr里元素冒泡事件
+    $(document).on('click', 'tr select,input', function(event) {
+    	event.stopPropagation();
+    });
+    
+    //删除联系人
+    $(document).on('click', '.deleteContact', function() {
+    	var tempThis = this;
+    	globalUtil.confirmMsg('是否确认删除该条信息？', function(yes) { //确认删除
+            if (yes) {
+            	if($('.td_selected').find('input[name=wms_cre_customer_change_line_contact_id]').val() != '') {
+	            	deleteContactIdArray.push($('.td_selected').find('input[name=wms_cre_customer_change_line_contact_id]').val());
+            	}
+            	$('.td_selected').remove();
+            }
+        });
+    });
+    
+    //贷款产品、贷款额度、还款期限变化则变更利率
+    $('#cre_loan_type,#max_repayment_time_limit,#credit_limit').change(function() {
+    	$.ajax({ 
+            type: "POST", 
+            url: global_param.context_name + "/loanappro/getprotocolProperty.do",
+            async: false,
+            dataType: "json",
+            data: {
+    	        	cre_loan_type: $("#cre_loan_type").val(),
+    	        	borrow_deadline: $("#max_repayment_time_limit").val(),
+    	        	credit_limit: $("#credit_limit").val(),
+    	        	wms_cre_credit_head_id: wms_cre_credit_head_id
+    	    }, 
+            success: function(data) {
+                if(data.newFD != null && ('borrow_interest' in data.newFD) && data.newFD.borrow_interest != null) {
+                	$('#loan_interest_rate').val(data.newFD.borrow_interest);
+                }
+            }
+        });
+    });
+    
+    //切换是否为直系亲属事件
+    $(document).on('click', '.contact_type', function() {
+    	$(this).siblings().attr('checked', false);
+    	$(this).parent().parent().find('[name=contact_relation_description]').parent().html(getContactTypeSelectStr($(this).val()));
+    });
+    
+    //联系人td选中事件
+    $(document).on('click', '.data_tb tr:gt(0)', function() {
+    	if($(this).hasClass('td_selected')) {
+    		$(this).removeClass('td_selected');
+    	} else {
+	    	$(this).addClass('td_selected').siblings().removeClass('td_selected');
+    	}
+    });
+    
+});
+
+//初始化业务员信息
+function initSalesman() {
+    $.get(globalUtil.getTimestampUrl('/loancheck/getHeadSalesman.do?wms_cre_credit_head_id= '+ wms_cre_credit_head_id), null,
+       function(data) {
+           if(data) {
+        	   $("#salesman_name_str").val(data.salesman_name + '/' + data.salesman_shortcode);
+               $("#salesman_id").val(data.salesman_id);//业务员id
+               $("#salesman_code").val(data.salesman_code);//业务员工号
+               $("#salesman_name").val(data.salesman_name);//业务员姓名
+               $("#city").val(data.city);//城市
+               $("#salesman_city_code").val(data.salesman_city_code);//城市编码
+               $("#salesman_dept_id").val(data.salesman_dept_id);//部门id
+               $("#salesman_shortcode").val(data.salesman_shortcode);//短工号
+           }
+    });
+}
+
+//贷款客户表格初始化
+function initGrid(customerList) {
+	//客户信息toolbar
+    var toolbarItemData = [];
+    toolbarItemData.push({
+        text : '新增',
+        click: searchCustomer,
+        icon : 'add'
+    });
+    toolbarItemData.push({
+        line : true
+    });
+    toolbarItemData.push({
+        text : '修改',
+        click: modify,
+        icon : 'modify'
+    });
+    toolbarItemData.push({
+        line : true
+    });
+    toolbarItemData.push({
+        text : '删除',
+        click: deleteSelectedRow,
+        icon : 'delete'
+    });
+    toolbarItemData.push({
+        line : true
+    });
+    $("#centertoolbar").ligerToolBar({
+        items : toolbarItemData
+    });
+    
+    var toolbarItemData2 = [];
+    toolbarItemData2.push({
+        text : '新增',
+        click: addlinkmanbtn,
+        icon : 'add'
+    });
+    $("#centertoolbar2").ligerToolBar({
+        items : toolbarItemData2
+    });
+    columns = [ {
+        display : '客户姓名',
+        name : 'customer_name',
+        width : 110,
+        minWidth : 110,
+         //添加超链接的东西
+         render: function (rowdata, rowindex, value) { 
+             return '<a href="javascript:customerInfo(' + rowdata.wms_cre_credit_line_customer_change_head_id + ');" style="color:#056AFF;text-decoration: none;">' + value + '</a>';                    
+         }
+    }, {
+        display : '身份证号',
+        name : 'id_card',
+        width : 160,
+        minWidth : 160,
+    }, {
+        display: '是否为主贷人',
+        name: 'is_major',
+        width: 90,
+        minWidth : 160,
+        render: function (rowdata, rowindex, value) {
+            if(value == 0){
+                value = "否";
+            }else if(value == 1){
+                value = "是";
+            }
+            return value;
+        }
+    }, {
+        display: '电话号码1',
+        name: 'mobile_telephone1',
+        width: 130,
+        minWidth: 130
+    },{
+        display: '电话号码2',
+        name: 'mobile_telephone2',
+        width: 130,
+        minWidth: 130
+    }, {
+        display : '性别',
+        name : 'gender',
+        width : 40,
+        minWidth : 40, 
+        render: function (rowdata, rowindex, value) {
+            if(value == 1){
+                value = "男";
+            }else if(value == 0){
+                value = "女";
+            }
+            return value;
+        }
+    }, {
+        display : '录入时间',
+        name : 'create_timestamp',
+        width : 160,
+        minWidth : 160
+    }];
+
+    grid = $("#grid").ligerGrid({
+        columns : columns,
+        data: customerList,
+        sortOrder:'asc', // 排序方式
+        rownumbers : true,
+        allowUnSelectRow : true,
+        enabledEdit: true,
+        usePager : false,
+        width : '100%',
+        height : 160,
+        heightDiff : -4,
+        parms : {
+            _filterParms : -1
+        }
+    });
+    
+}
+
+//初始化客户信息
+function initCustomerList() {
+	var customerList = globalUtil.syncPostJson('/cremanage/wmscrecreditlinecustomerchangeheadwithoutpaginglist.do',
+        {
+            'wms_cre_credit_head_id': wms_cre_credit_head_id
+        },'POST');
+    return customerList;
+}
+
+//获取主贷人信息(从所有客户里获取)
+function getMajorCustomer(customerList) {
+	var majorCustomer;
+	$(customerList.Rows).each(function(i, o){
+		if(o.is_major == '1') {//主贷人
+			majorCustomer = o;
+		    return;
+		}
+	});
+	return majorCustomer;
+}
+
+//初始化贷款单据信息(wms_cre_credit_head)
+function initHouseLoanInfo() {
+	var houseLoanInfo = globalUtil.syncGetJson('/cremanage/wmscrecreditheadinfobypk.do',
+	{
+        'wms_cre_credit_head_id': wms_cre_credit_head_id
+    },'GET');
+    return houseLoanInfo;
+}
+
+//抵押房产信息初始化
+function initHouseInfo(majorHouseInfo) {
+    columnsdyfc = [{
+        display: '房产类型',
+        name: 'house_type',
+        align: 'center', // 默认居中
+        width: 200,
+        minWidth: 200
+    },{
+        display: '建筑面积（平方米）',
+        name: 'house_building_area',
+        align: 'center', // 默认居中
+        width: 110,
+        minWidth: 110
+    },{
+        display: '小区名称',
+        name: 'community_name',
+        align: 'center', // 默认居中
+        width: 100,
+        minWidth: 100
+    },{
+        display: '抵押房产地址',
+        name: 'house_address_more',
+        align: 'center', // 默认居中
+        width: 200,
+        minWidth: 200
+    }];
+    
+    griddyfc = $("#griddyfc").ligerGrid({ // maingrid为表格div所在id
+        data: majorHouseInfo,
+        columns: columnsdyfc,
+        allowAdjustColWidth: false,
+        allowUnSelectRow: true, // 是否允许反选列，可编辑表格不可反选，查询可反选（如上下表格联动时），默认为false
+        usePager: false, // 是否分页支持，默认为true
+        rownumbers: true,
+        width: '100%',
+        height: 100,
+        heightDiff: -4,
+        enabledEdit: true
+    });
+}
+
+//房屋贷款产品种类
+function init_cre_loan_type(houseLoanInfo) {
+    var productList = globalUtil.syncGetJson('/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=102', {},'GET');
+    $(productList).each(function(i, o) {
+    	$('#cre_loan_type').append('<option value=' + o.value_code + '>' + o.value_meaning + '</option>');
+    });
+    $('#cre_loan_type').val(houseLoanInfo.cre_loan_type);
+}
+
+//初始化联系人tab页
+function initLinkTab(customerList) {
+    var linkType;//联系人类型(主贷人/共同贷款人)
+    var linkPeopleList;
+    var liClass;
+    for(var i = 0; i < customerList.length; i++) {
+    	linkType = (customerList[i].is_major == '1') ? '主贷人' : '共同贷款人';
+    	liClass = (i == 0) ? 'l-selected-sub' : 'l-unselected-sub';
+	    $('#allLinkPeopleUl').append(
+    		'<li class="' + liClass + '" id=' + customerList[i].wms_cre_credit_line_customer_change_head_id + 
+	    		' name="' + customerList[i].customer_name + 
+	    		'" is_major="' + customerList[i].is_major + '">' +
+                '<a>' + linkType + '</a>' +
+                '<div class="l-tab-links-item-left-sub"></div>' +
+                '<div class="l-tab-links-item-right-sub"></div>' +
+            '</li>'
+	    );
+	    //添加联系人信息
+		linkPeopleList = [];
+		linkPeopleList = globalUtil.syncPostJson('/cremanage/searchContantList.do', 
+		    {
+		        'wms_cre_credit_line_customer_change_head_id': customerList[i].wms_cre_credit_line_customer_change_head_id,
+		        'sortname' : 'wms_cre_customer_change_line_contact_id',
+		        'sortorder' : 'asc'
+		    }, 'POST');
+	    var type = (linkPeopleList.Rows.length != 0) ? 0 : 1;
+	    addLinkPeople(type, customerList[i].wms_cre_credit_line_customer_change_head_id, linkPeopleList.Rows, customerList[i].is_major);
+    }
+}
+
+//获取联系人描述下拉列表
+function getContactTypeSelectStr(contact_type, contact_relation_description) {
+	return contact_type == 1 ? ('<select name="contact_relation_description">' +
+							       '<option value="1"' + (contact_relation_description == '1' ? 'selected=selected' : '') + '">父母</option>' +
+							       '<option value="2"' + (contact_relation_description == '2' ? 'selected=selected' : '') + '">子女</option>' +
+							       '<option value="3"' + (contact_relation_description == '3' ? 'selected=selected' : '') + '">配偶</option>' +
+							       '<option value="4"' + (contact_relation_description == '4' ? 'selected=selected' : '') + '>兄弟姐妹</option>' +
+							       '<option value="5"' + (contact_relation_description == '5' ? 'selected=selected' : '') + '">其他直系亲属</option>' +
+							   '</select>') :
+							   ('<select name="contact_relation_description">' +
+							       '<option value="1"' + (contact_relation_description == '1' ? 'selected=selected' : '') + '">同学</option>' +
+							       '<option value="2"' + (contact_relation_description == '2' ? 'selected=selected' : '') + '">同事</option>' +
+							       '<option value="3"' + (contact_relation_description == '3' ? 'selected=selected' : '') + '">朋友</option>' +
+							   '</select>');
+}
+
+//获取是否为直系亲属单选按钮
+function getContactTypeRadio(contact_type) {
+	return contact_type == 1 ? ('<input type="radio" class="radio5 contact_type" value="1" checked="checked" />是' +
+			   				    '<input type="radio" class="radio5 contact_type" value="0" />否') : 
+							   ('<input type="radio" class="radio5 contact_type" value="1" />是' +
+			   				    '<input type="radio" class="radio5 contact_type" value="0" checked="checked" />否');
+			
+}
+
+//添加联系人信息(type 0:初始化新增 1:保存客户信息后新增)
+function addLinkPeople(type, tabid, linkPeopleList, is_major) {
+	var display = '';
+	if(type == 0) {
+		if(is_major != '1') {
+			display = 'none';
+		}
+		var addHTML = 
+		    '<div class="center-content clearboth changeContact" id=' + tabid + ' style="min-width: 500px; margin-top: 0px; height: 350px; display:' + display + '">' +
+		        '<div class="center-title">联系人信息</div>' +
+		        '<div class="center-txt">' +
+		            '<div class="minwidth400 l-toolbar">' +
+		                '<div class="l-toolbar-item l-panel-btn l-toolbar-item-hasicon addContact" customer_id="' + tabid + '">' +
+		                    '<span>新增</span>' +
+			                '<div class="l-panel-btn-l"></div>' +
+			                '<div class="l-panel-btn-r"></div>' +
+			                '<div class="l-icon l-icon-add"></div>' +
+		                '</div>' +
+		                '<div class="l-toolbar-item l-panel-btn l-toolbar-item-hasicon deleteContact" customer_id="' + tabid + '">' +
+		                    '<span>删除</span>' +
+			                '<div class="l-panel-btn-l"></div>' +
+			                '<div class="l-panel-btn-r"></div>' +
+		                '<div class="l-icon l-icon-delete"></div>' +
+	           	    '</div>' +
+		        '</div>' +
+		        '<div style="height: 293px; overflow: auto;">' +
+		            '<table cellspacing="0" cellpadding="0" class="data_tb"' +
+		                'style="width: 100%; margin-left: 0px; margin-right: 15px; height: 25px">' +
+	                    '<tr class="tr_title">' +
+		                    '<td width="15%">是否直系亲属</td>' +
+		                    '<td width="15%">姓名</td>' +
+		                    '<td width="15%">关系</td>' +
+		                    '<td width="20%">移动电话及小号</td>' +
+		                '</tr>';
+	    for(var i = 0; i < linkPeopleList.length; i++) {
+	    	addHTML += '<tr>';
+	    	addHTML +=     '<td align="left" class="left_title">' +
+	    				       getContactTypeRadio(linkPeopleList[i].contact_type) +
+		    			   '</td>' +
+		    			   '<td>' +
+		                       '<input name="contact_name" type="text" value="' + linkPeopleList[i].contact_name + '" style="width: 150px;" />' +
+		                   '</td>' +
+		                   '<td>' +
+		                       getContactTypeSelectStr(linkPeopleList[i].contact_type, linkPeopleList[i].contact_relation_description) +
+		                   '</td>' +
+		                   '<td>' +
+		                       '<input name="contact_mobile_phone" type="text" style="width: 150px;" value="' + linkPeopleList[i].contact_mobile_phone + '" />-' +
+		                       '<input name="contact_mobile_phone_short" type="text" value="' + linkPeopleList[i].contact_mobile_phone_short + '" style="width: 50px;" maxlength="8" />' +
+		                       '<input name="is_major" type="hidden" value="' + is_major + '" />' +
+			                   '<input type="hidden" name="wms_cre_customer_change_line_contact_id" value="' + linkPeopleList[i].wms_cre_customer_change_line_contact_id + '" />' +
+				               '<input type="hidden" name="wms_cre_credit_line_customer_change_head_id" value="' + tabid + '" />';
+		                   '</td>';
+     	    addHTML += '</tr>';
+	    }
+	    addHTML += '</table></div></div>';
+	    $('#allLinkManDiv').append(addHTML);
+	} else if (type == 1) {
+		if(is_major != '1') {
+            display = 'none';
+        }
+		$('#allLinkManDiv').append(
+	        '<div class="center-content clearboth changeContact" id=' + tabid + ' style="min-width: 500px; margin-top: 0px; height: 350px; display:' + display + '">' +
+		        '<div class="center-title">联系人信息</div>' +
+		        '<div class="center-txt">' +
+			        '<div class="minwidth400 l-toolbar">' +
+		                '<div class="l-toolbar-item l-panel-btn l-toolbar-item-hasicon addContact" customer_id="' + tabid + '">' +
+		                    '<span>新增</span>' +
+			                '<div class="l-panel-btn-l"></div>' +
+			                '<div class="l-panel-btn-r"></div>' +
+			                '<div class="l-icon l-icon-add"></div>' +
+		                '</div>' +
+		                '<div class="l-toolbar-item l-panel-btn l-toolbar-item-hasicon deleteContact" customer_id="' + tabid + '">' +
+		                    '<span>删除</span>' +
+			                '<div class="l-panel-btn-l"></div>' +
+			                '<div class="l-panel-btn-r"></div>' +
+		                '<div class="l-icon l-icon-delete"></div>' +
+	       	    	'</div>' +
+		        '</div>' +
+		        '<div style="height: 293px; overflow: auto;">' +
+		            '<table cellspacing="0" cellpadding="0" class="data_tb"' +
+		                'style="width: 100%; margin-left: 0px; margin-right: 15px; height: 25px">' +
+		                '<tr class="tr_title">' +
+		                    '<td width="15%">是否直系亲属</td>' +
+		                    '<td width="15%">姓名</td>' +
+		                    '<td width="15%">关系</td>' +
+		                    '<td width="20%">移动电话及小号</td>' +
+		                '</tr>' +
+		            '</table>' +
+		        '</div>' +
+		    '</div>'		
+		);
+	}
+}
+
+//初始化上传附件表格
+function initAttTable() {
+    $.getJSON(globalUtil.getTimestampUrl('/sysmanage/getdictdatatreebean.do?p_wms_sys_dict_id=' + p_wms_sys_dict_id + '&wms_sys_dict_id=' + wms_sys_dict_id), {},
+	    function(att_json) {
+	        for(var i = 0;i < att_json.length; i++) {
+	            var data = att_json[i]
+	            var children = data.children;
+	            var row = document.getElementById("att_tb").insertRow(document.getElementById("att_tb").rows.length);
+	            var td1 = row.insertCell(0);
+	            td1.rowSpan = children.length;
+	            td1.className = 'title textright';
+	            td1.style.width = '100px';
+	            SCtitle.innerHTML = data.text;
+	            var data0 = children[0];
+	            
+	            var td2 = row.insertCell(1);
+	            td2.className = 'textleft';
+	            td2.style.width = '400px';
+	            td2.innerHTML = data0.text;
+	            
+	            var td3 = row.insertCell(2);
+	            td3.className = 'textleft';
+	            td3.style.width = '100px';
+	            td3.style.height = '100px';
+	            td3.innerHTML = '<input class="btn-uploadF" onmouseover="this.className=\'btn-uploadF-over\'" onmouseout="this.className=\'btn-uploadF\'" onmousedown="this.className=\'btn-uploadF-down\'" type="button" style="margin-right:7px;" onclick="openAddAttDialog('+data.id+','+data0.id+')" style="display:none" />';
+	            
+	            var td4 = row.insertCell(3);
+	            td4.className = 'textleft';
+	            td4.id = data0.id;
+	            td4.pid = data.id;
+	            for(var j = 1; j < children.length; j++) {
+	                var row_t = document.getElementById("att_tb").insertRow(document.getElementById("att_tb").rows.length);
+	                var td1_t = row_t.insertCell(0);
+	                td1_t.className = 'textleft';
+	                td1_t.style.width = '100px';
+	                td1_t.innerHTML = children[j].text;
+	                
+	                var td3_t = row_t.insertCell(1);
+	                td3_t.className = 'textleft';
+	                td3_t.style.width = '30px';
+	                td3_t.innerHTML = '<input class="btn-uploadF" onmouseover="this.className=\'btn-uploadF-over\'" onmouseout="this.className=\'btn-uploadF\'" onmousedown="this.className=\'btn-uploadF-down\'" type="button" style="margin-right:7px;" onclick="openAddAttDialog(' + data.id+',' + children[j].id + ')" style="display:none" />';
+	                td3_t.style.height = '100px';
+	                var td4_t = row_t.insertCell(2);
+	                td4_t.className = 'textleft';
+	                td4_t.id = children[j].id;
+	                td4_t.pid = data.id;
+	            }
+	        }
+	        //初始化附件信息
+	        initAttData();
+	    }
+    );
+}
+
+//初始化上传附件信息
+function initAttData() {
+	var addFileArray = [];
+	$.ajax({ 
+        type: "POST", 
+        url: global_param.context_name + "/cremanage/wmscrehousingapplyattwithoutpaginglist.do",
+        async: false,
+        dataType: "json",
+        data: {
+            wms_cre_credit_head_id : wms_cre_credit_head_id,
+            data_type_name : data_type_name
+        }, 
+        traditional: true,
+        success: function(data) {
+            $(data.Rows).each(function(i, o) {
+            	addFileArray = [];
+            	addFileArray.push(o);
+            	addAttFile(addFileArray, o.data_detail_name);
+            });
+            if(type == 1) {//如果是查看页面需要隐藏上传按钮
+				$(".btn-uploadF").hide();
+				$(".imgdelete").hide();//隐藏删除图片的x
+			}
+        }
+    });
+}
+
+//初始化抵押房产信息(主贷人的:手机提交过来的只有一个房产)
+function initMajorHouseInfo(majorCustomer) {
+	var major_house_info = globalUtil.syncPostJson('/cremanage/wmscrecustomerchangelinehouseinfowithoutpaginglist.do', 
+    {
+        'wms_cre_credit_line_customer_change_head_id': majorCustomer.wms_cre_credit_line_customer_change_head_id
+    },'POST');
+	return major_house_info;
+}
+
+//新增客户信息
+var scfcDialog;
+function searchCustomer() {
+    var url = globalUtil.getHtml("../clientManage/addCustomer.html?type=0&is_major=0&wms_cre_credit_head_id=" + wms_cre_credit_head_id);
+    scfcDialog = $.ligerDialog.open({
+        url : url,
+        title : '新增贷款客户',
+        width : 900,
+        height : globalUtil.setDialogHeight(570),
+        isResize : false
+    });
+}
+
+//修改客户信息
+function modify() {
+    //选择某一行的操作
+    var row = grid.getSelectedRow();
+    index = row.__index;
+    //判断是否为空    
+    if (row == null) {
+        globalUtil.warnMsg(globalErrorMsg['100000']);//请选择一行记录进行修改
+        return;
+    }
+    var url = globalUtil.getHtml("../clientManage/addCustomer.html?type=1&wms_cre_credit_line_customer_change_head_id=" + 
+    		row.wms_cre_credit_line_customer_change_head_id + 
+    		"&is_major=" + row.is_major + 
+    		"&wms_cre_credit_head_id=" + wms_cre_credit_head_id);
+    scfcDialog = $.ligerDialog.open({
+        url : url,
+        title : '修改用户信息',
+        width : 900,
+        height : globalUtil.setDialogHeight(570),
+        onHiddenOrClose : function() {
+        },
+        isResize : false
+    });
+}
+
+//查看客户信息
+function customerInfo(wms_cre_credit_line_customer_change_head_id) {
+	var url = globalUtil.getHtml("../clientManage/addCustomer.html?type=2&wms_cre_credit_line_customer_change_head_id=" + 
+			wms_cre_credit_line_customer_change_head_id + '&wms_cre_credit_head_id=' +
+			wms_cre_credit_head_id);
+    scfcDialog = $.ligerDialog.open({
+        url : url,
+        title : '新增贷款客户',
+        width : 900,
+        height : globalUtil.setDialogHeight(570),
+        isResize : false
+    });
+}
+
+//移除贷款客户数据
+function deleteSelectedRow() {
+    var row = grid.getSelectedRow();
+    if (!row) {
+        globalUtil.warnMsg(globalErrorMsg['100001']); //请选择一行记录进行删除
+        return;
+    }
+    if (row.is_major == '1') {
+        globalUtil.warnMsg(globalErrorMsg['300134']); //主贷人不能删除
+        return;
+    }
+    globalUtil.confirmMsg(globalErrorMsg['100016'],
+	    function(yes) { //确认删除
+	        if(yes) {
+	        	globalUtil.successMsg(globalErrorMsg['100005']);
+	            global_ligerui_extend.deleteSelectedRow(grid); //grid表格对象
+	            deleteCustomer(row.wms_cre_credit_line_customer_change_head_id);
+	            //修复删除当前选中联系人的tab页对应得客户时产生的问题
+	            if(row.wms_cre_credit_line_customer_change_head_id == $('.l-selected-sub').attr('id')) {
+	            	$('#allLinkPeopleUl li:first').click();
+	            }
+	            removeOtherTab(row.wms_cre_credit_line_customer_change_head_id);
+	        }
+	    }
+    );
+}
+
+//删除客户信息
+function deleteCustomer(wms_cre_credit_line_customer_change_head_id) {
+	$.ajax({ 
+        type: "POST", 
+        url: global_param.context_name + "/cremanage/wmsCustomerAllInfoDelete.do",
+        async: false,
+        dataType: "json",
+        data: {
+        	wms_cre_credit_line_customer_change_head_id : wms_cre_credit_line_customer_change_head_id
+        }, 
+        traditional: true,
+        success: function(data) {
+            
+        }
+    });
+}
+
+function addlinkmanbtn() {
+    addlinkman(false);
+}
+
+//删除tab页 
+function removeOtherTab(tabId) {
+	//$("#allLinkManDiv").ligerGetTabManager().removeTabItem(tabId);
+    //移除li
+    $('li[id=' + tabId + ']').remove();
+    //移除div
+    $('div[id=' + tabId + ']').remove();
+}
+
+//保存客户信息回调
+function saveCustomer(customerInfo, is_major, houseInfo, type) {
+	if(houseInfo.length > 0) { 
+		allHouseInfo.concat(houseInfo);
+	}
+	if(type == 0) {//新增
+		//添加客户信息
+		global_ligerui_extend.addRows(grid, customerInfo);
+	} else if(type == 1) { //修改
+		grid.updateRow(index, customerInfo);
+	}
+	if(is_major == 1) {//主贷人的房产更改
+		//修改抵押房产信息(目前仅显示不可编辑)
+		if(griddyfc.getData().length > 0) {
+		    griddyfc.updateRow(0, houseInfo[0]); 
+		} else {
+			global_ligerui_extend.addRows(griddyfc, houseInfo[0]);
+		}
+	} else if(type == 0) {
+		$('#allLinkPeopleUl').append(
+			'<li class="l-unselected-sub" id=' + customerInfo.wms_cre_credit_line_customer_change_head_id + 
+	    		' name="' + customerInfo.customer_name + 
+	    		'" is_major="' + customerInfo.is_major + '">' +
+                '<a>共同贷款人</a>' +
+                '<div class="l-tab-links-item-left-sub"></div>' +
+                '<div class="l-tab-links-item-right-sub"></div>' +
+            '</li>'
+        );
+		addLinkPeople(1, customerInfo.wms_cre_credit_line_customer_change_head_id);
+	}
+}
+
+//业务员选择
+var spfcDialog;
+function searchPersonnel() {
+    var url = globalUtil.getHtml("searchPersonnelForCredit.html");
+    spfcDialog = $.ligerDialog.open({
+        url: url,
+        title: '选择业务员',
+        width: 1000,
+        height: globalUtil.setDialogHeight(600),
+        isResize: false
+    });
+}
+
+//选择业务员回调赋值
+function getCheckedPersonnelAll(data) {
+	$("#salesman_name_str").attr("value", data.personnel_name + '/' + data.personnel_shortcode);
+    $("#salesman_name").attr("value", data.personnel_name);
+    $("#salesman_id").attr("value", data.personnel_id);
+    $("#salesman_code").attr("value", data.personnel_code);
+    $("#city").attr("value", data.city);
+    $("#salesman_city_code").attr("value", data.personnel_regionnumber);
+    $("#salesman_dept_id").attr("value", data.personnel_deptid);
+    $("#salesman_shortcode").attr("value", data.personnel_shortcode);
+}
+
+//打开附件上传页面
+function openAddAttDialog(data_type_name, data_detail_name) {
+    var url = globalUtil.getHtml("addFileForCre.html?data_type_name=" + data_type_name + "&data_detail_name=" + data_detail_name);
+    dialog_att = $.ligerDialog.open({
+        url: url,
+        title: '上传附件',
+        width: 650,
+        height: globalUtil.setDialogHeight(250),
+        onHiddenOrClose: function(){
+            
+        },
+        isResize: false
+    });
+}
+
+//添加上传文件的信息链接
+function addAttFile(newfileArr, objid) {
+    fileArr = fileArr.concat(newfileArr);
+    var filehtml = '';
+    for(var i = 0;i < newfileArr.length; i++) {
+        var nnme = newfileArr[i].attachment_new_name.replace('/', 'thxg1');
+        nnme = nnme.replace('/', 'thxg2');
+        filehtml += '<div id="delUploadDivId' + nnme + '">';
+        filehtml += '<a target="_blank" href="' + global_param.upload_file_url + newfileArr[i].attachment_address + '">' + newfileArr[i].attachment_old_name + '</a>';
+        filehtml += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\'' + nnme + '\', ' + newfileArr[i].wms_cre_housing_apply_att_id + ')" class="imgdelete"/>';
+        filehtml += '</div>';
+    }
+    $("#" + objid).append(filehtml);
+}
+
+//删除上传文件信息
+function deleteFile(filename, id) {
+    $.ligerDialog.confirm(globalErrorMsg['100016'],
+	    function(yes) {
+	        if (yes) {
+	            $("#delUploadDivId" + filename).remove();
+	            filename = filename.replace('thxg1', '/');
+	            filename = filename.replace('thxg2', '/');
+	            for(var i = 0; i < fileArr.length; i++) {
+	                if(filename == fileArr[i].attachment_new_name) {
+	                    fileArr.splice(i, 1);
+	                    break;
+	                }
+	            }
+	            deleteAttIds.push(id);
+	        }                                            
+	    }
+    );
+}
+
+//切换tab页
+function changeTab(id) {
+    var dkinfo = document.getElementById("dkinfo"); //贷款信息tab
+    var cspginfo = document.getElementById("cspginfo"); //初审评估表tab
+    var khinfo = document.getElementById("khinfo"); //客户信息tab
+    if (id == 'dkinfo') {
+        document.getElementById("tabbody1").className = "tabbody1";
+        document.getElementById("tabbody2").className = "tabbody2";
+        document.getElementById("tabbody3").className = "tabbody2";
+        dkinfo.style.display = '';
+        cspginfo.style.display = 'none';
+        khinfo.style.display = 'none';
+    } else if (id == 'cspginfo') {
+        document.getElementById("tabbody1").className = "tabbody2";
+        document.getElementById("tabbody2").className = "tabbody2";
+        document.getElementById("tabbody3").className = "tabbody1";
+        dkinfo.style.display = 'none';
+        cspginfo.style.display = '';
+        khinfo.style.display = 'none';
+    } else if (id == 'khinfo'){
+        document.getElementById("tabbody1").className = "tabbody2";
+        document.getElementById("tabbody2").className = "tabbody1";
+        document.getElementById("tabbody3").className = "tabbody2";
+        dkinfo.style.display = 'none';
+        cspginfo.style.display = 'none';
+        khinfo.style.display = '';
+    }
+}
+
+//暂存/提交
+function save(flag) {
+	houseLoanInfo.cre_loan_type = $('#cre_loan_type').val();
+	houseLoanInfo.credit_limit = $('#credit_limit').val();
+	houseLoanInfo.max_repayment_time_limit = $('#max_repayment_time_limit').val();
+	houseLoanInfo.loan_interest_rate = $('#loan_interest_rate').val();
+	houseLoanInfo.salesman_name = $('#salesman_name').val();
+	houseLoanInfo.salesman_id = $('#salesman_id').val();
+	houseLoanInfo.salesman_code = $('#salesman_code').val();
+	houseLoanInfo.city = $('#city').val();
+	houseLoanInfo.salesman_city_code = $('#salesman_city_code').val();
+	houseLoanInfo.salesman_dept_id = $('#salesman_dept_id').val();
+	houseLoanInfo.salesman_shortcode = $('#salesman_shortcode').val();
+	houseLoanInfo.credit_purpose = $('#credit_purpose').val();
+
+	houseLoanInfo.enable_flag = '1';
+	houseLoanInfo = removeDateDataForObj(houseLoanInfo);
+	reqVO.houseLoanInfo = JSON.stringify(houseLoanInfo);
+	reqVO.type = flag;
+	
+	var tempContactInfo = {};
+	var contactPeopleArray = [];
+	//判断是否主贷人联系人信息全部为空 true 为不是 false为全部空
+	var is_not_null = false; 
+	//判断是否有填写联系人
+	$('#allLinkManDiv tr[class!=tr_title]').each(function(i, o) {
+		//判断是否主贷人
+		if($(this).find('input[name=is_major]').val() === '1') {
+			//联系人姓名
+			if($(this).find('input[name=contact_name]').val() != null && $(this).find('input[name=contact_name]').val() != "") {
+				is_not_null = true;
+				return false;
+			}
+			//联系人关系
+			if($(this).find('input[name=contact_relation_description]').val() != null && $(this).find('input[name=contact_relation_description]').val() != "") {
+				is_not_null = true;
+				return false;
+			}
+			//联系人手机号
+			if($(this).find('input[name=contact_mobile_phone]').val() != null && $(this).find('input[name=contact_mobile_phone]').val() != "") {
+				is_not_null = true;
+				return false;
+			}
+		}
+	});
+	
+	//是否终止提交信息--判断控制
+	var is_null = true;
+	$('#allLinkManDiv tr[class!=tr_title]').each(function(i, o) {
+		tempContactInfo = {};
+		tempContactInfo.contact_type = $(this).find('input[type=radio]:checked').val();
+		var is_major = $(this).find('input[name=is_major]').val();
+		//联系人姓名
+		if(is_not_null && ($(this).find('input[name=contact_name]').val() == null || $(this).find('input[name=contact_name]').val() == "") && is_major === "1") {
+			is_null = false;
+			//请填写联系人姓名
+            globalUtil.warnMsg(globalErrorMsg['400116']);
+            return false;
+		}
+		tempContactInfo.contact_name = $(this).find('input[name=contact_name]').val();
+		//联系人关系
+		if(is_not_null && ($(this).find('[name=contact_relation_description]').val() == null || $(this).find('[name=contact_relation_description]').val() == "") && is_major === "1") {
+			is_null = false;
+			//请填写联系人关系
+            globalUtil.warnMsg(globalErrorMsg['400117']);
+            return false;
+		}
+		tempContactInfo.contact_relation_description = $(this).find('[name=contact_relation_description]').val();
+		//联系人手机号
+		if(is_not_null && ($(this).find('input[name=contact_mobile_phone]').val() == null || $(this).find('input[name=contact_mobile_phone]').val() == "") && is_major === "1") {
+			is_null = false;
+			//请填写联系人手机号
+            globalUtil.warnMsg(globalErrorMsg['400118']);
+            return false;
+		}
+		tempContactInfo.contact_mobile_phone = $(this).find('input[name=contact_mobile_phone]').val();
+		//主贷人字段
+		if($(this).find('input[name=is_major]').val() == 'undefined') {
+			tempContactInfo.is_major = '0';
+		} else {
+			tempContactInfo.is_major = $(this).find('input[name=is_major]').val();
+		}
+		tempContactInfo.contact_mobile_phone_short = $(this).find('input[name=contact_mobile_phone_short]').val();
+		tempContactInfo.wms_cre_customer_change_line_contact_id = $(this).find('input[name=wms_cre_customer_change_line_contact_id]').val();
+		tempContactInfo.wms_cre_credit_head_id = wms_cre_credit_head_id;
+		tempContactInfo.wms_cre_credit_line_customer_change_head_id = $(this).find('input[name=wms_cre_credit_line_customer_change_head_id]').val();
+		
+		//客户姓名
+		if($('#' + tempContactInfo.wms_cre_credit_line_customer_change_head_id).attr('name') != '') {
+			tempContactInfo.customer_name = $('#' + tempContactInfo.wms_cre_credit_line_customer_change_head_id).attr('name');
+		}
+		//是否为主贷人
+		if($('#' + tempContactInfo.wms_cre_credit_line_customer_change_head_id).attr('is_major') != '') {
+			tempContactInfo.is_major = $('#' + tempContactInfo.wms_cre_credit_line_customer_change_head_id).attr('is_major');
+		}
+		
+		contactPeopleArray.push(tempContactInfo);
+	});
+	
+	//终止提交数据
+	if(!is_null) {
+		return;
+	}
+
+	reqVO.contactPeopleString = JSON.stringify(contactPeopleArray);
+	reqVO.deleteContactIdArray = deleteContactIdArray;
+    reqVO.attListJsonString = JSON.stringify(fileArr);
+	
+    reqVO.wms_cre_credit_head_id = wms_cre_credit_head_id;
+    reqVO.data_type_name = data_type_name;//当前页面显示图片的类别
+    reqVO.deleteAttIds = deleteAttIds;//附件删除的主键数组
+	$.ajax({ 
+        type: "POST", 
+        url: global_param.context_name + "/loancheck/saveHouseLoan.do",
+        async: false,
+        dataType: "json",
+        data: reqVO, 
+        traditional: true,
+        success: function(data) {
+            var result = data.result;
+            if(result == 'success') {
+                //保存成功
+                globalUtil.successMsg(globalErrorMsg['100002'], function() {
+                	window.parent.closeDialog();
+                });
+            } else if(result == 'error') {
+                //保存失败
+                globalUtil.errorMsg(globalErrorMsg['100012']);
+            }
+        }
+    });
+	
+}
+
+//取消
+function cancel() {
+	try {
+		window.parent.closeDialog();
+	} catch(err) {
+		try {
+			globalUtil.closeCurrentTab();
+		} catch(e) {
+			try {
+				window.close();
+			} catch(e) {
+				
+			}
+		}	
+	}
+}
+
+//移除日期类型属性(对象)
+function removeDateDataForObj(obj) {
+    for(var i in obj) {
+        if(i.indexOf('timestamp') > 0 || i.indexOf('date') > 0) {
+            obj[i] = undefined;
+        }
+    }
+    return obj;
+}
+
+//打开显示全部图片
+var jqueryViewJson = [];
+</script>    
+</body>
+</html>

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.cremanage.persist.WmsCreHousingCustomerHouseDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="long" resultType="WmsCreHousingCustomerHouse">
+		select
+		id,
+		wms_cre_credit_head_id,
+		wms_cre_customer_change_line_houseinfo_id,
+		house_use,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp
+		from
+		wms_cre_housing_customer_house
+		where
+		id = #{id}
+	</select>
+
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(id) as count
+		from wms_cre_housing_customer_house
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		id,
+		wms_cre_credit_head_id,
+		wms_cre_customer_change_line_houseinfo_id,
+		house_use,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp
+		wms_cre_housing_customer_house
+		<where>
+			<if test="paramname != null">
+				<!-- and columnName = #{columnName} -->
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- list -->
+	<select id="searchHCHBYMccid" parameterType="map" resultType="java.util.HashMap">
+		select
+		m1.id,
+		m1.wms_cre_credit_head_id,
+		m1.wms_cre_customer_change_line_houseinfo_id,
+		m1.house_use,
+		m1.create_user_id,
+		m1.create_user_name,
+		date_format(m1.create_timestamp, '%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		m1.create_timestamp,
+		m1.last_update_user_id,
+		m2.house_buy_date,
+		m2.house_buy_money,
+		m2.house_building_area,
+		IFNULL(m2.house_address_province, '') as house_address_province,
+		IFNULL(m2.house_address_city, '') as house_address_city,
+		IFNULL(m2.house_address_district, '') as house_address_district,
+		IFNULL(m2.house_address_street, '') as house_address_street,
+		IFNULL(m2.house_address_more, '') as house_address_more,
+		(CASE m3.version_number 
+		 WHEN '2' THEN CONCAT(IFNULL(m2.house_address_province, ''), IFNULL(m2.house_address_city, ''), IFNULL(m2.house_address_district, ''), IFNULL(m2.house_address_street, ''), IFNULL(m2.house_address_more, ''))
+		 ELSE CONCAT(
+		             IF(m2.house_address_province IS NULL, '', (case right(m2.house_address_province,1) when '省' then m2.house_address_province else  CONCAT(m2.house_address_province, '省') end )),
+					 IF(m2.house_address_city IS NULL, '', (case right(m2.house_address_city,1) when '市' then m2.house_address_city else  CONCAT(m2.house_address_city, '市') end )), 
+					 IF(m2.house_address_district IS NULL, '', (case right(m2.house_address_district,1) when '区' then m2.house_address_district else  CONCAT(m2.house_address_district, '区') end)), 
+					 IF(m2.house_address_street IS NULL, '', m2.house_address_street), 
+					 IF(m2.house_address_more IS NULL, '', m2.house_address_more)
+					)
+		  END) as house_address,
+		m2.house_type,
+		m2.house_no,
+		m2.house_vol_no,
+		m2.community_name
+		from wms_cre_housing_customer_house m1, wms_cre_customer_change_line_houseinfo m2, wms_cre_credit_head m3
+		<where>
+			m1.wms_cre_customer_change_line_houseinfo_id = m2.wms_cre_customer_change_line_houseinfo_id and
+			m1.wms_cre_credit_head_id = m3.wms_cre_credit_head_id
+			<if test="wms_cre_credit_head_id != null">
+				and m1.wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+		</where>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsCreHousingCustomerHouse"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+		wms_cre_housing_customer_house
+		(
+		id,
+
+		wms_cre_credit_head_id,
+
+		wms_cre_customer_change_line_houseinfo_id,
+
+		house_use,
+
+		create_user_id,
+
+		create_user_name,
+
+		create_timestamp,
+
+		last_update_user_id,
+
+		last_update_timestamp
+		)
+		VALUES
+		(
+		#{id},
+		#{wms_cre_credit_head_id},
+		#{wms_cre_customer_change_line_houseinfo_id},
+		#{house_use},
+		#{create_user_id},
+		#{create_user_name},
+		#{create_timestamp},
+		#{last_update_user_id},
+		#{last_update_timestamp}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsCreHousingCustomerHouse">
+		update wms_cre_housing_customer_house
+		<set>
+			<if test="id != null">
+				id = #{id},
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				wms_cre_credit_head_id = #{wms_cre_credit_head_id},
+			</if>
+			<if test="wms_cre_customer_change_line_houseinfo_id != null">
+				wms_cre_customer_change_line_houseinfo_id = #{wms_cre_customer_change_line_houseinfo_id},
+			</if>
+			<if test="house_use != null">
+				house_use = #{house_use},
+			</if>
+			<if test="create_user_id != null">
+				create_user_id = #{create_user_id},
+			</if>
+			<if test="create_user_name != null">
+				create_user_name = #{create_user_name},
+			</if>
+			<if test="create_timestamp != null">
+				create_timestamp = #{create_timestamp},
+			</if>
+			<if test="last_update_user_id != null">
+				last_update_user_id = #{last_update_user_id},
+			</if>
+			<if test="last_update_timestamp != null">
+				last_update_timestamp = #{last_update_timestamp},
+			</if>
+		</set>
+		where
+		id = #{id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsCreHousingCustomerHouse"
+		resultType="WmsCreHousingCustomerHouse">
+		select
+		id,
+		wms_cre_credit_head_id,
+		wms_cre_customer_change_line_houseinfo_id,
+		house_use,
+		create_user_id,
+		create_user_name,
+		date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+		create_timestamp,
+		last_update_user_id,
+		date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+		last_update_timestamp
+		from
+		wms_cre_housing_customer_house
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="wms_cre_credit_head_id != null">
+				and wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+			</if>
+			<if test="wms_cre_customer_change_line_houseinfo_id != null">
+				and wms_cre_customer_change_line_houseinfo_id =
+				#{wms_cre_customer_change_line_houseinfo_id}
+			</if>
+			<if test="house_use != null">
+				and house_use = #{house_use}
+			</if>
+			<if test="create_user_id != null">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="create_user_name != null">
+				and create_user_name = #{create_user_name}
+			</if>
+			<if test="create_timestamp != null">
+				and create_timestamp = #{create_timestamp}
+			</if>
+			<if test="last_update_user_id != null">
+				and last_update_user_id = #{last_update_user_id}
+			</if>
+			<if test="last_update_timestamp != null">
+				and last_update_timestamp = #{last_update_timestamp}
+			</if>
+			<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+				and id != #{id}
+			</if>
+		</where>
+	</select>
+	<delete id="deleteByMap" parameterType="map">
+		delete from wms_cre_housing_customer_house
+		<where>
+			<if test="dltIDArr !=null">
+				and wms_cre_credit_head_id in
+				<foreach collection="dltIDArr" item="wms_cre_credit_head_id"
+					index="index" open="(" separator="," close=")">
+					#{wms_cre_credit_head_id}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+	
+	
+	
+	
+	<select id="getwmscrehousingcustomerhouseinfo" parameterType="Integer" resultType="java.util.HashMap">
+		select 
+			t1.id,
+			t1.wms_cre_credit_head_id,
+			t1.wms_cre_customer_change_line_houseinfo_id,
+			t1.house_use,
+			t2.house_buy_date,
+			t2.house_buy_money,
+			t2.community_name,
+			t2.house_age,
+			t2.house_building_area
+			FROM wms_cre_housing_customer_house t1 
+			INNER JOIN
+			wms_cre_customer_change_line_houseinfo t2
+			where
+			t1.wms_cre_customer_change_line_houseinfo_id=t2.wms_cre_customer_change_line_houseinfo_id
+			AND
+			t1.wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+	</select>
+	
+	<select id="searchWmsCreCustomerChangeLineHouseinfoId" parameterType="int"
+		resultType="WmsCreHousingCustomerHouse">
+		select
+			id,
+			wms_cre_credit_head_id,
+			wms_cre_customer_change_line_houseinfo_id,
+			house_use,
+			create_user_id,
+			create_user_name,
+			date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+			create_timestamp,
+			last_update_user_id,
+			date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+			last_update_timestamp
+			from
+			wms_cre_housing_customer_house
+		where
+			wms_cre_credit_head_id = #{wms_cre_credit_head_id}
+	</select>
+		<!-- 获取表信息 -->
+	<select id="getCopyInfo" parameterType="Integer" resultType="WmsCreHousingCustomerHouse">
+		select *
+		from wms_cre_housing_customer_house
+		where
+		wms_cre_credit_head_id=#{wms_cre_credit_head_id}
+	</select>
+	
+</mapper> 

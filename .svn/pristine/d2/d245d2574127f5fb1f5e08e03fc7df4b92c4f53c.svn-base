@@ -1,0 +1,411 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+	xmlns:o="urn:schemas-microsoft-com:office:office"
+	xmlns:w="urn:schemas-microsoft-com:office:word"
+	xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
+	xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 12">
+<meta name=Originator content="Microsoft Word 12">
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script type="text/javascript" charset="utf-8"
+	src="../../js/media/js/ZeroClipboard.js"></script>
+<style>
+.text {
+	border-bottom: #666 1px solid;
+	border-left-width: 0px;
+	border-right-width: 0px;
+	border-top-width: 0px;
+	font-size: 15;
+}
+
+<!-- /* Font Definitions */
+@font-face {
+	font-family: 宋体;
+	panose-1: 2 1 6 0 3 1 1 1 1 1;
+	mso-font-alt: SimSun;
+	mso-font-charset: 134;
+	mso-generic-font-family: auto;
+	mso-font-pitch: variable;
+	mso-font-signature: 3 680460288 22 0 262145 0;
+}
+
+@font-face {
+	font-family: "Cambria Math";
+	panose-1: 2 4 5 3 5 4 6 3 2 4;
+	mso-font-charset: 1;
+	mso-generic-font-family: roman;
+	mso-font-format: other;
+	mso-font-pitch: variable;
+	mso-font-signature: 0 0 0 0 0 0;
+}
+
+@font-face {
+	font-family: Calibri;
+	panose-1: 2 15 5 2 2 2 4 3 2 4;
+	mso-font-charset: 0;
+	mso-generic-font-family: swiss;
+	mso-font-pitch: variable;
+	mso-font-signature: -520092929 1073786111 9 0 415 0;
+}
+
+@font-face {
+	font-family: "\@宋体";
+	panose-1: 2 1 6 0 3 1 1 1 1 1;
+	mso-font-charset: 134;
+	mso-generic-font-family: auto;
+	mso-font-pitch: variable;
+	mso-font-signature: 3 680460288 22 0 262145 0;
+}
+/* Style Definitions */
+p.MsoNormal,li.MsoNormal,div.MsoNormal {
+	mso-style-unhide: no;
+	mso-style-qformat: yes;
+	mso-style-parent: "";
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	text-align: justify;
+	text-justify: inter-ideograph;
+	mso-pagination: none;
+	font-size: 10.5pt;
+	mso-bidi-font-size: 11.0pt;
+	font-family: "Calibri", "sans-serif";
+	mso-ascii-font-family: Calibri;
+	mso-ascii-theme-font: minor-latin;
+	mso-fareast-font-family: 宋体;
+	mso-fareast-theme-font: minor-fareast;
+	mso-hansi-font-family: Calibri;
+	mso-hansi-theme-font: minor-latin;
+	mso-bidi-font-family: "Times New Roman";
+	mso-bidi-theme-font: minor-bidi;
+	mso-font-kerning: 1.0pt;
+}
+
+p.MsoHeader,li.MsoHeader,div.MsoHeader {
+	mso-style-noshow: yes;
+	mso-style-priority: 99;
+	mso-style-link: "页眉 Char";
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	text-align: center;
+	mso-pagination: none;
+	tab-stops: center 207.65pt right 415.3pt;
+	layout-grid-mode: char;
+	border: none;
+	mso-border-bottom-alt: solid windowtext .75pt;
+	padding: 0cm;
+	mso-padding-alt: 0cm 0cm 1.0pt 0cm;
+	font-size: 9.0pt;
+	font-family: "Calibri", "sans-serif";
+	mso-ascii-font-family: Calibri;
+	mso-ascii-theme-font: minor-latin;
+	mso-fareast-font-family: 宋体;
+	mso-fareast-theme-font: minor-fareast;
+	mso-hansi-font-family: Calibri;
+	mso-hansi-theme-font: minor-latin;
+	mso-bidi-font-family: "Times New Roman";
+	mso-bidi-theme-font: minor-bidi;
+	mso-font-kerning: 1.0pt;
+}
+
+p.MsoFooter,li.MsoFooter,div.MsoFooter {
+	mso-style-noshow: yes;
+	mso-style-priority: 99;
+	mso-style-link: "页脚 Char";
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	mso-pagination: none;
+	tab-stops: center 207.65pt right 415.3pt;
+	layout-grid-mode: char;
+	font-size: 9.0pt;
+	font-family: "Calibri", "sans-serif";
+	mso-ascii-font-family: Calibri;
+	mso-ascii-theme-font: minor-latin;
+	mso-fareast-font-family: 宋体;
+	mso-fareast-theme-font: minor-fareast;
+	mso-hansi-font-family: Calibri;
+	mso-hansi-theme-font: minor-latin;
+	mso-bidi-font-family: "Times New Roman";
+	mso-bidi-theme-font: minor-bidi;
+	mso-font-kerning: 1.0pt;
+}
+
+span.Char {
+	mso-style-name: "页眉 Char";
+	mso-style-noshow: yes;
+	mso-style-priority: 99;
+	mso-style-unhide: no;
+	mso-style-locked: yes;
+	mso-style-link: 页眉;
+	mso-ansi-font-size: 9.0pt;
+	mso-bidi-font-size: 9.0pt;
+}
+
+span.Char0 {
+	mso-style-name: "页脚 Char";
+	mso-style-noshow: yes;
+	mso-style-priority: 99;
+	mso-style-unhide: no;
+	mso-style-locked: yes;
+	mso-style-link: 页脚;
+	mso-ansi-font-size: 9.0pt;
+	mso-bidi-font-size: 9.0pt;
+}
+
+.MsoChpDefault {
+	mso-style-type: export-only;
+	mso-default-props: yes;
+	mso-bidi-font-family: "Times New Roman";
+	mso-bidi-theme-font: minor-bidi;
+}
+/* Page Definitions */
+@page {
+	mso-page-border-surround-header: no;
+	mso-page-border-surround-footer: no;
+	mso-footnote-separator: url("结清证明打印.files/header.htm") fs;
+	mso-footnote-continuation-separator: url("结清证明打印.files/header.htm") fcs;
+	mso-endnote-separator: url("结清证明打印.files/header.htm") es;
+	mso-endnote-continuation-separator: url("结清证明打印.files/header.htm") ecs;
+}
+
+@page Section1 {
+	size: 595.3pt 841.9pt;
+	margin: 72.0pt 90.0pt 72.0pt 90.0pt;
+	mso-header-margin: 42.55pt;
+	mso-footer-margin: 49.6pt;
+	mso-paper-source: 0;
+	layout-grid: 15.6pt;
+}
+
+div.Section1 {
+	page: Section1;
+}
+
+.btn-print,.btn-print-over,.btn-print-down {
+	background-image: url(../images/btn/btn-77x22.png);
+	background-color: transparent;
+	background-repeat: no-repeat;
+	width: 77px;
+	height: 22px;
+	border-width: 0;
+	cursor: pointer;
+}
+/*打印*/
+.btn-print {
+	background-position: 0 -748px;
+}
+
+.btn-print-over,.btn-print-down {
+	background-position: 0 -770px;
+}
+/*打印按钮*/
+.btn-printB,.btn-printB-over,.btn-printB-down {
+	background-image: url(../../images/btn/print-160x42.png);
+	background-color: transparent;
+	background-repeat: no-repeat;
+	width: 160px;
+	height: 42px;
+	border-width: 0;
+	cursor: pointer;
+}
+
+.btn-printB {
+	background-position: 0 0;
+}
+
+.btn-printB-over,.btn-printB-down {
+	background-position: 0 -42px;
+}
+</style>
+<script type="text/javascript">
+   $(function(){
+	   $("input[type=text]").attr({
+			"disabled" : "disabled"
+		});
+       //获取前台传递的表单数据
+ 	  	var wms_cre_credit_head_id=$.query.get("wms_cre_credit_head_id");
+ 	  	$.getJSON(globalUtil.getTimestampUrl('/loanpost/getWmsPostforClearById.do'),
+ 			  {'wms_cre_credit_head_id':wms_cre_credit_head_id},
+ 			  function(datajson){
+ 			 	   /*1.借款人debtor_name
+ 			     	2.身份证号debtor_identity_id
+ 			     	3.某年某月某日protocol_creat_date
+ 			     	4.贷款金额protocol_amount
+ 			     	5.合同编号protocol_code
+ 			     	6.还款银行refund_bank
+ 			     	7.还款账号refund_number
+ 			     	8.还款日每月refund_day
+ 			     	9.每月还款金额refund_limit_month
+ 			     	10.已还款xx期repay_period
+ 			     	11.尚欠本金0
+ 			     	12.尚欠滞纳金0
+ 			     	13.退换利息xx期back_interest_period
+ 			     	14.退换金额back_ammont
+ 			     	15.共计金额protocol_amount
+ 			     	16.现于xx年xx月xx日 结清还款clean_up_date_str
+ 			   		*/
+ 		 	   		//借款日期
+	 		 	   datajson.protocel_creat_year=datajson.protocol_creat_date.split("-")[0];
+	 		 	   datajson.protocel_creat_mouth=datajson.protocol_creat_date.split("-")[1];
+	 		 	   datajson.protocel_creat_day=datajson.protocol_creat_date.split("-")[2];
+	 		 	   //结清日期
+	 		 	   datajson.clean_up_date_str_year=datajson.clean_up_date_str.split("-")[0];
+	 		 	   datajson.clean_up_date_str_mouth=datajson.clean_up_date_str.split("-")[1];
+	 		 	   datajson.clean_up_date_str_day=datajson.clean_up_date_str.split("-")[2];
+	 		 	   globalUtil.setFormVal("jqPrint", datajson);
+	 		 	   $("#sqbenjin").val("0");
+	 		 	   $("#sqznjin").val("0");
+ 	  });
+
+   });
+   //实现打印功能
+   function printLoan(){
+		$("#dybtn").hide();
+		document.execCommand("print");
+		$("#dybtn").show();
+	}
+ </script>
+</head>
+
+<body lang=ZH-CN
+	style='tab-interval: 21.0pt; text-justify-trim: punctuation'>
+
+	<div id="jqPrint" class="pop-formDiv clearfix"
+		style="margin: 5px; margin-top: 25px;">
+		<div class=Section1 style='layout-grid: 15.6pt'>
+
+			<p class=MsoNormal align=center style='text-align: center'>
+				<b style='mso-bidi-font-weight: normal'><span
+					style='font-size: 22.0pt; font-family: 宋体; mso-ascii-font-family: Calibri; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-font-family: Calibri; mso-hansi-theme-font: minor-latin'>贷款结清证明</span></b><b
+					style='mso-bidi-font-weight: normal'><span lang=EN-US
+					style='font-size: 22.0pt'><o:p></o:p></span></b>
+			</p>
+
+			<p class=MsoNormal>
+				<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+					style='font-size: 12.0pt'><o:p>&nbsp;</o:p></span></b>
+			</p>
+
+			<p class=MsoNormal>
+				<b style='mso-bidi-font-weight: normal'> <span lang=EN-US
+					style='font-size: 12.0pt'><span style='mso-tab-count: 2'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</span></span></b><span
+					style='font-size: 14.0pt; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+					兹借款人<span lang=EN-US><input type="text" size="20"
+						class="text" id="debtor_name" /></span> 身份证号码:<span lang=EN-US><input
+						type="text" size="18" class="text" id="debtor_identity_id" />,</span>于<span
+					lang=EN-US><input type="text" size="8" class="text"
+						id="protocel_creat_year" /></span>年<span lang=EN-US><input
+						type="text" size="5" class="text" id="protocel_creat_mouth" /></span>月<span
+					lang=EN-US><input type="text" size="5" class="text"
+						id="protocel_creat_day" /></span>日<span lang=EN-US>,</span> 在我公司贷款<span
+					lang=EN-US><input type="text" size="20" class="text"
+						id="protocol_amount" /></span>元整<span lang=EN-US>,</span> 贷款合同编号<span
+					lang=EN-US>:<input type="text" size="25" class="text"
+						id="protocol_code" />,
+				</span> 还款银行：<span lang=EN-US><input type="text" size="25"
+						class="text" id="refund_bank" />,</span> 还款账号<span lang=EN-US>:<input
+						type="text" size="25" class="text" id="refund_number" />,
+				</span> 还款日每月<span lang=EN-US><input type="text" size="5"
+						class="text" id="refund_day" /></span>日<span lang=EN-US>,</span> 每月还款金额<span
+					lang=EN-US><input type="text" size="20" class="text"
+						id="refund_limit_month" /></span>元<span lang=EN-US>,</span> 已还款<span
+					lang=EN-US><input type="text" size="10" class="text"
+						id="repay_period" /></span>期<span lang=EN-US>,</span> 尚欠本金<span
+					lang=EN-US><input type="text" size="5" class="text"
+						id="sqbenjin" /></span>元, 尚欠滞纳金<span lang=EN-US><input type="text"
+						size="5" class="text" id="sqznjin" /></span>元<span lang=EN-US>,</span>
+					退还利息<span lang=EN-US><input type="text" size="5"
+						class="text" id="back_interest_period" /></span>期, 退还金额<span lang=EN-US><input
+						type="text" size="15" class="text" id="back_ammont" /></span>元, 共计金额<span
+					lang=EN-US><input type="text" size="15" class="text"
+						id="protocol_amount" /></span>元。 现于<span lang=EN-US><input
+						type="text" size="8" class="text" id="clean_up_date_str_year" /></span> 年<span
+					lang=EN-US><input type="text" size="5" class="text"
+						id="clean_up_date_str_mouth" /></span> 月<span lang=EN-US><input
+						type="text" size="5" class="text" id="clean_up_date_str_day" /></span>
+					日，结清还款。再与我公司无任何债务关系。<span lang=EN-US><o:p></o:p></span>
+				</span>
+			</p>
+			<p class=MsoNormal>
+				<span lang=EN-US
+					style='font-size: 14.0pt; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+			</p>
+
+			<p class=MsoNormal align=center style='text-align: center'>
+				<span
+					style='font-size: 14.0pt; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>特此证明！<span
+					lang=EN-US><o:p></o:p></span></span>
+			</p>
+
+			<p class=MsoNormal align=center style='text-align: center'>
+				<span lang=EN-US
+					style='font-size: 14.0pt; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+			</p>
+
+			<p class=MsoNormal>
+				<span
+					style='font-size: 14.0pt; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>说明<span
+					lang=EN-US>:</span>本表一式二份，客户、我司各一份。<span lang=EN-US><o:p></o:p></span></span>
+			</p>
+
+			<p class=MsoNormal>
+				<span lang=EN-US
+					style='font-size: 14.0pt; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><span
+					style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</span><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+				<o:p></o:p></span>
+			</p>
+
+			<p class=MsoNormal
+				style='text-indent: 224.0pt; mso-char-indent-count: 16.0'>
+				<span
+					style='font-size: 14.0pt; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>辽宁卓信财务管理有限公司<span
+					lang=EN-US><o:p></o:p></span></span>
+			</p>
+
+			<p class=MsoNormal>
+				<span lang=EN-US
+					style='font-size: 14.0pt; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+			</p>
+
+			<p class=MsoNormal>
+				<span lang=EN-US
+					style='font-size: 14.0pt; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><span
+					style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</span><span style='mso-spacerun: yes'>&nbsp;</span></span><span
+					style='font-size: 14.0pt; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>客户签字：<span
+					lang=EN-US><o:p></o:p></span>
+			</p>
+
+			<p class=MsoNormal>
+				<span lang=EN-US
+					style='font-size: 14.0pt; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+			</p>
+
+			<p class=MsoNormal>
+				<span lang=EN-US
+					style='font-size: 14.0pt; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><span
+					style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</span> </span><span
+					style='font-size: 14.0pt; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+					年 <span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;</span> 月 <span
+					lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;</span> 日 <span lang=EN-US><span></span><span
+						style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp; </span>
+					<o:p></o:p></span>
+				</span>
+			</p>
+
+		</div>
+	</div>
+	<div class="HTprint" style="float: right;">
+		<input id="dybtn" class="btn-printB"
+			onmouseover="this.className='btn-printB-over'"
+			onmouseout="this.className='btn-printB'"
+			onmousedown="this.className='btn-printB-down'" type="button"
+			onclick="printLoan()" />
+	</div>
+</body>
+</html>

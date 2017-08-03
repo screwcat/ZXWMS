@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveTransaSalesmanHisDao">
+	<insert id="batchSaveWmsInveTransaSalesmanHis" parameterType="java.util.List">
+		insert into wms_inve_transa_salesman_his (
+			wms_inve_transa_id,
+			salesman_id,
+			salesman_dept_id,
+			department_manager_id,
+			department_manager_dept_id,
+			vice_general_manager_id,
+			vice_general_manager_dept_id,
+			general_manager_id,
+			general_manager_dept_id,
+			center_manager_id,
+			center_manager_dept_id,
+			remark,
+			create_user_id,
+			create_timestamp
+		) values
+		<foreach collection="list" item="item" index="index" separator=",">
+		(
+			#{item.wms_inve_transa_id},
+			#{item.new_pm_personnel_id},
+			#{item.new_pm_personnel_dept_id},
+			#{item.department_manager_id},
+			#{item.department_manager_dept_id},
+			#{item.vice_general_manager_id},
+			#{item.vice_general_manager_dept_id},
+			#{item.general_manager_id},
+			#{item.general_manager_dept_id},
+			#{item.center_manager_id},
+			#{item.center_manager_dept_id},
+			#{item.remark},
+			#{item.create_user_id},
+			#{item.create_timestamp}
+		)
+		</foreach>
+	</insert>
+</mapper>

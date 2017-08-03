@@ -1,0 +1,717 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>验点审批</title>
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script language="Javascript" src="../../js/zx-all.js"> </script>
+</head>
+<body>
+	    <div class="tab_titleT">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr valign="bottom" id='trtab1'>
+					<td class="tabbody1" id="tabbody1" onclick="changeTab('yddata');"
+						tabname='mytab' style="width: 35%">
+						<div align="center">验点审核表</div>
+					</td>
+					<td class="tabbody2" id="tabbody2" onclick="changeTab('ydcsidea');"
+						tabname='mytab' style="width: 35%">
+						<div align="center">初审面签意见</div>
+					</td>
+				</tr>
+			</table>
+	     </div>
+	    <div class="pop-center" id="yddata" style="top: 30px;">
+		    <!--验点审核表  -->
+			<div class="center-content" style="min-width: 600px;">
+			    <div class="pop-center overflow-au">
+				<div class="center-content clearboth" style="min-width: 500px;">
+					<!--个人信息  -->
+					<div class="center-title3 position-re" style="margin-bottom: 10px">
+						个人信息
+						<div name="suofang" class="show-hide l-icon-hide"></div>
+					</div>
+					<div class="center-txt"
+						style="margin-bottom: 5px; height: 150px; padding: 5px; border: 1px solid #BFBFBF;">
+						<div class="float-l">
+							<div class="pop-form-title">姓名:</div>
+							<div class="pop-form-item">
+								<input type="text" id="customer_name" name="customer_name" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title">性别:</div>
+							<div class="pop-form-item">
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="radio"
+									id="gender" name="gender" value="1" class="radio3"
+									checked="checked" />男 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input
+									type="radio" id="gender" name="gender" value="0" class="radio3" />女
+								&nbsp;&nbsp;&nbsp;&nbsp;
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title">出生日期:</div>
+							<div class="pop-form-item">
+								<input id="accreditation_date" name="birthday" class="Wdate"
+									type="text"
+									onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+									style="vertical-align: top; width: 133px;" />
+							</div>
+						</div>
+						<div class="float-l clearboth">
+							<div class="pop-form-title">学历:</div>
+							<div class="pop-form-item">
+								<input type="text" id="degree" name="degree" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title">手机号码:</div>
+							<div class="pop-form-item">
+								<input type="text" id="telephone" name="telephone" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title">手机密码:</div>
+							<div class="pop-form-item">
+								<input type="text" id="service_password" name="service_password" />
+							</div>
+						</div>
+						<div class="float-l clearboth">
+							<div class="pop-form-title">现居住地址:</div>
+							<div class="pop-form-item">
+								<input type="text" id="address" name="address"
+									style="width: 647px;" />
+							</div>
+						</div>
+						<div class="float-l clearboth">
+							<div class="pop-form-title">身份证号码:</div>
+							<div class="pop-form-item">
+								<input type="text" id="id_card" name="id_card" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title">房产状况:</div>
+							<div class="pop-form-item">
+								<input type="text" id="has_house" name="has_house" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title">个人月收入:</div>
+							<div class="pop-form-item">
+								<input type="text" id="personal_month_income"
+									name="personal_month_income" />
+							</div>
+						</div>
+						<div class="float-l clearboth">
+							<div class="pop-form-title">如何知道我公司</div>
+							<div class="pop-form-item">
+								<textarea id="understand_company" name="understand_company"
+									style="width: 646px; height: 20px; resize: none;"></textarea>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- 家庭背景 -->
+				<div class="center-content clearboth" style="min-width: 500px;">
+					<div class="center-title3 position-re">
+						家庭背景
+						<div name="suofang" class="show-hide l-icon-hide"></div>
+					</div>
+					<div class="center-txt"
+						style="margin-bottom: 5px; height: 120px; border: 1px solid #bfbfbf; padding: 5px;">
+						<!--家庭背景信息 -->
+						<div id="grid_home_info"></div>
+					</div>
+				</div>
+				<!-- 贷款情况 -->
+				<div class="center-content clearboth" style="min-width: 500px;">
+					<div class="center-title3 position-re">
+						贷款情况
+						<div name="suofang" class="show-hide l-icon-hide"></div>
+					</div>
+					<div class="center-txt"
+						style="margin-bottom: 5px; height: 30px; border: 1px solid #bfbfbf; padding: 5px;">
+						<div class="float-l">
+							<div class="pop-form-title">申请额度(万):</div>
+							<div class="pop-form-item">
+								<input type="text" id="credit_limit" name="credit_limit" />
+							</div>
+						</div>
+						<div class="float-l">
+						<div class="pop-form-title">用途:</div>
+							<div class="pop-form-item">
+								<input type="text" id="credit_purpose" name="credit_purpose" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title">资金缺口:</div>
+							<div class="pop-form-item">
+								<input type="text" id="funding_gap" name="funding_gap" />
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- 企业情况 -->
+				<div class="center-content clearboth" style="min-width: 500px;">
+					<div class="center-title3 position-re">
+						企业情况
+						<div name="suofang" class="show-hide l-icon-hide"></div>
+					</div>
+					<div class="center-txt"
+						style="margin-bottom: 5px; height: 500px; border: 1px solid #bfbfbf; padding: 5px;">
+						<div class="float-l">
+						    <div class="pop-form-title">所属行业:</div>
+							<div class="pop-form-item">
+								<input type="text" id="comp_industry" name="comp_industry" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title">单位名称:</div>
+							<div class="pop-form-item">
+								<input type="text" id="work_unit_full_name"
+									name="work_unit_full_name" style="width: 389px;" />
+							</div>
+						</div>
+						<div class="float-l clearboth">
+							<div class="pop-form-title">经营范围:</div>
+							<div class="pop-form-item">
+								<textarea id="scope_of_business" name="scope_of_business"
+									style="width: 646px; height: 100px; resize: none;"></textarea>
+							</div>
+						</div>
+						<div class="float-l clearboth" style="margin-top: 80px;">
+						    <div class="pop-form-title">单位地址:</div>
+							<div class="pop-form-item">
+								<input type="text" id="company_adress" name="company_adress"
+									style="width: 646px;" />
+							</div>
+						</div>
+						<div class="float-l clearboth">
+							<div class="pop-form-title">成立时间:</div>
+							<div class="pop-form-item">
+								<input id="accreditation_date" name="found_date" class="Wdate"
+									type="text"
+									onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+									style="vertical-align: top; width: 133px;" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title">员工人数:</div>
+							<div class="pop-form-item">
+								<input type="text" id="employees_number" name="employees_number" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title">单位电话:</div>
+							<div class="pop-form-item">
+								<input type="text" id="unit_tel" name="unit_tel" />
+							</div>
+						</div>
+						<div class="float-l clearboth">
+							<div class="pop-form-item">
+							       年产值(上一年度):
+								<input type="text" id="annual_income" name="annual_income" />
+							</div>
+						</div>
+						<div class="float-l">
+						    <div class="pop-form-title">年产值(本年度):</div>
+							<div class="pop-form-item">
+								<input type="text" id="annual_income_this_year"
+									name="annual_income_this_year" />
+							</div>
+						</div>
+						<div class="float-l clearboth">
+							<div class="pop-form-title">利润率:</div>
+							<div class="pop-form-item">
+								<input type="text" id="profit_margin" name="profit_margin" />
+							</div>
+						</div>
+						<div class="float-l">
+							<div class="pop-form-title">流动资金:</div>
+							<div class="pop-form-item">
+								<input type="text" id="liquidity" name="liquidity" />
+							</div>
+						</div>
+						<div class="float-l clearboth">
+							<div class="pop-form-title">固定资产:</div>
+							<div class="pop-form-item">
+								<textarea id="fixed_money" name="fixed_money"
+									style="width: 646px; height: 100px; resize: none;"></textarea>
+							</div>
+						</div>
+						<div class="float-l clearboth" style="margin-top: 80px;">
+							<div class="pop-form-title">原贷款公司:</div>
+							<div class="pop-form-item">
+								<textarea id="original_loan_company" name="original_loan_company"
+									style="width: 646px; height: 100px; resize: none;"></textarea>
+							</div>
+						</div>
+	
+					</div>
+				</div>
+				<!-- 审核信息 -->
+				<div class="center-content clearboth clearfix"
+					style="min-width: 500px; height: auto">
+					<div class="center-title3 position-re">
+						审核情况
+						<div name="suofang" class="show-hide l-icon-hide"></div>
+					</div>
+					<div class="center-txt clearfix"
+						style="margin-bottom: 5px; height: 280px; border: 1px solid #bfbfbf; padding: 5px; height: auto">
+						<div class="float-l">
+							<div class="pop-form-title">审核意见:</div>
+							<div class="pop-form-item">
+								<textarea id="check_point_audit_opinion"
+									name="check_point_audit_opinion"
+									style="width: 646px; height: 150px; resize: none;"></textarea>
+							</div>
+						</div>
+						<div class="float-l clearboth  clearfix"
+							style="margin-top: 130px; height: auto">
+							<div class="pop-form-title2" align="right">附件：</div>
+							<div class="pop-form-item clearfix" align="right"
+								style="height: auto">
+								<div class="pop-form-item">
+									<a class="btn" href="#" onclick="openAddAttDialog()"
+										id="uploadButton">上传附件</a>
+								</div>
+								<div class="pop-form-item clearfix" id="fileinfo"
+									style="height: auto"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			    </div>
+			</div>
+	    </div>
+	    <div class="pop-center" id="ydcsidea" style="top: 30px; display: none;">
+		    <!--初审面签意见 -->
+		    <div class="center-content" style="min-width: 550px;">
+		        <div class="pop-center overflow-au">
+						<div class="center-content">
+							<!--初审面签意见  -->
+							<div class="center-title3 position-re" style="margin-bottom: 10px">
+								初审面签意见
+								<div name="suofang" class="show-hide l-icon-hide"></div>
+							</div>
+							<div class="center-txt"
+								style="margin-bottom: 5px; height: 350px; padding: 5px; border: 1px solid #BFBFBF;">
+								<div class="float-l">
+									<div class="pop-form-title">面签日期:</div>
+									<div class="pop-form-item">
+										&nbsp;<input id="trial_interview_timestamp_str"
+											name="trial_interview_timestamp_str" class="Wdate" type="text"
+											style="vertical-align: top; width: 133px;" disabled="disabled" />
+									</div>
+								</div>
+								<div class="float-l clearboth">
+									<div class="pop-form-title">面签意见:</div>
+									<div class="pop-form-item">
+										&nbsp;
+										<textarea id="trial_interview_advice"
+											name="trial_interview_advice"
+											style="width: 750px; height: 220px; resize: none;"
+											disabled="disabled"></textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+				</div>
+		    </div>
+	    </div>
+	<!-- 提交功能按钮区 -->
+	<div class="pop-footer5 clearboth" style="bottom: 1px;">
+		<input id="zcbtn" class="btn-saveZ"
+			onmouseover="this.className='btn-saveZ-over'"
+			onmouseout="this.className='btn-saveZ'"
+			onmousedown="this.className='btn-saveZ-down'" type="button"
+			style="margin-right: 7px;" onclick="save('','',0)" /> <input
+			id="tjbtn" class="btn-saveT"
+			onmouseover="this.className='btn-saveT-over'"
+			onmouseout="this.className='btn-saveT'"
+			onmousedown="this.className='btn-saveT-down'" type="button"
+			style="margin-right: 7px;" onclick="approvesave()" /> <input
+			id="cancelBtnId" class="btn-cancel"
+			onmouseover="this.className='btn-cancel-over'"
+			onmouseout="this.className='btn-cancel'"
+			onmousedown="this.className='btn-cancel-down'" type="button"
+			onclick="closeDialog();" />
+	</div>
+	<script type="text/javascript">
+     //获取主表单ID
+     var wms_cre_credit_head_id =$.query.get('wms_cre_credit_head_id');
+     //获取流程taskId
+     var taskId =$.query.get('taskId');
+     //是否为只读页面
+ 	 var cktype=$.query.get("cktype");
+     var grid_home_info;
+     var grid_home_info_data={};
+    //初始化家庭背景资料
+  	 grid_home_info_data.Rows=[
+ 	  	                 		 {"contact_relation_type":"父亲","name":"","age":"","work_unit_full_name":"","personal_income":"","car_brand":"","house_stat":""},
+ 	  	                 		 {"contact_relation_type":"母亲","name":"","age":"","work_unit_full_name":"","personal_income":"","car_brand":"","house_stat":""},
+ 	  	                 		 {"contact_relation_type":"配偶","name":"","age":"","work_unit_full_name":"","personal_income":"","car_brand":"","house_stat":""},
+ 	  	                 		 {"contact_relation_type":"子女","name":"","age":"","work_unit_full_name":"","personal_income":"","car_brand":"","house_stat":""}
+ 	  	                 		 ];
+  	//上传附件列表
+ 	var fileArr = [];	
+    //加载页面数据
+    $(function (){
+    	//当是只读页面时
+    	if(cktype=='ck') {	
+			$('#zcbtn').css('display','none');//隐藏保存按钮
+			$('#tjbtn').css('display','none');//隐藏保存按钮
+			$('#uploadButton').css('display','none');//隐藏上传按钮
+			initForm(cktype);
+			setReadOnly();
+		}else{
+			initForm();
+		}
+    });
+    
+    //获取验点页面数据(包含如果该数据被暂存过的情况)
+    function initForm(cktype){
+    	$.getJSON(globalUtil.getTimestampUrl('/loanreview/wmscrerevinspectionmaininfobyfk.do'),
+    		{"wms_cre_credit_head_id" : wms_cre_credit_head_id},
+    		function(json){
+    			$("#trial_interview_timestamp_str").val(json.wCreCreditHead.trial_interview_timestamp_str);
+				$("#trial_interview_advice").val(json.wCreCreditHead.trial_interview_advice);
+    			if(json.result !=null){
+					//加载总体数据信息
+	    		  	globalUtil.setFormVal("yddata", json.result);
+	    		  	setRadioVal("gender",json.result.gender);
+	    		  	//加载家庭背景信息
+	    		  	grid_home_info_data.Rows=json.family;
+	    			//证明json.result.comp_industry值为不为null并且不为'',实现填充数据
+	    		  	if(json.result.comp_industry!=null && json.result.comp_industry!=''){
+		    		  	init_comp_industry(json.result);    		  		
+	    		  	}else{
+	    		  		//如果为null并且''执行初始化下拉菜单
+	    		  		init_comp_industry();   
+	    		  	}
+				}else{
+					//如果json.result为null 说明没有暂存过的数据，执行初始化显示
+					init_comp_industry();
+				}
+    	  	//加载获取的附件信息
+    	  	fileArr=json.fileArrs;
+    	  	//判断当查看状态，不可以对附件进行编辑
+    	  	if(cktype=='ck'){
+    	  	    //所属行业不可编辑
+    			global_ligerui_extend.disabledCombox("comp_industry");
+    	  		init_attr();
+    	  	}else{
+    	  	    init_attr1();    	  		
+    	  	}
+    	  	init_home_info();
+    	});
+    }
+    /**审核意见*/
+	function approvesave(){ 
+    		var url = globalUtil.getHtml("infosapprove.html?approvalType=5&wms_cre_credit_head_id="+wms_cre_credit_head_id);
+    		dialog=$.ligerDialog.open({
+    			url:url,
+    			title: '审批',
+    	        width: 850,
+    	        height: globalUtil.setDialogHeight(500),
+    	        onHiddenOrClose: function(){
+    	    	},
+    	        isResize: false
+    		});  
+	}
+	/**保存所有信息操作*/
+	function save(pass,advice,flag){
+		var paramJson = {};
+		paramJson.pass = pass;
+		paramJson.advice = advice;
+		globalUtil.getFormParam("yddata",paramJson);
+		paramJson.gender=getRadioValues("gender");
+    	var ydfamliy=JSON.stringify(grid_home_info_data.Rows);
+    	paramJson.ydfamliy=ydfamliy;
+    	paramJson.fileArrs=JSON.stringify(fileArr);
+		//---------------------------------------------------------------------------------------
+		$.post(globalUtil.getTimestampUrl("/loanreview/wmscrerevinspectionmainsave.do?wms_cre_credit_head_id="+wms_cre_credit_head_id+"&taskId="+taskId+"&flag="+flag), paramJson,
+		        function(data) {
+		        	if (data === 'success') {
+		            	 globalUtil.successMsg(globalErrorMsg['100002'],
+		            		function(){            		 		
+		                		refreshAndClosePage();
+		            	 });//保存成功
+		        	}else if(data === 'temOK'){
+		        		 globalUtil.successMsg(globalErrorMsg['100032'],
+				            		function(){            		 		
+				                		refreshAndClosePage();
+				            	 });
+		        	}else if(data === 'supply'){
+		        		globalUtil.errorMsg(globalErrorMsg['100040'],
+			            		function(){            		 		
+			                		refreshAndClosePage();
+			            	 });//该单据已经退件
+		            }else {
+		                globalUtil.errorMsg(globalErrorMsg['100012']); //保存失败
+		            }
+		});
+	}
+	 //家庭背景情况列表信息
+	function init_home_info(){
+		var columns = [{
+            display: '',
+            name: 'contact_relation_type',
+            width: 80,
+            minWidth: 80
+         },{
+        	 display: '姓名',
+             name: 'name',
+             width: 100,
+             minWidth: 100,
+             editor: { type: 'text',maxlength:50 }
+	    },{
+			display: '年龄',
+	        name: 'age',
+	        width: 50,
+            minWidth: 50,
+	        editor: { type: 'text',maxlength:50 }
+
+	    },{
+			display: '工作单位',
+	        name: 'work_unit_full_name',
+	        width: 275,
+            minWidth: 275,
+	        editor: { type: 'text',maxlength:50 }
+	    
+	    },{
+			display: '收入情况',
+	        name: 'personal_income',
+	        width: 120,
+            minWidth: 120,
+	        editor: { type: 'text',maxlength:50 }
+	  
+	    },{
+			display: '车辆',
+	        name: 'car_brand',
+	        width: 120,
+            minWidth: 120,
+	        editor: { type: 'text',maxlength:50 }
+	      
+	    },{
+			display: '房产',
+	        name: 'house_stat',
+	        width: 178,
+            minWidth: 178,
+	        editor: { type: 'text',maxlength:50 }
+	      
+	    }];
+		//判断家庭背景信息是否允许编辑
+		var flag;
+		if(cktype=='ck'){
+			flag=false;
+		}else{
+			flag=true;
+		}
+		grid_home_info = $("#grid_home_info").ligerGrid({
+			columns: columns,
+			data:grid_home_info_data,
+			rownumbers: false,
+			allowUnSelectRow: false,
+			width: 930,
+	        height: 120,
+	        heightDiff: -4,
+			usePager: false,
+			enabledEdit: flag
+	    });
+	} 
+	
+	
+	//--------------------------------------------------设置为只读模式------------------------------------------
+	function setReadOnly(){
+		$("input[type=text]").attr({
+			"disabled" : "disabled"
+		});
+		$("input[type=checkbox]").attr({
+			"disabled" : "disabled"
+		});
+		$("select").attr({
+			"disabled" : "disabled"
+		});
+		$("textarea").attr({
+			"disabled" : "disabled"
+		});
+		$("input[type=radio]").attr({
+			"disabled" : "disabled"
+		});
+		
+	}
+	//------------------------------------------------------------------------------------------------------------
+	//弹出错误提示框
+	function errorMsg(msg){
+		globalUtil.addMask('1');
+		var obj = $.ligerDialog.error(msg, null, null);
+		obj.options.onHiddenOrClose = function() {
+			globalUtil.delMask('1');
+	    };
+	}
+	
+    //-------------------------------------------------------关闭窗口----------------------------------------------/
+     function closeDialog() {
+    	try{
+ 			window.parent.dialog.hide();
+ 		}catch(e){
+ 			globalUtil.closeCurrentTab();
+ 		}
+    }
+ 
+   //关闭本页并刷新查询页面
+     function refreshAndClosePage(){   
+     	window.parent.search();
+     	window.parent.dialog.hide();
+     }
+   //设置Radio控件的值
+ 	function setRadioVal(nameVal,valFromDb,ele,flag){
+ 		if(flag){
+ 			$(ele).find("input[name^='"+nameVal+"']").each(function() {
+ 				if ($(this).val() == valFromDb) {
+ 					$(this).attr('checked', 'checked');
+ 					return false;
+ 				}
+ 			});
+ 			
+ 		}else{
+ 			$("input[name='"+nameVal+"']").each(function() {
+ 				if ($(this).val() == valFromDb) {
+ 					$(this).attr('checked', 'checked');
+ 					return false;
+ 				}
+ 			});
+ 		}	
+ 	}
+   //获取单选按钮的值
+ 	function  getRadioValues(nameValue,classValue){
+ 		var result;
+ 		if(classValue==null){
+ 			var eleArr = document.getElementsByName(nameValue);
+ 			$.each(eleArr,function(i,ele){
+ 				if($(ele).attr('checked')){
+ 					result = $(ele).val();
+ 					return false;
+ 				}
+ 			});
+ 		}else{
+ 			var eleArr = $('.'+classValue);
+ 			$.each(eleArr.get(),function(i,ele){
+ 				if($(ele).attr('checked')){
+ 					result = $(ele).val();
+ 					return false;
+ 				}
+ 			});
+ 		}
+ 		return result;
+ 	}
+   //所属行业调用信贷-信调重要数据中的所属行业的下拉值
+	function init_comp_industry(json){
+		var comp_industry_params ={
+				dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=30 ',
+				t_col_name:'comp_industry',
+				valueField:'wms_sys_dict_data_id',   //下拉框value对应的值，默认为id
+				textField:'value_meaning',    //下拉框text对应的值，默认为text
+				def_val:'first'
+				};
+		global_ligerui_extend.initCombox("comp_industry",null,comp_industry_params);
+		if(json){
+			//把值装载设定
+			global_ligerui_extend.syncRequestInitComboxData(json,"comp_industry");
+		}else{			
+		    global_ligerui_extend.initComboxDefVal("comp_industry");
+		}
+	}
+	//获取上传附件内容，可以删除查看功能
+	function init_attr1(){
+		var filehtml = '';
+		for(var i=0;i<fileArr.length;i++){
+			var nnme=fileArr[i].attachment_new_name.replace('/','thxg1');
+			nnme=nnme.replace('/','thxg2');
+			filehtml += '<div id="delUploadDivId'+nnme+'">';
+			filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+fileArr[i].attachment_address+'">'+fileArr[i].attachment_old_name+'</a>';
+			filehtml += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\''+nnme+'\')"/>';
+			filehtml += '</div>'
+		}
+		$("#fileinfo").html(filehtml);   
+	}
+	//获取上传附件内容，并且只能查看功能
+	function init_attr(){
+		var filehtml = '';
+		for(var i=0;i<fileArr.length;i++){
+			var nnme=fileArr[i].attachment_new_name.replace('/','thxg1');
+			nnme=nnme.replace('/','thxg2');
+			filehtml += '<div id="delUploadDivId'+nnme+'">';
+			filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+fileArr[i].attachment_address+'">'+fileArr[i].attachment_old_name+'</a>';
+			filehtml += '</div>'
+		}
+		$("#fileinfo").html(filehtml);   
+	}
+	var dialog_att;
+	//打开附件上传页面
+	function openAddAttDialog(){
+		var url = globalUtil.getHtml("../creditManage/addFileForCre.html");
+		dialog_att = $.ligerDialog.open({
+	        url: url,
+	        title: '上传附件',
+	        width: 650,
+	        height: globalUtil.setDialogHeight(250),
+	        onHiddenOrClose: function(){
+	        	//alert('关闭或隐藏都调用的事件!');
+	    	},
+	        isResize: false
+		});
+	}
+	//添加上传文件的信息链接
+	function addAttFile(newfileArr,objid){
+		fileArr = fileArr.concat(newfileArr);
+		var filehtml = $("#fileinfo").html();
+		for(var i=0;i<newfileArr.length;i++){
+			var nnme=newfileArr[i].attachment_new_name.replace('/','thxg1');
+			nnme=nnme.replace('/','thxg2');
+			filehtml += '<div id="delUploadDivId'+nnme+'">';
+			filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+newfileArr[i].attachment_address+'">'+newfileArr[i].attachment_old_name+'</a>';
+			filehtml += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\''+nnme+'\')"/>';
+			filehtml += '</div>'
+		}		
+		$("#fileinfo").html(filehtml);
+	}
+	//删除上传文件的信息链接
+	function deleteFile(filename){
+	   	$.ligerDialog.confirm(globalErrorMsg['100016'],
+	    function(yes) {
+	    	if (yes) {
+	    		$("#delUploadDivId"+filename).remove();
+	    		filename=filename.replace('thxg1','/');
+	    		filename=filename.replace('thxg2','/');
+	    		for(var i=0;i<fileArr.length;i++){
+	    			if(filename == fileArr[i].attachment_new_name){
+	    				fileArr.splice(i,1);
+	    				break;
+	    			}
+	    		}
+	    	}                                            
+		});
+	}
+	/**页面切换*/
+	function changeTab(id) {
+		var yddata = document.getElementById("yddata"); //验点审核表
+		var ydcsidea = document.getElementById("ydcsidea"); //初审面签意见
+		if (id == 'yddata') {
+			document.getElementById("tabbody1").className = "tabbody1";
+			document.getElementById("tabbody2").className = "tabbody2";
+			yddata.style.display = '';
+			ydcsidea.style.display = 'none';	
+		} else if (id == 'ydcsidea') {
+			document.getElementById("tabbody1").className = "tabbody2";
+			document.getElementById("tabbody2").className = "tabbody1";
+			yddata.style.display = 'none';
+			ydcsidea.style.display = '';
+		}
+	}
+</script>
+</body>
+</html>

@@ -1,0 +1,2373 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>业务管理>签单管理>支付确认>金额支付</title>
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script language="Javascript" src="../../js/zx-all.js"> </script>
+<style>
+.textright{
+text-align:right;
+}
+.textleft{
+text-align:left;
+}
+/*input_tb css*/
+.input_tb_new{
+/*border:1px solid #dfdfdf;*/
+width:100%;
+margin-bottom:10px;
+}
+.input_tb_new a{
+color:#056aff;
+text-decoration:none;
+font-weight:normal;
+}
+.input_tb_new td{
+height:35px;
+line-height:25px;
+/*border-bottom:1px dashed #d5d5d5;*/
+padding-top:3px;
+}
+.input_tb_new .tr_title td{
+background-color:#f5f8ff;
+padding-left:16px;
+font-weight:bold;
+height:30px;
+line-height:30px;
+/*border-bottom:1px solid #dfdfdf;*/
+}
+.input_tb_new .tr_last td{
+border-bottom:0;
+}
+.input_tb_new .title{
+text-align:right;
+}
+.input_tb_new .subtitle{
+text-align:left;
+background-color:#d2e1fd;
+border-top:1px solid #fff;
+/*border-left:1px solid #fff;*/
+}
+
+.input_tb_new .tr_btn_input td{
+background-color:#fbfbfb;
+/*border-top:1px solid #dbdbdb;*/
+/*height:40px;*/
+
+}
+
+.title_tb{
+background-color:#f5f8ff;
+padding-left:16px;
+font-weight:bold;
+height:30px;
+line-height:30px;
+/*border:1px solid #dfdfdf;8/
+border-bottom:0;
+}
+.title_tb .title_txt{
+float:left;
+}
+.title_tb .title_btn{
+float:right;
+margin-top:2px;
+font-weight:normal;
+}
+.input_tb_new td {
+    /*border-bottom: 1px dashed #D5D5D5;*/
+    height: 35px;
+    line-height: 25px;
+    padding-top: 3px;
+}
+
+.data_tb td{
+height:30px;
+line-height:24px;
+padding-left:10px;
+border-bottom:1px dashed #e3e4e6;
+text-align:left;
+}
+label.label_Type_1 {display:inline-block; width:60px; height:auto; text-align:right; font-size:13px; white-wrap:break-word; word-break:break-all;}/*表单标签样式1*/
+p.value_Type_1 {display:inline-block; text-align:left; width:90px; height:auto;}
+</style>
+
+<script type="text/javascript">
+
+var grid_divwt4_data;
+var grid_divwt4;
+var all_pos_data;
+var this_inve_trance_data;
+var this_inve_trance_pro_data;
+var this_inve_transa_clerk_protocol_data;
+var json;
+
+var data_type_name=830;//上传附件 大类id
+var filecheck=823;//上传附件 pos机小票必填
+var fileArr = [];//上传附件列表
+var update="";//update=1  标识着是审核退回 上单修改页面 iframe 嵌套的页面 可以修改 在save方法中做了处理
+
+var remainTime;
+var bankCardInfos;
+
+var wms_inve_transa_id = $.query.get("wms_inve_transa_id");
+var wms_inve_pruduct_category_id = $.query.get("wms_inve_pruduct_category_id");
+var wms_inve_transa_prod_id = $.query.get("wms_inve_transa_prod_id");
+var cus_name = $.query.get("cus_name");
+var product_account = $.query.get("product_account");
+var category_name = $.query.get("category_name");
+var cktype = $.query.get("cktype");
+var taskId=$.query.get("taskId");
+
+$(function(){
+	//获取pos机数据
+    all_pos_data=globalUtil.syncGetJson('/inve/wmsinveposwithoutpaginglistEnable.do',{
+        'sortname':'wms_inve_pos_id'
+    },'GET');
+	
+    var resMap = globalUtil.syncGetJson('/inve/wmsinvetransainfo.do',{
+        'wms_inve_transa_id':wms_inve_transa_id
+        },'GET');
+    this_inve_trance_data = resMap.wmsInveTransa;
+    
+    this_inve_trance_pro_data = globalUtil.syncGetJson('/inve/wmsinvetransaprodinfobypkforjegl.do',{
+        'wms_inve_transa_id':wms_inve_transa_id
+        },'GET');
+    
+    this_inve_transa_clerk_protocol_data = globalUtil.syncGetJson('/inve/getClerkProtocolByWmsInveTransaId.do',{
+        'wms_inve_transa_id':wms_inve_transa_id
+    },'GET');
+	
+    
+    last_wms_inve_pruduct_category_id = this_inve_trance_pro_data.wms_inve_pruduct_category_id;
+    
+    //获取收益卡信息
+    json = globalUtil.syncGetJson('/inve/getinvetransaprodbyid.do',{
+        wms_inve_transa_prod_id: wms_inve_transa_prod_id,
+        sortname: 'sort_order', // 排序列名
+        sortorder: 'asc' // 排序方式
+    },'POST');
+    if(json!=null){
+        initForm(json);
+    }
+    if(json.wmsInveTransaProd.card_owner_name==""||json.wmsInveTransaProd.card_owner_name==null){
+    	$("#card_owner_name").val(this_inve_trance_data.cus_name);
+    }
+    //判断客户收益卡信息 初始化/有值不可编辑处理
+    if(json.wmsInveTransaProd.bank_of_deposit_pro != null && json.wmsInveTransaProd.bank_of_deposit_city != null) {
+       init_bank_of_deposit_pro(json.wmsInveTransaProd);
+    } else {
+       init_bank_of_deposit_pro();
+    }
+    
+    //设置实际支付日期默认当前日期
+    var date = new Date();
+    if(this_inve_trance_data.date_of_act == null || this_inve_trance_data.date_of_act == "")
+   	{
+		$("#act_date_of_payment").val(date.format("yyyy-MM-dd"));
+   	}
+    else
+   	{
+    	$("#act_date_of_payment").val(this_inve_trance_data.date_of_act);
+   	}
+	if(cktype != "ck")
+	{
+		initZhaiQuan();
+	}
+	changeTab02("zezf");
+	initShowTitleMsg(this_inve_trance_pro_data.product_account / 10000,this_inve_trance_pro_data.category_name);//初始化金额支付头标题信息
+	initToolbasData();//初始化金额支付信息按钮
+	initGridData();//初始化客户支付信息
+	init_attr(cktype);
+	initCustomerInfo(this_inve_trance_data);
+	init_category_name();//初始化产品类型
+	init_category_table_data();//初始化产品列表
+	//初始化收益卡信息
+	init_bank_card_info();
+	initPushMessagesClick();
+	initRenYunInfo();
+	$('#bank_of_deposit_pro').bind('change',function(){
+		getCityData1();
+	});
+	 /*
+     * 查看页面的时候都不允许点击或者修改
+     */
+    if(cktype == "ck")
+    {
+    	$("#change_category_btn").hide();
+    	$("#category_select_div").hide();
+    	$("#act_date_of_payment").val(this_inve_trance_data.date_of_act);
+    	$("#act_date_of_payment").attr("disabled", true);
+    	$("input[name='is_bank_card'][value=1]").attr("disabled",true);
+    	$("input[name='is_bank_card'][value=2]").attr("disabled",true);
+    	$("#bank_info").attr("disabled",true);
+    	$("#product_total_count_lower").attr("disabled",true);
+    	$("#category_name_select").attr("disabled",true);
+    	$("#category_query_btn").hide();
+    	$("#btn_div").hide();
+    	$("#debt_expires_str").attr("disabled",true);
+    	$("#income_account_str").attr("disabled",true);
+    	$("#expiration_reminder_str").attr("disabled",true);
+    	if(this_inve_transa_clerk_protocol_data != null)
+    	{
+    		var showStr = "";
+    		$("#hetongbianhao").show();
+    		
+    		//判断合同编号是否为空
+    		if(this_inve_transa_clerk_protocol_data.prot_code == undefined || this_inve_transa_clerk_protocol_data.prot_code == null || this_inve_transa_clerk_protocol_data.prot_code == "")
+    		{
+    			showStr += "合同编号:&nbsp;&nbsp;暂无";
+    		}
+    		else
+    		{
+    			showStr += "合同编号:&nbsp;&nbsp;" + this_inve_transa_clerk_protocol_data.prot_code;
+    		}
+    		$("#hetongbianhao").html(showStr);
+    	}
+    	else
+    	{
+    		$("#hetongbianhao").html("合同编号:&nbsp;&nbsp;暂无");
+    	}
+    }
+    else
+    {
+    	$("#hetongbianhao").hide();	
+    }
+	
+	
+});
+
+/*
+ * 初始化债权占用提示
+ */
+function initZhaiQuan()
+{
+	var params = {
+			transaId:wms_inve_transa_id,
+			categoryId:wms_inve_pruduct_category_id,
+			productAccount:product_account * 10000
+	}
+	
+	//用于验证债权是否小于债权限制金额和债权不足时添加债权限制信息
+	var verifyParams = {
+		product_account : product_account * 10000,
+		actDateOfPayment : $("#act_date_of_payment").val(),
+		origCategoryId: last_wms_inve_pruduct_category_id,
+		wms_inve_transa_id:this_inve_trance_data.wms_inve_transa_id,
+		newCategoryId : $("#wms_inve_pruduct_category_id").val()
+	}
+	
+	globalUtil.addMask();
+	globalUtil.showLoading();
+		
+	//配置债权之前先判断投资金额是否可以使用
+	$.post(globalUtil.getTimestampUrl('/inve/verifyCreditLimitAccountAvailable.do'), verifyParams, function(data){
+	
+		//如果可以使用则进行债权匹配
+		if(data)
+		{
+			$.post(globalUtil.getTimestampUrl('/inve/matchHoldCredit.do'), params, function(data){
+					
+				 globalUtil.delMask();
+				 globalUtil.closeLoading();
+				 
+				 if(!data)
+			     {
+					//债权信息不足时添加债权限制信息
+					$.post(globalUtil.getTimestampUrl('/inve/saveCreditLimit.do'), verifyParams, function(data){
+						var error = data.error;
+						if(error == "success")
+						{
+							globalUtil.errorMsg("债权不足,请联系债权录入专员!");
+	 		            	return;
+						}
+						else
+						{
+							globalUtil.errorMsg("债权不足,请联系债权录入专员!");
+	 		            	return;
+						}
+					});
+				  }
+				});
+			}
+			else
+			{
+				globalUtil.delMask();
+				globalUtil.closeLoading();
+				
+				globalUtil.errorMsg("债权不足,请联系债权录入专员!");
+            	return;
+			}
+		});
+		
+}
+
+/*
+ * 初始化人员信息
+ */
+function initRenYunInfo()
+{
+	var params = {wms_inve_transa_id : wms_inve_transa_id};
+	//根据上单表主键获取对应的人员信息
+	$.post(globalUtil.getTimestampUrl("/inve/getWmsInveRenYuanInfo.do"), params, function(data){
+		//业务员
+		if(data.salesman_name != null && data.salesman_name != "")
+		{
+			$("#salesman_name").html(data.salesman_name);
+		}
+		else
+		{
+			$("#salesman_name").html("无");
+		}
+		//部门经理
+		if(data.department_manager_name != null && data.department_manager_name != "")
+		{
+			$("#department_name").html(data.department_manager_name);
+		}
+		else
+		{
+			$("#department_name").html("无");
+		}
+		//副总
+		if(data.vice_general_name != null && data.vice_general_name != "")
+		{
+			$("#vice_manager_name").html(data.vice_general_name);
+		}
+		else
+		{
+			$("#vice_manager_name").html("无");
+		}
+		//中分总
+		if(data.center_manager_name != null && data.center_manager_name != "")
+		{
+			$("#center_manager_name").html(data.vice_general_name);
+		}
+		else
+		{
+			$("#center_manager_name").html("无");
+		}
+		//总
+		if(data.general_manager_name != null && data.general_manager_name != "")
+		{
+			$("#genter_manager_name").html(data.general_manager_name);
+		}
+		else
+		{
+			$("#genter_manager_name").html("无");
+		}
+		
+	});
+	
+}
+
+/*
+ * 产品类型
+ */
+function init_category_name(json){
+// 	 	var category_name_params ={
+// 	 			dest_url:'/inve/getCategorySelect.do',
+// 	 			t_col_name:'category_name_select',
+// 	 			valueField:'wms_inve_pruduct_category_id',   //下拉框value对应的值，默认为id
+// 	 			textField:'category_name',    //下拉框text对应的值，默认为text
+// 	 			def_val:'first'
+// 	 			};
+// 	 	global_ligerui_extend.initCombox("category_name_select",null,category_name_params);
+// 	 	global_ligerui_extend.initComboxDefVal("category_name_select");
+	
+	$("#category_name_select").ligerComboBox({
+		url: globalUtil.getTimestampUrl('/inve/getCategorySelect.do'),
+		valueField:'wms_inve_pruduct_category_id',
+		textField:'category_name',
+		def_val:'first',
+		autocomplete: true,
+		width: 100,
+		onSuccess:function(data){
+			if(cktype == 'ck')
+			{
+				global_ligerui_extend.setComboxVal("category_name_select", this_inve_trance_pro_data.wms_inve_pruduct_category_id);
+			}
+			else
+			{
+				global_ligerui_extend.setComboxVal("category_name_select", wms_inve_pruduct_category_id);
+			}
+		}
+	});
+	
+}
+
+
+/*
+ * 初始化客户基本信息
+ */
+function initCustomerInfo(obj)
+{
+	$("#cus_name").val(obj.cus_name);
+	if(obj.mobile_phone.length == 11){
+		var mobile_phone = obj.mobile_phone.substring(0,3) + '******' + obj.mobile_phone.substring(7);
+		$('#mobile_phone').val(mobile_phone);
+	}else{
+		var mobile_phone = '******';
+		$('#mobile_phone').val(mobile_phone);
+	}
+	var id_card;
+	if(obj.id_card.length == 18)
+	{
+		id_card = obj.id_card.substring(0,4) + '**********' + obj.id_card.substring(14);
+	}
+	else if(obj.id_card.length==8)
+	{
+		id_card = obj.id_card.substring(0,4) + '**********' + obj.id_card.substring(4, obj.id_card.length);
+	}
+	else
+	{
+		id_card = "********";
+	}
+	$("#id_card").val(id_card);
+	if(obj.cus_gender == 1)
+	{
+		$("input[name='cus_gender'][value=1]").attr("checked",true); 
+	}
+	if(obj.cus_gender == 0)
+	{
+		$("input[name='cus_gender'][value=2]").attr("checked",true);
+	}
+	$("#cus_birthday").val(obj.cus_birthday);
+	$("#customer_email").val(obj.customer_email);
+	$("#cus_address").val(obj.contact_address);
+	if(obj.bill_send_mode == 1)
+	{
+		$("input[name='bill_send_mode'][value=1]").attr("checked",true); 
+	}
+	if(obj.bill_send_mode == 3)
+	{
+		$("input[name='bill_send_mode'][value=3]").attr("checked",true); 
+	}
+}
+
+/*
+ * 初始化金额支付信息按钮
+ */
+function initToolbasData()
+{
+	if(cktype != 'ck')
+	{
+		var toolbarItemData4 = [];
+	
+	    toolbarItemData4.push({
+	        text : '新增',
+	        click: addRowsKHZFXX,
+	        icon : 'add'
+	    });
+	    toolbarItemData4.push({
+	        line : true
+	    });
+	    toolbarItemData4.push({
+	        text : '删除',
+	        click: deleteRowKHZFXX,
+	        icon : 'delete'
+	    });
+	    toolbarItemData4.push({
+	        line : true
+	    });
+	
+	    $("#toolbar-divwt4").ligerToolBar({
+	        items : toolbarItemData4
+	    });
+	}
+}
+
+/*
+ * 初始化客户支付信息
+ */
+function initGridData()
+{
+	var posArr=[];
+	for(var i=0;i<parseInt(all_pos_data.Rows.length);i++){
+	  	var thid=all_pos_data.Rows[i].wms_inve_pos_id;
+	  	var thval=all_pos_data.Rows[i].pos_code;
+	  	posArr.push({"wms_inve_pos_id":thid,"pos_code":thval})
+	}
+	
+	var payTypeData = [{ value_code: 1, value_meaning: '现金' },{ value_code: 2, value_meaning: '银行卡' },{ value_code: 3, value_meaning: '续单本金' }];
+	grid_divwt4_data=globalUtil.syncGetJson('/inve/wmsinvetransaforzfinfolist.do',{
+        'wms_inve_transa_id':wms_inve_transa_id,
+        'sortname':'wms_inve_transa_card_id'
+    },'GET');
+	
+	var updateCellIndex = 0;
+	
+	var columns4 = [{
+		display: '支付方式',
+		name: 'pay_type',
+		resizable: false,
+		width: 160,
+		minWidth: 160,
+		editor: { 
+			type: 'select', // 该列为可编辑状态
+			data: payTypeData, 
+			valueField:'value_code',   //下拉框value对应的值，默认为id
+			textField:'value_meaning'
+		},
+		render: function (rowdata, nowRowIndex, value, column) {
+			var payTypeValueStr = global_ligerui_extend.gridRenderSelectedValue2(rowdata, value, column);
+			if(cktype != 'ck'){
+				if(grid_divwt4_data.Rows.length != 0){
+					if(updateCellIndex != 0){
+						updateRowKHZFXX(nowRowIndex,rowdata, payTypeValueStr);	
+					}
+				}else{
+					updateRowKHZFXX(nowRowIndex,rowdata, payTypeValueStr);
+				}
+			}
+			if(cktype == 'ck')
+			{
+				if(value == 5)
+				{
+					return "单据续期";
+				}
+			}
+			return payTypeValueStr;
+		}
+	},{
+		display: '关联单据',
+		name: 'bill_code',
+		width: 160,
+		minWidth: 160,
+		resizable: false,
+		render: function (rowdata, nowRowIndex, value, column) {
+			var varluStr = "<a href='javascript:selectBill();'><img src='../../../resources/images/icons/search.gif' style='float:right;'/></a>";
+			if(cktype != 'ck'){
+				if(value=='0' || value == undefined){
+					return "----";
+				}
+				if(value != ''){
+					return value;
+				}else{
+					return varluStr;
+				}
+			}else{
+				if(value == null || value == ''){
+					return "----"
+				}else{
+					return value;
+				}
+			}
+			
+		} 
+	},{
+		display: 'POS机编号',
+		name: 'wms_inve_pos_id',
+		resizable: false,
+		width: 160,
+		minWidth: 160,
+		editor: { 
+			type: 'select', // 该列为可编辑状态
+			data: posArr, 
+			valueField: 'wms_inve_pos_id', 
+			textField: 'pos_code' 
+		},
+		render: function (rowdata, nowRowIndex, value, column) {
+			if(value == 0 || value == null || value == ""){
+				return "----";
+			}else{
+				return global_ligerui_extend.gridRenderSelectedValue(rowdata, nowRowIndex, value, column);
+			}
+		}
+	},{
+		display: '实际支付金额（万元）',
+		name: 'pay_account',
+		resizable: false,
+		width: 160,
+		minWidth: 160,
+		editor: {
+			type: 'text'
+		},
+		render:function(rowdata,nowRowIndex,value,column){
+			return value;
+		}
+	},{
+		display:'赎回信息id',
+		name:'wms_inve_redeem_id',
+		resizable:false,
+		hide:1,
+		width:10,
+		render:function(rowdata,nowRowIndex,value,column){
+			return value;
+		}
+	},{
+		display:'可用金额',
+		name:'redeem_amount',
+		resizable:false,
+		hide:1,
+		width:10,
+		render:function(rowdata,nowRowIndex,value,column){
+			return value;
+		}
+	},{
+		display:'赎回本金信息id',
+		name:'wms_inve_redeem_principal_detail_id',
+		resizable:false,
+		hide:1,
+		width:10,
+		render:function(rowdata,nowRowIndex,value,column){
+			return value;
+		}
+	},{
+		display:'赎回详细信息id',
+		name:'wms_inve_redeem_detail_id',
+		resizable:false,
+		hide:1,
+		width:10,
+		render:function(rowdata,nowRowIndex,value,column){
+			return value;
+		}
+	}
+	];
+	
+	if(cktype == 'ck'){
+		columns4.push({
+			display:'是否到账',
+			name:'is_finish',
+			resizable:false,
+			width:120,
+			minWidth:120,
+			render:function(rowdata,nowRowIndex,value,column){
+				if(value==0 || value == ''){
+					return "未到账";
+				}
+				if(value == 1){
+					return "已到账";
+				}
+			}
+		});
+	}
+	
+	grid_divwt4 = $("#grid-divwt4").ligerGrid({ // maingrid为表格div所在id
+		columns: columns4,
+		data:grid_divwt4_data,
+		rownumbers: true,
+		usePager: false, // 是否分页支持，默认为true
+		enabledEdit: cktype =='ck' ? false : true,
+		width: '100%',
+		height:100,
+		heightDiff: -4,
+		enabledEdit: true,
+		onAfterShowData:function(data){
+			if(cktype != 'ck'){
+				if(grid_divwt4_data.Rows.length != 0){
+					updateCellIndex=1;
+				}
+			}
+		}
+	});
+	
+	if(cktype != 'ck'){
+		if(grid_divwt4_data.Rows.length==0){
+			addRowsKHZFXX();
+		}
+	}
+	
+	if(cktype == 'ck'){
+		var datas = grid_divwt4.getData();
+		for(var i = 0; i < datas.length; i++){
+			for(var k = 0; k <10;k++ ){
+				var s = grid_divwt4.getCellObj(i,k);         	
+				$(s).bind("click",function(){return false;});				
+			}
+		}
+	}
+}
+
+//向客户信息列表中添加一行
+function addRowsKHZFXX(){
+	
+	var manager = $("#grid-divwt4").ligerGetGridManager();
+	
+	//判断上单时是否使用了续期本金
+	if(this_inve_trance_data.is_extend_amount == "1")
+	{
+		manager.appendRow({
+			'pay_type':'3',
+			'bill_code':'',
+			'wms_inve_pos_id':'0',
+			'pay_account':'',
+			'wms_inve_redeem_id':'',
+			'redeem_amount':'',
+			'wms_inve_redeem_principal_detail_id':'',
+			'wms_inve_redeem_detail_id':''
+		});
+	}
+	else
+	{
+		manager.appendRow({
+			'pay_type':'1',
+			'bill_code':'0',
+			'wms_inve_pos_id':'0',
+			'pay_account':'',
+			'wms_inve_redeem_id':'',
+			'redeem_amount':'',
+			'wms_inve_redeem_principal_detail_id':'',
+			'wms_inve_redeem_detail_id':''
+		});
+	}
+	
+}
+
+//从客户支付信息列表中删除一行数据
+function deleteRowKHZFXX(){
+	var manager = $("#grid-divwt4").ligerGetGridManager();
+    var row = manager.getSelectedRow();
+    if (!row) {
+        globalUtil.warnMsg(globalErrorMsg['100001']); //请选择一行记录进行删除
+        return;
+    }
+    globalUtil.confirmMsg(globalErrorMsg['100016'],
+    function(yes) { //确认删除
+    	if(yes){
+    		flaga=true;
+    		global_ligerui_extend.deleteSelectedRow(manager);
+    		if(update == 1){
+    			globalUtil.syncGetJson('/inve/wmsinvetransaforfreedredeembill.do',{
+    		        'wms_inve_transa_id':wms_inve_transa_id,
+    		        'wms_inve_redeem_principal_detail_id':row.wms_inve_redeem_principal_detail_id
+    		    },'GET');
+    		}
+    	}
+    });
+}
+
+//更新客户支付的列表信息
+function updateRowKHZFXX(nowRowIndex,row, payTypeValueStr){
+	if(payTypeValueStr != "请选择"){
+		if(payTypeValueStr == "现金"){
+			grid_divwt4.updateCell('bill_code', '0', row); 
+			grid_divwt4.updateCell('card_no', '----', row);
+			grid_divwt4.updateCell('wms_inve_pos_id', 0, row);
+			if(row.pay_account == null){
+				grid_divwt4.updateCell('pay_account','',row);
+			}
+			grid_divwt4.updateCell('wms_inve_redeem_id','',row);
+			grid_divwt4.updateCell('wms_inve_redeem_principal_detail_id','',row);
+			grid_divwt4.updateCell('wms_inve_redeem_detail_id', '',row);
+		}
+		if(payTypeValueStr == "银行卡"){
+			grid_divwt4.updateCell('bill_code', '0', row); 
+			if(row.card_no==null || row.card_no=='----'){
+				grid_divwt4.updateCell('card_no', '', row);
+			}
+			if(row.wms_inve_pos_id==0){
+				grid_divwt4.updateCell('wms_inve_pos_id', -1, row);
+			}
+			if(row.pay_account==null){
+				grid_divwt4.updateCell('pay_account','',row);
+			}
+			grid_divwt4.updateCell('wms_inve_redeem_id','',row);
+			grid_divwt4.updateCell('wms_inve_redeem_principal_detail_id','',row);
+			grid_divwt4.updateCell('wms_inve_redeem_detail_id', '',row);
+		}
+	   if(payTypeValueStr == "续单本金"){
+			if(row.bill_code == null || row.bill_code == '0'){
+				grid_divwt4.updateCell('bill_code', '', row);
+			}
+			grid_divwt4.updateCell('wms_inve_pos_id', 0, row);
+			if(row.pay_account == null){
+				grid_divwt4.updateCell('pay_account','',row);
+			}
+			if(row.wms_inve_redeem_id == null){
+				grid_divwt4.updateCell('wms_inve_redeem_id','',row);
+			}
+			
+			if(row.pay_account != null && globalUtil.accDiv(row.redeem_amount,10000)!=null){
+				if(row.pay_account > globalUtil.accDiv(row.redeem_amount,10000)){
+					if(update == 1){
+						if(row.redeem_amount != null && row.redeem_amount !=''){
+							if(row.pay_account > globalUtil.accDiv(row.redeem_amount,10000)){
+								if(row.pay_account <= globalUtil.accDiv(row.act_account,10000)){
+									grid_divwt4.updateCell('pay_account',row.pay_account,row);	
+								}else{
+									if(row.act_account == undefined || row.act_account==null || row.act_account==''){
+										grid_divwt4.updateCell('pay_account',globalUtil.accDiv(row.redeem_amount,10000),row);
+									}else{
+										if(row.pay_account > globalUtil.accAdd(globalUtil.accDiv(row.act_account,10000),globalUtil.accDiv(row.redeem_amount,10000))){
+											grid_divwt4.updateCell('pay_account',globalUtil.accDiv(row.act_account,10000)+globalUtil.accDiv(row.redeem_amount,10000),row);
+										}else{
+											grid_divwt4.updateCell('pay_account',row.pay_account,row);
+										}
+										//grid_divwt4.updateCell('pay_account',row.act_account+row.redeem_amount,row);
+									}
+								}
+							}else{
+								grid_divwt4.updateCell('pay_account',row.pay_account,row);
+							}
+						}else{
+							if(row.pay_account > globalUtil.accDiv(row.act_account,10000)){
+								globalUtil.warnMsg(globalErrorMsg['1400003']);
+								grid_divwt4.updateCell('pay_account',globalUtil.accDiv(row.act_account,10000),row);
+							}
+						}
+					}else{
+						if(row.pay_account != null && row.pay_account != '' && row.redeem_amount == '0'){
+							if(row.act_account != undefined && row.act_account != null && row.act_account !=''){
+								if(row.pay_account > globalUtil.accDiv(row.act_account,10000)){
+									grid_divwt4.updateCell('pay_account',globalUtil.accDiv(row.act_account,10000),row);
+								}else{
+									grid_divwt4.updateCell('pay_account',row.pay_account,row);
+								}
+							}
+						}else{
+							if(row.act_account != undefined && row.act_account != null && row.act_account !=''){
+								var oldAccount = parseInt(row.act_account);
+								var newAccount = parseInt(row.redeem_amount);
+								var resultAccount = oldAccount + newAccount;
+								grid_divwt4.updateCell('pay_account',globalUtil.accDiv(resultAccount,10000),row);	
+							}else{
+								globalUtil.warnMsg(globalErrorMsg['1400003']);
+								grid_divwt4.updateCell('pay_account',globalUtil.accDiv(row.redeem_amount,10000),row);
+							}
+						}
+					}
+					return;
+				}
+			}
+		}
+	}
+}
+
+//选择单据
+function selectBill(){
+	 var url = globalUtil.getHtml("selectBill.html?wms_inve_customer_id="+this_inve_trance_data.wms_inve_customer_id + "&wms_inve_transa_id="+wms_inve_transa_id+"&gridDatas="+JSON.stringify(grid_divwt4.getData()));
+	 selectBillDialog=$.ligerDialog.open({
+		url:url,
+		title: '单据选择',
+     	width: 950,
+     	height: globalUtil.setDialogHeight(600),
+     	onHiddenOrClose: function(){
+ 	 	},
+     	isResize: false
+	 }); 
+}
+
+//将选择的单据信息添加到客户支付信息列表中
+function setCusInfoGrid(obj){
+	var rowSelected = grid_divwt4.getSelectedRow();
+	grid_divwt4.updateCell('bill_code', obj[0].bill_code, rowSelected); 
+	grid_divwt4.updateCell('card_no', '----', rowSelected);
+	grid_divwt4.updateCell('wms_inve_pos_id', 0, rowSelected);
+	grid_divwt4.updateCell('pay_account', globalUtil.accDiv(obj[0].redeem_amount,10000), rowSelected);
+	grid_divwt4.updateCell('wms_inve_redeem_id', obj[0].wms_inve_redeem_id, rowSelected);
+	grid_divwt4.updateCell('redeem_amount', obj[0].redeem_amount, rowSelected);
+	grid_divwt4.updateCell('wms_inve_redeem_principal_detail_id', obj[0].wms_inve_redeem_principal_detail_id, rowSelected);
+	grid_divwt4.updateCell('wms_inve_redeem_detail_id', obj[0].wms_inve_redeem_detail_id, rowSelected);
+	for(var i = 1; i <= obj.length - 1; i++){
+		var data = {'pay_type':3,'bill_code':obj[i].bill_code,'card_no':'----','wms_inve_pos_id':0,'pay_account':globalUtil.accDiv(obj[i].redeem_amount,10000),'wms_inve_redeem_id':obj[i].wms_inve_redeem_id,'redeem_amount':obj[i].redeem_amount,'wms_inve_redeem_principal_detail_id':obj[i].wms_inve_redeem_principal_detail_id,'wms_inve_redeem_detail_id':obj[i].wms_inve_redeem_detail_id};
+		grid_divwt4.addRow(data);
+	} 
+}
+
+/*
+ * 初始化金额支付头标题信息
+ */
+function initShowTitleMsg(product_account, category_name)
+{
+	$("#divpart1").html("");
+	$("#divpart1").html("请确认客户" + this_inve_trance_data.cus_name + "是否已支付" + product_account + "万元用以投资【" + category_name + "】？");
+}
+
+/*
+ * 关闭支付dialog 
+ */
+function closeDialog()
+{
+	var params = {
+		transaId:this_inve_trance_data.wms_inve_transa_id	
+	}
+	
+	//释放债权
+	$.post(globalUtil.getTimestampUrl('/inve/releaseMatchedCredit.do'), params, function(data){
+		
+		window.parent.zhiFuDialog.hide();
+	});
+}
+
+function changeTab02(id){    
+	var khd = document.getElementById("zezf"); //金额支付
+	var khzl = document.getElementById("khzl"); //客户签单信息
+
+	if(id == 'zezf') 
+	{
+		document.getElementById("tabbody01").className = "tabbody1";
+		document.getElementById("tabbody02").className = "tabbody2";	
+		document.getElementById("khdtabdiv").className = "tab_step tab_step101";
+		document.getElementById("khzltabdiv").className = "tab_step tab_step202";
+		khd.style.display = '';
+		khzl.style.display = 'none';
+		
+	}else if(id == 'khzl')
+	{
+		document.getElementById("tabbody01").className = "tabbody2";
+		document.getElementById("tabbody02").className = "tabbody1";
+		document.getElementById("khdtabdiv").className = "tab_step tab_step102";
+		document.getElementById("khzltabdiv").className = "tab_step tab_step201";
+		khd.style.display = 'none';
+		khzl.style.display = '';
+	}
+	
+}
+
+
+//获取上传附件内容
+function init_attr(cktype){
+    $.getJSON(globalUtil.getTimestampUrl('/sysmanage/getdictdatatreebean.do?p_wms_sys_dict_id=88&wms_sys_dict_id=86'),
+            {},
+            function(att_json) {
+                    $.getJSON(
+                            globalUtil.getTimestampUrl('/inve/wmsinvetransaattwithoutpaginglist.do?sortName=wms_inve_transa_att_id'),
+                            {'wms_inve_transa_id':wms_inve_transa_id,'data_type_name':data_type_name},
+                            function (json){
+                               for(var i=0;i<att_json.length;i++){
+                                    var data = att_json[i]
+                                    var children = data.children;
+                                    var row = document.getElementById("att_tb").insertRow(document.getElementById("att_tb").rows.length);
+                                    var td1 = row.insertCell(0);
+                                    td1.rowSpan = children.length;
+                                    td1.className = 'title textright';
+                                    td1.style.width = '100px';
+                                    td1.innerHTML = data.text+":";
+                                    var data0 = children[0];
+                                    
+                                    var td2 = row.insertCell(1);
+                                    td2.className = 'textleft';
+                                    td2.style.width = '100px';
+                                    if(data0.id==filecheck){
+                                    	td2.innerHTML = '<font style="color:red;"></font>'+data0.text+":";   
+                                    }else{
+                                    	td2.innerHTML = data0.text+":";
+                                    }           
+                                    var td3 = row.insertCell(2);
+                                    td3.className = 'textleft';
+                                    td3.style.width = '30px';
+                                    td3.innerHTML = '';
+                                    if(cktype!='ck'){
+                                    td3.innerHTML = '<input class="btn-uploadF" onmouseover="this.className=\'btn-uploadF-over\'" onmouseout="this.className=\'btn-uploadF\'" onmousedown="this.className=\'btn-uploadF-down\'" type="button" style="margin-right:7px;" onclick="openAddAttDialog('+data.id+','+data0.id+')" style="display:none"/>';                                        	
+                                    }
+                                    
+                                    var td4 = row.insertCell(3);
+                                    td4.className = 'textleft';
+                                    td4.id = data0.id;
+                                    td4.pid = data.id;
+                                    td4.innerHTML=getdictAtt(data0.id,json.Rows,cktype);
+                                    
+//                                     for(var j = 1;j < children.length;j++){
+//                                         var row_t = document.getElementById("att_tb").insertRow(document.getElementById("att_tb").rows.length);
+//                                         var td1_t = row_t.insertCell(0);
+//                                         td1_t.className = 'textleft';
+//                                         td1_t.style.width = '100px';
+//                                         td1_t.innerHTML = children[j].text+':'; 
+                                        
+//                                         var td3_t = row_t.insertCell(1);
+//                                         td3_t.className = 'textleft';
+//                                         td3_t.style.width = '30px';
+//                                         td3_t.innerHTML = ''
+//                                         if(cktype!='ck'){
+//                                         td3_t.innerHTML = '<input class="btn-uploadF" onmouseover="this.className=\'btn-uploadF-over\'" onmouseout="this.className=\'btn-uploadF\'" onmousedown="this.className=\'btn-uploadF-down\'" type="button" style="margin-right:7px;" onclick="openAddAttDialog('+data.id+','+children[j].id+')" style="display:none"/>';                                            	
+//                                         }
+//                                         var td4_t = row_t.insertCell(2);
+//                                         td4_t.className = 'textleft';
+//                                         td4_t.id = children[j].id;
+//                                         td4_t.pid = data.id;
+//                                         td4_t.innerHTML=getdictAtt(children[j].id,json.Rows,cktype);
+//                                     }
+                                }
+                            }
+                        );
+            });
+            
+}
+
+/*
+ *打开附件上传页面
+ */
+function openAddAttDialog(data_type_name,data_detail_name){
+var url = globalUtil.getHtml("../creditManage/addFileForCre.html?data_type_name="+data_type_name+"&data_detail_name="+data_detail_name);
+dialog_att = $.ligerDialog.open({
+    url: url,
+    title: '上传附件',
+    width: 650,
+    height: globalUtil.setDialogHeight(250),
+    onHiddenOrClose: function(){
+        //alert('关闭或隐藏都调用的事件!');
+    },
+    isResize: false
+});
+}
+
+//读取上传文件显示上传文件名称
+function getdictAtt(code,json,cktype){
+    var htmlstr = "";
+    for(var i = 0 ;i < json.length; i++){
+        var data = json[i];
+        var data_detail_name = data.data_detail_name;
+        if(code == data.data_detail_name){
+            fileArr = fileArr.concat(data);
+            var nnme=data.attachment_new_name.replace('/','thxg1');
+            nnme=nnme.replace('/','thxg2');
+            htmlstr += '<div id="delUploadDivId'+nnme+'">';
+            htmlstr += '<a  target="_blank"  href="'+global_param.upload_file_url+data.attachment_address+'">'+data.attachment_old_name+'</a>';
+            if(cktype !='ck'){
+            htmlstr += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\''+nnme+'\')"/>';                	
+            }
+            htmlstr += '</div>'
+        }
+    }
+    return htmlstr;
+}
+var checkedPicNms=['jpg','jpeg','bmp','png','gif','gif'];
+//检查是否为图片格式
+function findPicHZ(name) {
+    for(var i = 0; i < checkedPicNms.length; i++) {
+        if(checkedPicNms[i] == name) {
+            return i;
+        }
+    }
+    return -1;
+};
+var dialog_att;
+
+/**
+ * 实现回显上传附件信息
+ */
+ function addAttFile(newfileArr,objid){
+     fileArr = fileArr.concat(newfileArr);
+     var filehtml = $("#"+objid).html();
+     for(var i=0;i<newfileArr.length;i++){
+         var nnme=newfileArr[i].attachment_new_name.replace('/','thxg1');
+         nnme=nnme.replace('/','thxg2');
+         filehtml += '<div id="delUploadDivId'+nnme+'">';
+         filehtml += '<a  target="_blank"  href="'+global_param.upload_file_url+newfileArr[i].attachment_address+'">'+newfileArr[i].attachment_old_name+'</a>';
+         filehtml += '<img src="../../images/icon/icon-close.gif" onclick="deleteFile(\''+nnme+'\')"/>';
+         filehtml += '</div>'
+     }
+     $("#"+objid).html(filehtml);
+ }
+ /**
+ * 删除附件信息
+ */
+ function deleteFile(filename){
+     $.ligerDialog.confirm(globalErrorMsg['100016'],
+     function(yes) {
+         if (yes) {
+             $("#delUploadDivId"+filename).remove();
+             filename=filename.replace('thxg1','/');
+             filename=filename.replace('thxg2','/');
+             for(var i=0;i<fileArr.length;i++){
+                 if(filename == fileArr[i].attachment_new_name){
+                     fileArr.splice(i,1);
+                     break;
+                 }
+             }
+         }                                            
+     });
+ }
+ /*
+     获取表格数据，去除全部为空的记录
+ */
+ function getGridData(grid){
+             grid.endEdit();
+         var data_all = grid.getData();
+         var griddata = [];
+         for(var i=0;i<data_all.length;i++){
+             var data = data_all[i];
+             var isEmpty = true;
+             if(data){
+                 for(var key in data){
+                     if($.trim(key) == '' || $.trim(key) == '__status'){continue;}
+                     if(!globalUtil.isEmpty(data[key])){
+                         if(data[key] instanceof Date){
+                             data[key]= data[key].format('yyyy-MM-dd');//格式化日期类型数据
+                         }
+                         
+                         isEmpty = false;
+                     }
+                 }
+             }
+             if(!isEmpty){
+                 griddata.push(data);
+             }
+         }
+     return griddata;
+ }
+ /** 
+ *转换long值为日期字符串 
+ * @param l long值 
+ * @param isFull 是否为完整的日期数据, 
+ * 为true时, 格式如"2000-03-05 01:05:04" 
+ * 为false时, 格式如 "2000-03-05" 
+ * @return 符合要求的日期字符串 
+ */ 
+ function getSmpFormatDateByLong(l, isFull) { 
+ return getSmpFormatDate(new Date(l), isFull); 
+ } 
+ 
+ function closeTabAndRes(){
+     parent.window.search();
+     window.parent.zhiFuDialog.hide();
+ }
+ /**
+  *初始化银行卡号自动四位加空格
+  */
+ function init_card_no(){
+     var val=$('#card_no').val();//获取用户输入
+     val = val.replace(/\D/g,'');
+     $("#card_no_copy").val(val);
+     change();
+ }
+ /**
+  *处理银行卡信息
+  */
+ function change(){
+      var card = $('#card_no_copy').val();
+      card = card.replace(/\D/g,'')
+      var ncard='';
+      for(var n=0;n<card.length;n=n+4){
+          ncard += card.substring(n,n+4)+" ";
+      }
+      //console.log(ncard.replace(/(\s*$)/g,""));
+      $('#card_no').val(ncard.replace(/(\s*$)/g,""));
+  }
+ 
+ 	/*
+	 * 生成大写的投资金额
+	 */
+	function changeProductTotalCountUpper(obj)
+	{
+ 		
+		if(obj.value == "")
+		{
+			$("#product_total_count_upper").val("");
+		}
+		else
+		{
+			$("#product_total_count_upper").val(convertCurrency(obj.value));
+		}
+		
+		initShowTitleMsg(obj.value, $("#category_name").val());
+		piPeiZhaiQuan();
+	}
+ 	
+ 	/*
+ 	 * 修改实际支付日期重新匹配债权
+ 	 */
+ 	function changeActDate(obj)
+ 	{
+ 		
+ 		var params = {
+ 				wms_inve_transa_id:this_inve_trance_data.wms_inve_transa_id,
+ 				act_of_date : obj.value,
+ 				origCategoryId: last_wms_inve_pruduct_category_id,
+				newCategoryId : $("#wms_inve_pruduct_category_id").val(),
+				productAccount: $("#product_total_count_lower").val() * 10000
+ 				
+ 		}
+ 		
+ 		//用于验证债权是否小于债权限制金额和债权不足时添加债权限制信息
+ 		var verifyParams = {
+ 			product_account : $("#product_total_count_lower").val() * 10000,
+			actDateOfPayment : $("#act_date_of_payment").val(),
+			origCategoryId: last_wms_inve_pruduct_category_id,
+			wms_inve_transa_id:this_inve_trance_data.wms_inve_transa_id,
+			newCategoryId : $("#wms_inve_pruduct_category_id").val()
+ 		}
+ 		//配置债权之前先判断投资金额是否可以使用
+ 		$.post(globalUtil.getTimestampUrl('/inve/verifyCreditLimitAccountAvailable.do'), verifyParams, function(data){
+ 			//如果可以使用则进行债权匹配
+ 			if(data)
+ 			{
+ 				$.post(globalUtil.getTimestampUrl('/inve/updateContractSigningType.do'), params, function(data){
+ 					
+ 					globalUtil.delMask();
+ 					globalUtil.closeLoading();
+ 					
+ 					if(!data)
+	 				{
+ 						//债权信息不足时添加债权限制信息
+ 						$.post(globalUtil.getTimestampUrl('/inve/saveCreditLimit.do'), verifyParams, function(data){
+ 							var error = data.error;
+ 							if(error == "success")
+ 							{
+ 								globalUtil.errorMsg("债权不足,请联系债权录入专员!");
+ 		 		            	return;
+ 							}
+ 							else
+ 							{
+ 								globalUtil.errorMsg("债权不足,请联系债权录入专员!");
+ 		 		            	return;
+ 							}
+ 						});
+	 				}
+ 	 			});
+ 			}
+ 			else
+ 			{
+ 				globalUtil.delMask();
+				globalUtil.closeLoading();
+				
+ 				globalUtil.errorMsg("债权不足,请联系债权录入专员!");
+	            return;
+ 			}
+ 		});
+ 	}
+ 	
+ 	var last_wms_inve_pruduct_category_id = null;
+ 	
+ 	/*
+ 	 * 修改实际支付时间,产品金额和产品重新匹配债权
+ 	 */
+	function piPeiZhaiQuan()
+ 	{
+ 		//用户配置债权
+ 		var params = {
+				transaId:this_inve_trance_data.wms_inve_transa_id,
+				origCategoryId: last_wms_inve_pruduct_category_id,
+				newCategoryId : $("#wms_inve_pruduct_category_id").val(),
+				productAccount: $("#product_total_count_lower").val() * 10000,
+				actDateOfPayment : $("#act_date_of_payment").val()
+		}
+ 		
+ 		//用于验证债权是否小于债权限制金额和债权不足时添加债权限制信息
+ 		var verifyParams = {
+ 				product_account : $("#product_total_count_lower").val() * 10000,
+ 				actDateOfPayment : $("#act_date_of_payment").val(),
+ 				origCategoryId: last_wms_inve_pruduct_category_id,
+ 				wms_inve_transa_id:this_inve_trance_data.wms_inve_transa_id,
+ 				newCategoryId : $("#wms_inve_pruduct_category_id").val()
+ 		}
+ 		
+ 		last_wms_inve_pruduct_category_id = $("#wms_inve_pruduct_category_id").val();
+ 		
+ 		globalUtil.addMask();
+ 		globalUtil.showLoading();
+ 		
+ 		//配置债权之前先判断投资金额是否可以使用
+ 		$.post(globalUtil.getTimestampUrl('/inve/verifyCreditLimitAccountAvailable.do'), verifyParams, function(data){
+ 			
+ 			//如果可以使用则进行债权匹配
+ 			if(data)
+ 			{
+ 				// 修改投资金额需要重新占用,先释放在匹配
+ 				$.post(globalUtil.getTimestampUrl('/inve/changeCategoryOrPaymentAccount.do'), params, function(data){
+ 					
+ 					globalUtil.delMask();
+ 					globalUtil.closeLoading();
+ 					
+ 					index = 0;
+ 					
+ 					if(!data)
+ 					{
+ 						//债权信息不足时添加债权限制信息
+ 						$.post(globalUtil.getTimestampUrl('/inve/saveCreditLimit.do'), verifyParams, function(data){
+ 							var error = data.error;
+ 							if(error == "success")
+ 							{
+ 								globalUtil.errorMsg("债权不足,请联系债权录入专员!");
+ 		 		            	return;
+ 							}
+ 							else
+ 							{
+ 								globalUtil.errorMsg("债权不足,请联系债权录入专员!");
+ 		 		            	return;
+ 							}
+ 						});
+ 					}
+ 				});
+ 			}
+ 			else
+ 			{
+ 				globalUtil.delMask();
+				globalUtil.closeLoading();
+				
+				index = 0;
+ 				
+ 				globalUtil.errorMsg("债权不足,请联系债权录入专员!");
+	            return;
+ 			}
+ 		});
+ 	}
+ 	
+	//小写金额转大写金额
+	function convertCurrency(currencyDigits) {  
+		var MAXIMUM_NUMBER = 99999999999.99;   
+		var CN_ZERO = "零";  
+		var CN_ONE = "壹";  
+		var CN_TWO = "贰";  
+		var CN_THREE = "叁";  
+		var CN_FOUR = "肆";  
+		var CN_FIVE = "伍";  
+		var CN_SIX = "陆";  
+		var CN_SEVEN = "柒";  
+		var CN_EIGHT = "捌";  
+		var CN_NINE = "玖";  
+		var CN_TEN = "拾";  
+		var CN_HUNDRED = "佰";  
+		var CN_THOUSAND = "仟";  
+		var CN_TEN_THOUSAND = "万";  
+		var CN_HUNDRED_MILLION = "亿";  
+		var CN_SYMBOL = "";  
+		var CN_DOLLAR = "";  
+		var CN_TEN_CENT = "角";  
+		var CN_CENT = "分";  
+		var CN_INTEGER = "";  
+		    
+		var integral;   
+		var decimal; 
+		var outputCharacters; 
+		var parts;  
+		var digits, radices, bigRadices, decimals;  
+		var zeroCount;  
+		var i, p, d;  
+		var quotient, modulus;  
+		  
+		currencyDigits = currencyDigits.toString();   
+		  
+		currencyDigits = currencyDigits.replace(/,/g, ""); 
+		currencyDigits = currencyDigits.replace(/^0+/, ""); 
+		
+		if (Number(currencyDigits) > MAXIMUM_NUMBER) {  
+		  globalUtil.warnMsg(globalErrorMsg['100404']);  
+		  return "";  
+		}		
+		parts = currencyDigits.split(".");  
+		if (parts.length > 1) {  
+		  integral = parts[0];  
+		  decimal = parts[1];  
+		  decimal = decimal.substr(0, 2);  
+		}  
+		else {  
+		  integral = parts[0];  
+		  decimal = "";  
+		}  
+		digits = new Array(CN_ZERO, CN_ONE, CN_TWO, CN_THREE, CN_FOUR, CN_FIVE, CN_SIX, CN_SEVEN, CN_EIGHT, CN_NINE);  
+		radices = new Array("", CN_TEN, CN_HUNDRED, CN_THOUSAND);  
+		bigRadices = new Array("", CN_TEN_THOUSAND, CN_HUNDRED_MILLION);  
+		decimals = new Array(CN_TEN_CENT, CN_CENT);  
+		outputCharacters = "";  
+		if (Number(integral) > 0) {  
+		  zeroCount = 0;  
+		  for (i = 0; i < integral.length; i++) {  
+		   p = integral.length - i - 1;  
+		   d = integral.substr(i, 1);  
+		   quotient = p / 4;  
+		   modulus = p % 4;  
+		   if (d == "0") {  
+		    zeroCount++;  
+		   }  
+		   else {  
+		    if (zeroCount > 0)  
+		    {  
+		     outputCharacters += digits[0];  
+		    }  
+		    zeroCount = 0;  
+		    outputCharacters += digits[Number(d)] + radices[modulus];  
+		  }  
+		   if (modulus == 0 && zeroCount < 4) {  
+		    outputCharacters += bigRadices[quotient];  
+		  }  
+		  }  
+		  outputCharacters += CN_DOLLAR;  
+		}  
+		if (decimal != "") {  
+		  for (i = 0; i < decimal.length; i++) {  
+		   d = decimal.substr(i, 1);  
+		   if (d != "0") {  
+		    outputCharacters += digits[Number(d)] + decimals[i];  
+		   }  
+		  }  
+		}  
+		if (outputCharacters == "") {  
+		  outputCharacters = CN_ZERO + CN_DOLLAR;  
+		}  
+		if (decimal == "") {  
+		  outputCharacters += CN_INTEGER;  
+		}  
+		outputCharacters = CN_SYMBOL + outputCharacters;  
+		return outputCharacters;  
+	} 
+	
+	//初始化银行卡按钮信息
+	function init_bank_card_info(){
+		if(update != '1'){
+			var params = {
+				cus_name:this_inve_trance_data.cus_name,
+				id_card:this_inve_trance_data.id_card
+			}
+			 
+			$.post(globalUtil.getTimestampUrl("/inve/getHistoryCustomerBankInfo.do"),params,
+					function(json,status){
+				bankCardInfos = json;
+				if(json != null && json != "" && json.length > 1){
+					$("input[name='is_bank_card']").eq(0).removeAttr("checked","checked"); 
+					$("input[name='is_bank_card']").eq(1).attr("checked","checked");
+					$("#card_owner_name").attr("readonly","readonly");
+					$("#card_no").attr("readonly","readonly");
+					$.ligerui.get("bank_of_deposit_pro").set('disabled', true);
+					$.ligerui.get("bank_of_deposit_city").set('disabled', true);
+					$("#bank_of_deposit").attr("readonly","readonly");
+					$("#bank_branch").attr("readonly","readonly");
+				}else{
+					$("input[name='is_bank_card']").eq(0).attr("checked","checked");
+					$("input[name='is_bank_card']").eq(1).removeAttr("checked","checked");
+				}
+				for(var i = 0; i < json.length; i++){
+					if(this_inve_trance_pro_data.card_owner_name == json[i].card_owner_name && this_inve_trance_pro_data.bank_of_deposit == json[i].bank_of_deposit
+																	                        && this_inve_trance_pro_data.bank_branch == json[i].bank_branch
+																	                        && this_inve_trance_pro_data.bank_of_deposit_pro == json[i].bank_of_deposit_pro
+																	                        && this_inve_trance_pro_data.bank_of_deposit_city == json[i].bank_of_deposit_city
+																	                        && this_inve_trance_pro_data.card_no == json[i].card_no)
+					{
+						$("#bank_info").append("<option value='" + json[i].card_no +"' selected='selected'>" +json[i].bank_card_info +"</option>");	
+					}
+					else
+					{
+						$("#bank_info").append("<option value='" + json[i].card_no +"'>" +json[i].bank_card_info +"</option>");
+					}
+				}
+			},"json"); 
+		}
+	}
+	
+	//选择银行卡信息同时为收益卡信息赋值
+	function changeOption(obj){
+		$("#bank_of_deposit_pro").unbind("change");
+		for(var i = 0; i < bankCardInfos.length; i++){
+			
+			if(bankCardInfos[i].card_no == obj.value){
+				$("#card_owner_name").val(bankCardInfos[i].card_owner_name);
+				$("#card_no").val(bankCardInfos[i].card_no);
+				global_ligerui_extend.setComboxVal("bank_of_deposit_pro", bankCardInfos[i].bank_of_deposit_pro);
+				init_bank_of_deposit_city(bankCardInfos[i].bank_of_deposit_pro, true);
+				global_ligerui_extend.setComboxVal("bank_of_deposit_city", bankCardInfos[i].bank_of_deposit_city);
+				$("#bank_of_deposit").val(bankCardInfos[i].bank_of_deposit);
+				$("#bank_branch").val(bankCardInfos[i].bank_branch);
+				$("#card_owner_name").attr("readonly","readonly");
+				$("#card_no").attr("readonly","readonly");
+				$.ligerui.get("bank_of_deposit_pro").set('disabled', true);
+				$.ligerui.get("bank_of_deposit_city").set('disabled', true);
+				$("#bank_of_deposit").attr("readonly","readonly");
+				$("#bank_branch").attr("readonly","readonly");
+				$("#wms_inve_customer_card_id").val(bankCardInfos[i].wms_inve_customer_card_id);
+			}
+			
+		}
+		
+		init_card_no();
+		
+		$('#bank_of_deposit_pro').bind('change',function(){
+			getCityData1();
+		});
+	}
+	
+	//客户收益卡信息-初始化省
+	function init_bank_of_deposit_pro(json){
+	        var bank_of_deposit_pro_params ={
+	                dest_url:'/sysmanage/wmssysdictdatabydictidempty.do?isEmpty=true&wms_sys_dict_id=72',
+	                t_col_name:'bank_of_deposit_pro',
+	                valueField:'value_code',   //下拉框value对应的值，默认为id
+	                textField:'value_meaning',    //下拉框text对应的值，默认为text
+	                input_width:200,
+	                def_val:'first'
+	        };
+	        global_ligerui_extend.initCombox("bank_of_deposit_pro",null,bank_of_deposit_pro_params);
+	        if(json){
+	            //把值装载设定
+	            global_ligerui_extend.syncRequestInitComboxData(json,"bank_of_deposit_pro");
+	            //让其不可编辑
+	            //global_ligerui_extend.disabledCombox("bank_of_deposit_pro");
+	        }else{          
+	            global_ligerui_extend.initComboxDefVal("bank_of_deposit_pro");
+	        }
+	}
+	
+	//客户收益卡信息-当点击省的时候,加载市
+	function getCityData1(){
+	        var jsondata0;
+	        if(json.wmsInveTransaProd.bank_of_deposit_pro != null && json.wmsInveTransaProd.bank_of_deposit_city != null) {
+	            jsondata0 = json.wmsInveTransaProd;
+	        }
+	    init_bank_of_deposit_city($("#bank_of_deposit_pro_hidden").val(), jsondata0)
+	}
+	//客户收益卡信息-获取市
+	function init_bank_of_deposit_city(p_wms_sys_dict_data_id, json){
+		p_wms_sys_dict_data_id = p_wms_sys_dict_data_id == null || p_wms_sys_dict_data_id==""?-1:p_wms_sys_dict_data_id;
+	    var bank_of_deposit_city_params ={
+	            dest_url:'/sysmanage/wmssysdictdatabydictidemptyc.do?isEmpty=true&wms_sys_dict_id=73&p_wms_sys_dict_data_id='+p_wms_sys_dict_data_id,
+	            t_col_name:'bank_of_deposit_city',
+	            valueField:'value_code',   //下拉框value对应的值，默认为id
+	            textField:'value_meaning',    //下拉框text对应的值，默认为text
+	            input_width:200,//下拉框长度
+	            def_val:'first'
+	            };
+	    global_ligerui_extend.initCombox("bank_of_deposit_city",null,bank_of_deposit_city_params);
+	    
+	    if(json){
+	        //把值装载设定
+	        global_ligerui_extend.syncRequestInitComboxData(json,"bank_of_deposit_city");
+	        //让其不可编辑
+	        //global_ligerui_extend.disabledCombox("bank_of_deposit_city");
+	    }else{     
+	        global_ligerui_extend.initComboxDefVal("bank_of_deposit_city");
+	    }
+	}
+	
+	//获取初始化值
+	function initForm(json){
+		 $("input[type='radio']").each(function(){
+			 $(this).attr("checked")=="checked"
+			 if(json.wmsInveTransa.pay_type==1 && $(this).val()=='xj'){
+				 $(this).attr("checked","checked");
+				 $("#divpart2_1").css("display","");
+	             $("#divpart2_2").css("display","none");
+	             $("#divpart2_3").css("display","none");
+			 }else if(json.wmsInveTransa.pay_type==2 && $(this).val()=='yhk'){
+				 $(this).attr("checked","checked");
+				 $("#divpart2_2").css("display","");
+	             $("#divpart2_1").css("display","none");
+	             $("#divpart2_3").css("display","none");
+			 }else if(json.wmsInveTransa.pay_type==3 && $(this).val()=='xj&yhk'){
+				 $(this).attr("checked","checked");
+				 $("#divpart2_3").css("display","");
+	             $("#divpart2_1").css("display","none");
+	             $("#divpart2_2").css("display","none");
+			 }
+	    });
+		
+		globalUtil.setFormVal("main_s", json.wmsInveTransaProd);
+		$("#wms_inve_customer_card_id").val(json.wmsInveTransaProd.wms_inve_customer_card_id);
+		init_bank_of_deposit_city(json.wmsInveTransaProd.bank_of_deposit_pro, true);
+		global_ligerui_extend.setComboxVal("bank_of_deposit_city", json.wmsInveTransaProd.bank_of_deposit_city);
+		
+		$("input[name=is_allopatry]").each(function(){
+	        if($(this).val()==json.wmsInveTransaProd.is_allopatry){
+	        	$(this).attr("checked","checked");
+	        }
+	   });
+		
+		init_card_no();
+	}
+	
+	//判断选择全新银行卡和已使用银行卡按钮
+	function changeRadio(obj){
+		
+		if(obj.value == 1){
+			$("#card_owner_name").val("");
+			$("#card_no").val("");
+			global_ligerui_extend.setComboxVal("bank_of_deposit_pro", -1);
+			init_bank_of_deposit_city(-1, true);
+			global_ligerui_extend.setComboxVal("bank_of_deposit_city", -1);
+			$("#bank_of_deposit").val("");
+			$("#bank_branch").val("");
+			$("#bank_info").val("-1");
+			$("#bank_info").attr("disabled", "disabled");
+			$("#card_owner_name").removeAttr("readonly");
+			$("#card_no").removeAttr("readonly");
+			$.ligerui.get("bank_of_deposit_pro").set('disabled', false);
+			$.ligerui.get("bank_of_deposit_city").set('disabled', false);
+			$("#bank_of_deposit").removeAttr("readonly");
+			$("#bank_branch").removeAttr("readonly");
+			$("#wms_inve_customer_card_id").val("");
+		}
+		if(obj.value==2){
+			$("#bank_info").removeAttr("disabled");
+			$("#card_owner_name").attr("readonly","readonly");
+			$("#card_no").attr("readonly","readonly");
+			$.ligerui.get("bank_of_deposit_pro").set('disabled', true);
+			$.ligerui.get("bank_of_deposit_city").set('disabled', true);
+			$("#bank_of_deposit").attr("readonly","readonly");
+			$("#bank_branch").attr("readonly","readonly");
+		}
+		
+	}
+	
+	/*
+	 * 初始化产品列表
+	 */
+	function init_category_table_data()
+	{
+		$("#product_total_count_lower").val(this_inve_trance_pro_data.product_account / 10000);
+		
+		var obj = {value : this_inve_trance_pro_data.product_account / 10000};
+		
+		//changeProductTotalCountUpper(obj);
+		
+		if(obj.value == "")
+		{
+			$("#product_total_count_upper").val("");
+		}
+		else
+		{
+			$("#product_total_count_upper").val(convertCurrency(obj.value));
+		}
+		
+		var trEle = '<tr class="lcsqxxtr">';
+		trEle += '<td><input type="radio" id="wms_inve_pruduct_category_id" checked="checked" class="radio5" value='+this_inve_trance_pro_data.wms_inve_pruduct_category_id+'></td>';
+		trEle += '<td><input type="hidden" id="category_name" value='+this_inve_trance_pro_data.category_name+'>'+this_inve_trance_pro_data.category_name+'</td>';	
+		trEle += '<td><input type="hidden" id="category_deadline" value='+this_inve_trance_pro_data.product_deadline+'>'+this_inve_trance_pro_data.product_deadline+'</td>';	
+		trEle += '<td><input type="hidden" id="category_return_rate" value='+this_inve_trance_pro_data.product_interest+'>'+this_inve_trance_pro_data.product_interest+'</td>';
+		
+		if(this_inve_trance_pro_data.category_rebate_way == 1)
+		{
+			trEle += '<td>月返</td>';	
+		}
+		if(this_inve_trance_pro_data.category_rebate_way == 2)
+		{
+			trEle += '<td>年返</td>';	
+		}
+		
+		trEle += '</tr>';
+		
+		$('.lcsqxxtr:last').after(trEle);
+	}
+	
+	var index = 0;
+	
+	/*
+	 * 查询产品
+	 */
+	function searchClick()
+	{
+		var category_name = $("#category_name_select").ligerComboBox("getValue");
+		
+		if(index > 0)
+		{
+			return;
+		}
+		index++;
+		
+		$('.lcsqxxtr:not(:first)').remove();//重置表格
+		
+		$.post(globalUtil.getTimestampUrl("/inve/getAllCategoryInfos.do"), null, function(data){
+			var objs = data.Rows;
+			for(var i = 0; i < objs.length; i++)
+			{
+				if(objs[i].wms_inve_pruduct_category_id == category_name)
+				{
+					var trEle = '<tr class="lcsqxxtr">';
+					trEle += '<td><input type="radio" id="wms_inve_pruduct_category_id" checked="checked" class="radio5" value='+objs[i].wms_inve_pruduct_category_id+'></td>';
+					trEle += '<td><input type="hidden" id="category_name" value='+objs[i].category_name+'>'+objs[i].category_name+'</td>';	
+					trEle += '<td><input type="hidden" id="category_deadline" value='+objs[i].category_deadline+'>'+objs[i].category_deadline+'</td>';	
+					trEle += '<td><input type="hidden" id="category_return_rate" value='+objs[i].category_return_rate+'>'+objs[i].category_return_rate+'</td>';
+					
+					if(objs[i].category_interest_pay_method == 1)
+					{
+						trEle += '<td>月返</td>';	
+					}
+					if(objs[i].category_interest_pay_method == 2)
+					{
+						trEle += '<td>年返</td>';	
+					}
+					
+					trEle += '</tr>';
+					
+					$('.lcsqxxtr:last').after(trEle);
+					
+					initShowTitleMsg($("#product_total_count_lower").val(), objs[i].category_name);
+					
+					piPeiZhaiQuan();
+					
+					break;
+				}
+			}
+			
+		});
+		
+		
+		
+	}
+	
+	/*
+	 * 初始化推送消息
+	 */
+	function initPushMessagesClick()
+	{
+		if(this_inve_trance_data.income_account == 1)
+		{       
+			$("#income_account_str").attr("checked", true);
+			$("#income_account").val(1);
+		}
+		if(this_inve_trance_data.expiration_reminder == 1)
+		{
+			$("#expiration_reminder_str").attr("checked", true);
+			$("#expiration_reminder").val(1);
+		}
+		if(this_inve_trance_data.debt_expires == 1)
+		{
+			$("#debt_expires_str").attr("checked", true);
+			$("#debt_expires").val(1);
+		}
+	}
+	
+	/*
+	 * 推送消息
+	 */
+	function pushMessagesClick(obj)
+	{
+		if(obj.checked)
+		{
+			if(obj.value == 1)
+			{
+				$("#income_account").val(1);
+			}
+			if(obj.value == 2)
+			{
+				$("#expiration_reminder").val(1);
+			}
+			if(obj.value == 3)
+			{
+				$("#debt_expires").val(1);
+			}
+		}
+		else
+		{
+			if(obj.value == 1)
+			{
+				$("#income_account").val(0);
+			}
+			if(obj.value == 2)
+			{
+				$("#expiration_reminder").val(0);
+			}
+			if(obj.value == 3)
+			{
+				$("#debt_expires").val(0);
+			}
+		}
+	}
+	var saveIdentification=false;//标记保存是否返回
+	//提交金额信息
+	function save(flag, type){
+		var jsonStr={};
+		var checkFlag=true;
+		var checkedFlag=false;
+		var jedata=getGridData(grid_divwt4);
+		var hjzfje=0;//合计支付金额
+		for(var i = 0; i < jedata.length;i++){
+				//现金
+				if(jedata[i].pay_type == 1){
+					if(flag == 1){
+						if(jedata[i].card_owner_name=='' || jedata[i].pay_account * 10000==''){
+					   		globalUtil.warnMsg(globalErrorMsg['800203']);
+					   		checkFlag=false;
+					   		return;
+					   	}else{
+					   		if(!globalUtil.isFloat(jedata[i].pay_account)){
+					   			globalUtil.warnMsg(globalErrorMsg['800206']);
+					   			checkFlag=false;
+					    		return;
+					   		}
+					   		hjzfje = globalUtil.accAdd(parseFloat(hjzfje),jedata[i].pay_account);
+					   		//hjzfje+=parseFloat(jedata[i].pay_account * 10000);
+					   	}
+					}
+				}
+				jsonStr.wms_inve_transa_id=wms_inve_transa_id;
+		    	jsonStr.pay_type=jedata[i].pay_type;
+		    	//jsonStr.cash_pay_name=jedata[0].cash_pay_name;
+		    	jsonStr.pay_account=jedata[i].pay_account * 10000;
+		    	jsonStr.should_pay_account=jedata[i].pay_account * 10000;
+		    	jsonStr.card_owner_name=jedata[i].card_owner_name;
+		    	jsonStr.act_account=jedata[i].pay_account * 10000;
+			
+				//银行卡
+				if(jedata[i].pay_type == 2){
+					if(flag == 1){
+						checkedFlag=true;
+					    if(jedata.length==0){
+					    	 globalUtil.warnMsg(globalErrorMsg['800204']);//请填全金额支付信息！
+					    	 checkFlag=false;
+					    	 return;
+					    }
+					    if(jedata[i].pay_account==''){
+				    	 	globalUtil.warnMsg("请填写实际支付金额");//请填全金额支付信息！
+				    	 	checkFlag=false;
+							return;
+				    	}else if(jedata[i].wms_inve_pos_id==''|| jedata[i].wms_inve_pos_id=='-1')
+				    	{
+				    		globalUtil.warnMsg("请选择POS机编号");//请填全金额支付信息！
+				    	 	checkFlag=false;
+							return;
+				    	}else {
+				    	    if(!globalUtil.isFloat(jedata[i].pay_account)||parseFloat(jedata[i].pay_account)<0){
+						     	globalUtil.warnMsg(globalErrorMsg['800206']);//支付金额错误，请修改！
+						    	checkFlag=false;
+							   	return;
+					    	 }
+				    	     hjzfje = globalUtil.accAdd(parseFloat(hjzfje),jedata[i].pay_account);
+				    		 //hjzfje+=parseFloat(jedata[i].pay_account * 10000);
+						}
+					}
+			    	jsonStr.wms_inve_transa_id=wms_inve_transa_id;
+			    	jsonStr.pay_type=jedata[i].pay_type;
+		    		jsonStr.pay_account=hjzfje;
+				}
+				//续单本金
+				if(jedata[i].pay_type == 3){
+					checkedFlag=true;
+				    if(jedata[i].card_owner_name=='' || jedata[i].pay_account=='' || jedata[i].bill_code == ''){
+				    	 globalUtil.warnMsg(globalErrorMsg['800204']);//请填全金额支付信息！
+				    	 checkFlag=false;
+					   	 return;
+				    }else {
+				    	 if(!globalUtil.isFloat(jedata[i].pay_account)||parseFloat(jedata[i].pay_account)<0){
+					   		globalUtil.warnMsg(globalErrorMsg['800206']);//支付金额错误，请修改！
+					   		checkFlag=false;
+					    	return;
+					   	 }
+				    	 hjzfje = globalUtil.accAdd(parseFloat(hjzfje),parseFloat(jedata[i].pay_account));
+				    	 //hjzfje+=parseFloat(jedata[i].pay_account * 10000);
+					}
+			    	jsonStr.wms_inve_transa_id=wms_inve_transa_id;
+			    	jsonStr.pay_type=jedata[i].pay_type;
+		    		jsonStr.pay_account=hjzfje;
+		    		jsonStr.wms_inve_redeem_principal_detail_id=jedata[i].wms_inve_redeem_principal_detail_id;
+		    		jsonStr.wms_inve_redeem_detail_id=jedata[i].wms_inve_redeem_detail_id;
+				}
+		}
+		
+		hjzfje = globalUtil.accMul(hjzfje, 10000);
+		
+		var product_account = $("#product_total_count_lower").val() * 10000;
+		
+		if(flag == 1){
+			
+			if(hjzfje != product_account){
+				globalUtil.warnMsg(globalErrorMsg['800205']);//支付金额与投资金额不等，请修改！
+		    	checkFlag=false;
+			    return;
+			}	
+		}
+		
+		jsonStr.itcardJSON=JSON.stringify(jedata);
+		if(!checkFlag){
+			return;
+		}
+		
+		/* if(!checkedFlag){
+			globalUtil.warnMsg(globalErrorMsg['800214']);
+			return;
+		} */
+		//实现对收益卡信息的校验
+        var paramck  = globalUtil.getFormParam("main_s");
+		if(flag=='1'){
+			 //判断卡主姓名card_owner_name
+	        if(paramck.card_owner_name =="" || paramck.card_owner_name =="-1"){
+	            globalUtil.errorMsg(globalErrorMsg['800139']); 
+	            return;
+	        }
+	        //判断银行卡号card_no
+	        if(paramck.card_no =="" || paramck.card_no =="-1"){
+	            globalUtil.errorMsg(globalErrorMsg['800140']); 
+	            return;
+	        }
+	        //判断省
+	        if(paramck.bank_of_deposit_pro == "" || paramck.bank_of_deposit_pro == "-1") {
+	            globalUtil.errorMsg(globalErrorMsg['800133']); 
+	                return;
+	        }
+	        //判断市
+	        if(paramck.bank_of_deposit_city == "" || paramck.bank_of_deposit_city == "-1") {
+	            globalUtil.errorMsg(globalErrorMsg['800134']); 
+	            return;
+	        }
+	        //判断开户行bank_of_deposit
+	        if(paramck.bank_of_deposit =="" || paramck.bank_of_depostit =="-1"){
+	            globalUtil.errorMsg(globalErrorMsg['800141']); 
+	            return;
+	        }
+	        //判断支行bank_branch
+	        if(paramck.bank_branch == "" || paramck.bank_branch =="-1"){
+	            globalUtil.errorMsg(globalErrorMsg['800142']); 
+	            return;
+	        }
+	        //实现对债权匹配归属信息校验
+// 	        if(checkIsallopatry()==false){
+// 	        	return;
+// 	        }
+	        //实现校验附件上传情况
+// 	        if(checkFileArr(fileArr,filecheck)){
+// 	        	return;
+// 	        }
+		}
+	    jsonStr.wms_inve_transa_prod_id=wms_inve_transa_prod_id;
+	    jsonStr.card_owner_name=paramck.card_owner_name;
+	    jsonStr.card_no= $("#card_no_copy").val();
+	    jsonStr.bank_of_deposit_pro=paramck.bank_of_deposit_pro;
+	    jsonStr.bank_of_deposit_city=paramck.bank_of_deposit_city;
+	    jsonStr.bank_of_deposit=paramck.bank_of_deposit;
+	    jsonStr.bank_branch=paramck.bank_branch;
+	    jsonStr.wms_inve_customer_card_id=$("#wms_inve_customer_card_id").val();
+	    jsonStr.id_card = this_inve_trance_data.id_card;
+	    jsonStr.flagKey=flag;//传入是暂存还是提交
+	    jsonStr.fileArrpay = JSON.stringify(fileArr);//附件
+	    jsonStr.taskId=taskId;
+	    jsonStr.data_type_name=data_type_name;//附件大类id
+	    jsonStr.product_total_count_lower=this_inve_trance_data.product_total_count_lower;
+	    jsonStr.income_account=$("#income_account").val();
+	    jsonStr.expiration_reminder=$("#expiration_reminder").val();
+	    jsonStr.debt_expires=$("#debt_expires").val();
+	    jsonStr.old_wms_inve_pruduct_category_id = this_inve_trance_pro_data.wms_inve_pruduct_category_id;
+	    
+	    jsonStr.product_total_count_lower = $("#product_total_count_lower").val() * 10000;
+	    jsonStr.product_total_count_upper = $("#product_total_count_upper").val();
+	    jsonStr.wms_inve_pruduct_category_id = $("#wms_inve_pruduct_category_id").val();
+	    jsonStr.product_account = $("#product_total_count_lower").val() * 10000;
+	    jsonStr.org_product_account = $("#product_total_count_lower").val() * 10000;
+	    jsonStr.category_name = $("#category_name").val();
+	    jsonStr.product_deadline = $("#category_deadline").val();
+	    jsonStr.product_interest = $("#category_return_rate").val();
+	    
+	    var act_date_of_payment = $("#act_date_of_payment").val();
+	    if(act_date_of_payment == "")
+	    {
+	    	globalUtil.warnMsg("实际支付日期不允许为空!"); 
+            return;
+	    }
+	    else
+	    {
+	    	jsonStr.date_of_act=act_date_of_payment;
+	    }
+	    
+	    $("input[name=is_allopatry]").each(function(){
+            if($(this).attr("checked") =="checked"){
+               jsonStr.is_allopatry=$(this).val();
+            }
+       });
+	    //如果是上单审核退回修改页面 需要把当前获取的数据传递到
+	    if(update=='1'){
+	    	window.parent.setInfo(jsonStr,0);
+	    	return;
+	    }
+	    //判断是否可以点击（点击的提交或者保存的请求是否返回 ）
+	    if(saveIdentification){
+			globalUtil.warnMsg(globalErrorMsg['1111111']); //请不要连续点击！
+			return;
+		}
+		saveIdentification=true;
+		
+		globalUtil.addMask();
+		globalUtil.showLoading();
+		
+		$.post(globalUtil.getTimestampUrl("/inve/wmsinvetransaupdateforjezf.do"),
+				jsonStr, function(data) {
+					saveIdentification=false;//标记保存是否返回
+					if (data == 'success') {
+						if(type == 1)
+			 			{
+						 	globalUtil.successMsg(globalErrorMsg['100002'],//保存成功
+									function() {							 		
+									 		closeTabAndRes();							 			
+									});
+						 }else if(type == 0){
+							 //type=0 调用打印
+							 doPrint();
+						 }
+						
+						globalUtil.delMask();
+	  					globalUtil.closeLoading();
+	  					
+					}else if(data == 'error'){
+						
+						globalUtil.delMask();
+	  					globalUtil.closeLoading();
+	  					
+						globalUtil.errorMsg(globalErrorMsg['100012']);//保存失败
+					}else if(data == "error1"){
+						
+						globalUtil.delMask();
+	  					globalUtil.closeLoading();
+	  					
+						globalUtil.errorMsg("债权不足,请联系债权录入专员!");//保存失败
+						return;
+					}
+				});
+	}
+    
+	function checkFileArr(fileArr,data_detail_name){
+    	if(fileArr.length==0){
+    		globalUtil.errorMsg(globalErrorMsg['800220']);//请上传收款凭证/Pos机小票!
+    		return true;
+    	}else{
+	    	var flg=true;
+	        for(var i=0;i<fileArr.length;i++){
+	        	if(fileArr[i].data_detail_name ==data_detail_name){
+	        		flg=false;
+	        		break;
+	        	}
+	        }
+	        if(flg){
+	        	globalUtil.errorMsg(globalErrorMsg['800220']);//请上传收款凭证/Pos机小票!
+	        }
+	        return flg;
+    	}
+    }
+	
+	//打印
+	function doPrint()
+	{
+		window.open("printProctolPreview.html?wms_inve_transa_id="+wms_inve_transa_id+"&url=printTransaProtocolpdf.pdf");
+	}
+	
+	//验证开户行输入的银行是否是邮政储蓄
+	function verifyName(obj)
+	{
+		var name = obj.value;
+		if(name.indexOf("邮政储蓄") >= 0)
+		{
+			$("#bank_of_deposit").val("");
+			$("#bank_of_deposit").focus();
+			globalUtil.errorMsg("暂不支持邮政储蓄银行卡,请更换其它银行卡");
+			return;
+		}
+	}
+</script>
+</head>
+<body>
+
+<!-- tab页面信息 -->
+<div class="pop-center overflow-au" style="top: 10px">
+	<div id="khxx" class="center-content" style="min-width: 600px; height: auto">
+		<table width="40%" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+				<td width="10%" class="tabbody01" id="tabbody01" onclick="changeTab02('zezf');">
+					<div align="center" id="khdtabdiv" class="tab_step tab_step101">金额支付</div>
+				</td>
+				<td width="10%" class="tabbody02" id="tabbody02" onclick="changeTab02('khzl');">
+					<div align="center" id="khzltabdiv" class="tab_step tab_step202">客户签单信息</div>
+				</td>
+			</tr>
+		</table>
+			
+		<!-- 客户支付信息 -->
+		<div class="pop-center overflow-au" style="top: 40px">
+			<div id="zezf">
+				<div id="divpart1" align="left" class="warningDiv askwaring"></div>
+				<div id="divpart2" class="pop-formDiv clearfix" style="margin: 5px;height: 180px;">
+					<div class="float-l clearboth" style="height: 10px;"></div>
+					<div class="center-content clearboth" style="min-width: 700px;">
+						<!-- 添加客户支付信息begin -->
+						<div class="center-title">
+							<font color="black">客户支付信息</font>
+						</div>
+						<!-- 新的客户支付信息 start -->
+						<div class="center-txt" style="margin-bottom: 15px; display: '';" id="divpart2_4">
+							<div id="toolbar-divwt4" class="minwidth400"></div>
+							<div id="grid-divwt4"></div>
+						</div>
+		                <div class="float-l clearboth">
+							<div class="float-l clearboth">
+		                		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		                		<span style="color: red;">*</span>实际支付日期:
+		                	</div>
+					        <div class="l-panel-search-item">
+					             <input id="act_date_of_payment" class="Wdate" type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true, maxDate:'%y-%M-%d'})" style="width: 133px; vertical-align: top;" onchange="changeActDate(this);"/>
+					        </div>
+					    </div>
+					</div>
+					<!-- 添加附件信息begin -->
+		        	<div class="center-title" style="margin-top: 20px;">附件信息</div>
+                	<div class="center-content2 clearboth" style="min-width: 500px;">
+		            	<table cellspacing="1" cellpadding="1" class="input_tb" id="att_tb" >
+		               		<tr >
+		               		</tr>
+		            	</table>
+                	</div>
+		        	<!-- 添加附件信息end -->
+				</div>
+			</div>
+			<!-- 客户资料信息 -->
+			<div id="khzl">
+				<div class="center-content clearboth" style="min-width: 700px;">
+						<div class="center-title">
+							<font color="black">客户基本信息</font>
+						</div>
+						<div class="center-content2 clearboth" style="min-width: 500px;">
+		            		<div class="l-panel-search-cond clearfix"  style="padding-top: 2px; height: 150px;">
+		                		<div class="float-l clearboth">
+		                    		<div class="l-panel-search-title">
+		                        		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		                        		<span style="color: red;">*</span>客户姓名:
+		                    		</div>
+		                    		<div class="l-panel-search-item">
+		                        		<input type="text" id="cus_name" style="width: 200px" isRequired="1" disabled="disabled"/>
+		                    		</div>
+		                		</div>
+				                <div class="float-l ">
+				                    <div class="l-panel-search-title">
+				                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        <span style="color: red;">*</span>联系电话:
+				                    </div>
+				                    <div class="l-panel-search-item">
+				                        <input type="text" id="mobile_phone" style="width: 200px" isRequired="1" disabled="disabled"/>
+				                    </div>
+				                </div>
+				               <div class="float-l clearboth">
+		                    		<div class="l-panel-search-title">
+				                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        <span style="color: red;">*</span>有效证件:
+				                    </div>
+				                    <div class="l-panel-search-item">
+				                        <input type="text" id="id_card" style="width: 200px" isRequired="1" disabled="disabled"/>
+				                    </div>
+				                </div>
+				                <div class="float-l ">
+				                    <div class="l-panel-search-title">
+				                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        	性别:
+				                    </div>
+				                    <div class="l-panel-search-item">
+				                         <input type="radio" name="cus_gender" value='1' class="radio5" disabled="disabled"/>男
+				                         <input type="radio" name="cus_gender" value='2' class="radio5" disabled="disabled"/>女
+				                    </div>
+				                </div>
+				                <div class="float-l clearboth">
+		                    		<div class="l-panel-search-title">
+				                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        	出生日期:
+				                    </div>
+				                    <div class="l-panel-search-item">
+				                        <input type="text" id="cus_birthday" style="width: 200px" isRequired="1"  disabled="disabled"/>
+				                    </div>
+				                </div>
+				                <div class="float-l">
+				                    <div class="l-panel-search-title">
+				                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        	电邮地址:
+				                    </div>
+				                    <div class="l-panel-search-item">
+				                        <input type="text" id="customer_email" style="width: 200px" isRequired="1" disabled="disabled"/>
+				                    </div>
+				                </div>
+				                <div class="float-l clearboth">
+		                    		<div class="l-panel-search-title">
+				                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        	通讯地址:
+				                    </div>
+				                    <div class="l-panel-search-item">
+				                        <input type="text" id="cus_address" style="width: 200px" isRequired="1" disabled="disabled"/>
+				                    </div>
+				                </div>
+				                 <div class="float-l">
+				                    <div class="l-panel-search-title">
+				                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        	账单默认发送地址:
+				                    </div>
+				                    <div class="l-panel-search-item">
+				                         <input type="radio" name="bill_send_mode" value='1' class="radio5" disabled="disabled"/>电邮地址
+				                         <input type="radio" name="bill_send_mode" value='3' class="radio5" disabled="disabled"/>通讯地址
+				                    </div>
+				                </div>
+				           </div>
+				        </div>
+		                
+						<!-- 收益卡信息 -->
+						<div class="center-title" style="margin-top: 20px;">
+		                                                         客户收益卡信息<span style="color: red;">(*为必填项)</span>
+		                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+		                    <span id="bank_info_title">                
+		            		      <input type="radio" name="is_bank_card" value='1' class="radio5" onchange="changeRadio(this);">全新银行卡</input>
+		            		      &nbsp;&nbsp;&nbsp; 
+		             		      <input type="radio" name="is_bank_card" value='2' class="radio5" onchange="changeRadio(this);">已使用银行卡</input>
+		             		      &nbsp;
+		             		      <select id="bank_info" onchange="changeOption(this);" style="width: 200px;"></select>
+		             	    </span>
+		                </div>
+		        		<div class="center-content2 clearboth" style="min-width: 500px;">
+		            		<div class="l-panel-search-cond clearfix" id='main_s' style="padding-top: 2px; height: 100px;">
+		                		<div class="float-l clearboth">
+		                    		<div class="l-panel-search-title">
+		                        		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		                        		<span style="color: red;">*</span>卡主姓名:
+		                    		</div>
+		                    		<div class="l-panel-search-item">
+		                        		<input type="text" id="card_owner_name" style="width: 200px" isRequired="1" />
+		                    		</div>
+		                    	</div>
+				                <div class="float-l ">
+				                    <div class="l-panel-search-title">
+				                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        <span style="color: red;">*</span>银行卡号:
+				                    </div>
+				                    <div class="l-panel-search-item">
+				                        <input type="hidden" id="card_no_copy" style="width: 200px" isRequired="1" />
+				                        <input type="text" id="card_no" style="width: 200px" isRequired="1" onkeyup="init_card_no()"/>
+				                    </div>
+				                </div>
+				                <div class="float-l clearboth">
+				                    <div class="l-panel-search-title">
+				                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        <span style="color: red;">*</span>省:
+				                    </div>
+				                    <div class="l-panel-search-item">
+				                        <input type="text" id="bank_of_deposit_pro" style="width: 200px" isRequired="1" />
+				                    </div>
+				                </div>
+				                <div class="float-l" style="margin-left: 66px">
+				                    <div class="l-panel-search-title">
+				                        <span style="color: red;">*</span>市:
+				                    </div>
+				                    <div class="l-panel-search-item">
+				                        <input type="text" id="bank_of_deposit_city" style="width: 200px" isRequired="1" />
+				                    </div>
+				                </div>
+				                <div class="float-l clearboth">
+				                    <div class="l-panel-search-title">
+				                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        <span style="color: red;">*</span>开户行:
+				                    </div>
+				                    <div class="l-panel-search-item">
+				                        <input type="text" id="bank_of_deposit" style="width: 200px" isRequired="1" onchange="verifyName(this);"/>
+				                    </div>
+				                </div>
+				                <div class="float-l">
+				                    <div class="l-panel-search-title">
+				                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        <span style="color: red;">*</span>支行:
+				                    </div>
+				                    <div class="l-panel-search-item">
+				                        <input type="text" id="bank_branch" style="width: 200px" isRequired="1" />
+				                        <input type="hidden" id="wms_inve_customer_card_id"></input>
+				                    </div>
+				                </div>
+			             	</div>
+		            	</div>
+		            	
+		            	<!-- 出借信息 -->
+		            	<div class="center-title">
+							<font color="black">出借信息</font>
+						</div>
+						<div class="center-content2 clearboth" style="min-width: 500px;">
+		            		<div class="l-panel-search-cond clearfix"  style="padding-top: 2px; height: 150px;">
+		                		<div class="float-l clearboth">
+		                    		<div class="l-panel-search-title">
+		                        		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		                        		<span style="color: red;">*</span>出借金额(小写):
+		                    		</div>
+		                    		<div class="l-panel-search-item">
+		                        		<input type="text" id="product_total_count_lower" style="width: 200px" isRequired="1"  onchange="changeProductTotalCountUpper(this);"/>万元
+		                    		</div>
+		                		</div>
+				                <div class="float-l ">
+				                    <div class="l-panel-search-title">
+				                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        <span style="color: red;">*</span>出借金额(大写):
+				                    </div>
+				                    <div class="l-panel-search-item">
+				                        <input type="text" id="product_total_count_upper" maxlength="20" readonly="readonly" style="width:170px;" />万元
+				                    </div>
+				                </div>
+				               <div class="float-l clearboth" id="category_select_div">
+		                    		<div class="l-panel-search-title">
+				                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        <span style="color: red;">&nbsp;&nbsp;</span>签单产品:
+				                    </div>
+				                    <div class="l-panel-search-item" >
+				                        <input type="text" id="category_name_select" style="width: 200px" isRequired="1"/>
+				                    </div>
+				                </div>
+				                <div class="float-l ">
+				                    <div class="l-panel-search-item">
+<!-- 				                       	<input type="button" id="category_query_btn" class="btn-search" onmouseover="this.className='btn-search-over'" onmouseout="this.className='btn-search'" onmousedown="this.className='btn-search-down'" style="margin-right: 7px;" onclick="searchClick();"></input> -->
+				                       		<a href="javascript:searchClick();" class="btnType1 btnSize1" id="change_category_btn">更换产品</a>
+				                       		<div id="hetongbianhao"></div>
+				                    </div>
+				                </div>
+						        <table id="lcsqxxtable" border="1" bordercolor="#BFBFBF" width="100%" style="text-align: center; margin-bottom: 5px; margin-top: 3px;margin-left: 50px; ">
+										<tr class="lcsqxxtr" style="background-color: #676b73; color: white" id="headtr">
+											<td width="5%"></td>
+											<td width="20%" class="title">产品名称</td>
+											<td width="20%" class="title">投资期限(月)</td>
+											<td width="20%" class="title">年化利率(%)</td>
+											<td width="20%" class="title">收益支付</td>
+											<td width="20%" class="title" style="display: none;">产品主键</td>
+										</tr>
+								</table>
+				            </div>
+			            		<div class="l-panel-search-cond clearfix" style="padding-top: 2px; margin-left: 5px;">
+						            <div class="float-l ">
+										 <label class="label_Type_1">客户经理：</label>
+			             				 <p class="value_Type_1" id="salesman_name"></p>
+			             			</div>
+			             			<div class="float-l ">
+			             			 	<label class="label_Type_1">部门经理：</label>
+			             			 	<p class="value_Type_1" id="department_name"></p>
+			             			</div>
+			             			<div class="float-l ">
+			             			 	<label class="label_Type_1">副总经理：</label>
+			             			 	<p class="value_Type_1" id="vice_manager_name"></p>
+			             		    </div>
+			             			<div class="float-l ">	 	
+			             				 <label class="label_Type_1">中分总：</label>
+			             				 <p class="value_Type_1" id="center_manager_name"></p>
+			             			</div>
+			             			<div class="float-l ">		 	
+			             				 <label class="label_Type_1">总经理：</label>
+			             				 <p class="value_Type_1" id="genter_manager_name"></p>
+			             			</div>
+		             			</div>
+		             			
+		             			<div class="l-panel-search-cond clearfix"  style="padding-top: 2px;margin-left: 20px;">
+						            <div class="float-l ">
+										 <label class="labelType1">是否接受平台推送消息：</label>
+			             				 <input type="checkbox" value="1" id="income_account_str" class="radio3" onclick="pushMessagesClick(this)"/>收益到账
+			             				 <input type="checkbox" value="2" id="expiration_reminder_str" class="radio3" onclick="pushMessagesClick(this)"/>到期提醒
+			             				 <input type="checkbox" value="3" id="debt_expires_str" class="radio3" onclick="pushMessagesClick(this)"/>债权到期
+			             				 
+			             				 <!-- 设置推送消息信息 -->
+										 <input type="hidden" id="income_account"/>
+										 <input type="hidden" id="expiration_reminder"/>
+										 <input type="hidden" id="debt_expires"/>
+			             			</div>
+		             			</div>
+				       </div>
+				</div>
+			</div>			
+		</div>
+	</div>
+</div>
+	
+	
+	<div class="pop-footer5" id="btn_div">
+<!-- 	    <input id="zcbtn"  -->
+<!-- 	           class="btn-saveZ"  -->
+<!-- 		       onmouseover="this.className='btn-saveZ-over'"  -->
+<!-- 		       onmouseout="this.className='btn-saveZ'"  -->
+<!-- 		       onmousedown="this.className='btn-saveZ-down'"  -->
+<!-- 		       type="button"  -->
+<!-- 		       style="margin-right:7px;"  -->
+<!-- 		       onclick="save(0,1)"/>    -->
+		<input id="tjbtn" 
+			   class="btn-saveT"
+			   onmouseover="this.className='btn-saveT-over'"
+			   onmouseout="this.className='btn-saveT'"
+			   onmousedown="this.className='btn-saveT-down'" 
+			   type="button"
+			   style="margin-right: 7px;" 
+			   onclick="save(1,1)" /> 
+	    <input
+			   id="cancelBtnId" 
+			   class="btn-cancel"
+			   onmouseover="this.className='btn-cancel-over'"
+			   onmouseout="this.className='btn-cancel'"
+			   onmousedown="this.className='btn-cancel-down'" 
+			   type="button"
+			   style="margin-right: 7px;"
+			   onclick="closeDialog();" />
+			   
+		<input id="printbtn" 
+			   class="btn-print"
+			   onmouseover="this.className='btn-print-over'"
+			   onmouseout="this.className='btn-print'"
+			   onmousedown="this.className='btn-print-down'" 
+			   type="button"
+			   onclick="save(0,0)"/>
+	</div>
+</body>
+</html>

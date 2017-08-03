@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/media/js/ZeroClipboard.js"></script>
+<title>业务管理>签单管理>签单申请</title>
+</head>
+<!--style="overflow-y:hidden;"主要实现边框右边无滚动条  -->
+<body style="overflow-y: hidden;">
+	<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<!--查询条件-->
+			<div class="l-panel-search-cond clearfix">
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;客户姓名：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="cus_name" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;电话号码：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="mobile_phone" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;理财产品：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="category_name" />
+					</div>
+				</div>
+				<div class="float-l clearboth">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;客户经理：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="salesman_name" />
+					</div>
+				</div>
+				<div class="float-l" style="margin-left: 36px">
+					<div class="l-panel-search-title">提交时间：</div>
+					<div class="l-panel-search-item">
+						<input id="create_timestamp_begin" class="Wdate" type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})" style="width: 133px; vertical-align: top;" />
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<input id="create_timestamp_end" class="Wdate" type="text"	onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})" style="width: 133px; vertical-align: top;" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="centertoolbar" class="minwidth400"></div>
+	<div id="grid"></div>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+		var grid;//定义列表对象
+		var cheDandialog;//撤单dialog对象
+		var zuoFeiDialog;//作废dialog对象
+		
+		$(function(){
+			init_category_name();//初始化产品类型
+			initToolbar();//设置操作按钮
+			initGridData();//列表
+		});
+		
+	
+		/*
+		 * 产品类型
+		 */
+    	function init_category_name(json){
+    		var category_name_params ={
+    				dest_url:'/inve/wmsinvepruductcategorylistforselect.do',
+    				t_col_name:'category_name',
+    				valueField:'wms_inve_pruduct_category_id',   //下拉框value对应的值，默认为id
+    				textField:'category_name',    //下拉框text对应的值，默认为text
+    				input_width:133,
+    				def_val:'first'
+    				};
+    		global_ligerui_extend.initCombox("category_name",null,category_name_params);
+   		    global_ligerui_extend.initComboxDefVal("category_name");
+    	}
+		 
+		/*
+		 * 设置操作按钮
+		 */
+		function initToolbar()
+		{
+			var toolbarItemData = [];
+            
+          	//修改按钮
+			toolbarItemData.push({
+                 text: '续期申请',
+                 click: updateBill,
+                 icon: 'modify'
+            });
+            toolbarItemData.push({
+                line: true
+            });
+            
+            //查询按钮
+            toolbarItemData.push({
+             	text: '查询',
+             	click: searchQuery,
+             	icon: 'search'
+         	});
+         	toolbarItemData.push({
+             	line: true
+         	});
+         	
+         	//清空按钮
+	        toolbarItemData.push({
+	            text: '清空',
+	            click:clear,
+	            icon: 'empty'
+	        });
+	        toolbarItemData.push({
+	            line: true
+	        });
+	        
+	        $("#centertoolbar").ligerToolBar({
+	             items: toolbarItemData
+	        });
+		}
+		
+		
+		/*
+		 *修改
+		 */
+		function updateBill()
+		{
+			var selectedRow = grid.getSelectedRow();
+			if(selectedRow == null)
+			{
+			   globalUtil.warnMsg("请选择一行记录！");
+	           return ;
+			}
+			
+			
+		}
+		
+		/*
+		 * 实现数据查询
+		 */
+        var search = function(flag) {
+        	if(flag) {//刷新到第1页
+	            initParams();
+	            global_ligerui_extend.search(grid, params);
+        	} else {//刷新当前页
+        		research();
+        	}
+        }
+		
+      	//弹出页关闭后刷新当前页(带当前页码)
+        var research = function() {
+        	initParams();
+        	global_ligerui_extend.research(grid, params);
+        }
+      	
+      	/*
+      	 * 初始化查询条件参数
+      	 */
+        function initParams() 
+      	{
+        	params = globalUtil.getFormParam("searchbar");
+        	if(params.category_name == '-1'){
+            	params.category_name = '';
+            }
+        	if(params.data_status == '-1'){
+        		params.data_status = '';
+        	}
+        }
+        
+        /*
+		 *查询
+		 */
+        var searchQuery = function() {
+        	search(true);
+        }
+		
+		/*
+		 * 清空查询条件
+		 */
+		function clear()
+		{
+			$("#cus_name").val("");
+			$("#mobile_phone").val("");
+			$("#category_name").val("请选择");
+        	global_ligerui_extend.setComboxVal("category_name","-1");
+			$("#salesman_name").val("");
+			$("#create_timestamp_begin").val("");
+			$("#create_timestamp_end").val("");
+		}
+		/*
+		 *列表显示
+		 */
+		function initGridData()
+		{
+			columns = [{
+             	display: '单据编号',
+             	name: 'bill_code',
+             	width: 180,
+             	minWidth: 180,
+             	render: function (rowdata, rowindex, value) { 
+     				return '<a href="javascript:inveInfo('+rowdata.wms_inve_transa_id+','+rowdata.wms_inve_transa_prod_id+','+rowdata.user_id+','+rowdata.inkey+');" style="color:#056AFF;text-decoration: none;">'+value+'</a>';
+     			}
+         	},{
+        	    display: '客户姓名',
+         	    name: 'cus_name',
+         	    width: 120,
+         	    minWidth: 120,
+     		},{
+        	 	display: '有效证件',
+         	 	name: 'id_card',
+          	 	width: 200,
+          	 	minWidth: 200,
+    		},{
+        	 	display: '电话号码',
+         	 	name: 'mobile_phone',
+          	 	width: 150,
+          	 	minWidth: 150,
+    		},{
+        		display: '理财产品',
+         	 	name: 'category_name',
+         	 	width: 120,
+         	 	minWidth: 120,
+     		},{
+        		display: '理财期限(月)',
+         	 	name: 'product_deadline',
+         	 	width: 120,
+         	 	minWidth: 120,
+     		},{
+        	 	display: '投资金额(万)',
+          		name: 'product_account',
+          		width: 120,
+          		minWidth: 120,
+    		},{
+        	 	 display: '到期时间',
+         	 	name: 'end_of_date',
+          	 	width: 100,
+         	 	minWidth: 100,
+     		}];
+			
+			grid = $("#grid").ligerGrid({
+        		columns: columns,
+        		url: global_param.context_name + '/inve/getRenewalInfos.do',
+        		sortName: 't1.cus_name,asc,t1.date_of_payment', // 排序列名
+				sortOrder: 'desc', // 排序方式
+        		rownumbers: true,
+        		allowUnSelectRow: true,
+        		usePager: true,
+        		width: '100%',
+        		height: '95%',
+        		heightDiff: -4,
+        		rowAttrRender: function(rowdata, rowindex) {
+    				
+        		}
+            });
+		}
+	
+		/*
+		 * 查看单据详情
+		 */
+		function inveInfo(wms_inve_transa_id,wms_inve_transa_prod_id,user_id,inkey)
+		{
+			var status;
+			var url = globalUtil.getTimestampUrl('/inve/wmsinvetransadSearchStatus.do');
+			var params = {
+					'wms_inve_transa_id': wms_inve_transa_id
+			}
+			
+      		$.post(url,params, function(data) {
+     					status = data;
+     					if(status == "1" || status == "2" || status == "7" || status == "9" || status == "10"){
+            				var url = globalUtil.getHtml("inve/addFinancialManagement.html?&user_id="+user_id+"&wms_inve_transa_id="+wms_inve_transa_id+"&wms_inve_transa_prod_id="+wms_inve_transa_prod_id+"&cktype=ck"+"&inkey="+inkey);
+            			}else{
+            				var url = globalUtil.getHtml("inve/addFinancialManagement.html?&zftype=zf&user_id="+user_id+"&wms_inve_transa_id="+wms_inve_transa_id+"&wms_inve_transa_prod_id="+wms_inve_transa_prod_id+"&cktype=ck"+"&inkey="+inkey);
+            			}
+     					globalUtil.openTab(10001, "理财详细信息", url, false);
+     		});
+        	
+        	if(user_id==undefined){
+        		user_id = 0;
+        	}
+		}
+	
+        </script>
+</body>
+</html>

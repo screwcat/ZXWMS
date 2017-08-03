@@ -1,0 +1,757 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sqls namespace="autosingle2">
+	<sqlElement key="sys_dept#list" author="auto_generator">  
+        <![CDATA[ 
+		  select  
+			  id,
+			  dept_name,
+			  p_dept_id,
+			  enable_flag,
+			  create_user,
+			  date_format(create_timestamp,'%Y-%c-%d')  as create_timestamp,
+			  last_update_user,
+			  date_format(last_update_timestamp,'%Y-%c-%d')  as last_update_timestamp,
+			  last_update_remark
+
+		  from  sys_dept
+		  where enable_flag = '1'
+		  <#if searchName??> 
+		      /* and column_name = :searchName */ 
+		  </#if> 
+		  <#if sortname??> 
+		  order by ${sortname} ${sortorder} 
+		  </#if> 
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="sys_dept#update" author="auto_generator">  
+        <![CDATA[ 
+		  update
+			  sys_dept
+		  set
+		  <#if id??>
+			  id = :id,
+		  <#else>
+			  id = null,
+		  </#if>
+		  <#if dept_name??>
+			  dept_name = :dept_name,
+		  <#else>
+			  dept_name = null,
+		  </#if>
+		  <#if p_dept_id??>
+			  p_dept_id = :p_dept_id,
+		  <#else>
+			  p_dept_id = null,
+		  </#if>
+		  <#if enable_flag??>
+			  enable_flag = :enable_flag,
+		  <#else>
+			  enable_flag = null,
+		  </#if>
+		  <#if create_user??>
+			  create_user = :create_user,
+		  <#else>
+			  create_user = null,
+		  </#if>
+		  <#if create_timestamp??>
+			  create_timestamp = :create_timestamp,
+		  <#else>
+			  create_timestamp = null,
+		  </#if>
+		  <#if last_update_user??>
+			  last_update_user = :last_update_user,
+		  <#else>
+			  last_update_user = null,
+		  </#if>
+		  <#if last_update_timestamp??>
+			  last_update_timestamp = :last_update_timestamp,
+		  <#else>
+			  last_update_timestamp = null,
+		  </#if>
+		  <#if last_update_remark??>
+			  last_update_remark = :last_update_remark
+		  <#else>
+			  last_update_remark = null
+		  </#if>
+
+		  where 1=1
+		  <#if pkName??>
+			  and pkName = :pkName
+		  </#if>
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="sys_log#list" author="auto_generator">  
+        <![CDATA[ 
+		  select  
+			  id,
+			  unit_name,
+			  user_code,
+			  user_name,
+			  oper_behavior,
+			  date_format(oper_timestamp,'%y-%c-%d %t')  as oper_timestamp,
+			  oper_ip
+
+		   from  sys_log
+		   where 1=1
+		   <#if user_code??> 
+		      and user_code like :user_code
+		   </#if> 
+		    <#if user_name??> 
+		      and user_name like :user_name
+		   </#if> 
+		   <#if sortname??> 
+		      order by ${sortname} ${sortorder} 
+		   </#if> 
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="sys_log#update" author="auto_generator">  
+        <![CDATA[ 
+		  update
+			  sys_log
+		  set
+		  <#if id??>
+			  id = :id,
+		  <#else>
+			  id = null,
+		  </#if>
+		  <#if dept_name??>
+			  dept_name = :dept_name,
+		  <#else>
+			  dept_name = null,
+		  </#if>
+		  <#if user_code??>
+			  user_code = :user_code,
+		  <#else>
+			  user_code = null,
+		  </#if>
+		  <#if user_name??>
+			  user_name = :user_name,
+		  <#else>
+			  user_name = null,
+		  </#if>
+		  <#if oper_behavior??>
+			  oper_behavior = :oper_behavior,
+		  <#else>
+			  oper_behavior = null,
+		  </#if>
+		  <#if oper_timestamp??>
+			  oper_timestamp = :oper_timestamp,
+		  <#else>
+			  oper_timestamp = null,
+		  </#if>
+		  <#if oper_ip??>
+			  oper_ip = :oper_ip
+		  <#else>
+			  oper_ip = null
+		  </#if>
+
+		  where 1=1
+		  <#if pkName??>
+			  and pkName = :pkName
+		  </#if>
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="sys_function#list" author="auto_generator">  
+        <![CDATA[ 
+		  select  
+			  id,
+			  func_name,
+			  func_method,
+			  func_sort,
+			  menu_id,
+			  default_flag,
+			  func_remark
+
+		  from  sys_function
+		  where 1=1
+		  <#if searchName??> 
+		      /* and column_name = :searchName */ 
+		  </#if> 
+		  <#if sortname??> 
+		  order by ${sortname} ${sortorder} 
+		  </#if> 
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="sys_function#update" author="auto_generator">  
+        <![CDATA[ 
+		  update
+			  sys_function
+		  set
+		  <#if id??>
+			  id = :id,
+		  <#else>
+			  id = null,
+		  </#if>
+		  <#if func_name??>
+			  func_name = :func_name,
+		  <#else>
+			  func_name = null,
+		  </#if>
+		  <#if func_method??>
+			  func_method = :func_method,
+		  <#else>
+			  func_method = null,
+		  </#if>
+		  <#if func_sort??>
+			  func_sort = :func_sort,
+		  <#else>
+			  func_sort = null,
+		  </#if>
+		  <#if menu_id??>
+			  menu_id = :menu_id,
+		  <#else>
+			  menu_id = null,
+		  </#if>
+		  <#if default_flag??>
+			  default_flag = :default_flag,
+		  <#else>
+			  default_flag = null,
+		  </#if>
+		  <#if func_remark??>
+			  func_remark = :func_remark
+		  <#else>
+			  func_remark = null
+		  </#if>
+
+		  where 1=1
+		  <#if pkName??>
+			  and pkName = :pkName
+		  </#if>
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="sys_menu#list" author="auto_generator">  
+        <![CDATA[ 
+		  select  
+			  id,
+			  menu_name,
+			  menu_url,
+			  menu_sort,
+			  menu_level,
+			  p_menu_id,
+			  menu_remark
+
+		  from  sys_menu
+		  where 1=1
+		  <#if searchName??> 
+		      /* and column_name = :searchName */ 
+		  </#if> 
+		  <#if sortname??> 
+		  order by ${sortname} ${sortorder} 
+		  </#if> 
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="sys_menu#update" author="auto_generator">  
+        <![CDATA[ 
+		  update
+			  sys_menu
+		  set
+		  <#if id??>
+			  id = :id,
+		  <#else>
+			  id = null,
+		  </#if>
+		  <#if menu_name??>
+			  menu_name = :menu_name,
+		  <#else>
+			  menu_name = null,
+		  </#if>
+		  <#if menu_url??>
+			  menu_url = :menu_url,
+		  <#else>
+			  menu_url = null,
+		  </#if>
+		  <#if menu_sort??>
+			  menu_sort = :menu_sort,
+		  <#else>
+			  menu_sort = null,
+		  </#if>
+		  <#if menu_level??>
+			  menu_level = :menu_level,
+		  <#else>
+			  menu_level = null,
+		  </#if>
+		  <#if p_menu_id??>
+			  p_menu_id = :p_menu_id,
+		  <#else>
+			  p_menu_id = null,
+		  </#if>
+		  <#if menu_remark??>
+			  menu_remark = :menu_remark
+		  <#else>
+			  menu_remark = null
+		  </#if>
+
+		  where 1=1
+		  <#if pkName??>
+			  and pkName = :pkName
+		  </#if>
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="sys_role#list" author="auto_generator">  
+        <![CDATA[ 
+		  select  
+			  id,
+			  role_name,
+			  enable_flag,
+			  create_user,
+			  date_format(create_timestamp,'%Y-%c-%d')  as create_timestamp,
+			  last_update_user,
+			  date_format(last_update_timestamp,'%Y-%c-%d')  as last_update_timestamp,
+			  last_update_remark
+
+		  from  sys_role
+		  where enable_flag='1'
+		  <#if role_name??> 
+		       and role_name = :role_name  
+		  </#if> 
+		  <#if sortname??> 
+		  order by ${sortname} ${sortorder} 
+		  </#if> 
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="sys_role#update" author="auto_generator">  
+        <![CDATA[ 
+		  update
+			  sys_role
+		  set
+		  <#if id??>
+			  id = :id,
+		  <#else>
+			  id = null,
+		  </#if>
+		  <#if role_name??>
+			  role_name = :role_name,
+		  <#else>
+			  role_name = null,
+		  </#if>
+		  <#if enable_flag??>
+			  enable_flag = :enable_flag,
+		  <#else>
+			  enable_flag = null,
+		  </#if>
+		  <#if create_user??>
+			  create_user = :create_user,
+		  <#else>
+			  create_user = null,
+		  </#if>
+		  <#if create_timestamp??>
+			  create_timestamp = :create_timestamp,
+		  <#else>
+			  create_timestamp = null,
+		  </#if>
+		  <#if last_update_user??>
+			  last_update_user = :last_update_user,
+		  <#else>
+			  last_update_user = null,
+		  </#if>
+		  <#if last_update_timestamp??>
+			  last_update_timestamp = :last_update_timestamp,
+		  <#else>
+			  last_update_timestamp = null,
+		  </#if>
+		  <#if last_update_remark??>
+			  last_update_remark = :last_update_remark
+		  <#else>
+			  last_update_remark = null
+		  </#if>
+
+		  where 1=1
+		  <#if pkName??>
+			  and pkName = :pkName
+		  </#if>
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="sys_role_menu_function#list" author="auto_generator">  
+        <![CDATA[ 
+		  select  
+			  id,
+			  role_id,
+			  menu_id,
+			  func_id
+
+		  from  sys_role_menu_function
+		  where 1=1
+		  <#if searchName??> 
+		      /* and column_name = :searchName */ 
+		  </#if> 
+		  <#if sortname??> 
+		  order by ${sortname} ${sortorder} 
+		  </#if> 
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="sys_role_menu_function#update" author="auto_generator">  
+        <![CDATA[ 
+		  update
+			  sys_role_menu_function
+		  set
+		  <#if id??>
+			  id = :id,
+		  <#else>
+			  id = null,
+		  </#if>
+		  <#if role_id??>
+			  role_id = :role_id,
+		  <#else>
+			  role_id = null,
+		  </#if>
+		  <#if menu_id??>
+			  menu_id = :menu_id,
+		  <#else>
+			  menu_id = null,
+		  </#if>
+		  <#if func_id??>
+			  func_id = :func_id
+		  <#else>
+			  func_id = null
+		  </#if>
+
+		  where 1=1
+		  <#if pkName??>
+			  and pkName = :pkName
+		  </#if>
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="sys_user#list" author="auto_generator">  
+        <![CDATA[ 
+		  select  
+			  id,
+			  user_code,
+			  user_passwd,
+			  dept_id,
+			  enable_flag,
+			  create_user,
+			  date_format(create_timestamp,'%Y-%c-%d')  as create_timestamp,
+			  last_update_user,
+			  date_format(last_update_timestamp,'%Y-%c-%d')  as last_update_timestamp,
+			  last_update_remark,
+			  (select dept_name from sys_dept t where t.id = t1.dept_id) as dept_name,
+			  user_realname
+
+		  from  sys_user t1
+		  where enable_flag='1'
+		  <#if user_code??> 
+		       and user_code like :user_code  
+		  </#if> 
+		  <#if dept_id??> 
+		       and dept_id = :dept_id  
+		  </#if> 
+		  <#if user_realname??> 
+		       and user_realname like :user_realname  
+		  </#if> 
+		  <#if sortname??> 
+		  order by ${sortname} ${sortorder} 
+		  </#if> 
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="sys_user#update" author="auto_generator">  
+        <![CDATA[ 
+		  update
+			  sys_user
+		  set
+		  <#if id??>
+			  id = :id,
+		  <#else>
+			  id = null,
+		  </#if>
+		  <#if user_code??>
+			  user_code = :user_code,
+		  <#else>
+			  user_code = null,
+		  </#if>
+		  <#if user_passwd??>
+			  user_passwd = :user_passwd,
+		  <#else>
+			  user_passwd = null,
+		  </#if>
+		  <#if dept_id??>
+			  dept_id = :dept_id,
+		  <#else>
+			  dept_id = null,
+		  </#if>
+		  <#if enable_flag??>
+			  enable_flag = :enable_flag,
+		  <#else>
+			  enable_flag = null,
+		  </#if>
+		  <#if create_user??>
+			  create_user = :create_user,
+		  <#else>
+			  create_user = null,
+		  </#if>
+		  <#if create_timestamp??>
+			  create_timestamp = :create_timestamp,
+		  <#else>
+			  create_timestamp = null,
+		  </#if>
+		  <#if last_update_user??>
+			  last_update_user = :last_update_user,
+		  <#else>
+			  last_update_user = null,
+		  </#if>
+		  <#if last_update_timestamp??>
+			  last_update_timestamp = :last_update_timestamp,
+		  <#else>
+			  last_update_timestamp = null,
+		  </#if>
+		  <#if last_update_remark??>
+			  last_update_remark = :last_update_remark,
+		  <#else>
+			  last_update_remark = null,
+		  </#if>
+		  <#if user_realname??>
+			  user_realname = :user_realname
+		  <#else>
+			  user_realname = null
+		  </#if>
+
+		  where 1=1
+		  <#if pkName??>
+			  and pkName = :pkName
+		  </#if>
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="sys_user_menu_func#list" author="auto_generator">  
+        <![CDATA[ 
+		  select  
+			  id,
+			  user_id,
+			  menu_id,
+			  func_id,
+			  create_user,
+			  date_format(create_timestamp,'%Y-%c-%d')  as create_timestamp,
+			  last_update_user,
+			  date_format(last_update_timestamp,'%Y-%c-%d')  as last_update_timestamp,
+			  last_update_remark
+
+		  from  sys_user_menu_func
+		  where 1=1
+		  <#if searchName??> 
+		      /* and column_name = :searchName */ 
+		  </#if> 
+		  <#if sortname??> 
+		  order by ${sortname} ${sortorder} 
+		  </#if> 
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="sys_user_menu_func#update" author="auto_generator">  
+        <![CDATA[ 
+		  update
+			  sys_user_menu_func
+		  set
+		  <#if id??>
+			  id = :id,
+		  <#else>
+			  id = null,
+		  </#if>
+		  <#if user_id??>
+			  user_id = :user_id,
+		  <#else>
+			  user_id = null,
+		  </#if>
+		  <#if menu_id??>
+			  menu_id = :menu_id,
+		  <#else>
+			  menu_id = null,
+		  </#if>
+		  <#if func_id??>
+			  func_id = :func_id,
+		  <#else>
+			  func_id = null,
+		  </#if>
+		  <#if create_user??>
+			  create_user = :create_user,
+		  <#else>
+			  create_user = null,
+		  </#if>
+		  <#if create_timestamp??>
+			  create_timestamp = :create_timestamp,
+		  <#else>
+			  create_timestamp = null,
+		  </#if>
+		  <#if last_update_user??>
+			  last_update_user = :last_update_user,
+		  <#else>
+			  last_update_user = null,
+		  </#if>
+		  <#if last_update_timestamp??>
+			  last_update_timestamp = :last_update_timestamp,
+		  <#else>
+			  last_update_timestamp = null,
+		  </#if>
+		  <#if last_update_remark??>
+			  last_update_remark = :last_update_remark
+		  <#else>
+			  last_update_remark = null
+		  </#if>
+
+		  where 1=1
+		  <#if pkName??>
+			  and pkName = :pkName
+		  </#if>
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="sys_user_role#list" author="auto_generator">  
+        <![CDATA[ 
+           select  
+			  id,
+			  role_name,
+			  (select id from sys_user_role t1 where t1.role_id=t.id and t1.user_id=:user_id) as ischecked
+		  from  sys_role t
+		  where enable_flag='1'
+		  order by ${sortname} ${sortorder} 
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="sys_user_role#update" author="auto_generator">  
+        <![CDATA[ 
+		  update
+			  sys_user_role
+		  set
+		  <#if id??>
+			  id = :id,
+		  <#else>
+			  id = null,
+		  </#if>
+		  <#if user_id??>
+			  user_id = :user_id,
+		  <#else>
+			  user_id = null,
+		  </#if>
+		  <#if role_id??>
+			  role_id = :role_id
+		  <#else>
+			  role_id = null
+		  </#if>
+
+		  where 1=1
+		  <#if pkName??>
+			  and pkName = :pkName
+		  </#if>
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="wms_sys_dict#list" author="auto_generator">  
+        <![CDATA[ 
+		  select  
+			  wms_sys_dict_id,
+			  dict_type,
+			  dict_code,
+			  dict_name
+
+		   from  wms_sys_dict
+		   where 1=1
+		   <#if dict_type??> 
+		        and dict_type = :dict_type 
+		   </#if>
+		   
+		   <#if dict_code??> 
+		        and dict_code = :dict_code
+		   </#if> 
+		   
+		   <#if dict_name??> 
+		        and dict_name = :dict_name 
+		   </#if> 
+		   <#if sortname??> 
+		      order by ${sortname} ${sortorder} 
+		   </#if> 
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="wms_sys_dict_data#dictDatalistByDictId"
+		author="auto_generator">  
+        <![CDATA[ 
+		  select  *  from  wms_sys_dict_data
+		   where 
+		   <#if wms_sys_dict_id??> 
+		        wms_sys_dict_id = :wms_sys_dict_id
+		   </#if> 
+		   order by sort_order
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="wms_sys_dict_data#dictDatalistByDictCode"
+		author="auto_generator">  
+        <![CDATA[ 
+		  select  
+			  wms_sys_dict_data_id,
+			  value_code,
+			  value_meaning,
+			  wms_sys_dict_id
+
+		   from  wms_sys_dict_data
+		   
+		   where wms_sys_dict_id = (
+		   
+		   select wms_sys_dict_id
+
+		   from  wms_sys_dict
+		   
+		   where dict_code = :dict_code
+		   )
+		   
+		   <#if sortname??> 
+		      order by ${sortname} ${sortorder} 
+		   </#if> 
+
+        ]]>
+	</sqlElement>
+
+	<sqlElement key="wms_sys_dict_data#list" author="auto_generator">  
+        <![CDATA[ 
+		  select  
+			  wms_sys_dict_data_id,
+			  value_code,
+			  value_meaning,
+			  wms_sys_dict_id
+
+		   from  wms_sys_dict_data
+		   where 1=1
+		   <#if value_code??> 
+		        and value_code = :value_code 
+		   </#if>
+		   
+		   <#if value_meaning??> 
+		        and value_meaning = :value_meaning
+		   </#if> 
+		   <#if sortname??> 
+		      order by ${sortname} ${sortorder} 
+		   </#if> 
+
+        ]]>
+	</sqlElement>
+
+</sqls>

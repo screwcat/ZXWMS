@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="4008" pageHeight="2836" orientation="Landscape" columnWidth="4008" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e4147443-96d0-4101-8ff2-b5ff2daae44c">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="181"/>
+	<property name="ireport.y" value="0"/>
+	<subDataset name="dataset1" uuid="66700b85-f357-4f89-9252-1e049a4e0d4b">
+		<field name="personnel_bankCardCode" class="java.lang.String"/>
+		<field name="personnel_name" class="java.lang.String"/>
+		<field name="all_mon" class="java.lang.String"/>
+		<field name="remark" class="java.lang.String"/>
+		<field name="personnel_bankName" class="java.lang.String"/>
+		<field name="personnel_bank_title" class="java.lang.String"/>
+		<field name="bank_province" class="java.lang.String"/>
+		<field name="bank_city" class="java.lang.String"/>
+		<field name="add_comm_mon" class="java.lang.String"/>
+		<field name="tax_mon" class="java.lang.String"/>
+		<field name="stock_comm_mon" class="java.lang.String"/>
+		<field name="team_comm_mon" class="java.lang.String"/>
+		<field name="old_comm_mon" class="java.lang.String"/>
+		<field name="old_team_comm_mon" class="java.lang.String"/>
+		<field name="adjust_amount" class="java.lang.String"/>
+		<field name="total_mon" class="java.lang.String"/>
+		<variable name="index" class="java.lang.Integer" calculation="Count">
+			<variableExpression><![CDATA[$F{personnel_bankCardCode}]]></variableExpression>
+			<initialValueExpression><![CDATA[]]></initialValueExpression>
+		</variable>
+	</subDataset>
+	<subDataset name="dataset2" uuid="503b9003-342b-4d21-8559-12e603aed7f5"/>
+	<subDataset name="dataset3" uuid="c6690170-bf06-4a09-af14-6d4261fd2730"/>
+	<subDataset name="dataset4" uuid="32cdc2e9-d5bf-4137-b14a-4c45f43fb976"/>
+	<parameter name="pyList" class="java.util.List"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="48" splitType="Stretch"/>
+	</title>
+	<detail>
+		<band height="258" splitType="Stretch">
+			<componentElement>
+				<reportElement uuid="048232e9-132d-490a-93a0-51cd9f6af19a" x="0" y="84" width="1865" height="27"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="dataset1" uuid="fab64e8b-8f0c-40bc-bbbf-a450866e39d0">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{pyList})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:listContents height="27" width="1865">
+						<textField>
+							<reportElement uuid="32d770e9-7bff-49f2-976e-2fd322b4fb90" stretchType="RelativeToBandHeight" x="0" y="0" width="63" height="21"/>
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid"/>
+								<topPen lineWidth="0.0" lineStyle="Solid"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$V{index}]]></textFieldExpression>
+						</textField>
+						<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+							<reportElement uuid="2feb57e5-716c-443a-b00a-aeb3f23a14d3" stretchType="RelativeToBandHeight" x="63" y="0" width="254" height="21"/>
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid"/>
+								<topPen lineWidth="0.0" lineStyle="Solid"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{personnel_bankCardCode}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement uuid="a17930ab-07cb-486e-a952-c888076c981f" stretchType="RelativeToBandHeight" x="317" y="0" width="144" height="21"/>
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid"/>
+								<topPen lineWidth="0.0" lineStyle="Solid"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{personnel_name}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement uuid="ed442a28-42c1-4142-b53b-573ae3b764ae" stretchType="RelativeToBandHeight" x="1221" y="0" width="70" height="21"/>
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid"/>
+								<topPen lineWidth="0.0" lineStyle="Solid"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{bank_city}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement uuid="d7b62d16-2e59-42d7-bdbd-aedc3ea14c58" stretchType="RelativeToBandHeight" x="1291" y="0" width="70" height="21"/>
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid"/>
+								<topPen lineWidth="0.0" lineStyle="Solid"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{add_comm_mon}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement uuid="ea522bfd-1dc5-4388-a436-0677830babf6" stretchType="RelativeToBandHeight" x="1361" y="0" width="72" height="21"/>
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid"/>
+								<topPen lineWidth="0.0" lineStyle="Solid"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{tax_mon}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement uuid="a3c407f7-ca02-47e2-81a9-ef87d1747de6" stretchType="RelativeToBandHeight" x="1433" y="0" width="72" height="21"/>
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid"/>
+								<topPen lineWidth="0.0" lineStyle="Solid"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{stock_comm_mon}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement uuid="08001265-8aee-47d5-854e-9b522635149e" stretchType="RelativeToBandHeight" x="1505" y="0" width="72" height="21"/>
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid"/>
+								<topPen lineWidth="0.0" lineStyle="Solid"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{team_comm_mon}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement uuid="915db863-27b7-4ccb-928e-51b248e3300f" stretchType="RelativeToBandHeight" x="1577" y="0" width="72" height="21"/>
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid"/>
+								<topPen lineWidth="0.0" lineStyle="Solid"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{old_comm_mon}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement uuid="7413f844-ab7c-41c5-b5f0-3dcf50b7354e" stretchType="RelativeToBandHeight" x="1649" y="0" width="72" height="21"/>
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid"/>
+								<topPen lineWidth="0.0" lineStyle="Solid"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{old_team_comm_mon}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement uuid="e0b7be9b-dfef-4833-9cff-2b42529bd83a" stretchType="RelativeToBandHeight" x="1721" y="0" width="72" height="21"/>
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid"/>
+								<topPen lineWidth="0.0" lineStyle="Solid"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{adjust_amount}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement uuid="6b5cce37-3fbb-4877-a5ac-645d22df8bde" stretchType="RelativeToBandHeight" x="1793" y="0" width="72" height="21"/>
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid"/>
+								<topPen lineWidth="0.0" lineStyle="Solid"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{total_mon}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement uuid="9a385826-38bf-4d0a-a32f-c99676ff5d51" stretchType="RelativeToBandHeight" x="971" y="0" width="180" height="21"/>
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid"/>
+								<topPen lineWidth="0.0" lineStyle="Solid"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{personnel_bank_title}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement uuid="c387a468-0f2d-474c-8536-4cc03321604c" stretchType="RelativeToBandHeight" x="541" y="0" width="250" height="21"/>
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid"/>
+								<topPen lineWidth="0.0" lineStyle="Solid"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{remark}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement uuid="e3af1863-3ee6-4d35-983a-325a75eb048d" stretchType="RelativeToBandHeight" x="461" y="0" width="80" height="21"/>
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid"/>
+								<topPen lineWidth="0.0" lineStyle="Solid"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{all_mon}]]></textFieldExpression>
+						</textField>
+						<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+							<reportElement uuid="87d8f015-5630-4ae5-8e17-af3edf740ec3" stretchType="RelativeToBandHeight" x="1151" y="0" width="70" height="21"/>
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid"/>
+								<topPen lineWidth="0.0" lineStyle="Solid"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{bank_province}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement uuid="20a721ba-42e7-4e9c-ac51-f01e69fe5817" stretchType="RelativeToBandHeight" x="791" y="0" width="180" height="21"/>
+							<box>
+								<pen lineWidth="0.0" lineStyle="Solid"/>
+								<topPen lineWidth="0.0" lineStyle="Solid"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{personnel_bankName}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<staticText>
+				<reportElement uuid="b4937c4c-c614-4ba5-9187-c2d6efc8c2cd" mode="Opaque" x="0" y="35" width="63" height="49" forecolor="#FFFFFF" backcolor="#2566B2"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[序号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="37d6f79b-4773-4315-af0a-9c7177822190" mode="Opaque" x="63" y="35" width="254" height="49" forecolor="#FFFFFF" backcolor="#2573B2"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[卡号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="56fc63f1-b48d-4526-a81c-4fdd2bc3353e" mode="Opaque" x="317" y="35" width="144" height="49" forecolor="#FFFFFF" backcolor="#2573B2"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[姓名]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ea1f1158-3fb3-47b1-9945-480de5f4ebbf" mode="Opaque" x="461" y="35" width="80" height="49" forecolor="#FFFFFF" backcolor="#2573B2"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[金额（元）]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4f2e7e73-89c1-4e78-b691-e9ea89e8efdd" mode="Opaque" x="541" y="35" width="250" height="49" forecolor="#FFFFFF" backcolor="#2573B2"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[备注]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e818330e-ecee-4433-806e-d4afe66643fc" mode="Opaque" x="791" y="35" width="180" height="49" forecolor="#FFFFFF" backcolor="#2573B2"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[银行]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7333e4a9-0008-4f7a-a606-d2c7df9ecf49" mode="Opaque" x="971" y="35" width="180" height="49" forecolor="#FFFFFF" backcolor="#2573B2"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[支行]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2a063c22-94e6-4ce0-959d-201da587a113" mode="Opaque" x="1151" y="35" width="70" height="49" forecolor="#FFFFFF" backcolor="#2573B2"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[省]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="86f11b44-308b-49d2-b29a-0f6689bf0776" mode="Opaque" x="1221" y="35" width="70" height="49" forecolor="#FFFFFF" backcolor="#2573B2"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[市]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a9eec9a9-eeb1-4b3b-86f5-0baaadd52397" mode="Opaque" x="1291" y="35" width="70" height="49" forecolor="#FFFFFF" backcolor="#2573B2"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[新增奖]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0fe1c73b-39f0-4ed7-b505-ee9c3d409126" mode="Opaque" x="1361" y="35" width="72" height="49" forecolor="#FFFFFF" backcolor="#2573B2"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[税费]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a85697f9-5d5a-41e5-a35f-82f42f5db40e" mode="Opaque" x="1433" y="35" width="72" height="49" forecolor="#FFFFFF" backcolor="#2573B2"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[存量奖]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="879a901b-ac18-491d-a6bf-b47e974d7593" mode="Opaque" x="1505" y="35" width="72" height="49" forecolor="#FFFFFF" backcolor="#2573B2"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[管理提成奖]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="481541e1-5f7a-45f7-84a1-d21b7af99c16" mode="Opaque" x="1649" y="35" width="72" height="49" forecolor="#FFFFFF" backcolor="#2573B2"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[老产品团队佣金]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2f958da9-dfea-46d5-b805-5852572111ef" mode="Opaque" x="1577" y="35" width="72" height="49" forecolor="#FFFFFF" backcolor="#2573B2"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[老产品个人佣金]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="925c6592-e319-49ee-b20c-096afee411f4" mode="Opaque" x="1721" y="35" width="72" height="49" forecolor="#FFFFFF" backcolor="#2573B2"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[调整金额]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1243a098-5b4f-495a-8968-6cdca66b292d" mode="Opaque" x="1793" y="35" width="72" height="49" forecolor="#FFFFFF" backcolor="#2573B2"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[合计金额]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

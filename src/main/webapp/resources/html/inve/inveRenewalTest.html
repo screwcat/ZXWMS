@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>老单据跨年续期测试HTML</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/app.css" type="text/css" rel="stylesheet" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<style type="text/css">
+#lcsqxxtable td {
+	padding: 7px;
+}
+</style>
+</head>
+<body>
+<center>
+	<div style="height: 200px;">
+	</div>
+	<table cellpadding="0" cellspacing="0" border="1" width="60%">
+		<tr>
+			<td align="right" width="20%">
+				续期时间：
+			</td>
+			<td align="left" colspan="2">
+				<input type="text" name="date_of_payment" id="date_of_payment" ></input>
+			</td>
+		</tr>
+		<tr>
+			<td align="right" width="20%">
+				单据id：
+			</td>
+			<td align="left" colspan="2">
+				<input type="text" name="wms_inve_transa_id" id="wms_inve_transa_id" ></input>
+			</td>
+		</tr>
+		<tr>
+			<td align="right" width="20%">
+				是否做里预约预约赎回：
+			</td>
+			<td align="left" width="20%">
+				<input type="text" name="is_order_redeem" id="is_order_redeem" value="0" ></input>
+			</td>
+			<td align="left" width="20%">
+				0:没有做预约赎回;1:表示做了预约赎回
+			</td>
+		</tr>
+		<tr>
+			<td align="right" width="20%">
+				续期合同编号：
+			</td>
+			<td align="left" colspan="2">
+				<input type="text" name="order_financial_bill_code" id="order_financial_bill_code" ></input>
+			</td>
+		</tr>
+		<tr>
+			<td align="center" colspan="3">
+				<input type="button" value="提交" onclick="tjClick()"></input>
+			</td>
+		</tr>
+		
+	</table>
+	</center>
+<script type="text/javascript">
+	function tjClick()
+	{
+		var url = globalUtil.getTimestampUrl("/inve/inveRenewalOldBill.do");
+		var params = {};
+		params.date_of_payment = $("#date_of_payment").val();
+		params.wms_inve_transa_id = $("#wms_inve_transa_id").val();
+		params.is_order_redeem = $("#is_order_redeem").val();
+		params.order_financial_bill_code = $("#order_financial_bill_code").val();
+		
+		if($("#date_of_payment").val() == "")  
+		{
+			alert("存在空值");
+			return;
+		}
+		if($("#wms_inve_transa_id").val() == "")
+		{
+			alert("存在空值");
+			return;
+		}
+		if($("#is_order_redeem").val()=="")
+		{
+			alert("存在空值");
+			return;
+		}
+		if($("#order_financial_bill_code").val()=="")
+		{
+			alert("存在空值");
+			return;
+		}
+		
+		$.post(url, params, function(data)
+		{
+			alert(data.ret_code);
+		});
+	}
+</script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.sysmanage.persist.SysLogDao">
+	<!-- 删除用户 -->
+	<delete id="delete">
+		delete from sys_log where id in
+		<foreach collection="array" item="item" index="index" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	<!-- 查询数据条数，直接返回int类型条数 -->
+	<select id="findCount" parameterType="map" resultType="int">
+		select count(id) as count
+		from sys_log
+		<where>
+			<if test="id != null">
+				id=#{id}
+			</if>
+			<if test="unit_name != null">
+				and unit_name=#{unit_name}
+			</if>
+			<if test="user_code != null">
+				and user_code like '${user_code}'
+			</if>
+			<if test="user_name != null">
+				and user_name like '${user_name}'
+			</if>
+			<if test="oper_behavior != null">
+				and oper_behavior=#{oper_behavior}
+			</if>
+			<if test="oper_timestamp != null">
+				and oper_timestamp=#{oper_timestamp}
+			</if>
+			<if test="oper_ip != null">
+				and oper_ip=#{oper_ip}
+			</if>
+		</where>
+	</select>
+	<!-- 查询SysLog -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		select
+		id,
+		unit_name,
+		user_code,
+		user_name,
+		oper_behavior,
+		oper_timestamp,
+		oper_ip,
+		oper_type
+		from
+		sys_log
+		<where>
+			<if test="id != null">
+				id=#{id}
+			</if>
+			<if test="unit_name != null">
+				and unit_name=#{unit_name}
+			</if>
+			<if test="user_code != null">
+				and user_code like '${user_code}'
+			</if>
+			<if test="user_name != null">
+				and user_name like '${user_name}'
+			</if>
+			<if test="oper_behavior != null">
+				and oper_behavior=#{oper_behavior}
+			</if>
+			<if test="oper_timestamp != null">
+				and oper_timestamp=#{oper_timestamp}
+			</if>
+			<if test="oper_ip != null">
+				and oper_ip=#{oper_ip}
+			</if>
+		</where>
+		<if test="sortname != null and sortorder !=null">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+	<!-- 插入用户，并在用户实体对象中将主键进行赋值，返回受影响的记录条数，如果不需要返回主键，无需配置useGeneratedKeys、keyProperty项 -->
+	<insert id="save" parameterType="SysLog" useGeneratedKeys="true"
+		keyProperty="id">
+		INSERT INTO sys_log
+		(unit_name ,user_code
+		,user_name,oper_behavior,oper_timestamp,oper_ip,oper_type)
+		VALUES
+		(
+		#{unit_name},#{user_code},
+		#{user_name},#{oper_behavior},#{oper_timestamp},#{oper_ip},#{oper_type});
+	</insert>
+</mapper> 

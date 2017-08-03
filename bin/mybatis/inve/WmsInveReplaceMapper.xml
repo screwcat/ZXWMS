@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.zx.emanage.inve.persist.WmsInveReplaceDao">
+	<!-- get entity by pk -->
+	<select id="get" parameterType="int" resultType="WmsInveReplace">
+		select
+        				wms_inve_replace_id,
+        				wms_inve_transa_id,
+        				new_wms_inve_transa_id,
+        				new_wms_inve_pruduct_category_id,
+						date_format(apply_datetime,'%Y-%m-%d') as apply_datetime_str,
+        				apply_datetime,
+        				org_product_amount,
+						date_format(begin_of_date,'%Y-%m-%d') as begin_of_date_str,
+        				begin_of_date,
+        				product_account,
+        				extra_pay_amount,
+        				redeem_company_reason,
+        				is_take_off_damages,
+        				replace_reason,
+        				data_status,
+        				create_user_id,
+        				create_user_name,
+						date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+        				create_timestamp,
+        				last_update_user_id,
+						date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+        				last_update_timestamp,
+        				enable_flag
+        	from
+        		wms_inve_replace
+        	where
+        				wms_inve_replace_id = #{wms_inve_replace_id}
+	</select>
+	
+	<select id="get4Appro" parameterType="int" resultType="map">
+		select 
+			t1.wms_inve_transa_id,t2.wms_inve_transa_prod_id,t3.wms_inve_transa_protocol_id,
+			t4.new_wms_inve_pruduct_category_id,
+			t1.date_of_payment,t2.category_name,t3.end_of_date,
+			truncate(t2.product_account/10000,0) as product_account,
+			truncate(t2.product_interest,1) as product_interest,
+			CONCAT(t2.product_deadline,'个月') as product_deadline_name, 
+			t2.product_deadline,
+			t1.cus_name,
+			CONCAT(left(t1.mobile_phone,3),'****',right(t1.mobile_phone,4)) as mobile_phone,
+			CONCAT(left(t1.id_card,4),'**********',right(t1.id_card,4)) as id_card,
+			t4.org_product_amount/10000 as org_product_amount,-- 原转产品金额
+			t4.org_product_amount/10000 as org_product_amount_2,
+			t4.product_account/10000 as new_product_account,
+			t4.apply_datetime,
+			(select t.category_name from wms_inve_pruduct_category t where t.wms_inve_pruduct_category_id=t4.new_wms_inve_pruduct_category_id) as new_category_name, 
+			t4.begin_of_date,
+			truncate(t4.extra_pay_amount/10000,0) as extra_pay_amount,
+			t4.is_take_off_damages,
+			CONCAT(t1.salesman_name,t1.salesman_shortcode) as sales_man,
+			CONCAT((select value_meaning from wms_sys_dict_data t where wms_sys_dict_id=1001 and t.value_code=t4.redeem_company_reason),'|不收服务费') as redeem_company_reason_desc,
+			t4.redeem_company_reason,
+			t4.wms_inve_replace_id,
+			(select t.category_deadline from wms_inve_pruduct_category t where t.wms_inve_pruduct_category_id=t4.new_wms_inve_pruduct_category_id) as new_product_deadline,
+			(SELECT t.category_return_rate FROM wms_inve_pruduct_category t WHERE t.wms_inve_pruduct_category_id = t4.new_wms_inve_pruduct_category_id) AS new_product_interest, 
+			t4.replace_reason
+			from wms_inve_transa t1,wms_inve_transa_prod t2,wms_inve_transa_protocol t3,wms_inve_replace t4
+			where t1.wms_inve_transa_id=t2.wms_inve_transa_id
+			and t1.wms_inve_transa_id=t4.wms_inve_transa_id
+			and t1.wms_inve_transa_id = t3.wms_inve_transa_id
+			and t3.wms_inve_redeem_id = 0
+			and t4.wms_inve_replace_id=#{wms_inve_replace_id}
+	</select>
+
+	
+	<!-- count num -->
+	<select id="findCount" parameterType="map" resultType="int">
+		SELECT 
+			count(1)
+			FROM wms_inve_replace t1,wms_inve_transa t2,wms_inve_transa_prod t3
+		<where>
+		    t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			and t2.wms_inve_transa_id = t3.wms_inve_transa_id
+			<if test="data_status != null">
+				 and t1.data_status = #{data_status} 
+			</if>
+			<if test="id_card != null">
+				 and t2.id_card = #{id_card} 
+			</if>
+			<if test="data_type != null">
+				 and t1.data_status in ('4','5') 
+			</if>
+			<if test="cus_name != null">
+				 and t2.cus_name = #{cus_name} 
+			</if>
+		</where>
+	</select>
+
+	<!-- list -->
+	<select id="search" parameterType="map" resultType="java.util.HashMap">
+		SELECT 
+			t1.wms_inve_replace_id,
+			t3.wms_inve_transa_id,
+			t3.wms_inve_transa_prod_id,
+			t2.bill_code,
+			t2.cus_name,
+			t3.category_name,
+			(select t.category_name from wms_inve_pruduct_category t where t.wms_inve_pruduct_category_id=t1.new_wms_inve_pruduct_category_id) as new_category_name, 
+			CONCAT(left(t2.id_card,4),'**********',right(t2.id_card,4)) as id_card,
+			t1.apply_datetime,
+			date_format(t1.create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+			(select t.value_meaning from wms_sys_dict_data t where t.wms_sys_dict_id=1002 and t.value_code=t1.data_status) as data_status_name
+			FROM wms_inve_replace t1,wms_inve_transa t2,wms_inve_transa_prod t3
+		<where>
+		    t1.wms_inve_transa_id = t2.wms_inve_transa_id
+			and t2.wms_inve_transa_id = t3.wms_inve_transa_id
+			<if test="data_status != null">
+				 and t1.data_status = #{data_status} 
+			</if>
+			<if test="id_card != null">
+				 and t2.id_card = #{id_card} 
+			</if>
+			<if test="cus_name != null">
+				 and t2.cus_name = #{cus_name} 
+			</if>
+			<if test="data_type != null">
+				 and t1.data_status in ('4','5') 
+			</if>
+		</where>
+		<if test="sortname != '' and sortorder !=''">
+			ORDER BY ${sortname} ${sortorder}
+		</if>
+		<if test="offset != null and pagesize !=null">
+			LIMIT ${offset} , ${pagesize}
+		</if>
+	</select>
+
+	<!-- save -->
+	<insert id="save" parameterType="WmsInveReplace" useGeneratedKeys="true" keyProperty="wms_inve_replace_id">
+		INSERT INTO wms_inve_replace
+		(
+				wms_inve_replace_id,
+
+				wms_inve_transa_id,
+
+				new_wms_inve_transa_id,
+
+				new_wms_inve_pruduct_category_id,
+
+				apply_datetime,
+
+				org_product_amount,
+
+				begin_of_date,
+
+				product_account,
+
+				extra_pay_amount,
+
+				redeem_company_reason,
+
+				is_take_off_damages,
+
+				replace_reason,
+
+				data_status,
+
+				create_user_id,
+
+				create_user_name,
+
+				create_timestamp,
+
+				last_update_user_id,
+
+				last_update_timestamp,
+
+				enable_flag
+		)
+		VALUES
+		(
+				#{wms_inve_replace_id},
+				#{wms_inve_transa_id},
+				#{new_wms_inve_transa_id},
+				#{new_wms_inve_pruduct_category_id},
+				#{apply_datetime},
+				#{org_product_amount},
+				#{begin_of_date},
+				#{product_account},
+				#{extra_pay_amount},
+				#{redeem_company_reason},
+				#{is_take_off_damages},
+				#{replace_reason},
+				#{data_status},
+				#{create_user_id},
+				#{create_user_name},
+				#{create_timestamp},
+				#{last_update_user_id},
+				#{last_update_timestamp},
+				#{enable_flag}
+		);
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update" parameterType="WmsInveReplace">
+		update wms_inve_replace
+		<set>
+					<if test="wms_inve_replace_id != null">
+						 wms_inve_replace_id = #{wms_inve_replace_id},
+					</if>
+					<if test="wms_inve_transa_id != null">
+						 wms_inve_transa_id = #{wms_inve_transa_id},
+					</if>
+					<if test="new_wms_inve_transa_id != null">
+						 new_wms_inve_transa_id = #{new_wms_inve_transa_id},
+					</if>
+					<if test="new_wms_inve_pruduct_category_id != null">
+						 new_wms_inve_pruduct_category_id = #{new_wms_inve_pruduct_category_id},
+					</if>
+					<if test="apply_datetime != null">
+						 apply_datetime = #{apply_datetime},
+					</if>
+					<if test="org_product_amount != null">
+						 org_product_amount = #{org_product_amount},
+					</if>
+					<if test="begin_of_date != null">
+						 begin_of_date = #{begin_of_date},
+					</if>
+					<if test="product_account != null">
+						 product_account = #{product_account},
+					</if>
+					<if test="extra_pay_amount != null">
+						 extra_pay_amount = #{extra_pay_amount},
+					</if>
+					<if test="redeem_company_reason != null">
+						 redeem_company_reason = #{redeem_company_reason},
+					</if>
+					<if test="is_take_off_damages != null">
+						 is_take_off_damages = #{is_take_off_damages},
+					</if>
+					<if test="replace_reason != null">
+						 replace_reason = #{replace_reason},
+					</if>
+					<if test="data_status != null">
+						 data_status = #{data_status},
+					</if>
+					<if test="create_user_id != null">
+						 create_user_id = #{create_user_id},
+					</if>
+					<if test="create_user_name != null">
+						 create_user_name = #{create_user_name},
+					</if>
+					<if test="create_timestamp != null">
+						 create_timestamp = #{create_timestamp},
+					</if>
+					<if test="last_update_user_id != null">
+						 last_update_user_id = #{last_update_user_id},
+					</if>
+					<if test="last_update_timestamp != null">
+						 last_update_timestamp = #{last_update_timestamp},
+					</if>
+					<if test="enable_flag != null">
+						 enable_flag = #{enable_flag},
+					</if>
+	   </set>
+		 where 
+    				wms_inve_replace_id = #{wms_inve_replace_id}
+	</update>
+	<select id="getListByEntity" parameterType="WmsInveReplace" resultType="WmsInveReplace">
+		select 
+				wms_inve_replace_id,
+				wms_inve_transa_id,
+				new_wms_inve_transa_id,
+				new_wms_inve_pruduct_category_id,
+				date_format(apply_datetime,'%Y-%m-%d') as apply_datetime_str,
+				apply_datetime,
+				org_product_amount,
+				date_format(begin_of_date,'%Y-%m-%d') as begin_of_date_str,
+				begin_of_date,
+				product_account,
+				extra_pay_amount,
+				redeem_company_reason,
+				is_take_off_damages,
+				replace_reason,
+				data_status,
+				create_user_id,
+				create_user_name,
+				date_format(create_timestamp,'%Y-%m-%d %H:%i:%s') as create_timestamp_str,
+				create_timestamp,
+				last_update_user_id,
+				date_format(last_update_timestamp,'%Y-%m-%d %H:%i:%s') as last_update_timestamp_str,
+				last_update_timestamp,
+				enable_flag
+		from
+		wms_inve_replace
+		<where>
+					<if test="wms_inve_replace_id != null">
+						and wms_inve_replace_id = #{wms_inve_replace_id}
+					</if>
+					<if test="wms_inve_transa_id != null">
+						and wms_inve_transa_id = #{wms_inve_transa_id}
+					</if>
+					<if test="new_wms_inve_transa_id != null">
+						and new_wms_inve_transa_id = #{new_wms_inve_transa_id}
+					</if>
+					<if test="new_wms_inve_pruduct_category_id != null">
+						and new_wms_inve_pruduct_category_id = #{new_wms_inve_pruduct_category_id}
+					</if>
+					<if test="apply_datetime != null">
+						and apply_datetime = #{apply_datetime}
+					</if>
+					<if test="org_product_amount != null">
+						and org_product_amount = #{org_product_amount}
+					</if>
+					<if test="begin_of_date != null">
+						and begin_of_date = #{begin_of_date}
+					</if>
+					<if test="product_account != null">
+						and product_account = #{product_account}
+					</if>
+					<if test="extra_pay_amount != null">
+						and extra_pay_amount = #{extra_pay_amount}
+					</if>
+					<if test="redeem_company_reason != null">
+						and redeem_company_reason = #{redeem_company_reason}
+					</if>
+					<if test="is_take_off_damages != null">
+						and is_take_off_damages = #{is_take_off_damages}
+					</if>
+					<if test="replace_reason != null">
+						and replace_reason = #{replace_reason}
+					</if>
+					<if test="data_status != null">
+						and data_status = #{data_status}
+					</if>
+					<if test="create_user_id != null">
+						and create_user_id = #{create_user_id}
+					</if>
+					<if test="create_user_name != null">
+						and create_user_name = #{create_user_name}
+					</if>
+					<if test="create_timestamp != null">
+						and create_timestamp = #{create_timestamp}
+					</if>
+					<if test="last_update_user_id != null">
+						and last_update_user_id = #{last_update_user_id}
+					</if>
+					<if test="last_update_timestamp != null">
+						and last_update_timestamp = #{last_update_timestamp}
+					</if>
+					<if test="enable_flag != null">
+						and enable_flag = #{enable_flag}
+					</if>
+				 	<if test="isExcludePKFlag != null and isExcludePKFlag == true">
+		        				and wms_inve_replace_id != #{wms_inve_replace_id}
+					</if>
+		</where>
+	</select>
+</mapper> 

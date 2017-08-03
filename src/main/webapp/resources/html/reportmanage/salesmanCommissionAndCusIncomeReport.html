@@ -1,0 +1,603 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script type="text/javascript" charset="utf-8"
+	src="../../js/media/js/ZeroClipboard.js"></script>
+<title>佣金&客户收益表</title>
+<style>
+.l-panel-search{
+	max-height: 100%;
+}
+.l-panel-search-title{
+	min-width: 100px;
+}
+.ml2{
+	margin-left: 2px;
+}
+</style>
+</head>
+<body style="overflow-y: hidden;">
+	<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<!--查询条件-->
+			<div class="l-panel-search-cond clearfix">
+				<div class="float-l">
+					<div class="l-panel-search-title">部门名称：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="dept_name"/>
+					</div>
+				</div>
+<!-- 			</div> -->
+<!-- 			<div class="l-panel-search-cond clearfix"> -->
+				<div class="float-l">
+					<div class="l-panel-search-title">客户经理/短工号：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="salesman_id"/>
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">统计月份：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="query_month" class="Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM',isShowClear:true, maxDate:'%y-%M'})" style="vertical-align: top;"/>
+					</div>
+				</div>
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">人员状态：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="salesman_status"/> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+			</div>
+<!-- 			<div class="l-panel-search-cond clearfix"> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">部门经理：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="department_manager_id"/> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">副总经理：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="vice_general_manager_id"/> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">总经理：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="general_manager_id"/> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">中分总：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="center_manager_id"/> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+			<div class="l-panel-search-cond clearfix">
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">单据编号：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="bill_code"/> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+				<div class="float-l">
+					<div class="l-panel-search-title">客户姓名：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="cus_name"/>
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title"><span style="visibility: hidden;">/短工号</span>产品名称：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="category_name"/>
+					</div>
+				</div>
+			</div>
+			<div class="l-panel-search-cond clearfix">
+				<div class="float-l">
+					<div class="l-panel-search-title">签单日期：</div>
+					<div class="l-panel-search-item">
+						<input id="date_of_payment_begin" class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+							style="width: 133px; vertical-align: top;" /><span style="visibility: hidden;">/短工号</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+							id="date_of_payment_end" class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})"
+							style="width: 133px; vertical-align: top;" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">签单金额：</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="product_account_begin"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="product_account_end"></input>
+					</div>
+				</div>
+<!-- 			</div> -->
+<!-- 			<div class="l-panel-search-cond clearfix"> -->
+<!-- 				<div class="float-l ml2"> -->
+<!-- 					<div class="l-panel-search-title">产品期数：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="product_deadline"/> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+			</div>
+<!-- 			<div class="l-panel-search-cond clearfix"> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">赎回日期：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 					<input id="redeem_date_begin" class="Wdate" type="text" -->
+<!-- 							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})" -->
+<!-- 							style="width: 133px; vertical-align: top;" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input -->
+<!-- 							id="redeem_date_end" class="Wdate" type="text" -->
+<!-- 							onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true})" -->
+<!-- 							style="width: 133px; vertical-align: top;" /> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">赎回金额：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="redeem_amount_begin"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="redeem_amount_end"></input> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+<!-- 			<div class="l-panel-search-cond clearfix"> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">正常收益：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="payable_basic_income_begin"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="payable_basic_income_end"></input> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">奖励收益：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="payable_reward_income_begin"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="payable_reward_income_end"></input> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">公益收益：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="extend_income_begin"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="extend_income_end"></input> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">收益合计：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="total_income_begin"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="total_income_end"></input> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+<!-- 			<div class="l-panel-search-cond clearfix"> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">老产品个人佣金：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="old_comm_mon_begin"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="old_comm_mon_end"></input> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">老产品税费：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="old_comm_tax_begin"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="old_comm_tax_end"></input> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">新产品开单奖：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="add_comm_mon_begin"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="add_comm_mon_end"></input> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">新产品税费：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="comm_tax_begin"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="comm_tax_end"></input> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">新产品存量奖：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="stock_comm_mon_begin"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="stock_comm_mon_end"></input> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">佣金合计：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="total_comm_begin"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="total_comm_end"></input> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+<!-- 			<div class="l-panel-search-cond clearfix"> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">老产品团队佣金：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="old_team_comm_mon_begin"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="old_team_comm_mon_end"></input> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">新产品管理提成：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="team_comm_mon_begin"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="team_comm_mon_end"></input> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="float-l"> -->
+<!-- 					<div class="l-panel-search-title">管理提成合计：</div> -->
+<!-- 					<div class="l-panel-search-item"> -->
+<!-- 						<input type="text" id="total_team_comm_begin"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="total_team_comm_end"></input> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+		</div>
+	</div>
+	<div id="centertoolbar"></div>
+	<div id="grid"></div>
+	<form id="expertFormId" action="/WMS/reportmanage/getSalesmanCommissionAndCusIncomeForExport.do" method="post">
+		<input type="hidden" id="export_dept_name" name="dept_name" />
+		<input type="hidden" id="export_salesman_id" name="salesman_id" />
+		<input type="hidden" id="export_query_month" name="query_month" />
+		<input type="hidden" id="export_cus_name" name="cus_name" />
+		<input type="hidden" id="export_category_name" name="category_name" />
+		<input type="hidden" id="export_date_of_payment_begin" name="date_of_payment_begin" />
+		<input type="hidden" id="export_date_of_payment_end" name="date_of_payment_end" />
+		<input type="hidden" id="export_product_account_begin" name="product_account_begin" />
+		<input type="hidden" id="export_product_account_end" name="product_account_end" />
+	</form>
+	<script>
+		var grid = null;
+		var toolbar = null;
+		
+		var menuId = $.query.get("menu_id");
+
+		var myDate = new Date();
+		var myMonth=myDate.getMonth()+1;
+		var myFullYear=myDate.getFullYear();
+		
+		$(function(){
+			$("#query_month").val(myDate.format("yyyy-MM"));
+			initToolbar();
+			initGrid();
+			initSearchInfo();
+		});
+
+		//初始化查询项中信息
+		function initSearchInfo(){
+			// 初始化产品信息
+			init_category_name();
+		}
+		
+		// 初始化工具栏
+		function initToolbar(){
+			var toolbarItems = [{
+				text: '查询',
+				click: search,
+				icon: 'search'
+			},{
+				line: true
+			},{
+				text: '清空',
+				click: clear,
+				icon: 'empty'
+			},{
+				line: true
+			},{
+				text: '导出',
+				click: exportExcel,
+				icon: 'export'
+			}];
+
+            $("#centertoolbar").ligerToolBar({
+                 items: toolbarItems
+			});
+		}
+		// 根据查询条件搜索
+		function search(){
+			var searchData = globalUtil.getFormParam('searchbar');
+			
+			var queryMonth = searchData.query_month;
+			if(queryMonth == '')
+			{
+				globalUtil.warnMsg('请输入查询月份！');
+				return;
+			}
+			var queryMyFullYear = null;
+			var queryMyMonth = null;
+			try{
+				queryMyFullYear = queryMonth.split("-")[0];
+				queryMyMonth = queryMonth.split("-")[1];
+			}catch(e){
+				globalUtil.warnMsg('输入查询月份不正确！');
+				return ;
+			}
+			if(queryMyFullYear<2016 || (queryMyFullYear == 2016 && queryMyMonth < 7) 
+					|| queryMyFullYear > myFullYear || (queryMyFullYear == myFullYear && queryMyMonth > myMonth))
+			{
+				globalUtil.warnMsg('查询月份范围只能是2016年7月份至当前月份！');
+				return ;
+			}
+			
+// 			console.log(JSON.stringify(searchData));
+			// 判断各种金额输入是否正确
+			if(isNotNum(searchData.product_account_begin, '签单金额输入不正确！') || isNotNum(searchData.product_account_end, '签单金额输入不正确！'))
+// 					|| isNotNum(searchData.redeem_amount_begin, '赎回金额输入不正确！') || isNotNum(searchData.redeem_amount_end, '赎回金额输入不正确！')
+// 					|| isNotNum(searchData.payable_basic_income_begin, '正常收益金额输入不正确！') || isNotNum(searchData.payable_basic_income_end, '正常收益金额输入不正确！')
+// 					|| isNotNum(searchData.payable_reward_income_begin, '奖励收益金额输入不正确！') || isNotNum(searchData.payable_reward_income_end, '奖励收益金额输入不正确！')
+// 					|| isNotNum(searchData.extend_income_begin, '公益收益金额输入不正确！') || isNotNum(searchData.extend_income_end, '公益收益金额输入不正确！')
+// 					|| isNotNum(searchData.total_income_begin, '收益合计金额输入不正确！') || isNotNum(searchData.total_income_end, '收益合计金额输入不正确！')
+// 					|| isNotNum(searchData.old_comm_mon_begin, '老产品个人佣金金额输入不正确！') || isNotNum(searchData.old_comm_mon_end, '老产品个人佣金金额输入不正确！')
+// 					|| isNotNum(searchData.old_comm_tax_begin, '老产品税费金额输入不正确！') || isNotNum(searchData.old_comm_tax_end, '老产品税费金额输入不正确！')
+// 					|| isNotNum(searchData.add_comm_mon_begin, '新产品开单奖金额输入不正确！') || isNotNum(searchData.add_comm_mon_end, '新产品开单奖金额输入不正确！')
+// 					|| isNotNum(searchData.comm_tax_begin, '新产品税费金额输入不正确！') || isNotNum(searchData.comm_tax_end, '新产品税费金额输入不正确！')
+// 					|| isNotNum(searchData.stock_comm_mon_begin, '新产品存量奖金额输入不正确！') || isNotNum(searchData.stock_comm_mon_end, '新产品存量奖金额输入不正确！')
+// 					|| isNotNum(searchData.total_comm_begin, '佣金合计金额输入不正确！') || isNotNum(searchData.total_comm_begin, '佣金合计金额输入不正确！')
+// 					|| isNotNum(searchData.old_team_comm_mon_begin, '老产品团队佣金金额输入不正确！') || isNotNum(searchData.old_team_comm_mon_end, '老产品团队佣金金额输入不正确！')
+// 					|| isNotNum(searchData.team_comm_mon_begin, '新产品管理提成金额输入不正确！') || isNotNum(searchData.team_comm_mon_end, '新产品管理提成金额输入不正确！')
+// 					|| isNotNum(searchData.total_team_comm_begin, '管理提成合计金额输入不正确！') || isNotNum(searchData.total_team_comm_end, '管理提成合计金额输入不正确！'))
+			{
+				return ;
+			}
+            global_ligerui_extend.search(grid, searchData);
+		}
+		// 判断并提示不是数字
+		function isNotNum(num, msg)
+		{
+			var isNum = /^[0-9]*$/;
+			// 如果是空或者不是undefined
+			if(!num || num.length==0)
+			{
+				// 没有传入数据的话当做是数字
+				return false;
+			}
+			else if(/^[0-9]*$/.test($.trim(num)) && num >= 0)
+			{
+				return false;
+			}
+			globalUtil.warnMsg(msg);
+			return true;
+		}
+		
+		// 清空查询条件
+		function clear(){
+			$("#dept_name").val("");
+        	$("#category_name").val("请选择");
+        	global_ligerui_extend.setComboxVal("category_name","-1");
+        	$("#salesman_id").val("");
+        	$("#query_month").val(myDate.format("yyyy-MM"));
+        	$("#cus_name").val("");
+        	$("#date_of_payment_begin").val("");
+        	$("#date_of_payment_end").val("");
+        	$("#product_account_begin").val("");
+        	$("#product_account_end").val("");
+		}
+		// 导出
+		function exportExcel(){
+			$("#export_dept_name").val($("#dept_name").val());
+			$("#export_salesman_id").val($("#salesman_id").val());
+			$("#export_query_month").val($("#query_month").val());
+			$("#export_cus_name").val($("#cus_name").val());
+			$("#export_category_name").val($("#category_name").ligerComboBox("getValue"));
+			$("#export_date_of_payment_begin").val($("#date_of_payment_begin").val());
+			$("#export_date_of_payment_end").val($("#date_of_payment_end").val());
+			$("#export_product_account_begin").val($("#product_account_begin").val());
+			$("#export_product_account_end").val($("#product_account_end").val());
+			
+			$("#expertFormId").submit();
+		}
+		
+		// 初始化表格
+		function initGrid(){
+            var columns = [{
+            	display: '一级部门',
+            	name: 'company_name',
+            	frozen: true,
+            	width: 130,
+            	minWidth: 130
+            },{
+            	display: '二级部门',
+            	name: 'dept_name',
+            	frozen: true,
+            	width: 130,
+            	minWidth: 130
+            },{
+            	display: '客户经理',
+            	name: 'salesman_name',
+            	frozen: true,
+            	width: 130,
+            	minWidth: 130
+            },{
+            	display: '人员状态',
+            	name: 'salesman_status',
+            	frozen: true,
+            	width: 130,
+            	minWidth: 130
+            },{
+            	display: '部门经理',
+            	name: 'department_manager_name',
+            	width: 130,
+            	minWidth: 130
+            },{
+            	display: '副总经理',
+            	name: 'vice_general_manager_name',
+            	width: 130,
+            	minWidth: 130
+            },{
+            	display: '总经理',
+            	name: 'general_manager_name',
+            	width: 130,
+            	minWidth: 130
+            },{
+            	display: '中分总',
+            	name: 'center_manager_name',
+            	width: 130,
+            	minWidth: 130
+            },{
+            	display: '单据编号',
+            	name: 'bill_code',
+            	width: 130,
+            	minWidth: 130
+            },{
+            	display: '客户姓名',
+            	name: 'cus_name',
+            	width: 130,
+            	minWidth: 130
+            },{
+            	display: '签单日期',
+            	name: 'date_of_payment',
+            	width: 130,
+            	minWidth: 130
+            },{
+            	display: '签单金额（元）',
+            	name: 'product_account',
+            	width: 130,
+            	minWidth: 130
+            },{
+            	display: '产品名称',
+            	name: 'category_name',
+            	width: 130,
+            	minWidth: 130
+            },{
+            	display: '产品期数（月）',
+            	name: 'product_deadline',
+            	width: 130,
+            	minWidth: 130
+            },{
+            	display: '赎回日期',
+            	name: 'redeem_date',
+            	width: 130,
+            	minWidth: 130
+            },{
+            	display: '赎回金额（元）',
+            	name: 'redeem_amount',
+            	width: 130,
+            	minWidth: 130
+            },{
+            	display: '客户每月收益情况（元）',
+            	columns: [{
+            		display: '正常收益',
+            		name: 'payable_basic_income',
+            		width: 130,
+            		minWidth: 130
+            	},{
+            		display: '奖励收益',
+            		name: 'payable_reward_income',
+            		width: 130,
+            		minWidth: 130
+            	},{
+            		display: '公益收益',
+            		name: 'extend_income',
+            		width: 130,
+            		minWidth: 130
+            	},{
+            		display: '收益合计',
+            		name: 'total_income',
+            		width: 130,
+            		minWidth: 130
+            	}]
+            },{
+            	display: '客户经理每月佣金情况（元）',
+            	columns: [{
+            		display: '老产品个人佣金',
+            		name: 'old_stock_comm_mon',
+            		width: 130,
+            		minWidth: 130
+//             		,
+//             		render: function (rowdata, rowindex, value) { 
+//             			if(rowdata.old_stock_comm_mon){
+//                 			if(rowdata.old_stock_comm_mon == '0.00000000')
+//                				{
+//                					return '0';
+//                				}
+//                 			else if(rowdata.old_stock_comm_mon.substring(0,rowdata.old_stock_comm_mon.length-6) == rowdata.old_stock_comm_mon.substring(0,rowdata.old_stock_comm_mon.length-8)+"00")
+//                				{
+//                					return rowdata.old_stock_comm_mon.substring(0,rowdata.old_stock_comm_mon.length-9);
+//                				}
+//                 			else
+//                 			{
+//                 				return rowdata.old_stock_comm_mon.substring(0,rowdata.old_stock_comm_mon.length-6);
+//                 			}
+//             			}
+//             		}
+            	},{
+            		display: '老产品税费',
+            		name: 'old_tax_mon',
+            		width: 130,
+            		minWidth: 130
+            	},{
+            		display: '新产品开单奖',
+            		name: 'add_comm_mon',
+            		width: 130,
+            		minWidth: 130
+            	},{
+            		display: '新产品税费',
+            		name: 'tax_mon',
+            		width: 130,
+            		minWidth: 130
+            	},{
+            		display: '新产品存量奖',
+            		name: 'stock_comm_mon',
+            		width: 130,
+            		minWidth: 130
+            	},{
+            		display: '佣金合计',
+            		name: 'total_comm_mon',
+            		width: 130,
+            		minWidth: 130
+            	}]
+            }
+//             ,{
+//             	display: '部门经理每月管理提成（元）',
+//             	columns: [{
+//             		display: '老产品团队佣金',
+//             		name: '',
+//             		width: 130,
+//             		minWidth: 130
+//             	},{
+//             		display: '新产品管理提成',
+//             		name: '',
+//             		width: 130,
+//             		minWidth: 130
+//             	},{
+//             		display: '管理提成合计',
+//             		name: '',
+//             		width: 130,
+//             		minWidth: 130
+//             	}]
+//             }
+            ];
+            grid = $("#grid").ligerGrid({
+            	columns: columns,
+            	url: global_param.context_name + "/reportmanage/getSalesmanCommissionAndCusIncomeWithPaging.do?menu_id="+menuId,
+            	sortName: 'ta.date_of_payment',
+            	sortOrder: 'asc',
+            	rownumbers: true,
+            	frozenRownumbers: true,
+            	allowUnSelectRow: true,
+        		usePager: true,
+        		width: '100%',
+        		height: '95%',
+        		heightDiff: -4,
+        		parms: {
+        			_filterParms: -1
+        		}
+            });
+		}
+		
+
+       	//初始化页面产品名称所有信息
+      	function  init_category_name(json){
+    		var category_name_params ={
+   				dest_url:'/inve/wmsinvepruductcategorylistforselect.do',
+   				t_col_name:'category_name',
+   				valueField:'wms_inve_pruduct_category_id',   //下拉框value对应的值，默认为id
+   				textField:'category_name',    //下拉框text对应的值，默认为text
+   				input_width:133,
+   				def_val:'first'
+			};
+    		global_ligerui_extend.initCombox("category_name",null,category_name_params);
+   		    global_ligerui_extend.initComboxDefVal("category_name");
+      	}
+	</script>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../css/zx-all.css" rel="stylesheet" type="text/css" />
+<link href="../../css/app.css" rel="stylesheet" type="text/css" />
+<script src="../../js/zx-all.js" type="text/javascript"></script>
+<script src="../../js/exportxls.js?v=2"></script>
+<script type="text/javascript" charset="utf-8"
+	src="../../js/media/js/ZeroClipboard.js"></script>
+<title>奖励佣金统计表</title>
+</head>
+<body style="overflow-y: hidden;">
+	<div class="l-panel-search clearfix centertoolbar-w">
+		<div id="searchbar" class="l-searchbar clearfix">
+			<!--查询条件-->
+			<div class="l-panel-search-cond clearfix">
+				<div class="float-l">
+					<div class="l-panel-search-title">公司范围:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="compay_id" style="width: 200px;"  onchange="getStoresData();"/>
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;部门范围:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="dept_id" style="width: 150px;" onchange="getbusinessgroupData();"/>
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;团队范围:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="team_id" style="width: 150px;" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title" style="margin-left: 16px">业务员/编号:</div>
+					<div class="l-panel-search-item">
+						<input type="text" id="personnel_Code" />
+					</div>
+				</div>
+				<div class="float-l">
+					<div class="l-panel-search-title">统计时间:</div>
+					<div class="l-panel-search-item">
+						<input id="create_datetime_begin" class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM',isShowClear:true})"
+							style="width: 90px; vertical-align: top;" /> 至 <input
+							id="create_datetime_end" class="Wdate" type="text"
+							onclick="WdatePicker({dateFmt:'yyyy-MM',isShowClear:true})"
+							style="width: 90px; vertical-align: top;" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="centertoolbar" class="minwidth400"></div>
+	<div id="grid"></div>
+	<!-- 工具条初始化 -->
+	<script type="text/javascript">
+        var grid;
+		var toolbar;
+		var params;
+		var dialog;
+		var columns;
+        $(function() {
+        	initGrid();
+        	var toolbarItemData = [];
+             toolbarItemData.push({
+                 text: '查询',
+                 click:search,
+                 icon: 'search'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             toolbarItemData.push({
+                 text: '清空',
+                 click:clear,
+                 icon: 'empty'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             toolbarItemData.push({
+                 text: '导出Excel',
+                 icon: 'export',
+                 id:'ToolTables_XLS_2'
+             });
+             toolbarItemData.push({
+                 line: true
+             });
+             $("#centertoolbar").ligerToolBar({
+                  items: toolbarItemData
+        	 });
+             search();
+             registerCsv();
+             init_companty_deptId();
+        });
+    	 //实现数据导出功能
+        function registerCsv(){
+        	var moviePath = "../../js/media/swf/copy_csv_xls_pdf.swf";
+        	var fileName = '奖励佣金统计表.xls';
+        	var titleJson = '';
+        	var dataJson = '';
+        	var obj = $("div[toolbarid='ToolTables_XLS_2']")[0];//获取菜单对象
+        	var getDataFun = function(){
+        		var text = {};
+        		initParams();
+        		//实现导出的时候，规定导出的具体内容
+        		text.title={'compay_name':'公司名称','dept_name':'部门名称','team_name':'团队名称','salesman_shortcode_name':'业务员/员工编号','job_name':'职称','stock':'存量（万）','monthly_net_growth':'本月净增（万）','monthly_newly_added':'本月新增（万）','reward_commission_coeff':'奖励佣金系数','reward_money':'奖励金额（元）','cash_prize':'现金奖励金额（元）','create_datetime_str':'月份'};//定义需要导出的列名以及列名与数据的对应关系
+        		var json = globalUtil.syncGetJson("/reportmanage/wmsinvecommissionrewardperformancewithoutpaginglist.do?sortName=reward_money&sortOrder=desc",params);//同步获取需要导出的数据内容
+        		text.data = json.Rows;
+        		return text;
+        	};
+        	registerXlsFlashBtn(moviePath,fileName,titleJson,dataJson,obj,getDataFun);
+        }
+        //清空所填写内容
+        function clear(){
+        	$("#personnel_Code").val("");
+        	$("#create_datetime_begin").val("");
+        	$("#create_datetime_end").val("");
+        	global_ligerui_extend.setComboxVal("compay_id","-2");
+		    global_ligerui_extend.setComboxVal("dept_id","-2");
+		    global_ligerui_extend.setComboxVal("team_id","-2");
+            search();	
+        }
+        //表格初始化
+        function initGrid() {
+        	columns = [{
+                display: '公司名称',
+                name: 'compay_name',
+                width: 130,
+                minWidth: 130,
+            	isSort:false
+            },{
+                display: '部门名称',
+                name: 'dept_name',
+                width: 130,
+                minWidth: 130,
+            	isSort:false
+            },{
+            	display:'团队名称',
+            	name:'team_name',
+            	width:130,
+            	minWidth:130,
+            	isSort:false
+            },{
+            	display:'业务员/员工编号',
+            	name:'salesman_shortcode_name',
+            	width:130,
+            	minWidth:130,
+            	isSort:false
+            },{
+            	display:'职称',
+            	name:'job_name',
+            	width:150,
+            	minWidth:150,
+            	isSort:false
+            },{
+            	display:'存量（万）',
+            	name:'stock',
+            	width:150,
+            	minWidth:150,
+            	isSort:true
+            },{
+            	display:'本月净增（万）',
+            	name:'monthly_net_growth',
+            	width:160,
+            	minWidth:160,
+            	isSort:true
+            },{
+            	display:'本月新增（万）',
+            	name:'monthly_newly_added',
+            	width:150,
+            	minWidth:150,
+            	isSort:true
+            },{
+            	display:'奖励佣金系数',
+            	name:'reward_commission_coeff',
+            	width:160,
+            	minWidth:160,
+            	isSort:false
+            },{
+            	display:'奖励金额（元）',
+            	name:'reward_money',
+            	width:160,
+            	minWidth:160,
+            	isSort:true
+            },{
+            	display:'现金奖励金额（元）',
+            	name:'cash_prize',
+            	width:160,
+            	minWidth:160,
+            	isSort:true
+            },{
+            	display:'月份',
+            	name:'create_datetime_str',
+            	width:160,
+            	minWidth:160,
+            	isSort:false
+            }];
+            grid = $("#grid").ligerGrid({
+        		columns: columns,
+        		url: global_param.context_name + '/reportmanage/wmsinvecommissionrewardperformancewithpaginglist.do',
+        		sortName: 'reward_money', // 排序列名
+				sortOrder: 'desc', // 排序方式
+        		rownumbers: true,
+        		allowUnSelectRow: true,
+        		enabledSort: true, 
+        		usePager: true,
+        		width: '100%',
+        		height: '100%',
+        		heightDiff: -4,
+        		parms: {
+        			_filterParms: -1
+        		}
+            });
+        }  
+        function inveInfo(salesman_id){
+    		var url = globalUtil.getHtml("showDetails.html?salesman_id=" + salesman_id);
+       		dialog=$.ligerDialog.open({
+       			url:url,
+       			title: '详细信息',
+		        width: 1100,
+		        height: globalUtil.setDialogHeight(600),
+		        onHiddenOrClose: function(){
+		    	},
+		        isResize: false
+       		}); 	
+		 }
+        //修改内容 添加发放时间
+        function update_date(){
+        	$.post(globalUtil.getTimestampUrl("/reportmanage/wmsinvecommissionperformanceupdatestatus.do"), params,
+        	   		function(data) {
+        	    	if (data === 'success') {
+        	        	 globalUtil.successMsg(globalErrorMsg['100002'], function(){            		 		
+        	        		 dialog.hide();
+        	        	 });
+        	         } else{
+        	             globalUtil.errorMsg(globalErrorMsg['100012']); //保存失败
+        	         }
+        	    });
+        }
+        function initParams() {
+        	params = globalUtil.getFormParam("searchbar");
+        	personnel_state(params);
+        }
+        //查询
+        var search= function() {
+            initParams();
+            global_ligerui_extend.search(grid, params);
+        }
+        //实现初始化部门范围
+    	function init_companty_deptId(){
+    		var personnel_deptId_params ={
+    				dest_url:'/sysmanage/getAllSysCompantyWithList.do?isAll=true&deptLevel=1&companyIds=127,122',
+    				t_col_name:'dept_id',
+    				valueField:'companyId',   //下拉框value对应的值，默认为id
+    				textField:'companyName',    //下拉框text对应的值，默认为text
+    				input_width:201,//下拉框长度
+    				def_val:'first'
+    				};
+    		global_ligerui_extend.initCombox("compay_id",null,personnel_deptId_params);		
+    		global_ligerui_extend.initComboxDefVal("compay_id");
+    	}
+    	//当点击部门范围的时候,加载门店范围
+    	function getStoresData(){
+    		//获取筛选条件
+        	params = globalUtil.getFormParam("searchbar");
+        	//判断选择部门
+      		if(params.compay_id=='-2'||params.compay_id=='')//全部
+      		{
+      			setStores(params.compay_id);
+      		}
+      		else
+      		{
+      			setStores(params.compay_id);
+      		}
+    	}
+    	//获取门店范围
+    	function setStores(companyId){
+    		var stores_params ={
+            		dest_url:'/sysmanage/getAllSysDeptsWithList.do?isAll=true&companyId='+companyId,
+            		t_col_name:'dept_id',
+            		valueField:'deptId',   //下拉框value对应的值，默认为id
+            		textField:'deptName',    //下拉框text对应的值，默认为text
+            		input_width:201,//下拉框长度
+            		def_val:'first'
+        			};
+          			global_ligerui_extend.initCombox("dept_id",null,stores_params);		
+        			global_ligerui_extend.initComboxDefVal("dept_id");
+    	}
+    	//点击门店范围的时候，加载业务组范围
+    	function getbusinessgroupData(){
+    		//获取筛选条件
+    		params = globalUtil.getFormParam("searchbar");
+    		//判断选择门店
+      		if(params.dept_id=='-2'||params.dept_id=='')//全部
+      		{
+      			setBusinessgroup(params.dept_id);
+      		}
+      		else
+      		{
+      			setBusinessgroup(params.dept_id);
+      		}
+    	}
+    	//设置业务组范围
+    	function setBusinessgroup(dept_id){
+    		var businessgroup_params ={
+            		dest_url:'/sysmanage/getAllSysTeamsWithList.do?isAll=true&deptpId='+dept_id,
+            		t_col_name:'team_id',
+            		valueField:'teamId',   //下拉框value对应的值，默认为id
+            		textField:'teamName',    //下拉框text对应的值，默认为text
+            		//input_width:201,//下拉框长度
+            		def_val:'first'
+        			};
+          			global_ligerui_extend.initCombox("team_id",null,businessgroup_params);		
+        			global_ligerui_extend.initComboxDefVal("team_id");
+    	}
+    	//兼职人员参加不参加
+    	function personnel_state(jsonStr) {
+    		$("input[name='personnel_state']").each(function() {
+    			if ($(this).is(':checked')) {
+    				jsonStr.personnel_state = $(this).val();
+    				return false;//退出each循环
+    			}
+    		});			
+    	}
+        </script>
+</body>
+</html>
